@@ -15,21 +15,23 @@ export function setupSignatureScenes(root: HTMLElement, templateId: TemplateId) 
   if (hero && visual && copy && final) {
     const timeline = gsap.timeline({
       defaults: { ease: 'none' },
-      scrollTrigger: { trigger: hero, scroller, start: 'top top', end: 'bottom bottom', scrub: 0.8, invalidateOnRefresh: true },
+      scrollTrigger: { trigger: hero, scroller, start: 'top top', end: 'bottom bottom', scrub: 1.4, invalidateOnRefresh: true },
     });
-    timeline.to(copy, { yPercent: templateId === 'neon-xv-euphoria' ? -30 : -18, opacity: 0, duration: 0.5 }, 0);
+    // Give the opening frame room to breathe, then expand the photo over a longer scroll range.
+    // The same timeline runs in reverse, so the return to the opening frame stays gradual too.
+    timeline.to(copy, { yPercent: templateId === 'neon-xv-euphoria' ? -30 : -18, opacity: 0, duration: 0.42 }, 0.1);
     if (templateId === 'boho-terracotta') {
-      timeline.to(root.querySelector('.st-hero__botanical'), { x: -65, rotate: -11, opacity: 0.25, duration: 1 }, 0);
-      timeline.to(visual, { left: '0%', top: '0%', width: '100%', height: '100%', borderRadius: '0%', rotate: 0, clipPath: 'inset(0% round 0px)', duration: 1 }, 0);
+      timeline.to(root.querySelector('.st-hero__botanical'), { x: -65, rotate: -11, opacity: 0.25, duration: 0.72 }, 0.14);
+      timeline.to(visual, { left: '0%', top: '0%', width: '100%', height: '100%', borderRadius: '0% 0% 0% 0%', rotate: 0, duration: 0.72 }, 0.14);
     } else if (templateId === 'modern-minimal-noir') {
-      timeline.to(visual, { left: '0%', top: '0%', width: '100%', height: '100%', clipPath: 'inset(0% round 0px)', duration: 1 }, 0);
-      timeline.to(root.querySelector('.st-hero__editorial-rule'), { y: -70, opacity: 0, duration: 0.6 }, 0);
+      timeline.to(visual, { left: '0%', top: '0%', width: '100%', height: '100%', duration: 0.72 }, 0.14);
+      timeline.to(root.querySelector('.st-hero__editorial-rule'), { y: -70, opacity: 0, duration: 0.44 }, 0.1);
     } else {
-      timeline.to(root.querySelector('.st-hero__ticket'), { x: 170, rotate: 18, opacity: 0, duration: 0.6 }, 0);
-      timeline.to(root.querySelector('.st-hero__orbit'), { scale: 1.7, opacity: 0.2, duration: 1 }, 0);
-      timeline.to(visual, { left: '0%', top: '0%', width: '100%', height: '100%', clipPath: 'inset(0% round 0px)', duration: 1 }, 0);
+      timeline.to(root.querySelector('.st-hero__ticket'), { x: 170, rotate: 18, opacity: 0, duration: 0.55 }, 0.12);
+      timeline.to(root.querySelector('.st-hero__orbit'), { scale: 1.7, opacity: 0.2, duration: 0.72 }, 0.14);
+      timeline.to(visual, { left: '0%', top: '0%', width: '100%', height: '100%', borderRadius: '0px', duration: 0.72 }, 0.14);
     }
-    timeline.fromTo(final, { opacity: 0, y: 45 }, { opacity: 1, y: 0, duration: 0.36 }, 0.64);
+    timeline.fromTo(final, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.18 }, 0.8);
   }
 
   const words = root.querySelectorAll<HTMLElement>('.st-story__word');
