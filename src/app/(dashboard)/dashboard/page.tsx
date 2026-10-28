@@ -828,11 +828,11 @@ function DashboardContent() {
 
                           <td className="px-5 py-4">
                             <Link
-                              href={`/${inv.slug}?template=${inv.templateId}&g=fam-lopez-8a2f`}
+                              href={`/invitacion/${inv.slug}?template=${inv.templateId}&g=fam-lopez-8a2f`}
                               target="_blank"
                               className="inline-flex cursor-pointer items-center gap-1 font-mono text-xs text-[#cc785c] hover:underline"
                             >
-                              <span>/{inv.slug}</span>
+                              <span>/invitacion/{inv.slug}</span>
                               <ExternalLink className="h-3 w-3" />
                             </Link>
                             <span className="block text-[11px] text-[#8e8b82]">
@@ -1324,7 +1324,7 @@ function DashboardContent() {
                     : 'Abrir Sobre en Preview'}
                 </button>
                 <Link
-                  href={`/${slug}?template=${templateId}&g=fam-lopez-8a2f`}
+                  href={`/invitacion/${slug}?template=${templateId}&g=fam-lopez-8a2f`}
                   target="_blank"
                   className="ml-2 inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[#e6dfd8] bg-white px-3 py-1 text-xs font-medium text-[#3d3d3a] hover:text-[#141413]"
                 >
@@ -1531,7 +1531,7 @@ function DashboardContent() {
               </thead>
               <tbody className="divide-y divide-white/10">
                 {activeGuests.map((g) => {
-                  const invitePath = `/${slug}?template=${templateId}&g=${g.guestToken}`;
+                  const invitePath = `/invitacion/${slug}?template=${templateId}&g=${g.guestToken}`;
                   const fullInviteUrl = `https://heyday.party${invitePath}`;
                   const waUrl = buildWhatsappInviteUrl({
                     phone: g.whatsappPhone || '525512345678',
@@ -1824,7 +1824,7 @@ function DashboardContent() {
                 </label>
                 <div className="flex items-center rounded-xl border border-[#d7cfc4] bg-[#faf9f5] px-3.5 py-2.5 text-xs">
                   <span className="text-[#8e8b82]">
-                    heyday.party/
+                    heyday.party/invitacion/
                   </span>
                   <input
                     type="text"

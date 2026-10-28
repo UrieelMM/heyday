@@ -61,7 +61,7 @@ function resolveTemplateAndTitle(slug: string, queryTemplate?: string): {
   }
 
   const validTemplate = TEMPLATES_CATALOG.find(
-    (t) => t.id === queryTemplate || slug === `demo-${t.id}`
+    (t) => t.id === queryTemplate || slug === t.id
   );
   const templateId: TemplateId = validTemplate
     ? validTemplate.id
@@ -120,6 +120,9 @@ export default async function PublicInvitationPage({
   const { g, template } = await searchParams;
 
   const { templateId, title } = resolveTemplateAndTitle(slug, template);
+  const seedEventDate = INITIAL_CLIENT_INVITATIONS.find(
+    (inv) => inv.slug.toLowerCase() === slug.toLowerCase()
+  )?.eventDate;
   const config = createDefaultInvitationConfig(templateId, title);
   const guestGroup: GuestGroup | null = g
     ? DEMO_GUEST_GROUPS[g] || {
@@ -144,7 +147,7 @@ export default async function PublicInvitationPage({
     <PublicInvitationClientView
       slug={slug}
       fallbackTemplateId={templateId}
-      fallbackEventDate={CELEBRATION_DEMO_DATES[templateId] || '2026-12-19T17:00:00-06:00'}
+      fallbackEventDate={seedEventDate || CELEBRATION_DEMO_DATES[templateId] || (templateId === 'royal-xv-enchanted' ? '2026-12-12T18:00:00-06:00' : '2026-12-19T17:00:00-06:00')}
       fallbackConfig={config}
       fallbackGuestGroup={guestGroup}
       guestToken={g}

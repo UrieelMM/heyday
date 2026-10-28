@@ -325,7 +325,7 @@ export default function HomePage() {
                     <div className="flex shrink-0 gap-1.5 pt-1">{[template.colors.bgPrimary, template.colors.accentPrimary, template.colors.accentSecondary].map((color) => <span key={color} className="h-3.5 w-3.5 rounded-full border border-[#e6dfd8]" style={{ backgroundColor: color }} />)}</div>
                   </div>
                   <div className="mt-5 flex gap-2 border-t border-[#ebe6df] pt-4">
-                    <Link href={`/demo-${template.id}?template=${template.id}&g=fam-invitada`} target="_blank" rel="noopener noreferrer" className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-lg border border-[#d7cfc4] text-xs font-medium transition-colors hover:bg-[#f5f0e8]"><Eye className="h-3.5 w-3.5" /> Ver demo</Link>
+                    <Link href={`/demo/${template.id}?g=fam-invitada`} target="_blank" rel="noopener noreferrer" className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-lg border border-[#d7cfc4] text-xs font-medium transition-colors hover:bg-[#f5f0e8]"><Eye className="h-3.5 w-3.5" /> Ver demo</Link>
                     <a href={whatsappHref(`¡Hola, HeyDay! Me interesa el diseño ${template.name} para mi evento.`)} target="_blank" rel="noopener noreferrer" className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-lg bg-[#cc785c] text-xs font-medium text-white transition-colors hover:bg-[#a9583e]">Elegir este estilo</a>
                   </div>
                 </div>
