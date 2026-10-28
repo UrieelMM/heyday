@@ -56,10 +56,9 @@ export const TEMPLATES_CATALOG: TemplateMetadata[] = [
     categoryLabel: 'Boda Jardín / Playa / Destino',
     badge: 'Ideal Bodas Destino',
     description:
-      'Orgánica y cálida con tonos terracota, verde salvia y arena, texturas de papel algodón e ilustraciones botánicas.',
-    signatureAnimation: 'Botanical Sway + Polaroid Stack',
-    previewImage:
-      'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=1000&q=80',
+      'Boda de jardín con luz de atardecer, papel cálido, botánicos dibujados y recuerdos en fotografías sueltas.',
+    signatureAnimation: 'Sunlit Botanical Hero + Polaroid Scroll',
+    previewImage: '/images/boho-terracotta/sunset-garden.jpg',
     colors: {
       bgPrimary: '#FBF6F0',
       bgSecondary: '#EFE5DC',
@@ -83,10 +82,9 @@ export const TEMPLATES_CATALOG: TemplateMetadata[] = [
     categoryLabel: 'Boda Civil / Contemporánea',
     badge: 'Estilo Vogue',
     description:
-      'Blanco y negro de alto contraste con estética de revista editorial, tipografía cinética y carrusel horizontal.',
-    signatureAnimation: 'Theme Inversion + Horizontal Pin Scroll',
-    previewImage:
-      'https://images.unsplash.com/photo-1537633552985-df8429e8048b?auto=format&fit=crop&w=1000&q=80',
+      'Boda civil en blanco y negro como una edición de revista: grilla precisa, fotografía monocroma y titulares monumentales.',
+    signatureAnimation: 'Editorial Cover Expansion + Monochrome Chapters',
+    previewImage: '/images/modern-minimal-noir/civil-architecture.jpg',
     colors: {
       bgPrimary: '#FFFFFF',
       bgSecondary: '#0F0F0F',
@@ -97,7 +95,7 @@ export const TEMPLATES_CATALOG: TemplateMetadata[] = [
     },
     fonts: {
       headingFont: 'Cormorant Garamond',
-      scriptFont: 'Pinyon Script',
+      scriptFont: 'Cormorant Garamond',
       bodyFont: 'Inter',
     },
     envelopeVariant: 'editorial-curtain',
@@ -137,10 +135,9 @@ export const TEMPLATES_CATALOG: TemplateMetadata[] = [
     categoryLabel: 'XV Años Moderno / Nocturno',
     badge: 'Tendencia Nocturna',
     description:
-      'Estética glassmorphism sobre fondo midnight con acentos magenta y cian eléctrico, pase VIP y playlist interactiva.',
-    signatureAnimation: 'Neon Glow Scrub + VIP Ticket Tear',
-    previewImage:
-      'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1000&q=80',
+      'XV años como una noche de club: luces magenta y cian, tipografía eléctrica, órbitas luminosas y pase VIP.',
+    signatureAnimation: 'Electric Orbit Reveal + VIP Ticket Exit',
+    previewImage: '/images/neon-xv-euphoria/night-stage.jpg',
     colors: {
       bgPrimary: '#090614',
       bgSecondary: '#140E29',
@@ -151,7 +148,7 @@ export const TEMPLATES_CATALOG: TemplateMetadata[] = [
     },
     fonts: {
       headingFont: 'Syne',
-      scriptFont: 'Great Vibes',
+      scriptFont: 'Syne',
       bodyFont: 'Space Grotesk',
     },
     envelopeVariant: 'pass-ticket-tear',
@@ -301,7 +298,7 @@ export function createDefaultInvitationConfig(
   const tpl =
     TEMPLATES_CATALOG.find((t) => t.id === templateId) || TEMPLATES_CATALOG[0];
 
-  return {
+  const config: InvitationConfig = {
     theme: {
       colors: { ...tpl.colors },
       fonts: { ...tpl.fonts },
@@ -541,4 +538,151 @@ export function createDefaultInvitationConfig(
       },
     },
   };
+
+  if (templateId === 'boho-terracotta') {
+    config.content.hero = {
+      ...config.content.hero,
+      badgeText: 'NUESTRO GRAN DÍA',
+      tagline: 'Entre jardines y atardeceres · San Miguel de Allende',
+      focalPoint: { x: 50, y: 45 },
+    };
+    config.content.quoteStory = {
+      quoteText: 'Nuestro amor creció entre caminos inesperados. Hoy queremos celebrarlo a cielo abierto, rodeados de quienes lo hicieron florecer.',
+      quoteAuthor: customTitle,
+      storyBlocks: [
+        { title: 'Donde comenzó', description: 'Una historia sencilla, hecha de conversaciones largas, viajes y tardes compartidas.' },
+        { title: 'Lo que viene', description: 'Un nuevo camino que queremos empezar con ustedes cerca de nosotros.' },
+      ],
+    };
+    config.content.vipParents.blessingMessage = 'Con el amor de nuestras familias, celebramos esta nueva etapa';
+    config.content.locations = [{
+      ...config.content.locations[1], id: 'boho-garden', type: 'reception',
+      title: 'Ceremonia y celebración al aire libre', time: '17:00 HRS',
+      imageUrl: '/images/boho-terracotta/sunset-garden.jpg',
+    }];
+    config.content.timeline = [
+      { id: 'boho-1', time: '17:00 HRS', title: 'Ceremonia entre jardines', description: 'Nos encontramos bajo la luz de la tarde.', icon: 'rings' },
+      { id: 'boho-2', time: '18:30 HRS', title: 'Brindis al atardecer', description: 'Un momento para abrazarnos y compartir.', icon: 'cocktail' },
+      { id: 'boho-3', time: '20:00 HRS', title: 'Cena y baile', description: 'La celebración continúa alrededor de la mesa y la pista.', icon: 'dinner' },
+    ];
+    config.content.gallery = {
+      layout: 'polaroid-scatter',
+      images: [
+        { url: '/images/boho-terracotta/sunset-garden.jpg', caption: 'Un lugar para encontrarnos' },
+        { url: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=900&q=80', caption: 'Pequeños instantes' },
+        { url: 'https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=900&q=80', caption: 'Nuestro lugar favorito' },
+      ],
+    };
+    config.content.dressCode = {
+      title: 'Elegante y natural', womenNotes: 'Vestido fluido o conjunto elegante; recomendamos calzado cómodo para jardín.',
+      menNotes: 'Traje ligero o saco con pantalón de vestir.',
+      reservedColors: [{ name: 'Marfil', hex: '#FAF0E6' }, { name: 'Blanco', hex: '#FFFFFF' }],
+      reservedNote: 'El blanco y el marfil están reservados para la pareja.',
+    };
+    config.content.socialFeatures.hashtag = '#SofiaYMateoAlAtardecer';
+    config.content.socialFeatures.enableAudioGuestbook = false;
+    config.content.rsvp.customConfirmationMessage = 'Este pase es una vista previa local. La asistencia aún no se ha enviado.';
+  }
+
+  if (templateId === 'modern-minimal-noir') {
+    config.audio.enabled = false;
+    config.content.hero = {
+      ...config.content.hero,
+      badgeText: 'THE WEDDING EDIT',
+      tagline: 'Una celebración civil · San Miguel de Allende',
+      focalPoint: { x: 50, y: 40 },
+    };
+    config.content.quoteStory = {
+      quoteText: 'Entre todos los caminos posibles, elegimos recorrer el mismo. Este es nuestro sí, y queremos vivirlo contigo.',
+      quoteAuthor: customTitle,
+      storyBlocks: [
+        { title: 'Capítulo uno', description: 'El encuentro que cambió nuestra manera de mirar el futuro.' },
+        { title: 'Capítulo dos', description: 'Una fecha, una promesa y todas las personas que forman parte de nuestra historia.' },
+      ],
+    };
+    config.content.vipParents.blessingMessage = 'Con nuestras familias y amigos como testigos de este momento';
+    config.content.locations = [{
+      ...config.content.locations[1], id: 'noir-civil', type: 'civil_ceremony',
+      title: 'Ceremonia civil y recepción', time: '17:00 HRS',
+      imageUrl: '/images/modern-minimal-noir/civil-architecture.jpg',
+    }];
+    config.content.timeline = [
+      { id: 'noir-1', time: '17:00 HRS', title: 'El sí', description: 'Ceremonia civil.', icon: 'rings' },
+      { id: 'noir-2', time: '18:30 HRS', title: 'El brindis', description: 'Cóctel y fotografías.', icon: 'cocktail' },
+      { id: 'noir-3', time: '20:00 HRS', title: 'La noche', description: 'Cena, música y celebración.', icon: 'party' },
+    ];
+    config.content.gallery.layout = 'cinema-slider';
+    config.content.gallery.images = config.content.gallery.images.slice(0, 3).map((image, index) => ({
+      ...image, url: index === 0 ? '/images/modern-minimal-noir/civil-architecture.jpg' : image.url,
+      caption: ['El encuentro', 'La historia', 'El futuro'][index],
+    }));
+    config.content.dressCode = {
+      title: 'Black tie opcional', womenNotes: 'Vestido de noche o conjunto sastre en tonos oscuros.',
+      menNotes: 'Smoking o traje negro con camisa formal.',
+      reservedColors: [{ name: 'Blanco', hex: '#FFFFFF' }],
+      reservedNote: 'El blanco está reservado para la pareja.',
+    };
+    config.content.socialFeatures = { enableSongRequests: false, enableAudioGuestbook: false, enableLiveDisposableCamera: false, hashtag: '#SofiaYMateoEdit' };
+    config.content.rsvp.customConfirmationMessage = 'Este pase es una vista previa local. La asistencia aún no se ha enviado.';
+  }
+
+  if (templateId === 'neon-xv-euphoria') {
+    const quinceName = customTitle.replace(/^mis\s*xv\s*[:—-]?\s*/i, '').trim() || customTitle;
+    config.audio.enabled = false;
+    config.content.hero = {
+      ...config.content.hero,
+      badgeText: 'MIS XV / ONE NIGHT ONLY',
+      tagline: 'Una noche para brillar · San Miguel de Allende',
+      focalPoint: { x: 50, y: 50 },
+    };
+    config.content.quoteStory = {
+      quoteText: 'Quince años de música, amigos y momentos inolvidables. Ahora empieza mi noche favorita, y quiero que seas parte de ella.',
+      quoteAuthor: quinceName,
+      storyBlocks: [
+        { title: 'Mi energía', description: 'Todo lo que soy y todo lo que sueño se encuentra en esta pista.' },
+        { title: 'Nuestra noche', description: 'Bailar, reír y vivir un recuerdo que nos acompañe siempre.' },
+      ],
+    };
+    config.content.vipParents = {
+      blessingMessage: 'Con el amor de mi familia y la alegría de celebrar contigo',
+      groups: [
+        { groupTitle: 'Mis papás', names: ['Patricia Salazar', 'Alejandro Ríos'] },
+        { groupTitle: 'Mis padrinos', names: ['Mariana Salazar', 'Roberto Ríos'] },
+      ],
+    };
+    config.content.locations = [{
+      ...config.content.locations[1], id: 'neon-party', type: 'reception',
+      title: 'Mi fiesta de XV años', time: '19:00 HRS',
+      imageUrl: '/images/neon-xv-euphoria/night-stage.jpg',
+    }];
+    config.content.timeline = [
+      { id: 'neon-1', time: '19:00 HRS', title: 'Check-in VIP', description: 'Llega, saluda y prepárate para brillar.', icon: 'party' },
+      { id: 'neon-2', time: '20:00 HRS', title: 'Mi entrada', description: 'El momento de encender la noche.', icon: 'waltz' },
+      { id: 'neon-3', time: '21:00 HRS', title: 'La pista es nuestra', description: 'DJ, luces y nuestras canciones favoritas.', icon: 'party' },
+    ];
+    config.content.gallery = {
+      layout: 'cinema-slider',
+      images: [
+        { url: '/images/neon-xv-euphoria/night-stage.jpg', caption: 'Luces de la noche' },
+        { url: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=900&q=80', caption: 'La música' },
+        { url: 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=900&q=80', caption: 'Todos juntos' },
+      ],
+    };
+    config.content.dressCode = {
+      title: 'Glow party', womenNotes: 'Look de noche con un detalle neón, metálico o brillante.',
+      menNotes: 'Look formal de noche con un acento de color o brillo.',
+      reservedColors: [{ name: 'Magenta', hex: '#FF2E93' }],
+      reservedNote: 'El magenta es el color protagonista de la quinceañera.',
+    };
+    config.content.gifts = {
+      introMessage: 'Tu presencia es el mejor regalo. Si quieres tener un detalle, habrá un espacio para lluvia de sobres durante la fiesta.',
+      registries: [], cashEnvelopeAtVenue: true,
+    };
+    config.content.accommodation = [];
+    config.content.socialFeatures = { enableSongRequests: true, enableAudioGuestbook: false, enableLiveDisposableCamera: true, hashtag: `#XV${quinceName.replace(/\s+/g, '')}` };
+    config.content.rsvp.customConfirmationMessage = 'Este pase es una vista previa local. La asistencia aún no se ha enviado.';
+  }
+
+
+  return config;
 }

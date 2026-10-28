@@ -36,6 +36,9 @@ import { AmbientParticlesCanvas } from './AmbientParticlesCanvas';
 import { EnvelopeOpener } from './EnvelopeOpener';
 import { FloatingAudioPlayer } from './FloatingAudioPlayer';
 import { EternalEleganceExperience } from '../templates/EternalEleganceExperience';
+import { SignatureHero } from '../templates/SignatureHero';
+import { setupSignatureScenes } from '../templates/signature-scenes';
+import '../templates/signature-templates.css';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -69,6 +72,8 @@ function StandardInvitationRenderer({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isEnvelopeOpen, setIsEnvelopeOpen] = useState(forceEnvelopeOpen);
   const [copiedClabe, setCopiedClabe] = useState(false);
+  const signatureTemplateId = templateId === 'boho-terracotta' || templateId === 'modern-minimal-noir' || templateId === 'neon-xv-euphoria'
+    ? templateId : null;
 
   // Estado Cuenta Regresiva
   const [timeLeft, setTimeLeft] = useState({
@@ -81,7 +86,7 @@ function StandardInvitationRenderer({
   // Estado DJ Song Requests
   const [songQuery, setSongQuery] = useState('');
   const [songArtist, setSongArtist] = useState('');
-  const [songsList, setSongsList] = useState([
+  const [songsList, setSongsList] = useState(signatureTemplateId ? [] : [
     {
       id: '1',
       title: 'September',
@@ -104,6 +109,10 @@ function StandardInvitationRenderer({
       votes: 9,
     },
   ]);
+
+  useEffect(() => {
+    if (signatureTemplateId) setSongsList([]);
+  }, [templateId, signatureTemplateId]);
 
   // Estado RSVP y Pase VIP QR
   const maxAdults = guestGroup ? guestGroup.allocatedAdults : 4;
@@ -155,6 +164,13 @@ function StandardInvitationRenderer({
   useGSAP(
     () => {
       if (!isEnvelopeOpen && !isBuilderPreview) return;
+      const root = containerRef.current;
+      if (!root) return;
+      if (signatureTemplateId) {
+        setupSignatureScenes(root, signatureTemplateId);
+        return;
+      }
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
       const sections = gsap.utils.toArray<HTMLElement>('.inv-reveal-section');
       sections.forEach((sec) => {
@@ -193,7 +209,7 @@ function StandardInvitationRenderer({
         );
       });
     },
-    { scope: containerRef, dependencies: [isEnvelopeOpen, templateId] }
+    { scope: containerRef, dependencies: [isEnvelopeOpen, templateId, signatureTemplateId] }
   );
 
   const { colors, fonts } = config.theme;
@@ -250,7 +266,7 @@ function StandardInvitationRenderer({
     ]);
     setSongQuery('');
     setSongArtist('');
-    toast.success('¡Canción agregada a la playlist de la fiesta!');
+    toast.success(signatureTemplateId ? 'Sugerencia añadida a esta vista previa.' : '¡Canción agregada a la playlist de la fiesta!');
   };
 
   const handleSubmitRsvp = (e: React.FormEvent) => {
@@ -262,23 +278,27 @@ function StandardInvitationRenderer({
 
     if (willAttend === 'no') {
       setGeneratedPass(null);
-      toast.success(
-        'Hemos registrado tu respuesta. ¡Gracias por avisarnos con tiempo!'
-      );
+      toast.success(signatureTemplateId
+        ? 'Tu respuesta se muestra sólo en esta vista previa; aún no se ha enviado.'
+        : 'Hemos registrado tu respuesta. ¡Gracias por avisarnos con tiempo!');
       return;
     }
 
     const tokenFragment = guestGroup?.guestToken || 'open-pass';
-    const qrPayload = `INV1:${slug}:${tokenFragment}:${confirmedAdults}:${confirmedChildren}:9f8a7b6c5d4e3f21`;
+    const qrPayload = signatureTemplateId
+      ? `DEMO:${slug}:${confirmedAdults}:${confirmedChildren}`
+      : `INV1:${slug}:${tokenFragment}:${confirmedAdults}:${confirmedChildren}:9f8a7b6c5d4e3f21`;
 
     setGeneratedPass({
       qrPayload,
       groupName: rsvpName.trim(),
       adults: confirmedAdults,
       children: confirmedChildren,
-      tableName: guestGroup?.tableName || 'Mesa 4 • Recepción Principal',
+      tableName: guestGroup?.tableName || (signatureTemplateId ? 'Mesa por asignar' : 'Mesa 4 • Recepción Principal'),
     });
-    toast.success('¡Asistencia confirmada! Tu Pase VIP QR ha sido generado.');
+    toast.success(signatureTemplateId
+      ? 'Pase de muestra generado. Esta respuesta aún no se ha enviado.'
+      : '¡Asistencia confirmada! Tu Pase VIP QR ha sido generado.');
   };
 
   return (
@@ -289,7 +309,7 @@ function StandardInvitationRenderer({
         color: colors.textPrimary,
         fontFamily: fonts.bodyFont,
       }}
-      className="relative min-h-dvh w-full overflow-x-hidden selection:bg-amber-500/20"
+      className={`relative min-h-dvh w-full overflow-x-hidden selection:bg-amber-500/20${signatureTemplateId ? ` st-root st-root--${signatureTemplateId}` : ''}`}
     >
       {/* 1. Sobre de Apertura Interactivo */}
       {!isBuilderPreview && (
@@ -317,7 +337,16 @@ function StandardInvitationRenderer({
       />
 
       {/* SECCIÓN 1: HERO / PORTADA PRINCIPAL */}
-      {isSectionEnabled('hero') && (
+      {isSectionEnabled('hero') && signatureTemplateId && (
+        <SignatureHero
+          templateId={signatureTemplateId}
+          config={config}
+          eventDate={eventDate}
+          guestGroup={guestGroup}
+          actionHref={isSectionEnabled('quote_story') ? '#st-story' : isSectionEnabled('rsvp') ? '#st-rsvp' : isSectionEnabled('locations') ? '#st-locations' : '#st-hero'}
+        />
+      )}
+      {isSectionEnabled('hero') && !signatureTemplateId && (
         <section className="relative flex min-h-dvh flex-col items-center justify-end overflow-hidden px-6 pb-16 pt-28 text-center">
           <div className="absolute inset-0 z-0 overflow-hidden">
             <img
@@ -382,7 +411,8 @@ function StandardInvitationRenderer({
       {/* SECCIÓN 2: FRASE EMOTIVA E HISTORIA */}
       {isSectionEnabled('quote_story') && (
         <section
-          className="inv-reveal-section mx-auto max-w-3xl px-6 py-20 text-center"
+          id="st-story"
+          className="inv-reveal-section st-story mx-auto max-w-3xl px-6 py-20 text-center"
         >
           <div
             className="mx-auto mb-6 h-12 w-px"
@@ -391,8 +421,15 @@ function StandardInvitationRenderer({
           <blockquote
             className="text-2xl leading-relaxed italic sm:text-3xl"
             style={{ fontFamily: fonts.headingFont }}
+            aria-label={signatureTemplateId ? content.quoteStory.quoteText : undefined}
           >
-            {content.quoteStory.quoteText}
+            {signatureTemplateId ? (
+              <span>
+                {content.quoteStory.quoteText.split(/(\s+)/).map((part, index) =>
+                  /^\s+$/.test(part) ? part : <span className="st-story__word" aria-hidden="true" key={index}>{part}</span>
+                )}
+              </span>
+            ) : content.quoteStory.quoteText}
           </blockquote>
           {content.quoteStory.quoteAuthor && (
             <p
@@ -444,7 +481,7 @@ function StandardInvitationRenderer({
       {isSectionEnabled('vip_parents') &&
         content.vipParents.groups.length > 0 && (
           <section
-            className="inv-reveal-section px-6 py-16"
+            className="inv-reveal-section st-family px-6 py-16"
             style={{ backgroundColor: colors.bgSecondary }}
           >
             <div className="mx-auto max-w-4xl text-center">
@@ -459,7 +496,7 @@ function StandardInvitationRenderer({
                 {content.vipParents.groups.map((grp, idx) => (
                   <div
                     key={idx}
-                    className="rounded-2xl border p-6"
+                    className="st-family__card rounded-2xl border p-6"
                     style={{
                       backgroundColor: colors.bgPrimary,
                       borderColor: `${colors.accentPrimary}33`,
@@ -491,7 +528,7 @@ function StandardInvitationRenderer({
 
       {/* SECCIÓN 4: CUENTA REGRESIVA + AGENDAR EN CALENDARIO */}
       {isSectionEnabled('countdown') && (
-        <section className="inv-reveal-section mx-auto max-w-3xl px-6 py-20 text-center">
+        <section className="inv-reveal-section st-countdown mx-auto max-w-3xl px-6 py-20 text-center">
           <p
             className="mb-2 text-xs font-semibold tracking-[0.25em] uppercase"
             style={{ color: colors.accentPrimary }}
@@ -514,7 +551,7 @@ function StandardInvitationRenderer({
             ].map((item) => (
               <div
                 key={item.label}
-                className="flex flex-col items-center justify-center rounded-2xl border py-5 shadow-xs"
+                className="st-countdown__unit flex flex-col items-center justify-center rounded-2xl border py-5 shadow-xs"
                 style={{
                   backgroundColor: colors.bgSecondary,
                   borderColor: `${colors.accentPrimary}35`,
@@ -576,7 +613,8 @@ function StandardInvitationRenderer({
       {/* SECCIÓN 5: UBICACIONES Y BOTONES CTA GOOGLE MAPS / WAZE */}
       {isSectionEnabled('locations') && content.locations.length > 0 && (
         <section
-          className="inv-reveal-section px-6 py-20"
+          id="st-locations"
+          className="inv-reveal-section st-locations px-6 py-20"
           style={{ backgroundColor: colors.bgSecondary }}
         >
           <div className="mx-auto max-w-5xl">
@@ -599,7 +637,7 @@ function StandardInvitationRenderer({
               {content.locations.map((loc) => (
                 <div
                   key={loc.id}
-                  className="flex flex-col overflow-hidden rounded-3xl border shadow-sm"
+                  className="st-locations__card flex flex-col overflow-hidden rounded-3xl border shadow-sm"
                   style={{
                     backgroundColor: colors.bgPrimary,
                     borderColor: `${colors.accentPrimary}30`,
@@ -675,7 +713,7 @@ function StandardInvitationRenderer({
 
       {/* SECCIÓN 6: ITINERARIO / TIMELINE ANIMADO */}
       {isSectionEnabled('timeline') && content.timeline.length > 0 && (
-        <section className="inv-reveal-section mx-auto max-w-3xl px-6 py-20">
+        <section className="inv-reveal-section st-timeline mx-auto max-w-3xl px-6 py-20">
           <div className="mb-12 text-center">
             <p
               className="mb-2 text-xs font-semibold tracking-[0.25em] uppercase"
@@ -693,12 +731,12 @@ function StandardInvitationRenderer({
 
           <div className="relative mx-auto max-w-xl pl-8">
             <div
-              className="absolute top-2 bottom-2 left-3 w-0.5"
+              className="st-timeline__line absolute top-2 bottom-2 left-3 w-0.5"
               style={{ backgroundColor: `${colors.accentPrimary}45` }}
             />
             <div className="space-y-8">
               {content.timeline.map((item) => (
-                <div key={item.id} className="relative">
+                <div key={item.id} className="st-timeline__item relative">
                   <div
                     className="absolute top-1.5 -left-6.5 h-3.5 w-3.5 rounded-full border-2"
                     style={{
@@ -736,7 +774,7 @@ function StandardInvitationRenderer({
       {/* SECCIÓN 7: GALERÍA MULTIMEDIA */}
       {isSectionEnabled('gallery') && content.gallery.images.length > 0 && (
         <section
-          className="inv-reveal-section px-6 py-20"
+          className="inv-reveal-section st-gallery px-6 py-20"
           style={{ backgroundColor: colors.bgSecondary }}
         >
           <div className="mx-auto max-w-5xl">
@@ -759,7 +797,7 @@ function StandardInvitationRenderer({
               {content.gallery.images.map((img, idx) => (
                 <div
                   key={idx}
-                  className="group relative aspect-3/4 overflow-hidden rounded-2xl shadow-sm"
+                  className="st-gallery__photo group relative aspect-3/4 overflow-hidden rounded-2xl shadow-sm"
                 >
                   <img
                     src={img.url}
@@ -780,7 +818,7 @@ function StandardInvitationRenderer({
 
       {/* SECCIÓN 8: CÓDIGO DE VESTIMENTA (DRESS CODE) */}
       {isSectionEnabled('dress_code') && (
-        <section className="inv-reveal-section mx-auto max-w-3xl px-6 py-20 text-center">
+        <section className="inv-reveal-section st-dress mx-auto max-w-3xl px-6 py-20 text-center">
           <p
             className="mb-2 text-xs font-semibold tracking-[0.25em] uppercase"
             style={{ color: colors.accentPrimary }}
@@ -863,7 +901,7 @@ function StandardInvitationRenderer({
       {/* SECCIÓN 9: MESA DE REGALOS Y TRANSFERENCIA CLABE 1-CLIC */}
       {isSectionEnabled('gifts') && (
         <section
-          className="inv-reveal-section px-6 py-20"
+          className="inv-reveal-section st-gifts px-6 py-20"
           style={{ backgroundColor: colors.bgSecondary }}
         >
           <div className="mx-auto max-w-4xl text-center">
@@ -994,6 +1032,13 @@ function StandardInvitationRenderer({
                   </div>
                 </div>
               )}
+              {content.gifts.cashEnvelopeAtVenue && content.gifts.registries.length === 0 && !content.gifts.bankTransfer?.enabled && (
+                <div className="st-gifts__envelope rounded-2xl border p-8 text-center md:col-span-2" style={{ borderColor: `${colors.accentPrimary}55` }}>
+                  <Gift className="mx-auto mb-3 h-7 w-7" style={{ color: colors.accentPrimary }} aria-hidden="true" />
+                  <p className="text-sm font-semibold tracking-widest uppercase">Lluvia de sobres en el evento</p>
+                  <p className="mt-2 text-sm" style={{ color: colors.textMuted }}>Habrá un espacio para dejar tu detalle durante la celebración.</p>
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -1002,7 +1047,7 @@ function StandardInvitationRenderer({
       {/* SECCIÓN 10: HOSPEDAJE SUGERIDO */}
       {isSectionEnabled('accommodation') &&
         content.accommodation.length > 0 && (
-          <section className="inv-reveal-section mx-auto max-w-4xl px-6 py-20">
+          <section className="inv-reveal-section st-stay mx-auto max-w-4xl px-6 py-20">
             <div className="mb-10 text-center">
               <Hotel
                 className="mx-auto mb-3 h-7 w-7"
@@ -1053,9 +1098,9 @@ function StandardInvitationRenderer({
         )}
 
       {/* SECCIÓN 11: FEATURES DIFERENCIADORAS — DJ PLAYLIST & AUDIO GUESTBOOK */}
-      {isSectionEnabled('social_features') && (
+      {isSectionEnabled('social_features') && (content.socialFeatures.enableSongRequests || content.socialFeatures.enableAudioGuestbook) && (
         <section
-          className="inv-reveal-section px-6 py-20"
+          className="inv-reveal-section st-social px-6 py-20"
           style={{ backgroundColor: colors.bgSecondary }}
         >
           <div className="mx-auto max-w-4xl">
@@ -1070,7 +1115,11 @@ function StandardInvitationRenderer({
                 className="mt-1 text-3xl font-semibold sm:text-4xl"
                 style={{ fontFamily: fonts.headingFont }}
               >
-                Playlist para el DJ & Libro de Firmas Vocal
+                {content.socialFeatures.enableSongRequests && content.socialFeatures.enableAudioGuestbook
+                  ? 'Playlist y mensajes de voz'
+                  : content.socialFeatures.enableSongRequests
+                    ? (templateId === 'neon-xv-euphoria' ? 'La playlist de mi fiesta' : 'La música de nuestra celebración')
+                    : 'Mensajes de voz'}
               </h2>
               {content.socialFeatures.hashtag && (
                 <p
@@ -1084,7 +1133,7 @@ function StandardInvitationRenderer({
 
             <div className="grid gap-8 md:grid-cols-2">
               {/* DJ Playlist Colaborativa */}
-              <div
+              {content.socialFeatures.enableSongRequests && <div
                 className="rounded-3xl border p-6"
                 style={{
                   backgroundColor: colors.bgPrimary,
@@ -1132,6 +1181,7 @@ function StandardInvitationRenderer({
                   </div>
                 </form>
 
+                {signatureTemplateId && <p className="mb-3 text-xs opacity-75">Vista previa local: tus sugerencias no se envían.</p>}
                 <div className="space-y-2.5">
                   {songsList.slice(0, 4).map((song) => (
                     <div
@@ -1171,10 +1221,10 @@ function StandardInvitationRenderer({
                     </div>
                   ))}
                 </div>
-              </div>
+              </div>}
 
               {/* Audio Guestbook */}
-              <div
+              {content.socialFeatures.enableAudioGuestbook && <div
                 className="flex flex-col justify-between rounded-3xl border p-6"
                 style={{
                   backgroundColor: colors.bgPrimary,
@@ -1224,7 +1274,7 @@ function StandardInvitationRenderer({
                     Toca para grabar mensaje de voz
                   </span>
                 </div>
-              </div>
+              </div>}
             </div>
           </div>
         </section>
@@ -1232,7 +1282,7 @@ function StandardInvitationRenderer({
 
       {/* SECCIÓN 12: MÓDULO RSVP INTELIGENTE + PASE VIP QR */}
       {isSectionEnabled('rsvp') && (
-        <section className="inv-reveal-section mx-auto max-w-2xl px-6 py-24">
+        <section id="st-rsvp" className="inv-reveal-section st-rsvp mx-auto max-w-2xl px-6 py-24">
           <div
             className="rounded-3xl border p-6 shadow-xl sm:p-10"
             style={{
@@ -1249,7 +1299,7 @@ function StandardInvitationRenderer({
                 className="text-3xl font-semibold sm:text-4xl"
                 style={{ fontFamily: fonts.headingFont }}
               >
-                Confirmación de Asistencia (RSVP)
+                {signatureTemplateId ? 'Vista previa de confirmación' : 'Confirmación de Asistencia (RSVP)'}
               </h2>
               <p
                 className="mt-2 text-sm"
@@ -1261,7 +1311,9 @@ function StandardInvitationRenderer({
                         ? ` y ${guestGroup.allocatedChildren} niños`
                         : ''
                     })`
-                  : 'Por favor confirma tu asistencia para generar tu Pase Digital con Código QR'}
+                  : signatureTemplateId
+                    ? 'Prueba el formulario y genera un pase de muestra. No se enviará tu respuesta.'
+                    : 'Por favor confirma tu asistencia para generar tu Pase Digital con Código QR'}
               </p>
             </div>
 
@@ -1430,11 +1482,11 @@ function StandardInvitationRenderer({
                   }}
                   className="w-full rounded-xl py-4 text-xs font-bold tracking-[0.2em] uppercase shadow-lg transition-transform hover:scale-[1.01] active:scale-[0.99]"
                 >
-                  Confirmar Asistencia y Generar Pase QR
+                  {signatureTemplateId ? 'Generar pase de muestra' : 'Confirmar Asistencia y Generar Pase QR'}
                 </button>
               </form>
             ) : (
-              /* PASE DIGITAL VIP CON QR CRIPTOGRÁFICO */
+              /* Pase de muestra local para los templates de firma */
               <div
                 className="rounded-2xl border p-6 text-center"
                 style={{
@@ -1450,7 +1502,7 @@ function StandardInvitationRenderer({
                   }}
                 >
                   <Ticket className="h-4 w-4" />
-                  <span>Pase de Acceso VIP Confirmado</span>
+                  <span>{signatureTemplateId ? 'Pase de muestra · sin registro' : 'Pase de Acceso VIP Confirmado'}</span>
                 </div>
 
                 <h3
@@ -1463,7 +1515,7 @@ function StandardInvitationRenderer({
                   className="mt-1 text-xs tracking-wider uppercase"
                   style={{ color: colors.textMuted }}
                 >
-                  Válido por {generatedPass.adults} Adultos
+                  {signatureTemplateId ? 'Muestra para' : 'Válido por'} {generatedPass.adults} Adultos
                   {generatedPass.children > 0
                     ? ` y ${generatedPass.children} Niños`
                     : ''}{' '}
