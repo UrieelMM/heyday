@@ -10,6 +10,7 @@ import {
   createDefaultInvitationConfig,
   TEMPLATES_CATALOG,
 } from '@/lib/templates/templates-catalog';
+import { refreshCelebrationConfig } from '@/lib/templates/refresh-celebration-config';
 
 export interface ClientInvitationRecord {
   id: string;
@@ -415,6 +416,18 @@ export const useEventsStore = create<EventsStoreState>()(
     }),
     {
       name: 'atelier-client-invitations-v1',
+      merge: (persistedState, currentState) => {
+        const savedInvitations = (persistedState as Partial<EventsStoreState> | undefined)?.invitations;
+        if (!Array.isArray(savedInvitations)) return currentState;
+
+        return {
+          ...currentState,
+          invitations: savedInvitations.map((record) => {
+            const config = refreshCelebrationConfig(record.config, record.templateId, record.title);
+            return config === record.config ? record : { ...record, config };
+          }),
+        };
+      },
     }
   )
 );

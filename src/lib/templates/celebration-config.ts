@@ -56,6 +56,7 @@ export function applyCelebrationDefaults(config: InvitationConfig, id: Celebrati
         { title: 'El brindis', description: 'Una mesa compartida para celebrar la vida y las personas que la llenan de sentido.' },
       ],
     };
+    config.content.vipParents = { blessingMessage: '', groups: [] };
     config.content.locations = [{
       ...config.content.locations[1], id: 'golden-gala', type: 'reception',
       title: 'Cena y celebración', time: '20:00 HRS', imageUrl: '/images/golden-jubilee/deco-ballroom.jpg',

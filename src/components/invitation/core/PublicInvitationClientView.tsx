@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { InvitationRenderer } from './InvitationRenderer';
 import { SmoothScrollProvider } from './SmoothScrollProvider';
 import { useEventsStore } from '@/stores/useEventsStore';
+import { refreshCelebrationConfig } from '@/lib/templates/refresh-celebration-config';
 import type {
   GuestGroup,
   InvitationConfig,
@@ -27,18 +28,25 @@ export function PublicInvitationClientView({
   fallbackGuestGroup,
   guestToken,
 }: PublicInvitationClientViewProps) {
-  const getBySlug = useEventsStore((s) => s.getBySlug);
   const [hydrated, setHydrated] = useState(false);
+  const savedRecord = useEventsStore((state) =>
+    hydrated
+      ? state.invitations.find((record) => record.slug.toLowerCase() === slug.toLowerCase())
+      : undefined
+  );
 
   useEffect(() => {
     setHydrated(true);
   }, []);
 
-  const savedRecord = hydrated ? getBySlug(slug) : undefined;
-
   const activeTemplateId = savedRecord?.templateId || fallbackTemplateId;
   const activeEventDate = savedRecord?.eventDate || fallbackEventDate;
-  const activeConfig = savedRecord?.config || fallbackConfig;
+  const activeConfig = useMemo(
+    () => savedRecord
+      ? refreshCelebrationConfig(savedRecord.config, savedRecord.templateId, savedRecord.title)
+      : fallbackConfig,
+    [savedRecord, fallbackConfig]
+  );
 
   const activeGuestGroup =
     savedRecord && guestToken
