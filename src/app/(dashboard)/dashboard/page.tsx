@@ -1352,6 +1352,7 @@ function DashboardContent() {
 
             <div className="flex flex-1 items-start justify-center overflow-y-auto p-4 sm:p-8">
               <div
+                data-invitation-scroller
                 className={`relative overflow-y-auto rounded-xl border border-[#cfcdc4]  transition-all duration-300 ${
                   viewport === 'mobile'
                     ? 'h-[780px] w-[390px]'

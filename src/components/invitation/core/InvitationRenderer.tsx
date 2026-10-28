@@ -35,6 +35,7 @@ import {
 import { AmbientParticlesCanvas } from './AmbientParticlesCanvas';
 import { EnvelopeOpener } from './EnvelopeOpener';
 import { FloatingAudioPlayer } from './FloatingAudioPlayer';
+import { EternalEleganceExperience } from '../templates/EternalEleganceExperience';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -48,7 +49,15 @@ interface InvitationRendererProps {
   isBuilderPreview?: boolean;
 }
 
-export function InvitationRenderer({
+export function InvitationRenderer(props: InvitationRendererProps) {
+  if (props.templateId === 'eternal-elegance') {
+    return <EternalEleganceExperience {...props} />;
+  }
+
+  return <StandardInvitationRenderer {...props} />;
+}
+
+function StandardInvitationRenderer({
   slug,
   templateId,
   eventDate,

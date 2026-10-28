@@ -29,8 +29,8 @@ export const TEMPLATES_CATALOG: TemplateMetadata[] = [
     categoryLabel: 'Boda Clásica / Luxury',
     badge: 'Bestseller Bodas',
     description:
-      'Editorial de alta costura en tonos marfil cálido y oro champagne, con arcos arquitectónicos que se expanden al hacer scroll.',
-    signatureAnimation: 'Arc Mask Reveal + Parallax Dorado',
+      'Una invitación de boda como pieza de papelería editorial: sobre nominal, arcos fotográficos, ilustración botánica y capítulos que se revelan al recorrerla.',
+    signatureAnimation: 'Sobre de lacre + Scrollytelling botánico',
     previewImage:
       'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1000&q=80',
     colors: {
