@@ -108,7 +108,7 @@ export default function RootLayout({
         spaceGrotesk.variable,
       ].join(' ')}
     >
-      <body className="min-h-dvh bg-[#f7f7f4] font-[var(--font-inter)] text-[#26251e] antialiased">
+      <body className="min-h-dvh bg-[#faf9f5] font-[var(--font-inter)] text-[#141413] antialiased">
         {children}
         <Toaster position="top-center" richColors />
       </body>

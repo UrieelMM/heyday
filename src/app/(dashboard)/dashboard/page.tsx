@@ -44,6 +44,7 @@ import { buildWhatsappInviteUrl } from '@/lib/whatsapp/link-builder';
 import { getAdminSession, logoutFakeAdmin } from '@/lib/auth/fake-auth';
 import { slugify } from '@/lib/utils';
 import type { SectionId, TemplateId } from '@/types/invitation.types';
+import './dashboard.css';
 
 const SECTION_LABELS: Record<SectionId, string> = {
   hero: '1. Portada Principal (Hero)',
@@ -390,33 +391,33 @@ function DashboardContent() {
   );
 
   return (
-    <div className="dashboard-shell flex min-h-dvh flex-col overflow-x-hidden bg-[#f7f7f4] text-[#26251e]">
+    <div className="dashboard-shell flex min-h-dvh flex-col overflow-x-hidden bg-[#faf9f5] text-[#141413]">
       {/* TOPBAR DEL DASHBOARD */}
-      <header className="sticky top-0 z-40 flex flex-wrap items-center justify-between gap-3 border-b border-[#e6e5e0] bg-[#f7f7f4]/95 px-4 py-3 backdrop-blur-md sm:px-6">
+      <header className="dashboard-topbar sticky top-0 z-40 flex flex-wrap items-center justify-between gap-3 border-b border-[#e6dfd8] bg-[#faf9f5]/95 px-4 py-3 backdrop-blur-md sm:px-6">
         <div className="flex min-w-0 flex-1 flex-wrap items-center gap-3">
           <Link href="/" className="flex cursor-pointer items-center gap-2">
-            <div className="grid h-8 w-8 grid-cols-2 gap-0.5 rounded-md bg-[#f54e00] p-1.5">
+            <div className="grid h-8 w-8 grid-cols-2 gap-0.5 rounded-md bg-[#cc785c] p-1.5">
               <span className="rounded-[1px] bg-white/95" />
               <span className="rounded-[1px] bg-white/65" />
               <span className="rounded-[1px] bg-white/65" />
               <span className="rounded-[1px] bg-white/95" />
             </div>
-            <span className="hidden text-sm font-medium tracking-[-0.02em] text-[#f54e00] sm:inline">
-              Atelier <span className="text-[#26251e]">Admin</span>
+            <span className="hidden text-sm font-medium tracking-[-0.02em] text-[#cc785c] sm:inline">
+              Atelier <span className="text-[#141413]">Admin</span>
             </span>
           </Link>
 
-          <div className="hidden h-5 w-px bg-[#e6e5e0] sm:block" />
+          <div className="hidden h-5 w-px bg-[#e6dfd8] sm:block" />
 
           {/* Navegación de Módulos */}
-          <div className="flex min-w-0 flex-1 gap-1 overflow-x-auto rounded-lg border border-[#e6e5e0] bg-white p-1 sm:flex-none">
+          <div className="flex min-w-0 flex-1 gap-1 overflow-x-auto rounded-lg border border-[#e6dfd8] bg-white p-1 sm:flex-none">
             <button
               type="button"
               onClick={() => setActiveTab('history')}
               className={`inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition ${
                 activeTab === 'history'
-                  ? 'bg-[#f54e00] text-white'
-                  : 'text-[#807d72] hover:text-[#26251e]'
+                  ? 'bg-[#cc785c] text-white'
+                  : 'text-[#6c6a64] hover:text-[#141413]'
               }`}
             >
               <FolderKanban className="h-3.5 w-3.5" />
@@ -427,8 +428,8 @@ function DashboardContent() {
               onClick={() => setActiveTab('builder')}
               className={`inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition ${
                 activeTab === 'builder'
-                  ? 'bg-[#f54e00] text-white'
-                  : 'text-[#807d72] hover:text-[#26251e]'
+                  ? 'bg-[#cc785c] text-white'
+                  : 'text-[#6c6a64] hover:text-[#141413]'
               }`}
             >
               <Wand2 className="h-3.5 w-3.5" />
@@ -439,8 +440,8 @@ function DashboardContent() {
               onClick={() => setActiveTab('guests')}
               className={`inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition ${
                 activeTab === 'guests'
-                  ? 'bg-[#f54e00] text-white'
-                  : 'text-[#807d72] hover:text-[#26251e]'
+                  ? 'bg-[#cc785c] text-white'
+                  : 'text-[#6c6a64] hover:text-[#141413]'
               }`}
             >
               <Users className="h-3.5 w-3.5" />
@@ -451,8 +452,8 @@ function DashboardContent() {
               onClick={() => setActiveTab('checkin')}
               className={`inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition ${
                 activeTab === 'checkin'
-                  ? 'bg-[#f54e00] text-white'
-                  : 'text-[#807d72] hover:text-[#26251e]'
+                  ? 'bg-[#cc785c] text-white'
+                  : 'text-[#6c6a64] hover:text-[#141413]'
               }`}
             >
               <QrCode className="h-3.5 w-3.5" />
@@ -475,7 +476,7 @@ function DashboardContent() {
               }));
               setIsNewModalOpen(true);
             }}
-            className="inline-flex h-10 cursor-pointer items-center gap-1.5 rounded-lg border border-[#f54e00]/40 bg-[#f54e00]/10 px-3.5 text-xs font-semibold text-[#d04200] transition hover:bg-[#f54e00] hover:text-white"
+            className="inline-flex h-10 cursor-pointer items-center gap-1.5 rounded-lg border border-[#cc785c]/40 bg-[#cc785c]/10 px-3.5 text-xs font-semibold text-[#a9583e] transition hover:bg-[#cc785c] hover:text-white"
           >
             <Plus className="h-4 w-4" />
             <span className="hidden whitespace-nowrap sm:inline">Nueva invitación</span>
@@ -485,23 +486,23 @@ function DashboardContent() {
             <button
               type="button"
               onClick={handleSaveCurrentBuilder}
-              className="inline-flex h-10 cursor-pointer items-center gap-1.5 rounded-lg bg-[#f54e00] px-4 text-xs font-semibold text-white transition hover:bg-[#d04200]"
+              className="inline-flex h-10 cursor-pointer items-center gap-1.5 rounded-lg bg-[#cc785c] px-4 text-xs font-semibold text-white transition hover:bg-[#a9583e]"
             >
               <CheckCircle2 className="h-4 w-4" />
               <span className="hidden sm:inline">Guardar cambios</span>
             </button>
           )}
 
-          <div className="hidden items-center gap-2 rounded-xl border border-[#e6e5e0] bg-[#f7f7f4] px-3 py-1.5 text-xs xl:flex">
-            <UserCheck className="h-3.5 w-3.5 text-[#1f8a65]" />
-            <span className="text-[#807d72]">{adminEmail}</span>
+          <div className="hidden items-center gap-2 rounded-xl border border-[#e6dfd8] bg-[#faf9f5] px-3 py-1.5 text-xs xl:flex">
+            <UserCheck className="h-3.5 w-3.5 text-[#5db872]" />
+            <span className="text-[#6c6a64]">{adminEmail}</span>
           </div>
 
           <button
             type="button"
             onClick={handleLogout}
             title="Cerrar sesión"
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-[#e6e5e0] bg-white px-3 py-2 text-xs font-semibold text-[#5a5852] transition hover:bg-[#cf2d56]/10 hover:text-[#cf2d56]"
+            className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-[#e6dfd8] bg-white px-3 py-2 text-xs font-semibold text-[#3d3d3a] transition hover:bg-[#c64545]/10 hover:text-[#c64545]"
           >
             <LogOut className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Salir</span>
@@ -513,14 +514,29 @@ function DashboardContent() {
           VISTA 1: HISTORIAL DE INVITACIONES POR TEMPLATE Y CLIENTES
       ===================================================================== */}
       {activeTab === 'history' && (
-        <div className="mx-auto grid w-full max-w-[1200px] flex-1 gap-6 p-4 sm:p-6 lg:grid-cols-12">
+        <div className="dashboard-history w-full flex-1">
+          <section className="dashboard-history__hero" aria-label="Resumen del espacio de trabajo">
+            <div className="dashboard-history__hero-inner">
+              <div>
+                <p className="dashboard-history__eyebrow"><span /> Atelier / Espacio de trabajo</p>
+                <h1>Momentos extraordinarios, <em>perfectamente organizados.</em></h1>
+                <p>Diseña cada historia, acompaña a tus clientes y sigue cada confirmación desde un solo lugar.</p>
+              </div>
+              <div className="dashboard-history__stats" aria-label="Estado de las invitaciones">
+                <div><strong>{invitations.length}</strong><span>invitaciones</span></div>
+                <div><strong>{invitations.filter((inv) => inv.status === 'published').length}</strong><span>publicadas</span></div>
+                <div><strong>{TEMPLATES_CATALOG.length}</strong><span>templates</span></div>
+              </div>
+            </div>
+          </section>
+          <div className="dashboard-history__content mx-auto grid w-full max-w-[1200px] gap-6 p-4 sm:p-6 lg:grid-cols-12">
           {/* Columna Izquierda: Selector de los 10 Templates con Historial */}
-          <aside className="space-y-3 lg:col-span-3">
-            <div className="rounded-xl border border-[#e6e5e0] bg-[#fafaf7] p-4">
-              <h2 className="text-xs font-bold tracking-wider text-[#f54e00] uppercase">
+          <aside className="dashboard-history__sidebar space-y-3 lg:col-span-3">
+            <div className="rounded-xl border border-[#e6dfd8] bg-[#f5f0e8] p-4">
+              <h2 className="text-xs font-bold tracking-wider text-[#cc785c] uppercase">
                 Historial por Template
               </h2>
-              <p className="mt-1 text-xs text-[#807d72]">
+              <p className="mt-1 text-xs text-[#6c6a64]">
                 Selecciona una plantilla para ver todas las invitaciones de
                 clientes creadas con ella:
               </p>
@@ -531,16 +547,16 @@ function DashboardContent() {
                   onClick={() => setSelectedHistoryTemplate('all')}
                   className={`flex w-full cursor-pointer items-center justify-between rounded-xl px-3.5 py-2.5 text-left text-xs font-semibold transition ${
                     selectedHistoryTemplate === 'all'
-                      ? 'bg-[#f54e00] text-white font-bold'
-                      : 'text-[#5a5852] hover:bg-white'
+                      ? 'bg-[#cc785c] text-white font-bold'
+                      : 'text-[#3d3d3a] hover:bg-white'
                   }`}
                 >
                   <span>Todos los Templates</span>
                   <span
                     className={`rounded-full px-2 py-0.5 text-[10px] ${
                       selectedHistoryTemplate === 'all'
-                        ? 'bg-black/5 text-[#26251e]'
-                        : 'bg-[#efeee8] text-[#5a5852]'
+                        ? 'bg-black/5 text-[#141413]'
+                        : 'bg-[#ebe6df] text-[#3d3d3a]'
                     }`}
                   >
                     {templateCounts.all}
@@ -557,8 +573,8 @@ function DashboardContent() {
                       onClick={() => setSelectedHistoryTemplate(tpl.id)}
                       className={`flex w-full cursor-pointer items-center justify-between rounded-xl px-3 py-2 text-left text-xs transition ${
                         isSelected
-                          ? 'bg-[#f54e00] font-bold text-white shadow-sm'
-                          : 'text-[#5a5852] hover:bg-white'
+                          ? 'bg-[#cc785c] font-bold text-white shadow-sm'
+                          : 'text-[#3d3d3a] hover:bg-white'
                       }`}
                     >
                       <span className="truncate">
@@ -567,8 +583,8 @@ function DashboardContent() {
                       <span
                         className={`ml-2 shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${
                           isSelected
-                            ? 'bg-black/5 text-[#26251e]'
-                            : 'bg-[#efeee8] text-[#d04200]'
+                            ? 'bg-black/5 text-[#141413]'
+                            : 'bg-[#ebe6df] text-[#a9583e]'
                         }`}
                       >
                         {count}
@@ -581,11 +597,11 @@ function DashboardContent() {
           </aside>
 
           {/* Columna Derecha: Filtros por Cliente/Fecha + Tabla Paginada */}
-          <div className="flex min-w-0 flex-col space-y-5 lg:col-span-9">
+          <div className="dashboard-history__main flex min-w-0 flex-col space-y-5 lg:col-span-9">
             {/* Cabecera del Template Activo */}
-            <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-[#e6e5e0] bg-[#fafaf7] p-5">
+            <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-[#e6dfd8] bg-[#f5f0e8] p-5">
               <div>
-                <span className="text-xs font-bold tracking-wider text-[#f54e00] uppercase">
+                <span className="text-xs font-bold tracking-wider text-[#cc785c] uppercase">
                   {selectedHistoryTemplate === 'all'
                     ? 'Historial Global Multi-Cliente'
                     : `Historial del Template: ${
@@ -594,7 +610,7 @@ function DashboardContent() {
                         )?.name
                       }`}
                 </span>
-                <h1 className="mt-0.5 text-2xl font-medium text-[#26251e]">
+                <h1 className="mt-0.5 text-2xl font-medium text-[#141413]">
                   {selectedHistoryTemplate === 'all'
                     ? 'Todas las Invitaciones de Clientes'
                     : `Invitaciones creadas con ${
@@ -617,7 +633,7 @@ function DashboardContent() {
                   }));
                   setIsNewModalOpen(true);
                 }}
-                className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-[#f54e00] px-4 py-2.5 text-xs font-bold tracking-wider text-white uppercase   transition hover:bg-[#d04200]"
+                className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-[#cc785c] px-4 py-2.5 text-xs font-bold tracking-wider text-white uppercase   transition hover:bg-[#a9583e]"
               >
                 <Plus className="h-4 w-4" />
                 {selectedHistoryTemplate === 'all'
@@ -631,27 +647,27 @@ function DashboardContent() {
             </div>
 
             {/* Barra de Filtros: Cliente, Rango de Fechas y Estado */}
-            <div className="grid gap-3 rounded-xl border border-[#e6e5e0] bg-[#fafaf7] p-4 sm:grid-cols-12">
+            <div className="grid gap-3 rounded-xl border border-[#e6dfd8] bg-[#f5f0e8] p-4 sm:grid-cols-12">
               {/* Búsqueda por Cliente / Evento / URL */}
               <div className="sm:col-span-4">
-                <label className="mb-1 block text-[11px] font-semibold text-[#807d72] uppercase">
+                <label className="mb-1 block text-[11px] font-semibold text-[#6c6a64] uppercase">
                   Filtrar por Cliente, Evento o Slug
                 </label>
                 <div className="relative">
-                  <Search className="pointer-events-none absolute top-2.5 left-3 h-4 w-4 text-[#a09c92]" />
+                  <Search className="pointer-events-none absolute top-2.5 left-3 h-4 w-4 text-[#8e8b82]" />
                   <input
                     type="text"
                     value={clientQuery}
                     onChange={(e) => setClientQuery(e.target.value)}
                     placeholder="Ej. Sofía, Camila, XV, boda-sofia..."
-                    className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] py-2 pr-3 pl-9 text-xs text-[#26251e] outline-none focus:border-[#f54e00]"
+                    className="w-full rounded-xl border border-[#d7cfc4] bg-[#faf9f5] py-2 pr-3 pl-9 text-xs text-[#141413] outline-none focus:border-[#cc785c]"
                   />
                 </div>
               </div>
 
               {/* Tipo de Fecha */}
               <div className="sm:col-span-2">
-                <label className="mb-1 block text-[11px] font-semibold text-[#807d72] uppercase">
+                <label className="mb-1 block text-[11px] font-semibold text-[#6c6a64] uppercase">
                   Campo de Fecha
                 </label>
                 <select
@@ -661,7 +677,7 @@ function DashboardContent() {
                       e.target.value as 'eventDate' | 'createdAt'
                     )
                   }
-                  className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3 py-2 text-xs text-[#26251e] outline-none focus:border-[#f54e00]"
+                  className="w-full rounded-xl border border-[#d7cfc4] bg-[#faf9f5] px-3 py-2 text-xs text-[#141413] outline-none focus:border-[#cc785c]"
                 >
                   <option value="eventDate">Fecha de Evento</option>
                   <option value="createdAt">Fecha Creada</option>
@@ -670,34 +686,34 @@ function DashboardContent() {
 
               {/* Fecha Desde */}
               <div className="sm:col-span-2">
-                <label className="mb-1 block text-[11px] font-semibold text-[#807d72] uppercase">
+                <label className="mb-1 block text-[11px] font-semibold text-[#6c6a64] uppercase">
                   Desde
                 </label>
                 <input
                   type="date"
                   value={dateFrom}
                   onChange={(e) => setDateFrom(e.target.value)}
-                  className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-2.5 py-2 text-xs text-[#26251e] outline-none focus:border-[#f54e00]"
+                  className="w-full rounded-xl border border-[#d7cfc4] bg-[#faf9f5] px-2.5 py-2 text-xs text-[#141413] outline-none focus:border-[#cc785c]"
                 />
               </div>
 
               {/* Fecha Hasta */}
               <div className="sm:col-span-2">
-                <label className="mb-1 block text-[11px] font-semibold text-[#807d72] uppercase">
+                <label className="mb-1 block text-[11px] font-semibold text-[#6c6a64] uppercase">
                   Hasta
                 </label>
                 <input
                   type="date"
                   value={dateTo}
                   onChange={(e) => setDateTo(e.target.value)}
-                  className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-2.5 py-2 text-xs text-[#26251e] outline-none focus:border-[#f54e00]"
+                  className="w-full rounded-xl border border-[#d7cfc4] bg-[#faf9f5] px-2.5 py-2 text-xs text-[#141413] outline-none focus:border-[#cc785c]"
                 />
               </div>
 
               {/* Estado + Botón Limpiar */}
               <div className="flex items-end gap-2 sm:col-span-2">
                 <div className="flex-1">
-                  <label className="mb-1 block text-[11px] font-semibold text-[#807d72] uppercase">
+                  <label className="mb-1 block text-[11px] font-semibold text-[#6c6a64] uppercase">
                     Estado
                   </label>
                   <select
@@ -711,7 +727,7 @@ function DashboardContent() {
                           | 'archived'
                       )
                     }
-                    className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-2.5 py-2 text-xs text-[#26251e] outline-none focus:border-[#f54e00]"
+                    className="w-full rounded-xl border border-[#d7cfc4] bg-[#faf9f5] px-2.5 py-2 text-xs text-[#141413] outline-none focus:border-[#cc785c]"
                   >
                     <option value="all">Todos</option>
                     <option value="published">Publicadas</option>
@@ -733,7 +749,7 @@ function DashboardContent() {
                       setStatusFilter('all');
                     }}
                     title="Limpiar filtros"
-                    className="cursor-pointer rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] p-2 text-[#807d72] hover:text-[#26251e]"
+                    className="cursor-pointer rounded-xl border border-[#d7cfc4] bg-[#faf9f5] p-2 text-[#6c6a64] hover:text-[#141413]"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -742,9 +758,9 @@ function DashboardContent() {
             </div>
 
             {/* Tabla del Historial de Invitaciones */}
-            <div className="overflow-x-auto rounded-xl border border-[#e6e5e0] bg-white">
+            <div className="overflow-x-auto rounded-xl border border-[#e6dfd8] bg-white">
               <table className="w-full text-left text-sm">
-                <thead className="border-b border-[#e6e5e0] bg-[#f7f7f4] text-[11px] font-bold tracking-wider text-[#807d72] uppercase">
+                <thead className="border-b border-[#e6dfd8] bg-[#faf9f5] text-[11px] font-bold tracking-wider text-[#6c6a64] uppercase">
                   <tr>
                     <th className="px-5 py-3.5">Cliente & Evento</th>
                     <th className="px-5 py-3.5">Template Usado</th>
@@ -759,7 +775,7 @@ function DashboardContent() {
                     <tr>
                       <td
                         colSpan={6}
-                        className="px-6 py-12 text-center text-sm text-[#807d72]"
+                        className="px-6 py-12 text-center text-sm text-[#6c6a64]"
                       >
                         No se encontraron invitaciones con los filtros
                         seleccionados.
@@ -775,22 +791,22 @@ function DashboardContent() {
                       return (
                         <tr
                           key={inv.id}
-                          className={`transition hover:bg-[#fafaf7] ${
-                            isCurrentInBuilder ? 'bg-[#f54e00]/5' : ''
+                          className={`transition hover:bg-[#f5f0e8] ${
+                            isCurrentInBuilder ? 'bg-[#cc785c]/5' : ''
                           }`}
                         >
                           <td className="px-5 py-4">
                             <div className="flex items-center gap-2">
-                              <span className="font-bold text-[#26251e]">
+                              <span className="font-bold text-[#141413]">
                                 {inv.clientName}
                               </span>
                               {isCurrentInBuilder && (
-                                <span className="rounded-full bg-[#f54e00]/10 px-2 py-0.5 text-[10px] font-bold text-[#d04200]">
+                                <span className="rounded-full bg-[#cc785c]/10 px-2 py-0.5 text-[10px] font-bold text-[#a9583e]">
                                   En Editor
                                 </span>
                               )}
                             </div>
-                            <span className="block text-xs text-[#807d72]">
+                            <span className="block text-xs text-[#6c6a64]">
                               Evento: {inv.title} • {inv.clientPhone}
                             </span>
                           </td>
@@ -801,17 +817,17 @@ function DashboardContent() {
                               onClick={() =>
                                 setSelectedHistoryTemplate(inv.templateId)
                               }
-                              className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#e6e5e0] bg-[#f7f7f4] px-2.5 py-1 text-xs font-semibold text-[#d04200] hover:border-[#f54e00]/40"
+                              className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#e6dfd8] bg-[#faf9f5] px-2.5 py-1 text-xs font-semibold text-[#a9583e] hover:border-[#cc785c]/40"
                             >
                               <span>{tplInfo?.name || inv.templateId}</span>
                             </button>
                           </td>
 
                           <td className="px-5 py-4 text-xs">
-                            <p className="font-semibold text-[#26251e]">
+                            <p className="font-semibold text-[#141413]">
                               Evento: {inv.eventDate.slice(0, 10)}
                             </p>
-                            <p className="text-[#a09c92]">
+                            <p className="text-[#8e8b82]">
                               Creada: {inv.createdAt.slice(0, 10)}
                             </p>
                           </td>
@@ -820,12 +836,12 @@ function DashboardContent() {
                             <Link
                               href={`/${inv.slug}?template=${inv.templateId}&g=fam-lopez-8a2f`}
                               target="_blank"
-                              className="inline-flex cursor-pointer items-center gap-1 font-mono text-xs text-[#f54e00] hover:underline"
+                              className="inline-flex cursor-pointer items-center gap-1 font-mono text-xs text-[#cc785c] hover:underline"
                             >
                               <span>/{inv.slug}</span>
                               <ExternalLink className="h-3 w-3" />
                             </Link>
-                            <span className="block text-[11px] text-[#a09c92]">
+                            <span className="block text-[11px] text-[#8e8b82]">
                               {inv.viewsCount} aperturas
                             </span>
                           </td>
@@ -834,8 +850,8 @@ function DashboardContent() {
                             <span
                               className={`inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
                                 inv.status === 'published'
-                                  ? 'bg-[#1f8a65]/10 text-[#1f8a65]'
-                                  : 'bg-[#f54e00]/10 text-[#d04200]'
+                                  ? 'bg-[#5db872]/10 text-[#5db872]'
+                                  : 'bg-[#cc785c]/10 text-[#a9583e]'
                               }`}
                             >
                               {inv.status === 'published'
@@ -849,7 +865,7 @@ function DashboardContent() {
                               <button
                                 type="button"
                                 onClick={() => handleOpenInBuilder(inv)}
-                                className="inline-flex cursor-pointer items-center gap-1 rounded-xl bg-[#f54e00] px-3 py-1.5 text-xs font-bold text-white transition hover:bg-[#d04200]"
+                                className="inline-flex cursor-pointer items-center gap-1 rounded-xl bg-[#cc785c] px-3 py-1.5 text-xs font-bold text-white transition hover:bg-[#a9583e]"
                               >
                                 <Wand2 className="h-3.5 w-3.5" />
                                 Personalizar
@@ -860,7 +876,7 @@ function DashboardContent() {
                                   loadInvitationRecord(inv);
                                   setActiveTab('guests');
                                 }}
-                                className="inline-flex cursor-pointer items-center gap-1 rounded-xl border border-[#cfcdc4] bg-white px-2.5 py-1.5 text-xs font-semibold text-[#26251e] transition hover:bg-[#efeee8]"
+                                className="inline-flex cursor-pointer items-center gap-1 rounded-xl border border-[#d7cfc4] bg-white px-2.5 py-1.5 text-xs font-semibold text-[#141413] transition hover:bg-[#ebe6df]"
                               >
                                 <Users className="h-3.5 w-3.5" />
                                 Invitados
@@ -872,7 +888,7 @@ function DashboardContent() {
                                   toast.info('Invitación eliminada del historial');
                                 }}
                                 title="Eliminar invitación"
-                                className="cursor-pointer rounded-xl border border-[#e6e5e0] p-1.5 text-[#807d72] transition hover:border-[#cf2d56]/40 hover:text-[#cf2d56]"
+                                className="cursor-pointer rounded-xl border border-[#e6dfd8] p-1.5 text-[#6c6a64] transition hover:border-[#c64545]/40 hover:text-[#c64545]"
                               >
                                 <Trash2 className="h-3.5 w-3.5" />
                               </button>
@@ -886,24 +902,24 @@ function DashboardContent() {
               </table>
 
               {/* Controles de Paginación */}
-              <div className="flex flex-wrap items-center justify-between gap-4 border-t border-[#e6e5e0] bg-[#f7f7f4] px-5 py-3.5 text-xs">
-                <div className="flex items-center gap-3 text-[#807d72]">
+              <div className="flex flex-wrap items-center justify-between gap-4 border-t border-[#e6dfd8] bg-[#faf9f5] px-5 py-3.5 text-xs">
+                <div className="flex items-center gap-3 text-[#6c6a64]">
                   <span>
                     Mostrando{' '}
-                    <strong className="text-[#26251e]">
+                    <strong className="text-[#141413]">
                       {filteredInvitations.length === 0
                         ? 0
                         : (safePage - 1) * pageSize + 1}
                     </strong>{' '}
                     –{' '}
-                    <strong className="text-[#26251e]">
+                    <strong className="text-[#141413]">
                       {Math.min(
                         safePage * pageSize,
                         filteredInvitations.length
                       )}
                     </strong>{' '}
                     de{' '}
-                    <strong className="text-[#26251e]">
+                    <strong className="text-[#141413]">
                       {filteredInvitations.length}
                     </strong>{' '}
                     invitaciones
@@ -912,7 +928,7 @@ function DashboardContent() {
                   <select
                     value={pageSize}
                     onChange={(e) => setPageSize(Number(e.target.value))}
-                    className="rounded-lg border border-[#cfcdc4] bg-white px-2 py-1 text-xs text-[#26251e] outline-none"
+                    className="rounded-lg border border-[#d7cfc4] bg-white px-2 py-1 text-xs text-[#141413] outline-none"
                   >
                     <option value={5}>5 por página</option>
                     <option value={10}>10 por página</option>
@@ -925,7 +941,7 @@ function DashboardContent() {
                     type="button"
                     disabled={safePage <= 1}
                     onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                    className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[#cfcdc4] bg-white px-3 py-1.5 font-semibold text-[#5a5852] transition hover:bg-[#efeee8] disabled:opacity-40"
+                    className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[#d7cfc4] bg-white px-3 py-1.5 font-semibold text-[#3d3d3a] transition hover:bg-[#ebe6df] disabled:opacity-40"
                   >
                     <ChevronLeft className="h-3.5 w-3.5" />
                     Anterior
@@ -939,8 +955,8 @@ function DashboardContent() {
                         onClick={() => setCurrentPage(pageNum)}
                         className={`h-8 w-8 cursor-pointer rounded-lg text-xs font-bold transition ${
                           pageNum === safePage
-                            ? 'bg-[#f54e00] text-white'
-                            : 'border border-[#e6e5e0] bg-white text-[#5a5852] hover:bg-[#efeee8]'
+                            ? 'bg-[#cc785c] text-white'
+                            : 'border border-[#e6dfd8] bg-white text-[#3d3d3a] hover:bg-[#ebe6df]'
                         }`}
                       >
                         {pageNum}
@@ -954,7 +970,7 @@ function DashboardContent() {
                     onClick={() =>
                       setCurrentPage((p) => Math.min(totalPages, p + 1))
                     }
-                    className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[#cfcdc4] bg-white px-3 py-1.5 font-semibold text-[#5a5852] transition hover:bg-[#efeee8] disabled:opacity-40"
+                    className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[#d7cfc4] bg-white px-3 py-1.5 font-semibold text-[#3d3d3a] transition hover:bg-[#ebe6df] disabled:opacity-40"
                   >
                     Siguiente
                     <ChevronRight className="h-3.5 w-3.5" />
@@ -963,6 +979,7 @@ function DashboardContent() {
               </div>
             </div>
           </div>
+          </div>
         </div>
       )}
 
@@ -970,30 +987,30 @@ function DashboardContent() {
           VISTA 2: CONSTRUCTOR VISUAL SPLIT-SCREEN EN TIEMPO REAL
       ===================================================================== */}
       {activeTab === 'builder' && (
-        <div className="flex flex-1 flex-col overflow-hidden xl:flex-row">
+        <div className="dashboard-builder flex flex-1 flex-col overflow-hidden xl:flex-row">
           {/* Panel Inspector Izquierdo */}
-          <aside className="flex max-h-[62dvh] w-full flex-col border-b border-[#e6e5e0] bg-[#fafaf7] xl:max-h-none xl:max-w-md xl:border-r xl:border-b-0">
+          <aside className="dashboard-builder__inspector flex max-h-[62dvh] w-full flex-col border-b border-[#e6dfd8] bg-[#f5f0e8] xl:max-h-none xl:max-w-md xl:border-r xl:border-b-0">
             {/* Tarjeta de Cliente Activo en el Builder */}
-            <div className="border-b border-[#e6e5e0] bg-[#f7f7f4]/95 px-4 py-3">
+            <div className="border-b border-[#e6dfd8] bg-[#faf9f5]/95 px-4 py-3">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold tracking-wider text-[#f54e00] uppercase">
+                <span className="text-[11px] font-bold tracking-wider text-[#cc785c] uppercase">
                   Cliente Activo en Editor
                 </span>
                 <button
                   type="button"
                   onClick={() => setActiveTab('history')}
-                  className="cursor-pointer text-[11px] font-semibold text-[#807d72] underline hover:text-[#26251e]"
+                  className="cursor-pointer text-[11px] font-semibold text-[#6c6a64] underline hover:text-[#141413]"
                 >
                   Cambiar cliente ({invitations.length})
                 </button>
               </div>
-              <p className="mt-0.5 truncate text-sm font-bold text-[#26251e]">
-                {clientName} — <span className="text-[#d04200]">/{slug}</span>
+              <p className="mt-0.5 truncate text-sm font-bold text-[#141413]">
+                {clientName} — <span className="text-[#a9583e]">/{slug}</span>
               </p>
             </div>
 
             {/* Sub-tabs del Inspector */}
-            <div className="grid grid-cols-4 border-b border-[#e6e5e0] bg-[#f7f7f4] p-1.5 text-xs font-semibold">
+            <div className="grid grid-cols-4 border-b border-[#e6dfd8] bg-[#faf9f5] p-1.5 text-xs font-semibold">
               {[
                 { id: 'templates', label: '10 Templates', icon: Sparkles },
                 { id: 'colors', label: 'Colores/URL', icon: Palette },
@@ -1012,8 +1029,8 @@ function DashboardContent() {
                     }
                     className={`flex cursor-pointer flex-col items-center gap-1 rounded-lg py-2 transition ${
                       inspectorTab === t.id
-                        ? 'bg-[#efeee8] text-[#f54e00]'
-                        : 'text-[#807d72] hover:text-[#26251e]'
+                        ? 'bg-[#ebe6df] text-[#cc785c]'
+                        : 'text-[#6c6a64] hover:text-[#141413]'
                     }`}
                   >
                     <Icon className="h-4 w-4" />
@@ -1028,9 +1045,9 @@ function DashboardContent() {
               {inspectorTab === 'templates' && (
                 <div className="space-y-4">
                   {/* Historial rápido de invitaciones creadas con el template seleccionado */}
-                  <div className="rounded-xl border border-[#f54e00]/30 bg-[#f54e00]/10 p-3.5">
+                  <div className="rounded-xl border border-[#cc785c]/30 bg-[#cc785c]/10 p-3.5">
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-bold text-[#d04200] uppercase">
+                      <span className="text-[11px] font-bold text-[#a9583e] uppercase">
                         Historial en {templateId} ({builderTemplateHistory.length}
                         )
                       </span>
@@ -1040,7 +1057,7 @@ function DashboardContent() {
                           setSelectedHistoryTemplate(templateId);
                           setActiveTab('history');
                         }}
-                        className="cursor-pointer text-[11px] font-semibold text-[#26251e] underline"
+                        className="cursor-pointer text-[11px] font-semibold text-[#141413] underline"
                       >
                         Ver todas / Filtrar
                       </button>
@@ -1053,8 +1070,8 @@ function DashboardContent() {
                           onClick={() => handleOpenInBuilder(item)}
                           className={`flex w-full cursor-pointer items-center justify-between rounded-lg px-2.5 py-1.5 text-left text-xs transition ${
                             item.id === eventId
-                              ? 'bg-[#f54e00] font-bold text-white'
-                              : 'bg-[#f7f7f4] text-[#26251e] hover:bg-[#f7f7f4]'
+                              ? 'bg-[#cc785c] font-bold text-white'
+                              : 'bg-[#faf9f5] text-[#141413] hover:bg-[#faf9f5]'
                           }`}
                         >
                           <span className="truncate">{item.clientName}</span>
@@ -1066,7 +1083,7 @@ function DashboardContent() {
                     </div>
                   </div>
 
-                  <p className="text-xs text-[#807d72]">
+                  <p className="text-xs text-[#6c6a64]">
                     Selecciona un template (muestra cuántas invitaciones has
                     creado con cada uno):
                   </p>
@@ -1078,8 +1095,8 @@ function DashboardContent() {
                       onClick={() => setTemplate(tpl.id as TemplateId)}
                       className={`flex w-full cursor-pointer items-center gap-3.5 rounded-xl border p-3 text-left transition ${
                         templateId === tpl.id
-                          ? 'border-[#f54e00] bg-[#f54e00]/10'
-                          : 'border-[#e6e5e0] bg-[#f7f7f4] hover:border-[#cfcdc4]'
+                          ? 'border-[#cc785c] bg-[#cc785c]/10'
+                          : 'border-[#e6dfd8] bg-[#faf9f5] hover:border-[#d7cfc4]'
                       }`}
                     >
                       <img
@@ -1089,14 +1106,14 @@ function DashboardContent() {
                       />
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center justify-between">
-                          <p className="truncate text-sm font-bold text-[#26251e]">
+                          <p className="truncate text-sm font-bold text-[#141413]">
                             {tpl.name}
                           </p>
-                          <span className="rounded-full bg-[#efeee8] px-2 py-0.5 text-[10px] font-bold text-[#d04200]">
+                          <span className="rounded-full bg-[#ebe6df] px-2 py-0.5 text-[10px] font-bold text-[#a9583e]">
                             {templateCounts[tpl.id] || 0} creadas
                           </span>
                         </div>
-                        <p className="mt-0.5 line-clamp-1 text-xs text-[#807d72]">
+                        <p className="mt-0.5 line-clamp-1 text-xs text-[#6c6a64]">
                           {tpl.categoryLabel} • {tpl.signatureAnimation}
                         </p>
                       </div>
@@ -1108,34 +1125,34 @@ function DashboardContent() {
               {inspectorTab === 'colors' && (
                 <div className="space-y-5">
                   <div>
-                    <label className="mb-1.5 block text-xs font-bold tracking-wider text-[#5a5852] uppercase">
+                    <label className="mb-1.5 block text-xs font-bold tracking-wider text-[#3d3d3a] uppercase">
                       Nombre del Cliente
                     </label>
                     <input
                       type="text"
                       value={clientName}
                       onChange={(e) => setMeta({ clientName: e.target.value })}
-                      className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3.5 py-2 text-sm text-[#26251e] outline-none"
+                      className="w-full rounded-xl border border-[#d7cfc4] bg-[#faf9f5] px-3.5 py-2 text-sm text-[#141413] outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="mb-1.5 block text-xs font-bold tracking-wider text-[#5a5852] uppercase">
+                    <label className="mb-1.5 block text-xs font-bold tracking-wider text-[#3d3d3a] uppercase">
                       URL Personalizada (Slug del Cliente)
                     </label>
-                    <div className="flex items-center rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3 py-2 text-xs">
-                      <span className="text-[#a09c92]">dominio.com/</span>
+                    <div className="flex items-center rounded-xl border border-[#d7cfc4] bg-[#faf9f5] px-3 py-2 text-xs">
+                      <span className="text-[#8e8b82]">dominio.com/</span>
                       <input
                         type="text"
                         value={slug}
                         onChange={(e) => setMeta({ slug: e.target.value })}
-                        className="ml-1 flex-1 bg-transparent font-semibold text-[#f54e00] outline-none"
+                        className="ml-1 flex-1 bg-transparent font-semibold text-[#cc785c] outline-none"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="mb-2 block text-xs font-bold tracking-wider text-[#5a5852] uppercase">
+                    <label className="mb-2 block text-xs font-bold tracking-wider text-[#3d3d3a] uppercase">
                       Paleta de Colores Personalizada
                     </label>
                     <div className="grid grid-cols-2 gap-3">
@@ -1147,7 +1164,7 @@ function DashboardContent() {
                       ].map((c) => (
                         <div
                           key={c.key}
-                          className="flex items-center justify-between rounded-xl border border-[#e6e5e0] bg-[#f7f7f4] p-2.5 text-xs"
+                          className="flex items-center justify-between rounded-xl border border-[#e6dfd8] bg-[#faf9f5] p-2.5 text-xs"
                         >
                           <span>{c.label}</span>
                           <input
@@ -1168,7 +1185,7 @@ function DashboardContent() {
                   </div>
 
                   <div>
-                    <label className="mb-2 block text-xs font-bold tracking-wider text-[#5a5852] uppercase">
+                    <label className="mb-2 block text-xs font-bold tracking-wider text-[#3d3d3a] uppercase">
                       Sello del Sobre Interactivo
                     </label>
                     <input
@@ -1178,7 +1195,7 @@ function DashboardContent() {
                         updateEnvelope({ sealMonogram: e.target.value })
                       }
                       placeholder="Ej. S & M o XV"
-                      className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3.5 py-2.5 text-sm text-[#26251e] outline-none"
+                      className="w-full rounded-xl border border-[#d7cfc4] bg-[#faf9f5] px-3.5 py-2.5 text-sm text-[#141413] outline-none"
                     />
                   </div>
                 </div>
@@ -1187,7 +1204,7 @@ function DashboardContent() {
               {inspectorTab === 'content' && (
                 <div className="space-y-4">
                   <div>
-                    <label className="mb-1 block text-xs font-semibold text-[#5a5852]">
+                    <label className="mb-1 block text-xs font-semibold text-[#3d3d3a]">
                       Etiqueta Superior (Badge)
                     </label>
                     <input
@@ -1196,12 +1213,12 @@ function DashboardContent() {
                       onChange={(e) =>
                         updateHero({ badgeText: e.target.value })
                       }
-                      className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3.5 py-2 text-sm text-[#26251e] outline-none"
+                      className="w-full rounded-xl border border-[#d7cfc4] bg-[#faf9f5] px-3.5 py-2 text-sm text-[#141413] outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-xs font-semibold text-[#5a5852]">
+                    <label className="mb-1 block text-xs font-semibold text-[#3d3d3a]">
                       Título Principal / Festejados
                     </label>
                     <input
@@ -1211,24 +1228,24 @@ function DashboardContent() {
                         updateHero({ mainTitle: e.target.value });
                         setMeta({ title: e.target.value });
                       }}
-                      className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3.5 py-2 text-sm text-[#26251e] outline-none"
+                      className="w-full rounded-xl border border-[#d7cfc4] bg-[#faf9f5] px-3.5 py-2 text-sm text-[#141413] outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-xs font-semibold text-[#5a5852]">
+                    <label className="mb-1 block text-xs font-semibold text-[#3d3d3a]">
                       Fecha y Ciudad (Subtítulo)
                     </label>
                     <input
                       type="text"
                       value={config.content.hero.tagline}
                       onChange={(e) => updateHero({ tagline: e.target.value })}
-                      className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3.5 py-2 text-sm text-[#26251e] outline-none"
+                      className="w-full rounded-xl border border-[#d7cfc4] bg-[#faf9f5] px-3.5 py-2 text-sm text-[#141413] outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-xs font-semibold text-[#5a5852]">
+                    <label className="mb-1 block text-xs font-semibold text-[#3d3d3a]">
                       URL Fotografía de Portada
                     </label>
                     <input
@@ -1237,12 +1254,12 @@ function DashboardContent() {
                       onChange={(e) =>
                         updateHero({ coverImageUrl: e.target.value })
                       }
-                      className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3.5 py-2 text-sm text-[#26251e] outline-none"
+                      className="w-full rounded-xl border border-[#d7cfc4] bg-[#faf9f5] px-3.5 py-2 text-sm text-[#141413] outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-xs font-semibold text-[#5a5852]">
+                    <label className="mb-1 block text-xs font-semibold text-[#3d3d3a]">
                       Código de Vestimenta
                     </label>
                     <input
@@ -1251,7 +1268,7 @@ function DashboardContent() {
                       onChange={(e) =>
                         updateDressCode({ title: e.target.value })
                       }
-                      className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3.5 py-2 text-sm text-[#26251e] outline-none"
+                      className="w-full rounded-xl border border-[#d7cfc4] bg-[#faf9f5] px-3.5 py-2 text-sm text-[#141413] outline-none"
                     />
                   </div>
                 </div>
@@ -1259,22 +1276,22 @@ function DashboardContent() {
 
               {inspectorTab === 'sections' && (
                 <div className="space-y-2.5">
-                  <p className="text-xs text-[#807d72]">
+                  <p className="text-xs text-[#6c6a64]">
                     Activa o desactiva cualquiera de los 12 bloques modulares:
                   </p>
                   {config.sectionsOrder.map((sec) => (
                     <div
                       key={sec.id}
-                      className="flex items-center justify-between rounded-xl border border-[#e6e5e0] bg-[#f7f7f4] px-3.5 py-2.5 text-xs"
+                      className="flex items-center justify-between rounded-xl border border-[#e6dfd8] bg-[#faf9f5] px-3.5 py-2.5 text-xs"
                     >
-                      <span className="font-medium text-[#26251e]">
+                      <span className="font-medium text-[#141413]">
                         {SECTION_LABELS[sec.id]}
                       </span>
                       <input
                         type="checkbox"
                         checked={sec.enabled}
                         onChange={() => toggleSection(sec.id)}
-                        className="h-4 w-4 cursor-pointer accent-[#f54e00]"
+                        className="h-4 w-4 cursor-pointer accent-[#cc785c]"
                       />
                     </div>
                   ))}
@@ -1284,13 +1301,13 @@ function DashboardContent() {
           </aside>
 
           {/* Lienzo Central de Previsualización Interactiva */}
-          <main className="flex min-w-0 flex-1 flex-col bg-[#f7f7f4]">
-            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#e6e5e0] bg-[#fafaf7] px-4 py-2.5 sm:px-6">
+          <main className="dashboard-builder__preview flex min-w-0 flex-1 flex-col bg-[#faf9f5]">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#e6dfd8] bg-[#f5f0e8] px-4 py-2.5 sm:px-6">
               <div className="flex min-w-0 flex-wrap items-center gap-2">
                 <button
                   type="button"
                   onClick={() => useBuilderStore.temporal.getState().undo()}
-                  className="cursor-pointer rounded-lg border border-[#e6e5e0] p-1.5 text-[#807d72] hover:text-[#26251e]"
+                  className="cursor-pointer rounded-lg border border-[#e6dfd8] p-1.5 text-[#6c6a64] hover:text-[#141413]"
                   title="Deshacer (Undo)"
                 >
                   <Undo2 className="h-4 w-4" />
@@ -1298,7 +1315,7 @@ function DashboardContent() {
                 <button
                   type="button"
                   onClick={() => useBuilderStore.temporal.getState().redo()}
-                  className="cursor-pointer rounded-lg border border-[#e6e5e0] p-1.5 text-[#807d72] hover:text-[#26251e]"
+                  className="cursor-pointer rounded-lg border border-[#e6dfd8] p-1.5 text-[#6c6a64] hover:text-[#141413]"
                   title="Rehacer (Redo)"
                 >
                   <Redo2 className="h-4 w-4" />
@@ -1306,7 +1323,7 @@ function DashboardContent() {
                 <button
                   type="button"
                   onClick={() => setPreviewEnvelopeOpen(!previewEnvelopeOpen)}
-                  className="ml-2 cursor-pointer rounded-lg border border-[#f54e00]/40 bg-[#f54e00]/10 px-3 py-1 text-xs font-semibold text-[#d04200]"
+                  className="ml-2 cursor-pointer rounded-lg border border-[#cc785c]/40 bg-[#cc785c]/10 px-3 py-1 text-xs font-semibold text-[#a9583e]"
                 >
                   {previewEnvelopeOpen
                     ? 'Probar Sobre Cerrado'
@@ -1315,14 +1332,14 @@ function DashboardContent() {
                 <Link
                   href={`/${slug}?template=${templateId}&g=fam-lopez-8a2f`}
                   target="_blank"
-                  className="ml-2 inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[#e6e5e0] bg-white px-3 py-1 text-xs font-medium text-[#5a5852] hover:text-[#26251e]"
+                  className="ml-2 inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[#e6dfd8] bg-white px-3 py-1 text-xs font-medium text-[#3d3d3a] hover:text-[#141413]"
                 >
                   <span>Ver URL Pública (/{slug})</span>
                   <ExternalLink className="h-3 w-3" />
                 </Link>
               </div>
 
-              <div className="flex items-center gap-1 rounded-xl border border-[#e6e5e0] bg-white p-1">
+              <div className="flex items-center gap-1 rounded-xl border border-[#e6dfd8] bg-white p-1">
                 {[
                   { id: 'mobile', label: 'Móvil 390px', icon: Smartphone },
                   { id: 'tablet', label: 'Tablet 768px', icon: Tablet },
@@ -1338,8 +1355,8 @@ function DashboardContent() {
                       }
                       className={`inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1 text-xs font-medium transition ${
                         viewport === vp.id
-                          ? 'bg-[#f54e00] text-white'
-                          : 'text-[#807d72] hover:text-[#26251e]'
+                          ? 'bg-[#cc785c] text-white'
+                          : 'text-[#6c6a64] hover:text-[#141413]'
                       }`}
                     >
                       <Icon className="h-3.5 w-3.5" />
@@ -1353,7 +1370,7 @@ function DashboardContent() {
             <div className="flex flex-1 items-start justify-center overflow-y-auto p-4 sm:p-8">
               <div
                 data-invitation-scroller
-                className={`relative overflow-y-auto rounded-xl border border-[#cfcdc4]  transition-all duration-300 ${
+                className={`relative overflow-y-auto rounded-xl border border-[#d7cfc4]  transition-all duration-300 ${
                   viewport === 'mobile'
                     ? 'h-[780px] w-[390px]'
                     : viewport === 'tablet'
@@ -1381,53 +1398,53 @@ function DashboardContent() {
         <div className="mx-auto w-full max-w-6xl space-y-8 p-6 sm:p-10">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <span className="text-xs font-bold tracking-wider text-[#f54e00] uppercase">
+              <span className="text-xs font-bold tracking-wider text-[#cc785c] uppercase">
                 CRM de Invitados del Cliente
               </span>
-              <h2 className="text-2xl font-medium text-[#26251e]">
+              <h2 className="text-2xl font-medium text-[#141413]">
                 {activeInvitationRecord?.clientName} ({title})
               </h2>
             </div>
             <button
               type="button"
               onClick={() => setActiveTab('history')}
-              className="cursor-pointer rounded-xl border border-[#cfcdc4] bg-white px-4 py-2 text-xs font-semibold text-[#26251e] hover:bg-[#efeee8]"
+              className="cursor-pointer rounded-xl border border-[#d7cfc4] bg-white px-4 py-2 text-xs font-semibold text-[#141413] hover:bg-[#ebe6df]"
             >
               Cambiar de Cliente / Invitación
             </button>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-3">
-            <div className="rounded-xl border border-[#e6e5e0] bg-white p-5">
-              <span className="text-xs text-[#807d72] uppercase">
+            <div className="rounded-xl border border-[#e6dfd8] bg-white p-5">
+              <span className="text-xs text-[#6c6a64] uppercase">
                 Familias / Grupos en Lista
               </span>
-              <p className="mt-1 text-3xl font-bold text-[#26251e]">
+              <p className="mt-1 text-3xl font-bold text-[#141413]">
                 {activeGuests.length} Grupos
               </p>
-              <span className="text-xs text-[#f54e00]">
+              <span className="text-xs text-[#cc785c]">
                 {totalAllocated} pases asignados en total
               </span>
             </div>
-            <div className="rounded-xl border border-[#e6e5e0] bg-white p-5">
-              <span className="text-xs text-[#807d72] uppercase">
+            <div className="rounded-xl border border-[#e6dfd8] bg-white p-5">
+              <span className="text-xs text-[#6c6a64] uppercase">
                 Invitados Confirmados (RSVP)
               </span>
-              <p className="mt-1 text-3xl font-bold text-[#1f8a65]">
+              <p className="mt-1 text-3xl font-bold text-[#5db872]">
                 {totalConfirmed} Personas
               </p>
-              <span className="text-xs text-[#807d72]">
+              <span className="text-xs text-[#6c6a64]">
                 Con Pase QR firmado generado
               </span>
             </div>
-            <div className="rounded-xl border border-[#e6e5e0] bg-white p-5">
-              <span className="text-xs text-[#807d72] uppercase">
+            <div className="rounded-xl border border-[#e6dfd8] bg-white p-5">
+              <span className="text-xs text-[#6c6a64] uppercase">
                 URL Base del Cliente
               </span>
-              <p className="mt-1 truncate font-mono text-base font-bold text-[#f54e00]">
+              <p className="mt-1 truncate font-mono text-base font-bold text-[#cc785c]">
                 /{slug}
               </p>
-              <span className="text-xs text-[#807d72]">
+              <span className="text-xs text-[#6c6a64]">
                 Smart Guest Links activos (?g=token)
               </span>
             </div>
@@ -1435,10 +1452,10 @@ function DashboardContent() {
 
           <form
             onSubmit={handleAddGuestGroup}
-            className="grid gap-4 rounded-xl border border-[#e6e5e0] bg-[#fafaf7] p-6 sm:grid-cols-6"
+            className="grid gap-4 rounded-xl border border-[#e6dfd8] bg-[#f5f0e8] p-6 sm:grid-cols-6"
           >
             <div className="sm:col-span-2">
-              <label className="mb-1 block text-xs text-[#807d72]">
+              <label className="mb-1 block text-xs text-[#6c6a64]">
                 Nombre de Familia o Invitado
               </label>
               <input
@@ -1447,11 +1464,11 @@ function DashboardContent() {
                 value={newGuestName}
                 onChange={(e) => setNewGuestName(e.target.value)}
                 placeholder="Ej. Familia Hernández Soto"
-                className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3.5 py-2.5 text-sm text-[#26251e] outline-none"
+                className="w-full rounded-xl border border-[#d7cfc4] bg-[#faf9f5] px-3.5 py-2.5 text-sm text-[#141413] outline-none"
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs text-[#807d72]">
+              <label className="mb-1 block text-xs text-[#6c6a64]">
                 WhatsApp
               </label>
               <input
@@ -1459,11 +1476,11 @@ function DashboardContent() {
                 value={newGuestPhone}
                 onChange={(e) => setNewGuestPhone(e.target.value)}
                 placeholder="525512345678"
-                className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3.5 py-2.5 text-sm text-[#26251e] outline-none"
+                className="w-full rounded-xl border border-[#d7cfc4] bg-[#faf9f5] px-3.5 py-2.5 text-sm text-[#141413] outline-none"
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs text-[#807d72]">
+              <label className="mb-1 block text-xs text-[#6c6a64]">
                 Pases Adulto / Niño
               </label>
               <div className="flex gap-2">
@@ -1473,7 +1490,7 @@ function DashboardContent() {
                   max={15}
                   value={newGuestAdults}
                   onChange={(e) => setNewGuestAdults(Number(e.target.value))}
-                  className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3 py-2.5 text-sm text-[#26251e] outline-none"
+                  className="w-full rounded-xl border border-[#d7cfc4] bg-[#faf9f5] px-3 py-2.5 text-sm text-[#141413] outline-none"
                 />
                 <input
                   type="number"
@@ -1481,34 +1498,34 @@ function DashboardContent() {
                   max={10}
                   value={newGuestChildren}
                   onChange={(e) => setNewGuestChildren(Number(e.target.value))}
-                  className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3 py-2.5 text-sm text-[#26251e] outline-none"
+                  className="w-full rounded-xl border border-[#d7cfc4] bg-[#faf9f5] px-3 py-2.5 text-sm text-[#141413] outline-none"
                 />
               </div>
             </div>
             <div>
-              <label className="mb-1 block text-xs text-[#807d72]">
+              <label className="mb-1 block text-xs text-[#6c6a64]">
                 Mesa Asignada
               </label>
               <input
                 type="text"
                 value={newGuestTable}
                 onChange={(e) => setNewGuestTable(e.target.value)}
-                className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3.5 py-2.5 text-sm text-[#26251e] outline-none"
+                className="w-full rounded-xl border border-[#d7cfc4] bg-[#faf9f5] px-3.5 py-2.5 text-sm text-[#141413] outline-none"
               />
             </div>
             <div className="flex items-end">
               <button
                 type="submit"
-                className="w-full cursor-pointer rounded-xl bg-[#f54e00] py-2.5 text-xs font-bold tracking-wider text-white uppercase transition hover:bg-[#d04200]"
+                className="w-full cursor-pointer rounded-xl bg-[#cc785c] py-2.5 text-xs font-bold tracking-wider text-white uppercase transition hover:bg-[#a9583e]"
               >
                 + Crear Pase Único
               </button>
             </div>
           </form>
 
-          <div className="overflow-x-auto rounded-xl border border-[#e6e5e0] bg-white">
+          <div className="overflow-x-auto rounded-xl border border-[#e6dfd8] bg-white">
             <table className="w-full text-left text-sm">
-              <thead className="border-b border-[#e6e5e0] bg-[#f7f7f4] text-xs text-[#807d72] uppercase">
+              <thead className="border-b border-[#e6dfd8] bg-[#faf9f5] text-xs text-[#6c6a64] uppercase">
                 <tr>
                   <th className="px-5 py-3.5">Familia / Invitado</th>
                   <th className="px-5 py-3.5">Cupo Asignado</th>
@@ -1532,10 +1549,10 @@ function DashboardContent() {
                   });
 
                   return (
-                    <tr key={g.id} className="hover:bg-[#fafaf7]">
-                      <td className="px-5 py-4 font-semibold text-[#26251e]">
+                    <tr key={g.id} className="hover:bg-[#f5f0e8]">
+                      <td className="px-5 py-4 font-semibold text-[#141413]">
                         {g.groupName}
-                        <span className="block text-xs font-normal text-[#807d72]">
+                        <span className="block text-xs font-normal text-[#6c6a64]">
                           Token: {g.guestToken}
                         </span>
                       </td>
@@ -1549,10 +1566,10 @@ function DashboardContent() {
                         <span
                           className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                             g.rsvpStatus === 'confirmed'
-                              ? 'bg-[#1f8a65]/10 text-[#1f8a65]'
+                              ? 'bg-[#5db872]/10 text-[#5db872]'
                               : g.rsvpStatus === 'viewed'
-                                ? 'bg-[#f54e00]/10 text-[#d04200]'
-                                : 'bg-[#efeee8] text-[#807d72]'
+                                ? 'bg-[#cc785c]/10 text-[#a9583e]'
+                                : 'bg-[#ebe6df] text-[#6c6a64]'
                           }`}
                         >
                           {g.rsvpStatus === 'confirmed'
@@ -1562,14 +1579,14 @@ function DashboardContent() {
                               : 'Pendiente'}
                         </span>
                       </td>
-                      <td className="px-5 py-4 text-xs text-[#5a5852]">
+                      <td className="px-5 py-4 text-xs text-[#3d3d3a]">
                         {g.tableName}
                       </td>
                       <td className="px-5 py-4">
                         <Link
                           href={invitePath}
                           target="_blank"
-                          className="inline-flex cursor-pointer items-center gap-1 text-xs font-medium text-[#f54e00] hover:underline"
+                          className="inline-flex cursor-pointer items-center gap-1 text-xs font-medium text-[#cc785c] hover:underline"
                         >
                           <span>Abrir sobre personalizado</span>
                           <ExternalLink className="h-3 w-3" />
@@ -1585,7 +1602,7 @@ function DashboardContent() {
                               );
                               toast.success('Link único copiado');
                             }}
-                            className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[#cfcdc4] px-2.5 py-1.5 text-xs text-[#26251e] hover:bg-[#efeee8]"
+                            className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[#d7cfc4] px-2.5 py-1.5 text-xs text-[#141413] hover:bg-[#ebe6df]"
                           >
                             <Copy className="h-3.5 w-3.5" />
                             Copiar Link
@@ -1594,7 +1611,7 @@ function DashboardContent() {
                             href={waUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex cursor-pointer items-center gap-1 rounded-lg bg-[#1f8a65] px-3 py-1.5 text-xs font-semibold text-[#26251e] hover:bg-[#1f8a65]"
+                            className="inline-flex cursor-pointer items-center gap-1 rounded-lg bg-[#5db872] px-3 py-1.5 text-xs font-semibold text-[#141413] hover:bg-[#5db872]"
                           >
                             <Send className="h-3.5 w-3.5" />
                             WhatsApp
@@ -1615,14 +1632,14 @@ function DashboardContent() {
       ===================================================================== */}
       {activeTab === 'checkin' && (
         <div className="mx-auto w-full max-w-4xl space-y-6 p-6 sm:p-10">
-          <div className="rounded-xl border border-[#e6e5e0] bg-white p-8 text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-xl bg-[#f54e00]/10 text-[#f54e00]">
+          <div className="rounded-xl border border-[#e6dfd8] bg-white p-8 text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-xl bg-[#cc785c]/10 text-[#cc785c]">
               <QrCode className="h-8 w-8" />
             </div>
-            <h2 className="text-2xl font-bold text-[#26251e]">
+            <h2 className="text-2xl font-bold text-[#141413]">
               Modo Recepción — {title} ({clientName})
             </h2>
-            <p className="mx-auto mt-2 max-w-xl text-sm text-[#807d72]">
+            <p className="mx-auto mt-2 max-w-xl text-sm text-[#6c6a64]">
               Valida la firma HMAC-SHA256 de los códigos QR en la puerta del
               evento y asigna el ingreso en tiempo real.
             </p>
@@ -1631,16 +1648,16 @@ function DashboardContent() {
               {activeGuests.map((g) => (
                 <div
                   key={g.id}
-                  className="flex flex-col justify-between rounded-xl border border-[#e6e5e0] bg-[#f7f7f4] p-5"
+                  className="flex flex-col justify-between rounded-xl border border-[#e6dfd8] bg-[#faf9f5] p-5"
                 >
                   <div>
-                    <span className="text-[11px] font-bold tracking-wider text-[#f54e00] uppercase">
+                    <span className="text-[11px] font-bold tracking-wider text-[#cc785c] uppercase">
                       {g.tableName}
                     </span>
-                    <h3 className="mt-1 font-bold text-[#26251e]">
+                    <h3 className="mt-1 font-bold text-[#141413]">
                       {g.groupName}
                     </h3>
-                    <p className="mt-1 text-xs text-[#807d72]">
+                    <p className="mt-1 text-xs text-[#6c6a64]">
                       Ingresaron: {g.checkedInCount} de{' '}
                       {g.allocatedAdults + g.allocatedChildren} pases
                     </p>
@@ -1666,7 +1683,7 @@ function DashboardContent() {
                         `Check-in validado: ${g.groupName} -> Pasar a ${g.tableName}`
                       );
                     }}
-                    className="mt-4 w-full cursor-pointer rounded-xl bg-[#efeee8] py-2.5 text-xs font-semibold text-white transition hover:bg-[#f54e00] hover:text-white"
+                    className="mt-4 w-full cursor-pointer rounded-xl bg-[#ebe6df] py-2.5 text-xs font-semibold text-white transition hover:bg-[#cc785c] hover:text-white"
                   >
                     Simular Escaneo QR en Puerta
                   </button>
@@ -1681,21 +1698,21 @@ function DashboardContent() {
           MODAL: CREAR NUEVA INVITACIÓN DE CLIENTE (GUARDADO POR TEMPLATE)
       ===================================================================== */}
       {isNewModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#26251e]/70 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-xl border border-[#cfcdc4] bg-white p-6  sm:p-8">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#141413]/70 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-lg rounded-xl border border-[#d7cfc4] bg-white p-6  sm:p-8">
             <div className="mb-5 flex items-center justify-between">
               <div>
-                <span className="text-xs font-bold tracking-wider text-[#f54e00] uppercase">
+                <span className="text-xs font-bold tracking-wider text-[#cc785c] uppercase">
                   Registro Multi-Cliente
                 </span>
-                <h3 className="text-xl font-bold text-[#26251e]">
+                <h3 className="text-xl font-bold text-[#141413]">
                   Crear Nueva Invitación y Guardar en Template
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setIsNewModalOpen(false)}
-                className="cursor-pointer rounded-lg p-1.5 text-[#807d72] hover:bg-[#efeee8] hover:text-[#26251e]"
+                className="cursor-pointer rounded-lg p-1.5 text-[#6c6a64] hover:bg-[#ebe6df] hover:text-[#141413]"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -1706,7 +1723,7 @@ function DashboardContent() {
               className="space-y-4"
             >
               <div>
-                <label className="mb-1 block text-xs font-semibold text-[#5a5852]">
+                <label className="mb-1 block text-xs font-semibold text-[#3d3d3a]">
                   1. Selecciona el Template (Se guardará en su historial)
                 </label>
                 <select
@@ -1717,7 +1734,7 @@ function DashboardContent() {
                       templateId: e.target.value as TemplateId,
                     }))
                   }
-                  className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3.5 py-2.5 text-sm text-[#26251e] outline-none focus:border-[#f54e00]"
+                  className="w-full rounded-xl border border-[#d7cfc4] bg-[#faf9f5] px-3.5 py-2.5 text-sm text-[#141413] outline-none focus:border-[#cc785c]"
                 >
                   {TEMPLATES_CATALOG.map((tpl) => (
                     <option key={tpl.id} value={tpl.id}>
@@ -1729,7 +1746,7 @@ function DashboardContent() {
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
-                  <label className="mb-1 block text-xs font-semibold text-[#5a5852]">
+                  <label className="mb-1 block text-xs font-semibold text-[#3d3d3a]">
                     2. Nombre del Cliente
                   </label>
                   <input
@@ -1743,12 +1760,12 @@ function DashboardContent() {
                       }))
                     }
                     placeholder="Ej. Familia Garza / Lucía y Fer"
-                    className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3.5 py-2.5 text-sm text-[#26251e] outline-none focus:border-[#f54e00]"
+                    className="w-full rounded-xl border border-[#d7cfc4] bg-[#faf9f5] px-3.5 py-2.5 text-sm text-[#141413] outline-none focus:border-[#cc785c]"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-xs font-semibold text-[#5a5852]">
+                  <label className="mb-1 block text-xs font-semibold text-[#3d3d3a]">
                     Teléfono WhatsApp del Cliente
                   </label>
                   <input
@@ -1761,14 +1778,14 @@ function DashboardContent() {
                       }))
                     }
                     placeholder="+52 55 1234 5678"
-                    className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3.5 py-2.5 text-sm text-[#26251e] outline-none focus:border-[#f54e00]"
+                    className="w-full rounded-xl border border-[#d7cfc4] bg-[#faf9f5] px-3.5 py-2.5 text-sm text-[#141413] outline-none focus:border-[#cc785c]"
                   />
                 </div>
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
-                  <label className="mb-1 block text-xs font-semibold text-[#5a5852]">
+                  <label className="mb-1 block text-xs font-semibold text-[#3d3d3a]">
                     3. Título del Evento (Festejados)
                   </label>
                   <input
@@ -1784,12 +1801,12 @@ function DashboardContent() {
                       }));
                     }}
                     placeholder="Ej. Boda Lucía & Fernando"
-                    className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3.5 py-2.5 text-sm text-[#26251e] outline-none focus:border-[#f54e00]"
+                    className="w-full rounded-xl border border-[#d7cfc4] bg-[#faf9f5] px-3.5 py-2.5 text-sm text-[#141413] outline-none focus:border-[#cc785c]"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-xs font-semibold text-[#5a5852]">
+                  <label className="mb-1 block text-xs font-semibold text-[#3d3d3a]">
                     Fecha del Evento
                   </label>
                   <input
@@ -1802,17 +1819,17 @@ function DashboardContent() {
                         eventDate: e.target.value,
                       }))
                     }
-                    className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3.5 py-2.5 text-sm text-[#26251e] outline-none focus:border-[#f54e00]"
+                    className="w-full rounded-xl border border-[#d7cfc4] bg-[#faf9f5] px-3.5 py-2.5 text-sm text-[#141413] outline-none focus:border-[#cc785c]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="mb-1 block text-xs font-semibold text-[#5a5852]">
+                <label className="mb-1 block text-xs font-semibold text-[#3d3d3a]">
                   4. URL Personalizada del Cliente
                 </label>
-                <div className="flex items-center rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3.5 py-2.5 text-xs">
-                  <span className="text-[#a09c92]">
+                <div className="flex items-center rounded-xl border border-[#d7cfc4] bg-[#faf9f5] px-3.5 py-2.5 text-xs">
+                  <span className="text-[#8e8b82]">
                     www.dominioprincipal.com/
                   </span>
                   <input
@@ -1826,7 +1843,7 @@ function DashboardContent() {
                       }))
                     }
                     placeholder="boda-lucia-y-fernando"
-                    className="ml-1 flex-1 bg-transparent font-mono font-bold text-[#f54e00] outline-none"
+                    className="ml-1 flex-1 bg-transparent font-mono font-bold text-[#cc785c] outline-none"
                   />
                 </div>
               </div>
@@ -1835,13 +1852,13 @@ function DashboardContent() {
                 <button
                   type="button"
                   onClick={() => setIsNewModalOpen(false)}
-                  className="cursor-pointer rounded-xl border border-[#cfcdc4] px-4 py-2.5 text-xs font-semibold text-[#5a5852] hover:bg-[#efeee8]"
+                  className="cursor-pointer rounded-xl border border-[#d7cfc4] px-4 py-2.5 text-xs font-semibold text-[#3d3d3a] hover:bg-[#ebe6df]"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl bg-[#f54e00] px-5 py-2.5 text-xs font-bold tracking-wider text-white uppercase  transition hover:bg-[#d04200]"
+                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl bg-[#cc785c] px-5 py-2.5 text-xs font-bold tracking-wider text-white uppercase  transition hover:bg-[#a9583e]"
                 >
                   <Wand2 className="h-4 w-4" />
                   Guardar en Historial y Personalizar
@@ -1859,7 +1876,7 @@ export default function DashboardPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-dvh items-center justify-center bg-[#f7f7f4] text-[#807d72]">
+        <div className="flex min-h-dvh items-center justify-center bg-[#faf9f5] text-[#6c6a64]">
           Cargando Dashboard...
         </div>
       }

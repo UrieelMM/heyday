@@ -59,39 +59,39 @@ function LoginFormContent() {
   };
 
   return (
-    <main className="login-shell min-h-dvh bg-[#f7f7f4] text-[#26251e]">
-      <header className="border-b border-[#e6e5e0]">
+    <main className="login-shell min-h-dvh bg-[#faf9f5] text-[#141413]">
+      <header className="border-b border-[#e6dfd8]">
         <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between px-5 sm:px-8">
-          <Link href="/" className="inline-flex items-center gap-2 text-sm text-[#5a5852] transition-colors hover:text-[#26251e]">
+          <Link href="/" className="inline-flex items-center gap-2 text-sm text-[#3d3d3a] transition-colors hover:text-[#141413]">
             <ArrowLeft className="h-4 w-4" />
             Volver al sitio
           </Link>
           <div className="inline-flex items-center gap-2.5">
-            <span className="grid h-8 w-8 grid-cols-2 gap-0.5 rounded-md bg-[#f54e00] p-1.5">
+            <span className="grid h-8 w-8 grid-cols-2 gap-0.5 rounded-md bg-[#cc785c] p-1.5">
               <span className="rounded-[1px] bg-white/95" />
               <span className="rounded-[1px] bg-white/65" />
               <span className="rounded-[1px] bg-white/65" />
               <span className="rounded-[1px] bg-white/95" />
             </span>
-            <span className="text-sm font-medium tracking-[-0.02em] text-[#f54e00]">Atelier Invitaciones</span>
+            <span className="text-sm font-medium tracking-[-0.02em] text-[#cc785c]">Atelier Invitaciones</span>
           </div>
         </div>
       </header>
 
       <div className="mx-auto grid min-h-[calc(100dvh-64px)] max-w-[1200px] lg:grid-cols-2">
-        <section className="hidden border-r border-[#e6e5e0] px-8 py-20 lg:flex lg:flex-col lg:justify-between">
+        <section className="hidden border-r border-[#e6dfd8] px-8 py-20 lg:flex lg:flex-col lg:justify-between">
           <div>
-            <p className="eyebrow text-[#f54e00]">Panel de administración</p>
-            <h1 className="editorial-display mt-5 max-w-lg text-6xl leading-[1.05]">
+            <p className="eyebrow text-[#cc785c]">Panel de administración</p>
+            <h1 className="editorial-display mt-5 max-w-lg font-[var(--font-cormorant)] text-6xl leading-[1.05]">
               Todo tu evento, en un espacio que sí se siente claro.
             </h1>
-            <p className="mt-6 max-w-md text-base leading-7 text-[#5a5852]">
+            <p className="mt-6 max-w-md text-base leading-7 text-[#3d3d3a]">
               Continúa donde lo dejaste: clientes, diseño, invitados y recepción comparten el mismo flujo.
             </p>
           </div>
 
-          <div className="max-w-md rounded-xl bg-[#26251e] p-6 text-[#f7f7f4]">
-            <p className="eyebrow text-[#dfa88f]">Dentro del panel</p>
+          <div className="max-w-md rounded-xl bg-[#141413] p-6 text-[#faf9f5]">
+            <p className="eyebrow text-[#e8a55a]">Dentro del panel</p>
             <div className="mt-5 space-y-4">
               {[
                 'Historial por cliente y template',
@@ -100,7 +100,7 @@ function LoginFormContent() {
                 'Pases QR para recepción',
               ].map((item) => (
                 <div key={item} className="flex items-center gap-3 border-b border-white/15 pb-4 text-sm last:border-0 last:pb-0">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#9fc9a2] text-[#26251e]">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#5db872] text-[#141413]">
                     <Check className="h-3 w-3" />
                   </span>
                   {item}
@@ -113,35 +113,35 @@ function LoginFormContent() {
         <section className="flex items-center justify-center px-5 py-12 sm:px-8 lg:px-16">
           <div className="w-full max-w-md">
             <div className="mb-8">
-              <span className="flex h-11 w-11 items-center justify-center rounded-lg border border-[#e6e5e0] bg-white text-[#f54e00]">
+              <span className="flex h-11 w-11 items-center justify-center rounded-lg border border-[#e6dfd8] bg-white text-[#cc785c]">
                 <ShieldCheck className="h-5 w-5" />
               </span>
-              <h2 className="editorial-display mt-5 text-4xl">Bienvenido de vuelta.</h2>
-              <p className="mt-2 text-sm leading-6 text-[#5a5852]">
+              <h2 className="editorial-display mt-5 font-[var(--font-cormorant)] text-5xl">Bienvenido de vuelta.</h2>
+              <p className="mt-2 text-sm leading-6 text-[#3d3d3a]">
                 Ingresa para gestionar tus invitaciones y clientes.
               </p>
             </div>
 
-            <div className="mb-6 flex items-center justify-between gap-4 rounded-lg border border-[#e6e5e0] bg-[#fafaf7] p-3.5">
+            <div className="mb-6 flex items-center justify-between gap-4 rounded-lg border border-[#e6dfd8] bg-[#f5f0e8] p-3.5">
               <div className="flex items-center gap-3">
-                <span className="flex h-8 w-8 items-center justify-center rounded-md bg-[#dfa88f]/55 text-[#26251e]">
+                <span className="flex h-8 w-8 items-center justify-center rounded-md bg-[#e8a55a]/55 text-[#141413]">
                   <KeyRound className="h-4 w-4" />
                 </span>
                 <div>
                   <p className="text-xs font-medium">Modo demo local</p>
-                  <p className="mt-0.5 text-[11px] text-[#807d72]">Acceso preparado para explorar el producto</p>
+                  <p className="mt-0.5 text-[11px] text-[#6c6a64]">Acceso preparado para explorar el producto</p>
                 </div>
               </div>
-              <button type="button" onClick={handleQuickFill} className="shrink-0 rounded-md border border-[#cfcdc4] bg-white px-3 py-2 text-xs font-medium transition-colors hover:bg-[#efeee8]">
+              <button type="button" onClick={handleQuickFill} className="shrink-0 rounded-md border border-[#d7cfc4] bg-white px-3 py-2 text-xs font-medium transition-colors hover:bg-[#ebe6df]">
                 Rellenar
               </button>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label htmlFor="admin-email" className="mb-2 block text-xs font-medium text-[#5a5852]">Correo electrónico</label>
+                <label htmlFor="admin-email" className="mb-2 block text-xs font-medium text-[#3d3d3a]">Correo electrónico</label>
                 <div className="relative">
-                  <Mail className="pointer-events-none absolute left-3.5 top-3.5 h-4 w-4 text-[#a09c92]" />
+                  <Mail className="pointer-events-none absolute left-3.5 top-3.5 h-4 w-4 text-[#8e8b82]" />
                   <input
                     id="admin-email"
                     type="email"
@@ -149,15 +149,15 @@ function LoginFormContent() {
                     value={email}
                     onChange={(event) => setEmail(event.target.value)}
                     placeholder="admin@atelierinvitaciones.com"
-                    className="w-full rounded-lg border py-3 pr-4 pl-10 text-sm outline-none transition-colors focus:border-[#f54e00]"
+                    className="w-full rounded-lg border py-3 pr-4 pl-10 text-sm outline-none transition-colors focus:border-[#cc785c]"
                   />
                 </div>
               </div>
 
               <div>
-                <label htmlFor="admin-password" className="mb-2 block text-xs font-medium text-[#5a5852]">Contraseña</label>
+                <label htmlFor="admin-password" className="mb-2 block text-xs font-medium text-[#3d3d3a]">Contraseña</label>
                 <div className="relative">
-                  <Lock className="pointer-events-none absolute left-3.5 top-3.5 h-4 w-4 text-[#a09c92]" />
+                  <Lock className="pointer-events-none absolute left-3.5 top-3.5 h-4 w-4 text-[#8e8b82]" />
                   <input
                     id="admin-password"
                     type="password"
@@ -165,7 +165,7 @@ function LoginFormContent() {
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
                     placeholder="••••••••"
-                    className="w-full rounded-lg border py-3 pr-4 pl-10 text-sm outline-none transition-colors focus:border-[#f54e00]"
+                    className="w-full rounded-lg border py-3 pr-4 pl-10 text-sm outline-none transition-colors focus:border-[#cc785c]"
                   />
                 </div>
               </div>
@@ -173,14 +173,14 @@ function LoginFormContent() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#f54e00] px-5 text-sm font-medium text-white transition-colors hover:bg-[#d04200] disabled:opacity-50"
+                className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#cc785c] px-5 text-sm font-medium text-white transition-colors hover:bg-[#a9583e] disabled:opacity-50"
               >
                 {isSubmitting ? 'Abriendo tu espacio…' : 'Entrar al dashboard'}
                 {!isSubmitting && <ArrowRight className="h-4 w-4" />}
               </button>
             </form>
 
-            <p className="mono-label mt-6 text-center text-[10px] text-[#a09c92]">
+            <p className="mono-label mt-6 text-center text-[10px] text-[#8e8b82]">
               DEMO LOCAL · LISTO PARA SUPABASE AUTH
             </p>
           </div>
@@ -194,7 +194,7 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-dvh items-center justify-center bg-[#f7f7f4] text-sm text-[#807d72]">
+        <div className="flex min-h-dvh items-center justify-center bg-[#faf9f5] text-sm text-[#6c6a64]">
           Preparando acceso…
         </div>
       }
