@@ -1,6 +1,6 @@
 # Migraciones de HeyDay
 
-Las nueve migraciones de `supabase/migrations/` están ordenadas por timestamp para usarse con Supabase CLI. Están preparadas para un proyecto **nuevo** y todavía no se han ejecutado contra una base real.
+Las nueve migraciones de `supabase/migrations/` están ordenadas por timestamp para usarse con Supabase CLI. Se aplicaron al proyecto `odpiybzxaviifydyqfbk` (`heyday.party`) el 28 de octubre de 2026. `supabase migration list --linked` confirmó que las nueve versiones locales y remotas coinciden. Una consulta posterior devolvió 10 diseños, 10 tablas con RLS y 2 buckets.
 
 | Orden | Migración | Contenido |
 | --- | --- | --- |
@@ -14,11 +14,11 @@ Las nueve migraciones de `supabase/migrations/` están ordenadas por timestamp p
 | 8 | `20261028000800_rpc_functions_and_views.sql` | Vista y funciones de historial y métricas |
 | 9 | `20261028000900_seed_templates.sql` | Los diez diseños del catálogo actual de la app |
 
-## Al crear el proyecto
+## Para continuar el desarrollo
 
-1. Instala Supabase CLI desde su distribución oficial. En la raíz del repositorio ejecuta `supabase init` para generar `supabase/config.toml`, luego `supabase login` y `supabase link --project-ref <project-ref>`.
-2. Ejecuta `supabase db push`. Comprueba después `supabase migration list` y que `public.templates_catalog` tenga diez filas.
-3. Crea tu usuario en **Authentication > Users**. El trigger crea su perfil con rol `client_host`, sin privilegios de administrador.
+1. La CLI está instalada como dependencia de desarrollo y `supabase/config.toml` está inicializado. En una máquina nueva ejecuta `npx supabase login` y `npx supabase link --project-ref odpiybzxaviifydyqfbk`.
+2. Para futuras migraciones, crea un archivo SQL con un timestamp posterior, ejecuta `npx supabase db push --linked` y comprueba `npx supabase migration list --linked`. No vuelvas a ejecutar manualmente las nueve migraciones ya aplicadas.
+3. Crea tu usuario en **Authentication > Users** si aún no existe. El trigger crea su perfil con rol `client_host`, sin privilegios de administrador.
 4. Desde **SQL Editor**, promueve **solo tu cuenta** y verifica que la consulta devuelva una fila:
 
 ```sql
@@ -28,7 +28,7 @@ WHERE id = (SELECT id FROM auth.users WHERE email = 'tu-correo@ejemplo.com')
 RETURNING id, email, role;
 ```
 
-5. Copia `.env.example` a `.env.local` y configura la URL, la clave **publishable** y la clave **secret**. La clave secret y `QR_MASTER_SECRET` son exclusivamente del servidor y nunca deben llevar el prefijo `NEXT_PUBLIC_`.
+5. `.env.local` contiene la URL y la clave **publishable** entregadas para este proyecto. Cuando se implemente el acceso del servidor a datos privados, agrega la clave **secret** en `SUPABASE_SECRET_KEY`. Esa clave y `QR_MASTER_SECRET` son exclusivamente del servidor y nunca deben llevar el prefijo `NEXT_PUBLIC_`.
 
 No combines `supabase db push` con cambios de esquema desde SQL Editor: el editor no registra las migraciones en el historial de la CLI. El `UPDATE` anterior cambia datos, no el esquema. Para futuras modificaciones, crea un archivo de migración con un timestamp posterior.
 
@@ -48,8 +48,10 @@ WHERE id IN ('event-assets', 'guest-memories');
 
 El resultado esperado es **10 diseños**, RLS activo en las **10 tablas**, `event-assets` público y `guest-memories` privado.
 
+En la comprobación inicial, `auth.users` tenía **0 usuarios** y no había administradores. Para activar el acceso real, crea tu usuario en Supabase Auth y ejecuta el `UPDATE` de promoción anterior; comprueba que `RETURNING` devuelva una fila.
+
 ## Estado de la aplicación
 
-El dashboard todavía usa autenticación de demostración y guarda invitaciones en `localStorage`; las páginas públicas y el formulario RSVP también muestran datos de demostración. Configurar `.env.local` **no conecta automáticamente estos flujos a Supabase**. Esa integración requiere reemplazar la autenticación de prueba, leer y escribir datos desde el servidor, validar eventos publicados y tokens de invitados, y generar URLs firmadas para las fotos privadas. Los endpoints públicos deben devolver solo campos permitidos y usar la clave secret únicamente en el servidor.
+Los clientes de navegador y servidor ya usan la URL y la clave pública del proyecto, y `src/middleware.ts` renueva las sesiones de Supabase en `/login` y `/dashboard`. El dashboard todavía usa autenticación de demostración y guarda invitaciones en `localStorage`; las páginas públicas y el formulario RSVP también muestran datos de demostración. Configurar `.env.local` **no conecta automáticamente estos flujos a Supabase**. Esa integración requiere reemplazar la autenticación de prueba, leer y escribir datos desde el servidor, validar eventos publicados y tokens de invitados, y generar URLs firmadas para las fotos privadas. Los endpoints públicos deben devolver solo campos permitidos y usar la clave secret únicamente en el servidor.
 
 El límite de 50 fotos se aplica en la tabla `event_memories`. La carga del archivo y la creación del registro deben coordinarse desde el servidor para limpiar un archivo si la inserción falla. Las subidas anónimas directas a Storage están deshabilitadas.

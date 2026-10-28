@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS public.events (
   config JSONB NOT NULL DEFAULT '{}'::jsonb,
   
   -- Clave única por evento para firmar códigos QR (HMAC-SHA256)
-  qr_secret_key TEXT NOT NULL DEFAULT encode(gen_random_bytes(32), 'hex'),
+  qr_secret_key TEXT NOT NULL DEFAULT encode(extensions.gen_random_bytes(32), 'hex'),
   
   -- Métricas
   views_count INTEGER NOT NULL DEFAULT 0 CHECK (views_count >= 0),
