@@ -7,9 +7,9 @@
 CREATE TABLE IF NOT EXISTS public.profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   full_name TEXT NOT NULL,
-  email TEXT NOT NULL UNIQUE,
+  email TEXT UNIQUE,
   phone TEXT,
-  role public.user_role NOT NULL DEFAULT 'agency_admin',
+  role public.user_role NOT NULL DEFAULT 'client_host',
   avatar_url TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -20,21 +20,24 @@ CREATE TRIGGER trg_profiles_updated_at
   BEFORE UPDATE ON public.profiles
   FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
 
--- Trigger automático para crear un perfil cuando se registra un usuario en Supabase Auth
+-- El rol de administrador se asigna manualmente desde SQL Editor después de crear la cuenta.
+-- Nunca se toma el rol desde los metadatos que puede enviar el usuario al registrarse.
 CREATE OR REPLACE FUNCTION public.handle_new_auth_user()
 RETURNS TRIGGER AS $$
 BEGIN
   INSERT INTO public.profiles (id, full_name, email, role)
   VALUES (
     NEW.id,
-    COALESCE(NEW.raw_user_meta_data->>'full_name', split_part(NEW.email, '@', 1)),
+    COALESCE(NULLIF(NEW.raw_user_meta_data->>'full_name', ''), NULLIF(split_part(COALESCE(NEW.email, ''), '@', 1), ''), 'Usuario'),
     NEW.email,
-    COALESCE((NEW.raw_user_meta_data->>'role')::public.user_role, 'agency_admin')
+    'client_host'::public.user_role
   )
   ON CONFLICT (id) DO NOTHING;
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = '';
+
+REVOKE EXECUTE ON FUNCTION public.handle_new_auth_user() FROM PUBLIC, anon, authenticated;
 
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created

@@ -1,6 +1,7 @@
 -- ============================================================================
--- ARCHIVO 09: SEED INICIAL DE LOS 10 TEMPLATES OFICIALES
+-- ARCHIVO 09: CATÁLOGO ACTUAL DE LOS 10 DISEÑOS HEYDAY
 -- Orden de ejecución: 9 de 9
+-- Valores sincronizados con src/lib/templates/templates-catalog.ts.
 -- ============================================================================
 
 INSERT INTO public.templates_catalog (
@@ -14,6 +15,8 @@ INSERT INTO public.templates_catalog (
   preview_image_url,
   default_colors,
   default_fonts,
+  envelope_variant,
+  ambient_effect,
   sort_order
 )
 VALUES
@@ -23,11 +26,13 @@ VALUES
     'wedding',
     'Boda Clásica / Luxury',
     'Bestseller Bodas',
-    'Editorial de alta costura en tonos marfil cálido y oro champagne, con arcos arquitectónicos que se expanden al hacer scroll.',
-    'Arc Mask Reveal + Parallax Dorado',
+    'Una invitación de boda como pieza de papelería editorial: sobre nominal, arcos fotográficos, ilustración botánica y capítulos que se revelan al recorrerla.',
+    'Sobre de lacre + Scrollytelling botánico',
     'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1000&q=80',
     '{"bgPrimary":"#FAF7F2","bgSecondary":"#F2ECE1","textPrimary":"#1E1B18","textMuted":"#6E655F","accentPrimary":"#C5A059","accentSecondary":"#8C7355"}'::jsonb,
     '{"headingFont":"Cormorant Garamond","scriptFont":"Pinyon Script","bodyFont":"Montserrat"}'::jsonb,
+    'wax-seal-classic',
+    'gold-sparkles',
     1
   ),
   (
@@ -36,11 +41,13 @@ VALUES
     'wedding',
     'Boda Jardín / Playa / Destino',
     'Ideal Bodas Destino',
-    'Orgánica y cálida con tonos terracota, verde salvia y arena, texturas de papel algodón e ilustraciones botánicas.',
-    'Botanical Sway + Polaroid Stack',
-    'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=1000&q=80',
+    'Boda de jardín con luz de atardecer, papel cálido, botánicos dibujados y recuerdos en fotografías sueltas.',
+    'Sunlit Botanical Hero + Polaroid Scroll',
+    '/images/boho-terracotta/sunset-garden.jpg',
     '{"bgPrimary":"#FBF6F0","bgSecondary":"#EFE5DC","textPrimary":"#2C221E","textMuted":"#6D5B53","accentPrimary":"#C86D51","accentSecondary":"#6B7F6E"}'::jsonb,
     '{"headingFont":"Playfair Display","scriptFont":"Pinyon Script","bodyFont":"Plus Jakarta Sans"}'::jsonb,
+    'wax-seal-classic',
+    'white-petals',
     2
   ),
   (
@@ -49,11 +56,13 @@ VALUES
     'wedding',
     'Boda Civil / Contemporánea',
     'Estilo Vogue',
-    'Blanco y negro de alto contraste con estética de revista editorial, tipografía cinética y carrusel horizontal.',
-    'Theme Inversion + Horizontal Pin Scroll',
-    'https://images.unsplash.com/photo-1537633552985-df8429e8048b?auto=format&fit=crop&w=1000&q=80',
+    'Boda civil en blanco y negro como una edición de revista: grilla precisa, fotografía monocroma y titulares monumentales.',
+    'Editorial Cover Expansion + Monochrome Chapters',
+    '/images/modern-minimal-noir/civil-architecture.jpg',
     '{"bgPrimary":"#FFFFFF","bgSecondary":"#0F0F0F","textPrimary":"#0A0A0A","textMuted":"#666666","accentPrimary":"#111111","accentSecondary":"#7A7A7A"}'::jsonb,
-    '{"headingFont":"Cormorant Garamond","scriptFont":"Pinyon Script","bodyFont":"Inter"}'::jsonb,
+    '{"headingFont":"Cormorant Garamond","scriptFont":"Cormorant Garamond","bodyFont":"Inter"}'::jsonb,
+    'editorial-curtain',
+    'none',
     3
   ),
   (
@@ -62,11 +71,13 @@ VALUES
     'xv_years',
     'XV Años Gala Real',
     'Favorito XV Años',
-    'Romántica e imperial en rosa cuarzo, oro rosa metálico y ciruela, con partículas de destellos dorados y cortejo de honor.',
-    'Golden Sparkle Canvas + SVG Crown Draw',
-    'https://images.unsplash.com/photo-1566737236500-c8ac43014a67?auto=format&fit=crop&w=1000&q=80',
-    '{"bgPrimary":"#FFF9FB","bgSecondary":"#F9EBEF","textPrimary":"#2D1920","textMuted":"#734F5A","accentPrimary":"#D4AF37","accentSecondary":"#B76E79"}'::jsonb,
+    'Un jardín encantado de lavanda, ciruela y rosa empolvado: mariposas, destellos y una experiencia de XV años con carácter propio.',
+    'Cinematic XV Portal + Scroll Chapters',
+    '/images/royal-xv/enchanted-portal.jpg',
+    '{"bgPrimary":"#FAF5FA","bgSecondary":"#F1E5F2","textPrimary":"#35223F","textMuted":"#725D79","accentPrimary":"#9A5C86","accentSecondary":"#C88FA6"}'::jsonb,
     '{"headingFont":"Cinzel","scriptFont":"Great Vibes","bodyFont":"Plus Jakarta Sans"}'::jsonb,
+    'wax-seal-classic',
+    'soft-stars',
     4
   ),
   (
@@ -75,11 +86,13 @@ VALUES
     'xv_years',
     'XV Años Moderno / Nocturno',
     'Tendencia Nocturna',
-    'Estética glassmorphism sobre fondo midnight con acentos magenta y cian eléctrico, pase VIP y playlist interactiva.',
-    'Neon Glow Scrub + VIP Ticket Tear',
-    'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1000&q=80',
+    'XV años como una noche de club: luces magenta y cian, tipografía eléctrica, órbitas luminosas y pase VIP.',
+    'Electric Orbit Reveal + VIP Ticket Exit',
+    '/images/neon-xv-euphoria/night-stage.jpg',
     '{"bgPrimary":"#090614","bgSecondary":"#140E29","textPrimary":"#F8F7FF","textMuted":"#A39BBF","accentPrimary":"#FF2E93","accentSecondary":"#00F0FF"}'::jsonb,
-    '{"headingFont":"Syne","scriptFont":"Great Vibes","bodyFont":"Space Grotesk"}'::jsonb,
+    '{"headingFont":"Syne","scriptFont":"Syne","bodyFont":"Space Grotesk"}'::jsonb,
+    'pass-ticket-tear',
+    'soft-stars',
     5
   ),
   (
@@ -88,11 +101,13 @@ VALUES
     'adult_birthday',
     'Cumpleaños 30s, 40s, 50s / Aniversario',
     'Gala Nocturna',
-    'Sofisticación Art Déco en negro ónix y dorado imperial con burbujas ascendentes y números monumentales con parallax.',
-    'Champagne Bubbles + Monumental Parallax',
-    'https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=1000&q=80',
+    'Cumpleaños adulto de gala inspirado en la geometría Art Déco: un salón dorado se abre hacia el brindis de una vida.',
+    'Art Deco Frame Expansion + Golden Chapters',
+    '/images/golden-jubilee/deco-ballroom.jpg',
     '{"bgPrimary":"#0D0D0D","bgSecondary":"#171614","textPrimary":"#F5F0E6","textMuted":"#A39B8B","accentPrimary":"#E5C158","accentSecondary":"#9E7B4F"}'::jsonb,
-    '{"headingFont":"Playfair Display","scriptFont":"Pinyon Script","bodyFont":"Inter"}'::jsonb,
+    '{"headingFont":"Cinzel","scriptFont":"Pinyon Script","bodyFont":"Inter"}'::jsonb,
+    'editorial-curtain',
+    'gold-sparkles',
     6
   ),
   (
@@ -101,11 +116,13 @@ VALUES
     'kids_birthday',
     'Cumpleaños Infantil',
     'Interactivo',
-    'Diseño alegre estilo Bento con tarjetas redondeadas, animaciones con rebote elástico y explosión de confeti al abrir.',
-    'Elastic Bento Bounce + Confetti Burst',
-    'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1000&q=80',
-    '{"bgPrimary":"#FFFDF7","bgSecondary":"#FFF3D6","textPrimary":"#1E293B","textMuted":"#64748B","accentPrimary":"#FF6B6B","accentSecondary":"#4ECDC4"}'::jsonb,
+    'Cumpleaños infantil como cuento de exploración en papel recortado: sol, camino y tarjetas llenas de juego.',
+    'Paper Adventure Hero + Playful Bento Scroll',
+    '/images/fiesta-kids-adventure/paper-adventure.jpg',
+    '{"bgPrimary":"#FFFDF7","bgSecondary":"#FFF3D6","textPrimary":"#1E293B","textMuted":"#64748B","accentPrimary":"#B84444","accentSecondary":"#4ECDC4"}'::jsonb,
     '{"headingFont":"Fredoka","scriptFont":"Fredoka","bodyFont":"Plus Jakarta Sans"}'::jsonb,
+    'pass-ticket-tear',
+    'confetti',
     7
   ),
   (
@@ -114,11 +131,13 @@ VALUES
     'baptism_communion',
     'Bautizo / Primera Comunión',
     'Ceremonia Religiosa',
-    'Etérea y luminosa en azul cielo empolvado, blanco nube y dorado suave, con protagonismo para padres y padrinos.',
-    'Soft Cloud Parallax + Olive Branch SVG',
-    'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1000&q=80',
-    '{"bgPrimary":"#F8FAFC","bgSecondary":"#EDF4F8","textPrimary":"#1E2D3D","textMuted":"#5B7083","accentPrimary":"#C9A96E","accentSecondary":"#7FA6C4"}'::jsonb,
+    'Bautizo o Primera Comunión con agua o cáliz, vela, lino blanco y ramas de olivo; una invitación luminosa centrada en la fe y la familia.',
+    'Baptismal Light Reveal + Olive Branch Scroll',
+    '/images/celestial-grace/baptism-font.jpg',
+    '{"bgPrimary":"#F8FAFC","bgSecondary":"#EDF4F8","textPrimary":"#1E2D3D","textMuted":"#5B7083","accentPrimary":"#80633B","accentSecondary":"#7FA6C4"}'::jsonb,
     '{"headingFont":"Cormorant Garamond","scriptFont":"Great Vibes","bodyFont":"Plus Jakarta Sans"}'::jsonb,
+    'wax-seal-classic',
+    'soft-stars',
     8
   ),
   (
@@ -132,6 +151,8 @@ VALUES
     'https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=1000&q=80',
     '{"bgPrimary":"#FCF9F5","bgSecondary":"#F2EFE9","textPrimary":"#3D352E","textMuted":"#7A6F66","accentPrimary":"#8FB9A8","accentSecondary":"#F4A28C"}'::jsonb,
     '{"headingFont":"Playfair Display","scriptFont":"Great Vibes","bodyFont":"Plus Jakarta Sans"}'::jsonb,
+    'wax-seal-classic',
+    'white-petals',
     9
   ),
   (
@@ -145,12 +166,20 @@ VALUES
     'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1000&q=80',
     '{"bgPrimary":"#0B132B","bgSecondary":"#1C2541","textPrimary":"#F8F9FA","textMuted":"#94A3B8","accentPrimary":"#D4AF37","accentSecondary":"#5BC0BE"}'::jsonb,
     '{"headingFont":"Cinzel","scriptFont":"Pinyon Script","bodyFont":"Inter"}'::jsonb,
+    'pass-ticket-tear',
+    'gold-sparkles',
     10
   )
 ON CONFLICT (id) DO UPDATE SET
   name = EXCLUDED.name,
+  category = EXCLUDED.category,
   category_label = EXCLUDED.category_label,
+  badge = EXCLUDED.badge,
   description = EXCLUDED.description,
+  signature_animation = EXCLUDED.signature_animation,
   preview_image_url = EXCLUDED.preview_image_url,
   default_colors = EXCLUDED.default_colors,
-  default_fonts = EXCLUDED.default_fonts;
+  default_fonts = EXCLUDED.default_fonts,
+  envelope_variant = EXCLUDED.envelope_variant,
+  ambient_effect = EXCLUDED.ambient_effect,
+  sort_order = EXCLUDED.sort_order;

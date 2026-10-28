@@ -1,26 +1,55 @@
-# Guía de Implementación SQL en Supabase
+# Migraciones de HeyDay
 
-Esta carpeta contiene toda la infraestructura de base de datos separada modularmente en **9 archivos SQL** numerados dentro de `supabase/migrations/`.
+Las nueve migraciones de `supabase/migrations/` están ordenadas por timestamp para usarse con Supabase CLI. Están preparadas para un proyecto **nuevo** y todavía no se han ejecutado contra una base real.
 
-## Orden de Ejecución en el SQL Editor de Supabase
+| Orden | Migración | Contenido |
+| --- | --- | --- |
+| 1 | `20261028000100_extensions_and_enums.sql` | Extensión, trigger de fechas y enums |
+| 2 | `20261028000200_profiles_and_clients.sql` | Perfiles de Auth y clientes |
+| 3 | `20261028000300_templates_and_events.sql` | Catálogo e invitaciones |
+| 4 | `20261028000400_guests_seating_and_rsvp.sql` | Invitados, mesas y registros RSVP/QR |
+| 5 | `20261028000500_social_features_and_memories.sql` | Canciones y recuerdos; máximo de 50 fotos por evento |
+| 6 | `20261028000600_rls_policies.sql` | RLS para el administrador de HeyDay |
+| 7 | `20261028000700_storage_buckets.sql` | Assets públicos y recuerdos privados, hasta 8 MB por archivo |
+| 8 | `20261028000800_rpc_functions_and_views.sql` | Vista y funciones de historial y métricas |
+| 9 | `20261028000900_seed_templates.sql` | Los diez diseños del catálogo actual de la app |
 
-Cuando crees tu proyecto en [Supabase](https://supabase.com), abre la sección **SQL Editor** y ejecuta los archivos en el siguiente orden:
+## Al crear el proyecto
 
-1. **[`01_extensions_and_enums.sql`](./migrations/01_extensions_and_enums.sql)**
-   * Habilita `pgcrypto`, crea el trigger reutilizable `set_updated_at()` y define todos los tipos `ENUM` (`user_role`, `event_category`, `event_status`, `rsvp_mode`, `rsvp_status`, `table_shape`, `media_type`).
-2. **[`02_profiles_and_clients.sql`](./migrations/02_profiles_and_clients.sql)**
-   * Crea la tabla `public.profiles` (con trigger automático cuando se registra un usuario en `auth.users`) y la tabla `public.clients` para gestionar múltiples clientes.
-3. **[`03_templates_and_events.sql`](./migrations/03_templates_and_events.sql)**
-   * Crea el catálogo `public.templates_catalog` y la tabla principal `public.events` con índices optimizados para consultar el historial de invitaciones por template (`template_id`), por cliente (`client_name`) y por rango de fechas (`event_date`, `created_at`).
-4. **[`04_guests_seating_and_rsvp.sql`](./migrations/04_guests_seating_and_rsvp.sql)**
-   * Crea `public.seating_tables`, `public.guest_groups` (con validación de cupo máximo por familia y `guest_token`), `public.guest_members` y la bitácora `public.rsvp_checkin_logs`.
-5. **[`05_social_features_and_memories.sql`](./migrations/05_social_features_and_memories.sql)**
-   * Crea `public.song_requests` (DJ Playlist con votación) y `public.event_memories` (Audio Guestbook y Live Disposable Camera).
-6. **[`06_rls_policies.sql`](./migrations/06_rls_policies.sql)**
-   * Activa **Row Level Security (RLS)** en todas las tablas y define las políticas de lectura pública para invitaciones publicadas y control total para administradores autenticados.
-7. **[`07_storage_buckets.sql`](./migrations/07_storage_buckets.sql)**
-   * Crea los buckets `event-assets` y `guest-memories` en Supabase Storage con sus límites de tamaño, tipos MIME permitidos y políticas de acceso.
-8. **[`08_rpc_functions_and_views.sql`](./migrations/08_rpc_functions_and_views.sql)**
-   * Crea la vista `public.v_template_invitations_history` y la función RPC `public.get_paginated_invitations_history(...)` lista para paginar y filtrar invitaciones por `template_id`, nombre de cliente y rango de fechas directamente desde el servidor.
-9. **[`09_seed_templates_and_demo_data.sql`](./migrations/09_seed_templates_and_demo_data.sql)**
-   * Inserta los **10 templates iniciales** con sus colores, tipografías y configuraciones base.
+1. Instala Supabase CLI desde su distribución oficial. En la raíz del repositorio ejecuta `supabase init` para generar `supabase/config.toml`, luego `supabase login` y `supabase link --project-ref <project-ref>`.
+2. Ejecuta `supabase db push`. Comprueba después `supabase migration list` y que `public.templates_catalog` tenga diez filas.
+3. Crea tu usuario en **Authentication > Users**. El trigger crea su perfil con rol `client_host`, sin privilegios de administrador.
+4. Desde **SQL Editor**, promueve **solo tu cuenta** y verifica que la consulta devuelva una fila:
+
+```sql
+UPDATE public.profiles
+SET role = 'agency_admin'
+WHERE id = (SELECT id FROM auth.users WHERE email = 'tu-correo@ejemplo.com')
+RETURNING id, email, role;
+```
+
+5. Copia `.env.example` a `.env.local` y configura la URL, la clave **publishable** y la clave **secret**. La clave secret y `QR_MASTER_SECRET` son exclusivamente del servidor y nunca deben llevar el prefijo `NEXT_PUBLIC_`.
+
+No combines `supabase db push` con cambios de esquema desde SQL Editor: el editor no registra las migraciones en el historial de la CLI. El `UPDATE` anterior cambia datos, no el esquema. Para futuras modificaciones, crea un archivo de migración con un timestamp posterior.
+
+## Comprobaciones después de migrar
+
+```sql
+SELECT count(*) AS disenos FROM public.templates_catalog;
+SELECT tablename, rowsecurity FROM pg_tables
+WHERE schemaname = 'public' AND tablename IN (
+  'profiles', 'clients', 'templates_catalog', 'events', 'seating_tables',
+  'guest_groups', 'guest_members', 'rsvp_checkin_logs', 'song_requests', 'event_memories'
+)
+ORDER BY tablename;
+SELECT id, public, file_size_limit FROM storage.buckets
+WHERE id IN ('event-assets', 'guest-memories');
+```
+
+El resultado esperado es **10 diseños**, RLS activo en las **10 tablas**, `event-assets` público y `guest-memories` privado.
+
+## Estado de la aplicación
+
+El dashboard todavía usa autenticación de demostración y guarda invitaciones en `localStorage`; las páginas públicas y el formulario RSVP también muestran datos de demostración. Configurar `.env.local` **no conecta automáticamente estos flujos a Supabase**. Esa integración requiere reemplazar la autenticación de prueba, leer y escribir datos desde el servidor, validar eventos publicados y tokens de invitados, y generar URLs firmadas para las fotos privadas. Los endpoints públicos deben devolver solo campos permitidos y usar la clave secret únicamente en el servidor.
+
+El límite de 50 fotos se aplica en la tabla `event_memories`. La carga del archivo y la creación del registro deben coordinarse desde el servidor para limpiar un archivo si la inserción falla. Las subidas anónimas directas a Storage están deshabilitadas.

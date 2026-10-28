@@ -18,11 +18,11 @@ $$ LANGUAGE plpgsql;
 -- Tipos enumerados del dominio de invitaciones digitales
 DO $$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'user_role') THEN
+  IF to_regtype('public.user_role') IS NULL THEN
     CREATE TYPE public.user_role AS ENUM ('superadmin', 'agency_admin', 'client_host');
   END IF;
 
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'event_category') THEN
+  IF to_regtype('public.event_category') IS NULL THEN
     CREATE TYPE public.event_category AS ENUM (
       'wedding',
       'xv_years',
@@ -34,23 +34,23 @@ BEGIN
     );
   END IF;
 
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'event_status') THEN
+  IF to_regtype('public.event_status') IS NULL THEN
     CREATE TYPE public.event_status AS ENUM ('draft', 'published', 'archived');
   END IF;
 
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'rsvp_mode') THEN
+  IF to_regtype('public.rsvp_mode') IS NULL THEN
     CREATE TYPE public.rsvp_mode AS ENUM ('closed_list', 'open_registration');
   END IF;
 
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'rsvp_status') THEN
+  IF to_regtype('public.rsvp_status') IS NULL THEN
     CREATE TYPE public.rsvp_status AS ENUM ('pending', 'viewed', 'confirmed', 'declined');
   END IF;
 
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'table_shape') THEN
+  IF to_regtype('public.table_shape') IS NULL THEN
     CREATE TYPE public.table_shape AS ENUM ('round', 'rectangular', 'sweetheart');
   END IF;
 
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'media_type') THEN
+  IF to_regtype('public.media_type') IS NULL THEN
     CREATE TYPE public.media_type AS ENUM ('photo', 'audio_message');
   END IF;
 END

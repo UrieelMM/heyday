@@ -53,6 +53,9 @@ CREATE TABLE IF NOT EXISTS public.guest_groups (
   UNIQUE(event_id, guest_token),
   CONSTRAINT chk_confirmed_within_allocated CHECK (
     confirmed_adults <= allocated_adults AND confirmed_children <= allocated_children
+  ),
+  CONSTRAINT chk_checkin_within_confirmed CHECK (
+    checked_in_count <= confirmed_adults + confirmed_children
   )
 );
 

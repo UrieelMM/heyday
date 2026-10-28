@@ -15,6 +15,8 @@ CREATE TABLE IF NOT EXISTS public.templates_catalog (
   preview_image_url TEXT NOT NULL,
   default_colors JSONB NOT NULL DEFAULT '{}'::jsonb,
   default_fonts JSONB NOT NULL DEFAULT '{}'::jsonb,
+  envelope_variant TEXT NOT NULL CHECK (envelope_variant IN ('wax-seal-classic', 'editorial-curtain', 'pass-ticket-tear')),
+  ambient_effect TEXT NOT NULL CHECK (ambient_effect IN ('none', 'gold-sparkles', 'white-petals', 'soft-stars', 'confetti')),
   is_active BOOLEAN NOT NULL DEFAULT TRUE,
   sort_order SMALLINT NOT NULL DEFAULT 1,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -31,7 +33,7 @@ CREATE TABLE IF NOT EXISTS public.events (
   client_email TEXT,
   client_phone TEXT,
   
-  -- URL única personalizada (ej. dominioprincipal.com/boda-sofia-y-mateo)
+  -- URL única personalizada (ej. heyday.party/invitacion/boda-sofia-y-mateo)
   slug TEXT NOT NULL UNIQUE CHECK (
     slug ~ '^[a-z0-9]+(?:-[a-z0-9]+)*$'
     AND char_length(slug) BETWEEN 3 AND 60
@@ -42,7 +44,7 @@ CREATE TABLE IF NOT EXISTS public.events (
   category public.event_category NOT NULL,
   title TEXT NOT NULL,
   subtitle TEXT,
-  status public.event_status NOT NULL DEFAULT 'published',
+  status public.event_status NOT NULL DEFAULT 'draft',
   
   -- Fechas del evento y configuración RSVP
   event_date TIMESTAMPTZ NOT NULL,
@@ -59,7 +61,7 @@ CREATE TABLE IF NOT EXISTS public.events (
   qr_secret_key TEXT NOT NULL DEFAULT encode(gen_random_bytes(32), 'hex'),
   
   -- Métricas
-  views_count INTEGER NOT NULL DEFAULT 0,
+  views_count INTEGER NOT NULL DEFAULT 0 CHECK (views_count >= 0),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
