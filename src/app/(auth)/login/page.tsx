@@ -7,11 +7,11 @@ import { toast } from 'sonner';
 import {
   ArrowLeft,
   ArrowRight,
+  Check,
   KeyRound,
   Lock,
   Mail,
   ShieldCheck,
-  Sparkles,
 } from 'lucide-react';
 import {
   DEMO_ADMIN_USER,
@@ -32,14 +32,11 @@ function LoginFormContent() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    const existing = getAdminSession();
-    if (existing) {
-      // Ya tiene sesión activa, puede continuar directo si lo desea
-    }
+    getAdminSession();
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
     setIsSubmitting(true);
 
     setTimeout(() => {
@@ -50,7 +47,7 @@ function LoginFormContent() {
         return;
       }
 
-      toast.success('¡Bienvenido al Panel de Administración!');
+      toast.success('Bienvenido al panel de administración');
       router.push(targetUrl);
     }, 350);
   };
@@ -58,142 +55,138 @@ function LoginFormContent() {
   const handleQuickFill = () => {
     setEmail(DEMO_ADMIN_USER.email);
     setPassword(DEMO_ADMIN_USER.password);
-    toast.info('Credenciales de Administrador cargadas');
+    toast.info('Acceso demo preparado');
   };
 
   return (
-    <div className="relative flex min-h-dvh flex-col justify-between overflow-hidden bg-stone-950 px-6 py-10 text-stone-100">
-      {/* Resplandor ambiental */}
-      <div className="pointer-events-none absolute -top-40 left-1/2 h-96 w-[680px] -translate-x-1/2 rounded-full bg-amber-500/10 blur-3xl" />
-
-      {/* Top link */}
-      <div className="relative z-10 mx-auto flex w-full max-w-6xl items-center justify-between">
-        <Link
-          href="/"
-          className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-stone-300 transition hover:bg-white/10 hover:text-white"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Volver a la Landing Principal
-        </Link>
-
-        <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500 text-stone-950">
-            <Sparkles className="h-4 w-4" />
+    <main className="login-shell min-h-dvh bg-[#f7f7f4] text-[#26251e]">
+      <header className="border-b border-[#e6e5e0]">
+        <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between px-5 sm:px-8">
+          <Link href="/" className="inline-flex items-center gap-2 text-sm text-[#5a5852] transition-colors hover:text-[#26251e]">
+            <ArrowLeft className="h-4 w-4" />
+            Volver al sitio
+          </Link>
+          <div className="inline-flex items-center gap-2.5">
+            <span className="grid h-8 w-8 grid-cols-2 gap-0.5 rounded-md bg-[#f54e00] p-1.5">
+              <span className="rounded-[1px] bg-white/95" />
+              <span className="rounded-[1px] bg-white/65" />
+              <span className="rounded-[1px] bg-white/65" />
+              <span className="rounded-[1px] bg-white/95" />
+            </span>
+            <span className="text-sm font-medium tracking-[-0.02em] text-[#f54e00]">Atelier Invitaciones</span>
           </div>
-          <span className="text-sm font-bold tracking-tight text-white">
-            Atelier<span className="text-amber-400">Invitaciones</span>
-          </span>
         </div>
-      </div>
+      </header>
 
-      {/* Tarjeta Central de Login */}
-      <div className="relative z-10 mx-auto my-12 w-full max-w-md">
-        <div className="rounded-3xl border border-white/15 bg-stone-900/85 p-8 shadow-2xl backdrop-blur-xl sm:p-10">
-          <div className="mb-6 text-center">
-            <div className="mx-auto mb-3 inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-amber-500/30 bg-amber-500/15 text-amber-400">
-              <ShieldCheck className="h-6 w-6" />
-            </div>
-            <h1 className="text-2xl font-bold tracking-tight text-white">
-              Acceso Administrador
+      <div className="mx-auto grid min-h-[calc(100dvh-64px)] max-w-[1200px] lg:grid-cols-2">
+        <section className="hidden border-r border-[#e6e5e0] px-8 py-20 lg:flex lg:flex-col lg:justify-between">
+          <div>
+            <p className="eyebrow text-[#f54e00]">Panel de administración</p>
+            <h1 className="editorial-display mt-5 max-w-lg text-6xl leading-[1.05]">
+              Todo tu evento, en un espacio que sí se siente claro.
             </h1>
-            <p className="mt-1.5 text-xs leading-relaxed text-stone-400">
-              Inicia sesión para gestionar las invitaciones de tus clientes,
-              personalizar templates y administrar el historial por plantilla.
+            <p className="mt-6 max-w-md text-base leading-7 text-[#5a5852]">
+              Continúa donde lo dejaste: clientes, diseño, invitados y recepción comparten el mismo flujo.
             </p>
           </div>
 
-          {/* Banner de Credenciales Fake / Pre-Supabase */}
-          <div className="mb-6 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-xs">
-            <div className="flex items-center justify-between">
-              <span className="inline-flex items-center gap-1.5 font-bold text-amber-300 uppercase">
-                <KeyRound className="h-3.5 w-3.5" />
-                Modo Demo Local (Pre-Supabase)
-              </span>
-              <button
-                type="button"
-                onClick={handleQuickFill}
-                className="cursor-pointer rounded-lg bg-amber-500/20 px-2.5 py-1 text-[11px] font-semibold text-amber-200 transition hover:bg-amber-500/30"
-              >
-                Rellenar datos
-              </button>
-            </div>
-            <div className="mt-2.5 space-y-1 font-mono text-[11px] text-stone-300">
-              <p>
-                <span className="text-stone-400">Usuario:</span>{' '}
-                {DEMO_ADMIN_USER.email}
-              </p>
-              <p>
-                <span className="text-stone-400">Password:</span>{' '}
-                {DEMO_ADMIN_USER.password}
-              </p>
+          <div className="max-w-md rounded-xl bg-[#26251e] p-6 text-[#f7f7f4]">
+            <p className="eyebrow text-[#dfa88f]">Dentro del panel</p>
+            <div className="mt-5 space-y-4">
+              {[
+                'Historial por cliente y template',
+                'Constructor visual en tiempo real',
+                'Links nominales y RSVP controlado',
+                'Pases QR para recepción',
+              ].map((item) => (
+                <div key={item} className="flex items-center gap-3 border-b border-white/15 pb-4 text-sm last:border-0 last:pb-0">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#9fc9a2] text-[#26251e]">
+                    <Check className="h-3 w-3" />
+                  </span>
+                  {item}
+                </div>
+              ))}
             </div>
           </div>
+        </section>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label
-                htmlFor="admin-email"
-                className="mb-1.5 block text-xs font-semibold tracking-wider text-stone-300 uppercase"
-              >
-                Correo Electrónico
-              </label>
-              <div className="relative">
-                <Mail className="pointer-events-none absolute top-3.5 left-3.5 h-4 w-4 text-stone-500" />
-                <input
-                  id="admin-email"
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@atelierinvitaciones.com"
-                  className="w-full rounded-xl border border-white/15 bg-stone-950 py-3 pr-4 pl-10 text-sm text-white outline-none transition focus:border-amber-500"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="admin-password"
-                className="mb-1.5 block text-xs font-semibold tracking-wider text-stone-300 uppercase"
-              >
-                Contraseña
-              </label>
-              <div className="relative">
-                <Lock className="pointer-events-none absolute top-3.5 left-3.5 h-4 w-4 text-stone-500" />
-                <input
-                  id="admin-password"
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full rounded-xl border border-white/15 bg-stone-950 py-3 pr-4 pl-10 text-sm text-white outline-none transition focus:border-amber-500"
-                />
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="mt-2 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-amber-500 py-3.5 text-xs font-bold tracking-wider text-stone-950 uppercase shadow-lg shadow-amber-500/20 transition hover:bg-amber-400 disabled:opacity-50"
-            >
-              <span>
-                {isSubmitting
-                  ? 'Iniciando sesión...'
-                  : 'Entrar al Dashboard & Builder'}
+        <section className="flex items-center justify-center px-5 py-12 sm:px-8 lg:px-16">
+          <div className="w-full max-w-md">
+            <div className="mb-8">
+              <span className="flex h-11 w-11 items-center justify-center rounded-lg border border-[#e6e5e0] bg-white text-[#f54e00]">
+                <ShieldCheck className="h-5 w-5" />
               </span>
-              <ArrowRight className="h-4 w-4" />
-            </button>
-          </form>
-        </div>
-      </div>
+              <h2 className="editorial-display mt-5 text-4xl">Bienvenido de vuelta.</h2>
+              <p className="mt-2 text-sm leading-6 text-[#5a5852]">
+                Ingresa para gestionar tus invitaciones y clientes.
+              </p>
+            </div>
 
-      {/* Footer simple */}
-      <p className="relative z-10 text-center text-xs text-stone-500">
-        Atelier Invitaciones Digitales • Autenticación lista para conectar con
-        Supabase Auth
-      </p>
-    </div>
+            <div className="mb-6 flex items-center justify-between gap-4 rounded-lg border border-[#e6e5e0] bg-[#fafaf7] p-3.5">
+              <div className="flex items-center gap-3">
+                <span className="flex h-8 w-8 items-center justify-center rounded-md bg-[#dfa88f]/55 text-[#26251e]">
+                  <KeyRound className="h-4 w-4" />
+                </span>
+                <div>
+                  <p className="text-xs font-medium">Modo demo local</p>
+                  <p className="mt-0.5 text-[11px] text-[#807d72]">Acceso preparado para explorar el producto</p>
+                </div>
+              </div>
+              <button type="button" onClick={handleQuickFill} className="shrink-0 rounded-md border border-[#cfcdc4] bg-white px-3 py-2 text-xs font-medium transition-colors hover:bg-[#efeee8]">
+                Rellenar
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div>
+                <label htmlFor="admin-email" className="mb-2 block text-xs font-medium text-[#5a5852]">Correo electrónico</label>
+                <div className="relative">
+                  <Mail className="pointer-events-none absolute left-3.5 top-3.5 h-4 w-4 text-[#a09c92]" />
+                  <input
+                    id="admin-email"
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                    placeholder="admin@atelierinvitaciones.com"
+                    className="w-full rounded-lg border py-3 pr-4 pl-10 text-sm outline-none transition-colors focus:border-[#f54e00]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="admin-password" className="mb-2 block text-xs font-medium text-[#5a5852]">Contraseña</label>
+                <div className="relative">
+                  <Lock className="pointer-events-none absolute left-3.5 top-3.5 h-4 w-4 text-[#a09c92]" />
+                  <input
+                    id="admin-password"
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                    placeholder="••••••••"
+                    className="w-full rounded-lg border py-3 pr-4 pl-10 text-sm outline-none transition-colors focus:border-[#f54e00]"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#f54e00] px-5 text-sm font-medium text-white transition-colors hover:bg-[#d04200] disabled:opacity-50"
+              >
+                {isSubmitting ? 'Abriendo tu espacio…' : 'Entrar al dashboard'}
+                {!isSubmitting && <ArrowRight className="h-4 w-4" />}
+              </button>
+            </form>
+
+            <p className="mono-label mt-6 text-center text-[10px] text-[#a09c92]">
+              DEMO LOCAL · LISTO PARA SUPABASE AUTH
+            </p>
+          </div>
+        </section>
+      </div>
+    </main>
   );
 }
 
@@ -201,8 +194,8 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-dvh items-center justify-center bg-stone-950 text-stone-400">
-          Cargando acceso...
+        <div className="flex min-h-dvh items-center justify-center bg-[#f7f7f4] text-sm text-[#807d72]">
+          Preparando acceso…
         </div>
       }
     >

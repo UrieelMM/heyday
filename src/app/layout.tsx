@@ -5,6 +5,7 @@ import {
   Fredoka,
   Great_Vibes,
   Inter,
+  JetBrains_Mono,
   Montserrat,
   Pinyon_Script,
   Playfair_Display,
@@ -66,6 +67,11 @@ const inter = Inter({
   weight: ['400', '500', '600', '700'],
   variable: '--font-inter',
 });
+const jetbrains = JetBrains_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500'],
+  variable: '--font-jetbrains',
+});
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
   weight: ['400', '500', '700'],
@@ -86,6 +92,7 @@ export default function RootLayout({
   return (
     <html
       lang="es"
+      data-scroll-behavior="smooth"
       className={[
         cormorant.variable,
         playfair.variable,
@@ -97,10 +104,11 @@ export default function RootLayout({
         jakarta.variable,
         montserrat.variable,
         inter.variable,
+        jetbrains.variable,
         spaceGrotesk.variable,
       ].join(' ')}
     >
-      <body className="min-h-dvh bg-stone-950 font-sans text-stone-100 antialiased">
+      <body className="min-h-dvh bg-[#f7f7f4] font-[var(--font-inter)] text-[#26251e] antialiased">
         {children}
         <Toaster position="top-center" richColors />
       </body>

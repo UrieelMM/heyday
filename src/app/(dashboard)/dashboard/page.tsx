@@ -390,76 +390,79 @@ function DashboardContent() {
   );
 
   return (
-    <div className="flex min-h-dvh flex-col bg-stone-950 text-stone-100">
+    <div className="dashboard-shell flex min-h-dvh flex-col overflow-x-hidden bg-[#f7f7f4] text-[#26251e]">
       {/* TOPBAR DEL DASHBOARD */}
-      <header className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 bg-stone-900/90 px-6 py-3.5 backdrop-blur-md">
-        <div className="flex flex-wrap items-center gap-4">
+      <header className="sticky top-0 z-40 flex flex-wrap items-center justify-between gap-3 border-b border-[#e6e5e0] bg-[#f7f7f4]/95 px-4 py-3 backdrop-blur-md sm:px-6">
+        <div className="flex min-w-0 flex-1 flex-wrap items-center gap-3">
           <Link href="/" className="flex cursor-pointer items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500 text-stone-950">
-              <Sparkles className="h-4 w-4" />
+            <div className="grid h-8 w-8 grid-cols-2 gap-0.5 rounded-md bg-[#f54e00] p-1.5">
+              <span className="rounded-[1px] bg-white/95" />
+              <span className="rounded-[1px] bg-white/65" />
+              <span className="rounded-[1px] bg-white/65" />
+              <span className="rounded-[1px] bg-white/95" />
             </div>
-            <span className="font-bold tracking-tight text-white">
-              Atelier<span className="text-amber-400">Admin</span>
+            <span className="hidden text-sm font-medium tracking-[-0.02em] text-[#f54e00] sm:inline">
+              Atelier <span className="text-[#26251e]">Admin</span>
             </span>
           </Link>
 
-          <div className="hidden h-5 w-px bg-white/15 sm:block" />
+          <div className="hidden h-5 w-px bg-[#e6e5e0] sm:block" />
 
           {/* Navegación de Módulos */}
-          <div className="flex flex-wrap rounded-xl border border-white/10 bg-stone-950 p-1">
+          <div className="flex min-w-0 flex-1 gap-1 overflow-x-auto rounded-lg border border-[#e6e5e0] bg-white p-1 sm:flex-none">
             <button
               type="button"
               onClick={() => setActiveTab('history')}
               className={`inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition ${
                 activeTab === 'history'
-                  ? 'bg-amber-500 text-stone-950'
-                  : 'text-stone-400 hover:text-white'
+                  ? 'bg-[#f54e00] text-white'
+                  : 'text-[#807d72] hover:text-[#26251e]'
               }`}
             >
               <FolderKanban className="h-3.5 w-3.5" />
-              Clientes & Historial por Template ({invitations.length})
+              <span className="whitespace-nowrap">Historial ({invitations.length})</span>
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('builder')}
               className={`inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition ${
                 activeTab === 'builder'
-                  ? 'bg-amber-500 text-stone-950'
-                  : 'text-stone-400 hover:text-white'
+                  ? 'bg-[#f54e00] text-white'
+                  : 'text-[#807d72] hover:text-[#26251e]'
               }`}
             >
               <Wand2 className="h-3.5 w-3.5" />
-              Constructor Visual
+              <span className="whitespace-nowrap">Constructor</span>
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('guests')}
               className={`inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition ${
                 activeTab === 'guests'
-                  ? 'bg-amber-500 text-stone-950'
-                  : 'text-stone-400 hover:text-white'
+                  ? 'bg-[#f54e00] text-white'
+                  : 'text-[#807d72] hover:text-[#26251e]'
               }`}
             >
               <Users className="h-3.5 w-3.5" />
-              Invitados de {title} ({activeGuests.length})
+              <span className="whitespace-nowrap">Invitados ({activeGuests.length})</span>
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('checkin')}
               className={`inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition ${
                 activeTab === 'checkin'
-                  ? 'bg-amber-500 text-stone-950'
-                  : 'text-stone-400 hover:text-white'
+                  ? 'bg-[#f54e00] text-white'
+                  : 'text-[#807d72] hover:text-[#26251e]'
               }`}
             >
               <QrCode className="h-3.5 w-3.5" />
-              Recepción QR
+              <span className="whitespace-nowrap">Recepción QR</span>
             </button>
           </div>
         </div>
 
         {/* Acciones Derecha: Crear Nueva Invitación + Guardar + Logout */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => {
@@ -472,33 +475,33 @@ function DashboardContent() {
               }));
               setIsNewModalOpen(true);
             }}
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-amber-500/40 bg-amber-500/15 px-3.5 py-2 text-xs font-bold text-amber-300 transition hover:bg-amber-500 hover:text-stone-950"
+            className="inline-flex h-10 cursor-pointer items-center gap-1.5 rounded-lg border border-[#f54e00]/40 bg-[#f54e00]/10 px-3.5 text-xs font-semibold text-[#d04200] transition hover:bg-[#f54e00] hover:text-white"
           >
             <Plus className="h-4 w-4" />
-            Nueva Invitación de Cliente
+            <span className="hidden whitespace-nowrap sm:inline">Nueva invitación</span>
           </button>
 
           {activeTab === 'builder' && (
             <button
               type="button"
               onClick={handleSaveCurrentBuilder}
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl bg-amber-500 px-4 py-2 text-xs font-bold tracking-wider text-stone-950 uppercase shadow-md transition hover:bg-amber-400"
+              className="inline-flex h-10 cursor-pointer items-center gap-1.5 rounded-lg bg-[#f54e00] px-4 text-xs font-semibold text-white transition hover:bg-[#d04200]"
             >
               <CheckCircle2 className="h-4 w-4" />
-              Guardar Cambios
+              <span className="hidden sm:inline">Guardar cambios</span>
             </button>
           )}
 
-          <div className="hidden items-center gap-2 rounded-xl border border-white/10 bg-stone-950 px-3 py-1.5 text-xs xl:flex">
-            <UserCheck className="h-3.5 w-3.5 text-emerald-400" />
-            <span className="text-stone-400">{adminEmail}</span>
+          <div className="hidden items-center gap-2 rounded-xl border border-[#e6e5e0] bg-[#f7f7f4] px-3 py-1.5 text-xs xl:flex">
+            <UserCheck className="h-3.5 w-3.5 text-[#1f8a65]" />
+            <span className="text-[#807d72]">{adminEmail}</span>
           </div>
 
           <button
             type="button"
             onClick={handleLogout}
             title="Cerrar sesión"
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold text-stone-300 transition hover:bg-rose-500/20 hover:text-rose-300"
+            className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-[#e6e5e0] bg-white px-3 py-2 text-xs font-semibold text-[#5a5852] transition hover:bg-[#cf2d56]/10 hover:text-[#cf2d56]"
           >
             <LogOut className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Salir</span>
@@ -510,14 +513,14 @@ function DashboardContent() {
           VISTA 1: HISTORIAL DE INVITACIONES POR TEMPLATE Y CLIENTES
       ===================================================================== */}
       {activeTab === 'history' && (
-        <div className="mx-auto grid w-full max-w-7xl flex-1 gap-6 p-6 lg:grid-cols-12">
+        <div className="mx-auto grid w-full max-w-[1200px] flex-1 gap-6 p-4 sm:p-6 lg:grid-cols-12">
           {/* Columna Izquierda: Selector de los 10 Templates con Historial */}
           <aside className="space-y-3 lg:col-span-3">
-            <div className="rounded-2xl border border-white/10 bg-stone-900/70 p-4">
-              <h2 className="text-xs font-bold tracking-wider text-amber-400 uppercase">
+            <div className="rounded-xl border border-[#e6e5e0] bg-[#fafaf7] p-4">
+              <h2 className="text-xs font-bold tracking-wider text-[#f54e00] uppercase">
                 Historial por Template
               </h2>
-              <p className="mt-1 text-xs text-stone-400">
+              <p className="mt-1 text-xs text-[#807d72]">
                 Selecciona una plantilla para ver todas las invitaciones de
                 clientes creadas con ella:
               </p>
@@ -528,16 +531,16 @@ function DashboardContent() {
                   onClick={() => setSelectedHistoryTemplate('all')}
                   className={`flex w-full cursor-pointer items-center justify-between rounded-xl px-3.5 py-2.5 text-left text-xs font-semibold transition ${
                     selectedHistoryTemplate === 'all'
-                      ? 'bg-amber-500 text-stone-950 font-bold'
-                      : 'text-stone-300 hover:bg-white/5'
+                      ? 'bg-[#f54e00] text-white font-bold'
+                      : 'text-[#5a5852] hover:bg-white'
                   }`}
                 >
                   <span>Todos los Templates</span>
                   <span
                     className={`rounded-full px-2 py-0.5 text-[10px] ${
                       selectedHistoryTemplate === 'all'
-                        ? 'bg-stone-950/20 text-stone-950'
-                        : 'bg-stone-800 text-stone-300'
+                        ? 'bg-black/5 text-[#26251e]'
+                        : 'bg-[#efeee8] text-[#5a5852]'
                     }`}
                   >
                     {templateCounts.all}
@@ -554,8 +557,8 @@ function DashboardContent() {
                       onClick={() => setSelectedHistoryTemplate(tpl.id)}
                       className={`flex w-full cursor-pointer items-center justify-between rounded-xl px-3 py-2 text-left text-xs transition ${
                         isSelected
-                          ? 'bg-amber-500 font-bold text-stone-950 shadow-sm'
-                          : 'text-stone-300 hover:bg-white/5'
+                          ? 'bg-[#f54e00] font-bold text-white shadow-sm'
+                          : 'text-[#5a5852] hover:bg-white'
                       }`}
                     >
                       <span className="truncate">
@@ -564,8 +567,8 @@ function DashboardContent() {
                       <span
                         className={`ml-2 shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${
                           isSelected
-                            ? 'bg-stone-950/20 text-stone-950'
-                            : 'bg-stone-800 text-amber-300'
+                            ? 'bg-black/5 text-[#26251e]'
+                            : 'bg-[#efeee8] text-[#d04200]'
                         }`}
                       >
                         {count}
@@ -578,11 +581,11 @@ function DashboardContent() {
           </aside>
 
           {/* Columna Derecha: Filtros por Cliente/Fecha + Tabla Paginada */}
-          <div className="flex flex-col space-y-5 lg:col-span-9">
+          <div className="flex min-w-0 flex-col space-y-5 lg:col-span-9">
             {/* Cabecera del Template Activo */}
-            <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-white/10 bg-stone-900/80 p-5">
+            <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-[#e6e5e0] bg-[#fafaf7] p-5">
               <div>
-                <span className="text-xs font-bold tracking-wider text-amber-400 uppercase">
+                <span className="text-xs font-bold tracking-wider text-[#f54e00] uppercase">
                   {selectedHistoryTemplate === 'all'
                     ? 'Historial Global Multi-Cliente'
                     : `Historial del Template: ${
@@ -591,7 +594,7 @@ function DashboardContent() {
                         )?.name
                       }`}
                 </span>
-                <h1 className="mt-0.5 text-2xl font-extrabold text-white">
+                <h1 className="mt-0.5 text-2xl font-medium text-[#26251e]">
                   {selectedHistoryTemplate === 'all'
                     ? 'Todas las Invitaciones de Clientes'
                     : `Invitaciones creadas con ${
@@ -614,7 +617,7 @@ function DashboardContent() {
                   }));
                   setIsNewModalOpen(true);
                 }}
-                className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-amber-500 px-4 py-2.5 text-xs font-bold tracking-wider text-stone-950 uppercase shadow-lg shadow-amber-500/20 transition hover:bg-amber-400"
+                className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-[#f54e00] px-4 py-2.5 text-xs font-bold tracking-wider text-white uppercase   transition hover:bg-[#d04200]"
               >
                 <Plus className="h-4 w-4" />
                 {selectedHistoryTemplate === 'all'
@@ -628,27 +631,27 @@ function DashboardContent() {
             </div>
 
             {/* Barra de Filtros: Cliente, Rango de Fechas y Estado */}
-            <div className="grid gap-3 rounded-2xl border border-white/10 bg-stone-900/60 p-4 sm:grid-cols-12">
+            <div className="grid gap-3 rounded-xl border border-[#e6e5e0] bg-[#fafaf7] p-4 sm:grid-cols-12">
               {/* Búsqueda por Cliente / Evento / URL */}
               <div className="sm:col-span-4">
-                <label className="mb-1 block text-[11px] font-semibold text-stone-400 uppercase">
+                <label className="mb-1 block text-[11px] font-semibold text-[#807d72] uppercase">
                   Filtrar por Cliente, Evento o Slug
                 </label>
                 <div className="relative">
-                  <Search className="pointer-events-none absolute top-2.5 left-3 h-4 w-4 text-stone-500" />
+                  <Search className="pointer-events-none absolute top-2.5 left-3 h-4 w-4 text-[#a09c92]" />
                   <input
                     type="text"
                     value={clientQuery}
                     onChange={(e) => setClientQuery(e.target.value)}
                     placeholder="Ej. Sofía, Camila, XV, boda-sofia..."
-                    className="w-full rounded-xl border border-white/15 bg-stone-950 py-2 pr-3 pl-9 text-xs text-white outline-none focus:border-amber-500"
+                    className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] py-2 pr-3 pl-9 text-xs text-[#26251e] outline-none focus:border-[#f54e00]"
                   />
                 </div>
               </div>
 
               {/* Tipo de Fecha */}
               <div className="sm:col-span-2">
-                <label className="mb-1 block text-[11px] font-semibold text-stone-400 uppercase">
+                <label className="mb-1 block text-[11px] font-semibold text-[#807d72] uppercase">
                   Campo de Fecha
                 </label>
                 <select
@@ -658,7 +661,7 @@ function DashboardContent() {
                       e.target.value as 'eventDate' | 'createdAt'
                     )
                   }
-                  className="w-full rounded-xl border border-white/15 bg-stone-950 px-3 py-2 text-xs text-white outline-none focus:border-amber-500"
+                  className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3 py-2 text-xs text-[#26251e] outline-none focus:border-[#f54e00]"
                 >
                   <option value="eventDate">Fecha de Evento</option>
                   <option value="createdAt">Fecha Creada</option>
@@ -667,34 +670,34 @@ function DashboardContent() {
 
               {/* Fecha Desde */}
               <div className="sm:col-span-2">
-                <label className="mb-1 block text-[11px] font-semibold text-stone-400 uppercase">
+                <label className="mb-1 block text-[11px] font-semibold text-[#807d72] uppercase">
                   Desde
                 </label>
                 <input
                   type="date"
                   value={dateFrom}
                   onChange={(e) => setDateFrom(e.target.value)}
-                  className="w-full rounded-xl border border-white/15 bg-stone-950 px-2.5 py-2 text-xs text-white outline-none focus:border-amber-500"
+                  className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-2.5 py-2 text-xs text-[#26251e] outline-none focus:border-[#f54e00]"
                 />
               </div>
 
               {/* Fecha Hasta */}
               <div className="sm:col-span-2">
-                <label className="mb-1 block text-[11px] font-semibold text-stone-400 uppercase">
+                <label className="mb-1 block text-[11px] font-semibold text-[#807d72] uppercase">
                   Hasta
                 </label>
                 <input
                   type="date"
                   value={dateTo}
                   onChange={(e) => setDateTo(e.target.value)}
-                  className="w-full rounded-xl border border-white/15 bg-stone-950 px-2.5 py-2 text-xs text-white outline-none focus:border-amber-500"
+                  className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-2.5 py-2 text-xs text-[#26251e] outline-none focus:border-[#f54e00]"
                 />
               </div>
 
               {/* Estado + Botón Limpiar */}
               <div className="flex items-end gap-2 sm:col-span-2">
                 <div className="flex-1">
-                  <label className="mb-1 block text-[11px] font-semibold text-stone-400 uppercase">
+                  <label className="mb-1 block text-[11px] font-semibold text-[#807d72] uppercase">
                     Estado
                   </label>
                   <select
@@ -708,7 +711,7 @@ function DashboardContent() {
                           | 'archived'
                       )
                     }
-                    className="w-full rounded-xl border border-white/15 bg-stone-950 px-2.5 py-2 text-xs text-white outline-none focus:border-amber-500"
+                    className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-2.5 py-2 text-xs text-[#26251e] outline-none focus:border-[#f54e00]"
                   >
                     <option value="all">Todos</option>
                     <option value="published">Publicadas</option>
@@ -730,7 +733,7 @@ function DashboardContent() {
                       setStatusFilter('all');
                     }}
                     title="Limpiar filtros"
-                    className="cursor-pointer rounded-xl border border-white/15 bg-stone-950 p-2 text-stone-400 hover:text-white"
+                    className="cursor-pointer rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] p-2 text-[#807d72] hover:text-[#26251e]"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -739,9 +742,9 @@ function DashboardContent() {
             </div>
 
             {/* Tabla del Historial de Invitaciones */}
-            <div className="overflow-x-auto rounded-2xl border border-white/10 bg-stone-900">
+            <div className="overflow-x-auto rounded-xl border border-[#e6e5e0] bg-white">
               <table className="w-full text-left text-sm">
-                <thead className="border-b border-white/10 bg-stone-950/70 text-[11px] font-bold tracking-wider text-stone-400 uppercase">
+                <thead className="border-b border-[#e6e5e0] bg-[#f7f7f4] text-[11px] font-bold tracking-wider text-[#807d72] uppercase">
                   <tr>
                     <th className="px-5 py-3.5">Cliente & Evento</th>
                     <th className="px-5 py-3.5">Template Usado</th>
@@ -756,7 +759,7 @@ function DashboardContent() {
                     <tr>
                       <td
                         colSpan={6}
-                        className="px-6 py-12 text-center text-sm text-stone-400"
+                        className="px-6 py-12 text-center text-sm text-[#807d72]"
                       >
                         No se encontraron invitaciones con los filtros
                         seleccionados.
@@ -772,22 +775,22 @@ function DashboardContent() {
                       return (
                         <tr
                           key={inv.id}
-                          className={`transition hover:bg-white/[0.03] ${
-                            isCurrentInBuilder ? 'bg-amber-500/[0.05]' : ''
+                          className={`transition hover:bg-[#fafaf7] ${
+                            isCurrentInBuilder ? 'bg-[#f54e00]/5' : ''
                           }`}
                         >
                           <td className="px-5 py-4">
                             <div className="flex items-center gap-2">
-                              <span className="font-bold text-white">
+                              <span className="font-bold text-[#26251e]">
                                 {inv.clientName}
                               </span>
                               {isCurrentInBuilder && (
-                                <span className="rounded-full bg-amber-500/20 px-2 py-0.5 text-[10px] font-bold text-amber-300">
+                                <span className="rounded-full bg-[#f54e00]/10 px-2 py-0.5 text-[10px] font-bold text-[#d04200]">
                                   En Editor
                                 </span>
                               )}
                             </div>
-                            <span className="block text-xs text-stone-400">
+                            <span className="block text-xs text-[#807d72]">
                               Evento: {inv.title} • {inv.clientPhone}
                             </span>
                           </td>
@@ -798,17 +801,17 @@ function DashboardContent() {
                               onClick={() =>
                                 setSelectedHistoryTemplate(inv.templateId)
                               }
-                              className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-white/10 bg-stone-950 px-2.5 py-1 text-xs font-semibold text-amber-300 hover:border-amber-500/40"
+                              className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#e6e5e0] bg-[#f7f7f4] px-2.5 py-1 text-xs font-semibold text-[#d04200] hover:border-[#f54e00]/40"
                             >
                               <span>{tplInfo?.name || inv.templateId}</span>
                             </button>
                           </td>
 
                           <td className="px-5 py-4 text-xs">
-                            <p className="font-semibold text-stone-200">
+                            <p className="font-semibold text-[#26251e]">
                               Evento: {inv.eventDate.slice(0, 10)}
                             </p>
-                            <p className="text-stone-500">
+                            <p className="text-[#a09c92]">
                               Creada: {inv.createdAt.slice(0, 10)}
                             </p>
                           </td>
@@ -817,12 +820,12 @@ function DashboardContent() {
                             <Link
                               href={`/${inv.slug}?template=${inv.templateId}&g=fam-lopez-8a2f`}
                               target="_blank"
-                              className="inline-flex cursor-pointer items-center gap-1 font-mono text-xs text-amber-400 hover:underline"
+                              className="inline-flex cursor-pointer items-center gap-1 font-mono text-xs text-[#f54e00] hover:underline"
                             >
                               <span>/{inv.slug}</span>
                               <ExternalLink className="h-3 w-3" />
                             </Link>
-                            <span className="block text-[11px] text-stone-500">
+                            <span className="block text-[11px] text-[#a09c92]">
                               {inv.viewsCount} aperturas
                             </span>
                           </td>
@@ -831,8 +834,8 @@ function DashboardContent() {
                             <span
                               className={`inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
                                 inv.status === 'published'
-                                  ? 'bg-emerald-500/15 text-emerald-400'
-                                  : 'bg-amber-500/15 text-amber-300'
+                                  ? 'bg-[#1f8a65]/10 text-[#1f8a65]'
+                                  : 'bg-[#f54e00]/10 text-[#d04200]'
                               }`}
                             >
                               {inv.status === 'published'
@@ -846,7 +849,7 @@ function DashboardContent() {
                               <button
                                 type="button"
                                 onClick={() => handleOpenInBuilder(inv)}
-                                className="inline-flex cursor-pointer items-center gap-1 rounded-xl bg-amber-500 px-3 py-1.5 text-xs font-bold text-stone-950 transition hover:bg-amber-400"
+                                className="inline-flex cursor-pointer items-center gap-1 rounded-xl bg-[#f54e00] px-3 py-1.5 text-xs font-bold text-white transition hover:bg-[#d04200]"
                               >
                                 <Wand2 className="h-3.5 w-3.5" />
                                 Personalizar
@@ -857,7 +860,7 @@ function DashboardContent() {
                                   loadInvitationRecord(inv);
                                   setActiveTab('guests');
                                 }}
-                                className="inline-flex cursor-pointer items-center gap-1 rounded-xl border border-white/15 bg-white/5 px-2.5 py-1.5 text-xs font-semibold text-stone-200 transition hover:bg-white/10"
+                                className="inline-flex cursor-pointer items-center gap-1 rounded-xl border border-[#cfcdc4] bg-white px-2.5 py-1.5 text-xs font-semibold text-[#26251e] transition hover:bg-[#efeee8]"
                               >
                                 <Users className="h-3.5 w-3.5" />
                                 Invitados
@@ -869,7 +872,7 @@ function DashboardContent() {
                                   toast.info('Invitación eliminada del historial');
                                 }}
                                 title="Eliminar invitación"
-                                className="cursor-pointer rounded-xl border border-white/10 p-1.5 text-stone-400 transition hover:border-rose-500/40 hover:text-rose-400"
+                                className="cursor-pointer rounded-xl border border-[#e6e5e0] p-1.5 text-[#807d72] transition hover:border-[#cf2d56]/40 hover:text-[#cf2d56]"
                               >
                                 <Trash2 className="h-3.5 w-3.5" />
                               </button>
@@ -883,24 +886,24 @@ function DashboardContent() {
               </table>
 
               {/* Controles de Paginación */}
-              <div className="flex flex-wrap items-center justify-between gap-4 border-t border-white/10 bg-stone-950/60 px-5 py-3.5 text-xs">
-                <div className="flex items-center gap-3 text-stone-400">
+              <div className="flex flex-wrap items-center justify-between gap-4 border-t border-[#e6e5e0] bg-[#f7f7f4] px-5 py-3.5 text-xs">
+                <div className="flex items-center gap-3 text-[#807d72]">
                   <span>
                     Mostrando{' '}
-                    <strong className="text-white">
+                    <strong className="text-[#26251e]">
                       {filteredInvitations.length === 0
                         ? 0
                         : (safePage - 1) * pageSize + 1}
                     </strong>{' '}
                     –{' '}
-                    <strong className="text-white">
+                    <strong className="text-[#26251e]">
                       {Math.min(
                         safePage * pageSize,
                         filteredInvitations.length
                       )}
                     </strong>{' '}
                     de{' '}
-                    <strong className="text-white">
+                    <strong className="text-[#26251e]">
                       {filteredInvitations.length}
                     </strong>{' '}
                     invitaciones
@@ -909,7 +912,7 @@ function DashboardContent() {
                   <select
                     value={pageSize}
                     onChange={(e) => setPageSize(Number(e.target.value))}
-                    className="rounded-lg border border-white/15 bg-stone-900 px-2 py-1 text-xs text-white outline-none"
+                    className="rounded-lg border border-[#cfcdc4] bg-white px-2 py-1 text-xs text-[#26251e] outline-none"
                   >
                     <option value={5}>5 por página</option>
                     <option value={10}>10 por página</option>
@@ -922,7 +925,7 @@ function DashboardContent() {
                     type="button"
                     disabled={safePage <= 1}
                     onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                    className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-white/15 bg-stone-900 px-3 py-1.5 font-semibold text-stone-300 transition hover:bg-white/10 disabled:opacity-40"
+                    className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[#cfcdc4] bg-white px-3 py-1.5 font-semibold text-[#5a5852] transition hover:bg-[#efeee8] disabled:opacity-40"
                   >
                     <ChevronLeft className="h-3.5 w-3.5" />
                     Anterior
@@ -936,8 +939,8 @@ function DashboardContent() {
                         onClick={() => setCurrentPage(pageNum)}
                         className={`h-8 w-8 cursor-pointer rounded-lg text-xs font-bold transition ${
                           pageNum === safePage
-                            ? 'bg-amber-500 text-stone-950'
-                            : 'border border-white/10 bg-stone-900 text-stone-300 hover:bg-white/10'
+                            ? 'bg-[#f54e00] text-white'
+                            : 'border border-[#e6e5e0] bg-white text-[#5a5852] hover:bg-[#efeee8]'
                         }`}
                       >
                         {pageNum}
@@ -951,7 +954,7 @@ function DashboardContent() {
                     onClick={() =>
                       setCurrentPage((p) => Math.min(totalPages, p + 1))
                     }
-                    className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-white/15 bg-stone-900 px-3 py-1.5 font-semibold text-stone-300 transition hover:bg-white/10 disabled:opacity-40"
+                    className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[#cfcdc4] bg-white px-3 py-1.5 font-semibold text-[#5a5852] transition hover:bg-[#efeee8] disabled:opacity-40"
                   >
                     Siguiente
                     <ChevronRight className="h-3.5 w-3.5" />
@@ -967,30 +970,30 @@ function DashboardContent() {
           VISTA 2: CONSTRUCTOR VISUAL SPLIT-SCREEN EN TIEMPO REAL
       ===================================================================== */}
       {activeTab === 'builder' && (
-        <div className="flex flex-1 overflow-hidden">
+        <div className="flex flex-1 flex-col overflow-hidden xl:flex-row">
           {/* Panel Inspector Izquierdo */}
-          <aside className="flex w-full max-w-md flex-col border-r border-white/10 bg-stone-900/60">
+          <aside className="flex max-h-[62dvh] w-full flex-col border-b border-[#e6e5e0] bg-[#fafaf7] xl:max-h-none xl:max-w-md xl:border-r xl:border-b-0">
             {/* Tarjeta de Cliente Activo en el Builder */}
-            <div className="border-b border-white/10 bg-stone-950/90 px-4 py-3">
+            <div className="border-b border-[#e6e5e0] bg-[#f7f7f4]/95 px-4 py-3">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold tracking-wider text-amber-400 uppercase">
+                <span className="text-[11px] font-bold tracking-wider text-[#f54e00] uppercase">
                   Cliente Activo en Editor
                 </span>
                 <button
                   type="button"
                   onClick={() => setActiveTab('history')}
-                  className="cursor-pointer text-[11px] font-semibold text-stone-400 underline hover:text-white"
+                  className="cursor-pointer text-[11px] font-semibold text-[#807d72] underline hover:text-[#26251e]"
                 >
                   Cambiar cliente ({invitations.length})
                 </button>
               </div>
-              <p className="mt-0.5 truncate text-sm font-bold text-white">
-                {clientName} — <span className="text-amber-300">/{slug}</span>
+              <p className="mt-0.5 truncate text-sm font-bold text-[#26251e]">
+                {clientName} — <span className="text-[#d04200]">/{slug}</span>
               </p>
             </div>
 
             {/* Sub-tabs del Inspector */}
-            <div className="grid grid-cols-4 border-b border-white/10 bg-stone-950/60 p-1.5 text-xs font-semibold">
+            <div className="grid grid-cols-4 border-b border-[#e6e5e0] bg-[#f7f7f4] p-1.5 text-xs font-semibold">
               {[
                 { id: 'templates', label: '10 Templates', icon: Sparkles },
                 { id: 'colors', label: 'Colores/URL', icon: Palette },
@@ -1009,8 +1012,8 @@ function DashboardContent() {
                     }
                     className={`flex cursor-pointer flex-col items-center gap-1 rounded-lg py-2 transition ${
                       inspectorTab === t.id
-                        ? 'bg-white/10 text-amber-400'
-                        : 'text-stone-400 hover:text-white'
+                        ? 'bg-[#efeee8] text-[#f54e00]'
+                        : 'text-[#807d72] hover:text-[#26251e]'
                     }`}
                   >
                     <Icon className="h-4 w-4" />
@@ -1025,9 +1028,9 @@ function DashboardContent() {
               {inspectorTab === 'templates' && (
                 <div className="space-y-4">
                   {/* Historial rápido de invitaciones creadas con el template seleccionado */}
-                  <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-3.5">
+                  <div className="rounded-xl border border-[#f54e00]/30 bg-[#f54e00]/10 p-3.5">
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-bold text-amber-300 uppercase">
+                      <span className="text-[11px] font-bold text-[#d04200] uppercase">
                         Historial en {templateId} ({builderTemplateHistory.length}
                         )
                       </span>
@@ -1037,7 +1040,7 @@ function DashboardContent() {
                           setSelectedHistoryTemplate(templateId);
                           setActiveTab('history');
                         }}
-                        className="cursor-pointer text-[11px] font-semibold text-white underline"
+                        className="cursor-pointer text-[11px] font-semibold text-[#26251e] underline"
                       >
                         Ver todas / Filtrar
                       </button>
@@ -1050,8 +1053,8 @@ function DashboardContent() {
                           onClick={() => handleOpenInBuilder(item)}
                           className={`flex w-full cursor-pointer items-center justify-between rounded-lg px-2.5 py-1.5 text-left text-xs transition ${
                             item.id === eventId
-                              ? 'bg-amber-500 font-bold text-stone-950'
-                              : 'bg-stone-950/70 text-stone-200 hover:bg-stone-950'
+                              ? 'bg-[#f54e00] font-bold text-white'
+                              : 'bg-[#f7f7f4] text-[#26251e] hover:bg-[#f7f7f4]'
                           }`}
                         >
                           <span className="truncate">{item.clientName}</span>
@@ -1063,7 +1066,7 @@ function DashboardContent() {
                     </div>
                   </div>
 
-                  <p className="text-xs text-stone-400">
+                  <p className="text-xs text-[#807d72]">
                     Selecciona un template (muestra cuántas invitaciones has
                     creado con cada uno):
                   </p>
@@ -1073,10 +1076,10 @@ function DashboardContent() {
                       key={tpl.id}
                       type="button"
                       onClick={() => setTemplate(tpl.id as TemplateId)}
-                      className={`flex w-full cursor-pointer items-center gap-3.5 rounded-2xl border p-3 text-left transition ${
+                      className={`flex w-full cursor-pointer items-center gap-3.5 rounded-xl border p-3 text-left transition ${
                         templateId === tpl.id
-                          ? 'border-amber-500 bg-amber-500/10'
-                          : 'border-white/10 bg-stone-950/60 hover:border-white/25'
+                          ? 'border-[#f54e00] bg-[#f54e00]/10'
+                          : 'border-[#e6e5e0] bg-[#f7f7f4] hover:border-[#cfcdc4]'
                       }`}
                     >
                       <img
@@ -1086,14 +1089,14 @@ function DashboardContent() {
                       />
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center justify-between">
-                          <p className="truncate text-sm font-bold text-white">
+                          <p className="truncate text-sm font-bold text-[#26251e]">
                             {tpl.name}
                           </p>
-                          <span className="rounded-full bg-stone-800 px-2 py-0.5 text-[10px] font-bold text-amber-300">
+                          <span className="rounded-full bg-[#efeee8] px-2 py-0.5 text-[10px] font-bold text-[#d04200]">
                             {templateCounts[tpl.id] || 0} creadas
                           </span>
                         </div>
-                        <p className="mt-0.5 line-clamp-1 text-xs text-stone-400">
+                        <p className="mt-0.5 line-clamp-1 text-xs text-[#807d72]">
                           {tpl.categoryLabel} • {tpl.signatureAnimation}
                         </p>
                       </div>
@@ -1105,34 +1108,34 @@ function DashboardContent() {
               {inspectorTab === 'colors' && (
                 <div className="space-y-5">
                   <div>
-                    <label className="mb-1.5 block text-xs font-bold tracking-wider text-stone-300 uppercase">
+                    <label className="mb-1.5 block text-xs font-bold tracking-wider text-[#5a5852] uppercase">
                       Nombre del Cliente
                     </label>
                     <input
                       type="text"
                       value={clientName}
                       onChange={(e) => setMeta({ clientName: e.target.value })}
-                      className="w-full rounded-xl border border-white/15 bg-stone-950 px-3.5 py-2 text-sm text-white outline-none"
+                      className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3.5 py-2 text-sm text-[#26251e] outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="mb-1.5 block text-xs font-bold tracking-wider text-stone-300 uppercase">
+                    <label className="mb-1.5 block text-xs font-bold tracking-wider text-[#5a5852] uppercase">
                       URL Personalizada (Slug del Cliente)
                     </label>
-                    <div className="flex items-center rounded-xl border border-white/15 bg-stone-950 px-3 py-2 text-xs">
-                      <span className="text-stone-500">dominio.com/</span>
+                    <div className="flex items-center rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3 py-2 text-xs">
+                      <span className="text-[#a09c92]">dominio.com/</span>
                       <input
                         type="text"
                         value={slug}
                         onChange={(e) => setMeta({ slug: e.target.value })}
-                        className="ml-1 flex-1 bg-transparent font-semibold text-amber-400 outline-none"
+                        className="ml-1 flex-1 bg-transparent font-semibold text-[#f54e00] outline-none"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="mb-2 block text-xs font-bold tracking-wider text-stone-300 uppercase">
+                    <label className="mb-2 block text-xs font-bold tracking-wider text-[#5a5852] uppercase">
                       Paleta de Colores Personalizada
                     </label>
                     <div className="grid grid-cols-2 gap-3">
@@ -1144,7 +1147,7 @@ function DashboardContent() {
                       ].map((c) => (
                         <div
                           key={c.key}
-                          className="flex items-center justify-between rounded-xl border border-white/10 bg-stone-950 p-2.5 text-xs"
+                          className="flex items-center justify-between rounded-xl border border-[#e6e5e0] bg-[#f7f7f4] p-2.5 text-xs"
                         >
                           <span>{c.label}</span>
                           <input
@@ -1165,7 +1168,7 @@ function DashboardContent() {
                   </div>
 
                   <div>
-                    <label className="mb-2 block text-xs font-bold tracking-wider text-stone-300 uppercase">
+                    <label className="mb-2 block text-xs font-bold tracking-wider text-[#5a5852] uppercase">
                       Sello del Sobre Interactivo
                     </label>
                     <input
@@ -1175,7 +1178,7 @@ function DashboardContent() {
                         updateEnvelope({ sealMonogram: e.target.value })
                       }
                       placeholder="Ej. S & M o XV"
-                      className="w-full rounded-xl border border-white/15 bg-stone-950 px-3.5 py-2.5 text-sm text-white outline-none"
+                      className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3.5 py-2.5 text-sm text-[#26251e] outline-none"
                     />
                   </div>
                 </div>
@@ -1184,7 +1187,7 @@ function DashboardContent() {
               {inspectorTab === 'content' && (
                 <div className="space-y-4">
                   <div>
-                    <label className="mb-1 block text-xs font-semibold text-stone-300">
+                    <label className="mb-1 block text-xs font-semibold text-[#5a5852]">
                       Etiqueta Superior (Badge)
                     </label>
                     <input
@@ -1193,12 +1196,12 @@ function DashboardContent() {
                       onChange={(e) =>
                         updateHero({ badgeText: e.target.value })
                       }
-                      className="w-full rounded-xl border border-white/15 bg-stone-950 px-3.5 py-2 text-sm text-white outline-none"
+                      className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3.5 py-2 text-sm text-[#26251e] outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-xs font-semibold text-stone-300">
+                    <label className="mb-1 block text-xs font-semibold text-[#5a5852]">
                       Título Principal / Festejados
                     </label>
                     <input
@@ -1208,24 +1211,24 @@ function DashboardContent() {
                         updateHero({ mainTitle: e.target.value });
                         setMeta({ title: e.target.value });
                       }}
-                      className="w-full rounded-xl border border-white/15 bg-stone-950 px-3.5 py-2 text-sm text-white outline-none"
+                      className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3.5 py-2 text-sm text-[#26251e] outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-xs font-semibold text-stone-300">
+                    <label className="mb-1 block text-xs font-semibold text-[#5a5852]">
                       Fecha y Ciudad (Subtítulo)
                     </label>
                     <input
                       type="text"
                       value={config.content.hero.tagline}
                       onChange={(e) => updateHero({ tagline: e.target.value })}
-                      className="w-full rounded-xl border border-white/15 bg-stone-950 px-3.5 py-2 text-sm text-white outline-none"
+                      className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3.5 py-2 text-sm text-[#26251e] outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-xs font-semibold text-stone-300">
+                    <label className="mb-1 block text-xs font-semibold text-[#5a5852]">
                       URL Fotografía de Portada
                     </label>
                     <input
@@ -1234,12 +1237,12 @@ function DashboardContent() {
                       onChange={(e) =>
                         updateHero({ coverImageUrl: e.target.value })
                       }
-                      className="w-full rounded-xl border border-white/15 bg-stone-950 px-3.5 py-2 text-sm text-white outline-none"
+                      className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3.5 py-2 text-sm text-[#26251e] outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-xs font-semibold text-stone-300">
+                    <label className="mb-1 block text-xs font-semibold text-[#5a5852]">
                       Código de Vestimenta
                     </label>
                     <input
@@ -1248,7 +1251,7 @@ function DashboardContent() {
                       onChange={(e) =>
                         updateDressCode({ title: e.target.value })
                       }
-                      className="w-full rounded-xl border border-white/15 bg-stone-950 px-3.5 py-2 text-sm text-white outline-none"
+                      className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3.5 py-2 text-sm text-[#26251e] outline-none"
                     />
                   </div>
                 </div>
@@ -1256,22 +1259,22 @@ function DashboardContent() {
 
               {inspectorTab === 'sections' && (
                 <div className="space-y-2.5">
-                  <p className="text-xs text-stone-400">
+                  <p className="text-xs text-[#807d72]">
                     Activa o desactiva cualquiera de los 12 bloques modulares:
                   </p>
                   {config.sectionsOrder.map((sec) => (
                     <div
                       key={sec.id}
-                      className="flex items-center justify-between rounded-xl border border-white/10 bg-stone-950 px-3.5 py-2.5 text-xs"
+                      className="flex items-center justify-between rounded-xl border border-[#e6e5e0] bg-[#f7f7f4] px-3.5 py-2.5 text-xs"
                     >
-                      <span className="font-medium text-stone-200">
+                      <span className="font-medium text-[#26251e]">
                         {SECTION_LABELS[sec.id]}
                       </span>
                       <input
                         type="checkbox"
                         checked={sec.enabled}
                         onChange={() => toggleSection(sec.id)}
-                        className="h-4 w-4 cursor-pointer accent-amber-500"
+                        className="h-4 w-4 cursor-pointer accent-[#f54e00]"
                       />
                     </div>
                   ))}
@@ -1281,13 +1284,13 @@ function DashboardContent() {
           </aside>
 
           {/* Lienzo Central de Previsualización Interactiva */}
-          <main className="flex flex-1 flex-col bg-stone-950">
-            <div className="flex items-center justify-between border-b border-white/10 bg-stone-900/40 px-6 py-2.5">
-              <div className="flex items-center gap-2">
+          <main className="flex min-w-0 flex-1 flex-col bg-[#f7f7f4]">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#e6e5e0] bg-[#fafaf7] px-4 py-2.5 sm:px-6">
+              <div className="flex min-w-0 flex-wrap items-center gap-2">
                 <button
                   type="button"
                   onClick={() => useBuilderStore.temporal.getState().undo()}
-                  className="cursor-pointer rounded-lg border border-white/10 p-1.5 text-stone-400 hover:text-white"
+                  className="cursor-pointer rounded-lg border border-[#e6e5e0] p-1.5 text-[#807d72] hover:text-[#26251e]"
                   title="Deshacer (Undo)"
                 >
                   <Undo2 className="h-4 w-4" />
@@ -1295,7 +1298,7 @@ function DashboardContent() {
                 <button
                   type="button"
                   onClick={() => useBuilderStore.temporal.getState().redo()}
-                  className="cursor-pointer rounded-lg border border-white/10 p-1.5 text-stone-400 hover:text-white"
+                  className="cursor-pointer rounded-lg border border-[#e6e5e0] p-1.5 text-[#807d72] hover:text-[#26251e]"
                   title="Rehacer (Redo)"
                 >
                   <Redo2 className="h-4 w-4" />
@@ -1303,7 +1306,7 @@ function DashboardContent() {
                 <button
                   type="button"
                   onClick={() => setPreviewEnvelopeOpen(!previewEnvelopeOpen)}
-                  className="ml-2 cursor-pointer rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-300"
+                  className="ml-2 cursor-pointer rounded-lg border border-[#f54e00]/40 bg-[#f54e00]/10 px-3 py-1 text-xs font-semibold text-[#d04200]"
                 >
                   {previewEnvelopeOpen
                     ? 'Probar Sobre Cerrado'
@@ -1312,14 +1315,14 @@ function DashboardContent() {
                 <Link
                   href={`/${slug}?template=${templateId}&g=fam-lopez-8a2f`}
                   target="_blank"
-                  className="ml-2 inline-flex cursor-pointer items-center gap-1 rounded-lg border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-stone-300 hover:text-white"
+                  className="ml-2 inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[#e6e5e0] bg-white px-3 py-1 text-xs font-medium text-[#5a5852] hover:text-[#26251e]"
                 >
                   <span>Ver URL Pública (/{slug})</span>
                   <ExternalLink className="h-3 w-3" />
                 </Link>
               </div>
 
-              <div className="flex items-center gap-1 rounded-xl border border-white/10 bg-stone-900 p-1">
+              <div className="flex items-center gap-1 rounded-xl border border-[#e6e5e0] bg-white p-1">
                 {[
                   { id: 'mobile', label: 'Móvil 390px', icon: Smartphone },
                   { id: 'tablet', label: 'Tablet 768px', icon: Tablet },
@@ -1335,8 +1338,8 @@ function DashboardContent() {
                       }
                       className={`inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1 text-xs font-medium transition ${
                         viewport === vp.id
-                          ? 'bg-amber-500 text-stone-950'
-                          : 'text-stone-400 hover:text-white'
+                          ? 'bg-[#f54e00] text-white'
+                          : 'text-[#807d72] hover:text-[#26251e]'
                       }`}
                     >
                       <Icon className="h-3.5 w-3.5" />
@@ -1349,7 +1352,7 @@ function DashboardContent() {
 
             <div className="flex flex-1 items-start justify-center overflow-y-auto p-4 sm:p-8">
               <div
-                className={`relative overflow-y-auto rounded-3xl border border-white/15 shadow-2xl transition-all duration-300 ${
+                className={`relative overflow-y-auto rounded-xl border border-[#cfcdc4]  transition-all duration-300 ${
                   viewport === 'mobile'
                     ? 'h-[780px] w-[390px]'
                     : viewport === 'tablet'
@@ -1377,53 +1380,53 @@ function DashboardContent() {
         <div className="mx-auto w-full max-w-6xl space-y-8 p-6 sm:p-10">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <span className="text-xs font-bold tracking-wider text-amber-400 uppercase">
+              <span className="text-xs font-bold tracking-wider text-[#f54e00] uppercase">
                 CRM de Invitados del Cliente
               </span>
-              <h2 className="text-2xl font-extrabold text-white">
+              <h2 className="text-2xl font-medium text-[#26251e]">
                 {activeInvitationRecord?.clientName} ({title})
               </h2>
             </div>
             <button
               type="button"
               onClick={() => setActiveTab('history')}
-              className="cursor-pointer rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-xs font-semibold text-stone-200 hover:bg-white/10"
+              className="cursor-pointer rounded-xl border border-[#cfcdc4] bg-white px-4 py-2 text-xs font-semibold text-[#26251e] hover:bg-[#efeee8]"
             >
               Cambiar de Cliente / Invitación
             </button>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-3">
-            <div className="rounded-2xl border border-white/10 bg-stone-900 p-5">
-              <span className="text-xs text-stone-400 uppercase">
+            <div className="rounded-xl border border-[#e6e5e0] bg-white p-5">
+              <span className="text-xs text-[#807d72] uppercase">
                 Familias / Grupos en Lista
               </span>
-              <p className="mt-1 text-3xl font-bold text-white">
+              <p className="mt-1 text-3xl font-bold text-[#26251e]">
                 {activeGuests.length} Grupos
               </p>
-              <span className="text-xs text-amber-400">
+              <span className="text-xs text-[#f54e00]">
                 {totalAllocated} pases asignados en total
               </span>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-stone-900 p-5">
-              <span className="text-xs text-stone-400 uppercase">
+            <div className="rounded-xl border border-[#e6e5e0] bg-white p-5">
+              <span className="text-xs text-[#807d72] uppercase">
                 Invitados Confirmados (RSVP)
               </span>
-              <p className="mt-1 text-3xl font-bold text-emerald-400">
+              <p className="mt-1 text-3xl font-bold text-[#1f8a65]">
                 {totalConfirmed} Personas
               </p>
-              <span className="text-xs text-stone-400">
+              <span className="text-xs text-[#807d72]">
                 Con Pase QR firmado generado
               </span>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-stone-900 p-5">
-              <span className="text-xs text-stone-400 uppercase">
+            <div className="rounded-xl border border-[#e6e5e0] bg-white p-5">
+              <span className="text-xs text-[#807d72] uppercase">
                 URL Base del Cliente
               </span>
-              <p className="mt-1 truncate font-mono text-base font-bold text-amber-400">
+              <p className="mt-1 truncate font-mono text-base font-bold text-[#f54e00]">
                 /{slug}
               </p>
-              <span className="text-xs text-stone-400">
+              <span className="text-xs text-[#807d72]">
                 Smart Guest Links activos (?g=token)
               </span>
             </div>
@@ -1431,10 +1434,10 @@ function DashboardContent() {
 
           <form
             onSubmit={handleAddGuestGroup}
-            className="grid gap-4 rounded-2xl border border-white/10 bg-stone-900/70 p-6 sm:grid-cols-6"
+            className="grid gap-4 rounded-xl border border-[#e6e5e0] bg-[#fafaf7] p-6 sm:grid-cols-6"
           >
             <div className="sm:col-span-2">
-              <label className="mb-1 block text-xs text-stone-400">
+              <label className="mb-1 block text-xs text-[#807d72]">
                 Nombre de Familia o Invitado
               </label>
               <input
@@ -1443,11 +1446,11 @@ function DashboardContent() {
                 value={newGuestName}
                 onChange={(e) => setNewGuestName(e.target.value)}
                 placeholder="Ej. Familia Hernández Soto"
-                className="w-full rounded-xl border border-white/15 bg-stone-950 px-3.5 py-2.5 text-sm text-white outline-none"
+                className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3.5 py-2.5 text-sm text-[#26251e] outline-none"
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs text-stone-400">
+              <label className="mb-1 block text-xs text-[#807d72]">
                 WhatsApp
               </label>
               <input
@@ -1455,11 +1458,11 @@ function DashboardContent() {
                 value={newGuestPhone}
                 onChange={(e) => setNewGuestPhone(e.target.value)}
                 placeholder="525512345678"
-                className="w-full rounded-xl border border-white/15 bg-stone-950 px-3.5 py-2.5 text-sm text-white outline-none"
+                className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3.5 py-2.5 text-sm text-[#26251e] outline-none"
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs text-stone-400">
+              <label className="mb-1 block text-xs text-[#807d72]">
                 Pases Adulto / Niño
               </label>
               <div className="flex gap-2">
@@ -1469,7 +1472,7 @@ function DashboardContent() {
                   max={15}
                   value={newGuestAdults}
                   onChange={(e) => setNewGuestAdults(Number(e.target.value))}
-                  className="w-full rounded-xl border border-white/15 bg-stone-950 px-3 py-2.5 text-sm text-white outline-none"
+                  className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3 py-2.5 text-sm text-[#26251e] outline-none"
                 />
                 <input
                   type="number"
@@ -1477,34 +1480,34 @@ function DashboardContent() {
                   max={10}
                   value={newGuestChildren}
                   onChange={(e) => setNewGuestChildren(Number(e.target.value))}
-                  className="w-full rounded-xl border border-white/15 bg-stone-950 px-3 py-2.5 text-sm text-white outline-none"
+                  className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3 py-2.5 text-sm text-[#26251e] outline-none"
                 />
               </div>
             </div>
             <div>
-              <label className="mb-1 block text-xs text-stone-400">
+              <label className="mb-1 block text-xs text-[#807d72]">
                 Mesa Asignada
               </label>
               <input
                 type="text"
                 value={newGuestTable}
                 onChange={(e) => setNewGuestTable(e.target.value)}
-                className="w-full rounded-xl border border-white/15 bg-stone-950 px-3.5 py-2.5 text-sm text-white outline-none"
+                className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3.5 py-2.5 text-sm text-[#26251e] outline-none"
               />
             </div>
             <div className="flex items-end">
               <button
                 type="submit"
-                className="w-full cursor-pointer rounded-xl bg-amber-500 py-2.5 text-xs font-bold tracking-wider text-stone-950 uppercase transition hover:bg-amber-400"
+                className="w-full cursor-pointer rounded-xl bg-[#f54e00] py-2.5 text-xs font-bold tracking-wider text-white uppercase transition hover:bg-[#d04200]"
               >
                 + Crear Pase Único
               </button>
             </div>
           </form>
 
-          <div className="overflow-x-auto rounded-2xl border border-white/10 bg-stone-900">
+          <div className="overflow-x-auto rounded-xl border border-[#e6e5e0] bg-white">
             <table className="w-full text-left text-sm">
-              <thead className="border-b border-white/10 bg-stone-950/60 text-xs text-stone-400 uppercase">
+              <thead className="border-b border-[#e6e5e0] bg-[#f7f7f4] text-xs text-[#807d72] uppercase">
                 <tr>
                   <th className="px-5 py-3.5">Familia / Invitado</th>
                   <th className="px-5 py-3.5">Cupo Asignado</th>
@@ -1528,10 +1531,10 @@ function DashboardContent() {
                   });
 
                   return (
-                    <tr key={g.id} className="hover:bg-white/[0.02]">
-                      <td className="px-5 py-4 font-semibold text-white">
+                    <tr key={g.id} className="hover:bg-[#fafaf7]">
+                      <td className="px-5 py-4 font-semibold text-[#26251e]">
                         {g.groupName}
-                        <span className="block text-xs font-normal text-stone-400">
+                        <span className="block text-xs font-normal text-[#807d72]">
                           Token: {g.guestToken}
                         </span>
                       </td>
@@ -1545,10 +1548,10 @@ function DashboardContent() {
                         <span
                           className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                             g.rsvpStatus === 'confirmed'
-                              ? 'bg-emerald-500/15 text-emerald-400'
+                              ? 'bg-[#1f8a65]/10 text-[#1f8a65]'
                               : g.rsvpStatus === 'viewed'
-                                ? 'bg-amber-500/15 text-amber-300'
-                                : 'bg-stone-800 text-stone-400'
+                                ? 'bg-[#f54e00]/10 text-[#d04200]'
+                                : 'bg-[#efeee8] text-[#807d72]'
                           }`}
                         >
                           {g.rsvpStatus === 'confirmed'
@@ -1558,14 +1561,14 @@ function DashboardContent() {
                               : 'Pendiente'}
                         </span>
                       </td>
-                      <td className="px-5 py-4 text-xs text-stone-300">
+                      <td className="px-5 py-4 text-xs text-[#5a5852]">
                         {g.tableName}
                       </td>
                       <td className="px-5 py-4">
                         <Link
                           href={invitePath}
                           target="_blank"
-                          className="inline-flex cursor-pointer items-center gap-1 text-xs font-medium text-amber-400 hover:underline"
+                          className="inline-flex cursor-pointer items-center gap-1 text-xs font-medium text-[#f54e00] hover:underline"
                         >
                           <span>Abrir sobre personalizado</span>
                           <ExternalLink className="h-3 w-3" />
@@ -1581,7 +1584,7 @@ function DashboardContent() {
                               );
                               toast.success('Link único copiado');
                             }}
-                            className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-white/15 px-2.5 py-1.5 text-xs text-stone-200 hover:bg-white/10"
+                            className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[#cfcdc4] px-2.5 py-1.5 text-xs text-[#26251e] hover:bg-[#efeee8]"
                           >
                             <Copy className="h-3.5 w-3.5" />
                             Copiar Link
@@ -1590,7 +1593,7 @@ function DashboardContent() {
                             href={waUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex cursor-pointer items-center gap-1 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-500"
+                            className="inline-flex cursor-pointer items-center gap-1 rounded-lg bg-[#1f8a65] px-3 py-1.5 text-xs font-semibold text-[#26251e] hover:bg-[#1f8a65]"
                           >
                             <Send className="h-3.5 w-3.5" />
                             WhatsApp
@@ -1611,14 +1614,14 @@ function DashboardContent() {
       ===================================================================== */}
       {activeTab === 'checkin' && (
         <div className="mx-auto w-full max-w-4xl space-y-6 p-6 sm:p-10">
-          <div className="rounded-3xl border border-white/10 bg-stone-900 p-8 text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-500/15 text-amber-400">
+          <div className="rounded-xl border border-[#e6e5e0] bg-white p-8 text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-xl bg-[#f54e00]/10 text-[#f54e00]">
               <QrCode className="h-8 w-8" />
             </div>
-            <h2 className="text-2xl font-bold text-white">
+            <h2 className="text-2xl font-bold text-[#26251e]">
               Modo Recepción — {title} ({clientName})
             </h2>
-            <p className="mx-auto mt-2 max-w-xl text-sm text-stone-400">
+            <p className="mx-auto mt-2 max-w-xl text-sm text-[#807d72]">
               Valida la firma HMAC-SHA256 de los códigos QR en la puerta del
               evento y asigna el ingreso en tiempo real.
             </p>
@@ -1627,16 +1630,16 @@ function DashboardContent() {
               {activeGuests.map((g) => (
                 <div
                   key={g.id}
-                  className="flex flex-col justify-between rounded-2xl border border-white/10 bg-stone-950 p-5"
+                  className="flex flex-col justify-between rounded-xl border border-[#e6e5e0] bg-[#f7f7f4] p-5"
                 >
                   <div>
-                    <span className="text-[11px] font-bold tracking-wider text-amber-400 uppercase">
+                    <span className="text-[11px] font-bold tracking-wider text-[#f54e00] uppercase">
                       {g.tableName}
                     </span>
-                    <h3 className="mt-1 font-bold text-white">
+                    <h3 className="mt-1 font-bold text-[#26251e]">
                       {g.groupName}
                     </h3>
-                    <p className="mt-1 text-xs text-stone-400">
+                    <p className="mt-1 text-xs text-[#807d72]">
                       Ingresaron: {g.checkedInCount} de{' '}
                       {g.allocatedAdults + g.allocatedChildren} pases
                     </p>
@@ -1662,7 +1665,7 @@ function DashboardContent() {
                         `Check-in validado: ${g.groupName} -> Pasar a ${g.tableName}`
                       );
                     }}
-                    className="mt-4 w-full cursor-pointer rounded-xl bg-white/10 py-2.5 text-xs font-semibold text-white transition hover:bg-amber-500 hover:text-stone-950"
+                    className="mt-4 w-full cursor-pointer rounded-xl bg-[#efeee8] py-2.5 text-xs font-semibold text-white transition hover:bg-[#f54e00] hover:text-white"
                   >
                     Simular Escaneo QR en Puerta
                   </button>
@@ -1677,21 +1680,21 @@ function DashboardContent() {
           MODAL: CREAR NUEVA INVITACIÓN DE CLIENTE (GUARDADO POR TEMPLATE)
       ===================================================================== */}
       {isNewModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-3xl border border-white/15 bg-stone-900 p-6 shadow-2xl sm:p-8">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#26251e]/70 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-lg rounded-xl border border-[#cfcdc4] bg-white p-6  sm:p-8">
             <div className="mb-5 flex items-center justify-between">
               <div>
-                <span className="text-xs font-bold tracking-wider text-amber-400 uppercase">
+                <span className="text-xs font-bold tracking-wider text-[#f54e00] uppercase">
                   Registro Multi-Cliente
                 </span>
-                <h3 className="text-xl font-bold text-white">
+                <h3 className="text-xl font-bold text-[#26251e]">
                   Crear Nueva Invitación y Guardar en Template
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setIsNewModalOpen(false)}
-                className="cursor-pointer rounded-lg p-1.5 text-stone-400 hover:bg-white/10 hover:text-white"
+                className="cursor-pointer rounded-lg p-1.5 text-[#807d72] hover:bg-[#efeee8] hover:text-[#26251e]"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -1702,7 +1705,7 @@ function DashboardContent() {
               className="space-y-4"
             >
               <div>
-                <label className="mb-1 block text-xs font-semibold text-stone-300">
+                <label className="mb-1 block text-xs font-semibold text-[#5a5852]">
                   1. Selecciona el Template (Se guardará en su historial)
                 </label>
                 <select
@@ -1713,7 +1716,7 @@ function DashboardContent() {
                       templateId: e.target.value as TemplateId,
                     }))
                   }
-                  className="w-full rounded-xl border border-white/15 bg-stone-950 px-3.5 py-2.5 text-sm text-white outline-none focus:border-amber-500"
+                  className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3.5 py-2.5 text-sm text-[#26251e] outline-none focus:border-[#f54e00]"
                 >
                   {TEMPLATES_CATALOG.map((tpl) => (
                     <option key={tpl.id} value={tpl.id}>
@@ -1725,7 +1728,7 @@ function DashboardContent() {
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
-                  <label className="mb-1 block text-xs font-semibold text-stone-300">
+                  <label className="mb-1 block text-xs font-semibold text-[#5a5852]">
                     2. Nombre del Cliente
                   </label>
                   <input
@@ -1739,12 +1742,12 @@ function DashboardContent() {
                       }))
                     }
                     placeholder="Ej. Familia Garza / Lucía y Fer"
-                    className="w-full rounded-xl border border-white/15 bg-stone-950 px-3.5 py-2.5 text-sm text-white outline-none focus:border-amber-500"
+                    className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3.5 py-2.5 text-sm text-[#26251e] outline-none focus:border-[#f54e00]"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-xs font-semibold text-stone-300">
+                  <label className="mb-1 block text-xs font-semibold text-[#5a5852]">
                     Teléfono WhatsApp del Cliente
                   </label>
                   <input
@@ -1757,14 +1760,14 @@ function DashboardContent() {
                       }))
                     }
                     placeholder="+52 55 1234 5678"
-                    className="w-full rounded-xl border border-white/15 bg-stone-950 px-3.5 py-2.5 text-sm text-white outline-none focus:border-amber-500"
+                    className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3.5 py-2.5 text-sm text-[#26251e] outline-none focus:border-[#f54e00]"
                   />
                 </div>
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
-                  <label className="mb-1 block text-xs font-semibold text-stone-300">
+                  <label className="mb-1 block text-xs font-semibold text-[#5a5852]">
                     3. Título del Evento (Festejados)
                   </label>
                   <input
@@ -1780,12 +1783,12 @@ function DashboardContent() {
                       }));
                     }}
                     placeholder="Ej. Boda Lucía & Fernando"
-                    className="w-full rounded-xl border border-white/15 bg-stone-950 px-3.5 py-2.5 text-sm text-white outline-none focus:border-amber-500"
+                    className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3.5 py-2.5 text-sm text-[#26251e] outline-none focus:border-[#f54e00]"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-xs font-semibold text-stone-300">
+                  <label className="mb-1 block text-xs font-semibold text-[#5a5852]">
                     Fecha del Evento
                   </label>
                   <input
@@ -1798,17 +1801,17 @@ function DashboardContent() {
                         eventDate: e.target.value,
                       }))
                     }
-                    className="w-full rounded-xl border border-white/15 bg-stone-950 px-3.5 py-2.5 text-sm text-white outline-none focus:border-amber-500"
+                    className="w-full rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3.5 py-2.5 text-sm text-[#26251e] outline-none focus:border-[#f54e00]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="mb-1 block text-xs font-semibold text-stone-300">
+                <label className="mb-1 block text-xs font-semibold text-[#5a5852]">
                   4. URL Personalizada del Cliente
                 </label>
-                <div className="flex items-center rounded-xl border border-white/15 bg-stone-950 px-3.5 py-2.5 text-xs">
-                  <span className="text-stone-500">
+                <div className="flex items-center rounded-xl border border-[#cfcdc4] bg-[#f7f7f4] px-3.5 py-2.5 text-xs">
+                  <span className="text-[#a09c92]">
                     www.dominioprincipal.com/
                   </span>
                   <input
@@ -1822,7 +1825,7 @@ function DashboardContent() {
                       }))
                     }
                     placeholder="boda-lucia-y-fernando"
-                    className="ml-1 flex-1 bg-transparent font-mono font-bold text-amber-400 outline-none"
+                    className="ml-1 flex-1 bg-transparent font-mono font-bold text-[#f54e00] outline-none"
                   />
                 </div>
               </div>
@@ -1831,13 +1834,13 @@ function DashboardContent() {
                 <button
                   type="button"
                   onClick={() => setIsNewModalOpen(false)}
-                  className="cursor-pointer rounded-xl border border-white/15 px-4 py-2.5 text-xs font-semibold text-stone-300 hover:bg-white/10"
+                  className="cursor-pointer rounded-xl border border-[#cfcdc4] px-4 py-2.5 text-xs font-semibold text-[#5a5852] hover:bg-[#efeee8]"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl bg-amber-500 px-5 py-2.5 text-xs font-bold tracking-wider text-stone-950 uppercase shadow-lg transition hover:bg-amber-400"
+                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl bg-[#f54e00] px-5 py-2.5 text-xs font-bold tracking-wider text-white uppercase  transition hover:bg-[#d04200]"
                 >
                   <Wand2 className="h-4 w-4" />
                   Guardar en Historial y Personalizar
@@ -1855,7 +1858,7 @@ export default function DashboardPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-dvh items-center justify-center bg-stone-950 text-stone-400">
+        <div className="flex min-h-dvh items-center justify-center bg-[#f7f7f4] text-[#807d72]">
           Cargando Dashboard...
         </div>
       }

@@ -4,29 +4,20 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import {
   ArrowRight,
-  Calendar,
-  CheckCircle2,
+  CalendarDays,
+  Check,
   ChevronDown,
-  Clock,
-  Copy,
+  Clock3,
   Eye,
   FolderKanban,
-  Gift,
-  Heart,
-  Layers,
   LayoutDashboard,
-  Lock,
   MapPin,
   Mic,
-  Music,
   QrCode,
   ShieldCheck,
   Smartphone,
-  Sparkles,
-  Star,
   Users,
-  Wand2,
-  Zap,
+  WandSparkles,
 } from 'lucide-react';
 import { TEMPLATES_CATALOG } from '@/lib/templates/templates-catalog';
 import type { EventCategory } from '@/types/invitation.types';
@@ -35,660 +26,526 @@ const CATEGORY_FILTERS: Array<{
   id: 'all' | EventCategory;
   label: string;
 }> = [
-  { id: 'all', label: 'Todos los Templates (10)' },
-  { id: 'wedding', label: 'Bodas (3)' },
-  { id: 'xv_years', label: 'XV Años (2)' },
-  { id: 'adult_birthday', label: 'Cumpleaños Adulto' },
-  { id: 'kids_birthday', label: 'Cumpleaños Infantil' },
-  { id: 'baptism_communion', label: 'Bautizo / Comunión' },
-  { id: 'baby_shower', label: 'Baby Shower' },
-  { id: 'graduation_gala', label: 'Graduación / Gala' },
+  { id: 'all', label: 'Todas' },
+  { id: 'wedding', label: 'Bodas' },
+  { id: 'xv_years', label: 'XV años' },
+  { id: 'adult_birthday', label: 'Cumpleaños' },
+  { id: 'kids_birthday', label: 'Infantiles' },
+  { id: 'baptism_communion', label: 'Bautizo' },
+  { id: 'baby_shower', label: 'Baby shower' },
+  { id: 'graduation_gala', label: 'Graduación' },
+];
+
+const FEATURES = [
+  {
+    number: '01',
+    icon: Users,
+    title: 'Cada invitado recibe su propia experiencia.',
+    description:
+      'Links nominales, pases asignados y un sobre que saluda a cada familia por su nombre.',
+  },
+  {
+    number: '02',
+    icon: QrCode,
+    title: 'Del RSVP a la puerta, sin listas sueltas.',
+    description:
+      'Confirmaciones controladas, pase QR y check-in con mesa asignada desde el mismo sistema.',
+  },
+  {
+    number: '03',
+    icon: Smartphone,
+    title: 'Diseñado primero para WhatsApp y móvil.',
+    description:
+      'Carga ligera, acciones táctiles claras y una presentación vertical que se siente natural en el teléfono.',
+  },
+  {
+    number: '04',
+    icon: FolderKanban,
+    title: 'Una operación ordenada para cada cliente.',
+    description:
+      'Historial por plantilla, filtros, estados y acceso rápido al constructor de cada evento.',
+  },
+  {
+    number: '05',
+    icon: MapPin,
+    title: 'Todo lo importante queda a un toque.',
+    description:
+      'Maps, Waze, calendario, mesa de regalos y contacto directo sin sacar al invitado del flujo.',
+  },
+  {
+    number: '06',
+    icon: Mic,
+    title: 'La invitación sigue viva durante la fiesta.',
+    description:
+      'Mensajes de voz, canciones sugeridas y recuerdos compartidos para extender la experiencia.',
+  },
 ];
 
 const FAQS = [
   {
-    q: '¿Cómo funciona el historial de invitaciones por Template y por Cliente?',
-    a: 'En el Dashboard puedes seleccionar cualquiera de los 10 templates (por ejemplo, Eternal Elegance) y ver el historial paginado de todas las invitaciones creadas con esa plantilla, filtrando por nombre del cliente, rango de fechas o estado de publicación.',
+    question: '¿Cómo evitan que una familia confirme más pases?',
+    answer:
+      'Cada grupo recibe un enlace único. El formulario reconoce su asignación y limita adultos y niños al cupo definido por el anfitrión.',
   },
   {
-    q: '¿Cómo se evita que los invitados confirmen personas extra no invitadas?',
-    a: 'Cada familia recibe un Smart Guest Link único (ej. dominioprincipal.com/boda-sofia-mateo?g=fam-lopez). Al abrir su sobre digital, aparece su nombre impreso y el formulario RSVP bloquea automáticamente el selector al número exacto de pases asignados.',
+    question: '¿La experiencia funciona dentro de WhatsApp?',
+    answer:
+      'Sí. Las invitaciones se plantean mobile-first, con áreas táctiles amplias, tipografía legible y una carga optimizada para el navegador interno de WhatsApp.',
   },
   {
-    q: '¿Las invitaciones se ven bien cuando se abren desde WhatsApp en iPhone y Android?',
-    a: 'Sí. El 100% de las plantillas están diseñadas bajo arquitectura Mobile-First con unidades dinámicas (dvh/svh), tipografías sin auto-zoom forzado en iOS y carga en el Edge menor a 1.5 segundos.',
+    question: '¿Qué ocurre después de confirmar asistencia?',
+    answer:
+      'El invitado recibe un pase digital con QR, sus asistentes confirmados y la mesa asignada cuando ya está disponible.',
   },
   {
-    q: '¿Cómo funciona el Pase VIP con Código QR el día del evento?',
-    a: 'Cuando el invitado confirma su asistencia, se genera al instante un Pase VIP con código QR firmado criptográficamente (HMAC-SHA256). En la entrada del salón, la hostess escanea el QR desde el modo Recepción y visualiza cuántas personas ingresan y su mesa asignada.',
+    question: '¿Puedo manejar varios clientes y estilos?',
+    answer:
+      'Sí. El dashboard organiza invitaciones por cliente, plantilla, estado y fecha; además permite cambiar de template sin perder el contenido del evento.',
   },
 ];
 
+function BrandMark({ compact = false }: { compact?: boolean }) {
+  return (
+    <span className="inline-flex items-center gap-2.5" aria-label="Atelier Invitaciones">
+      <span className="grid h-8 w-8 grid-cols-2 gap-0.5 rounded-md bg-[#f54e00] p-1.5 text-white">
+        <span className="rounded-[1px] bg-white/95" />
+        <span className="rounded-[1px] bg-white/65" />
+        <span className="rounded-[1px] bg-white/65" />
+        <span className="rounded-[1px] bg-white/95" />
+      </span>
+      {!compact && (
+        <span className="text-[15px] font-medium tracking-[-0.02em] text-[#f54e00]">
+          Atelier Invitaciones
+        </span>
+      )}
+    </span>
+  );
+}
+
+function ProductPreview() {
+  return (
+    <div className="overflow-hidden rounded-xl border border-[#cfcdc4] bg-white">
+      <div className="flex h-11 items-center justify-between border-b border-[#e6e5e0] px-4">
+        <div className="flex items-center gap-2">
+          <BrandMark compact />
+          <span className="hidden text-xs text-[#807d72] sm:inline">Panel de evento</span>
+        </div>
+        <span className="mono-label rounded-md bg-[#efeee8] px-2.5 py-1 text-[10px] text-[#5a5852]">
+          /boda-sofia-y-mateo
+        </span>
+      </div>
+
+      <div className="grid min-h-[430px] sm:grid-cols-[150px_1fr]">
+        <aside className="hidden border-r border-[#e6e5e0] bg-[#fafaf7] p-3 sm:block">
+          <p className="eyebrow px-2 py-2 text-[#a09c92]">Espacio</p>
+          {['Resumen', 'Diseño', 'Invitados', 'Recepción'].map((item, index) => (
+            <div
+              key={item}
+              className={`mb-1 flex items-center gap-2 rounded-md px-2.5 py-2 text-xs ${
+                index === 0
+                  ? 'bg-[#efeee8] font-medium text-[#26251e]'
+                  : 'text-[#807d72]'
+              }`}
+            >
+              <span className={`h-1.5 w-1.5 rounded-full ${index === 0 ? 'bg-[#f54e00]' : 'bg-[#cfcdc4]'}`} />
+              {item}
+            </div>
+          ))}
+        </aside>
+
+        <div className="p-4 sm:p-5">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="eyebrow text-[#f54e00]">Boda · 24 oct 2026</p>
+              <h2 className="mt-1 text-[22px] font-normal tracking-[-0.02em] text-[#26251e]">
+                Sofía & Mateo
+              </h2>
+            </div>
+            <span className="rounded-full bg-[#9fc9a2]/55 px-2.5 py-1 text-[10px] font-medium text-[#26251e]">
+              Publicada
+            </span>
+          </div>
+
+          <div className="mt-5 grid grid-cols-3 gap-2">
+            {[
+              ['85', 'familias'],
+              ['142', 'confirmados'],
+              ['68%', 'abrieron'],
+            ].map(([value, label]) => (
+              <div key={label} className="rounded-lg border border-[#e6e5e0] bg-[#fafaf7] p-3">
+                <p className="text-xl font-normal tracking-[-0.03em] text-[#26251e]">{value}</p>
+                <p className="mt-1 text-[10px] text-[#807d72]">{label}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-3 grid gap-3 lg:grid-cols-[1.15fr_.85fr]">
+            <div className="rounded-lg border border-[#e6e5e0] p-3.5">
+              <div className="mb-4 flex items-center justify-between">
+                <p className="text-xs font-medium text-[#26251e]">Actividad del evento</p>
+                <span className="mono-label text-[9px] text-[#a09c92]">EN VIVO</span>
+              </div>
+              <div className="space-y-3">
+                {[
+                  ['Invitación abierta', 'Familia López', '#9fbbe0'],
+                  ['RSVP confirmado', '4 asistentes', '#9fc9a2'],
+                  ['Pase generado', 'Mesa 08', '#c0a8dd'],
+                  ['Link enviado', 'WhatsApp', '#dfa88f'],
+                ].map(([action, detail, color]) => (
+                  <div key={`${action}-${detail}`} className="grid grid-cols-[8px_1fr_auto] items-center gap-2.5">
+                    <span className="h-2 w-2 rounded-full" style={{ backgroundColor: color }} />
+                    <span className="text-[11px] text-[#5a5852]">{action}</span>
+                    <span className="mono-label text-[9px] text-[#a09c92]">{detail}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="relative min-h-48 overflow-hidden rounded-lg bg-[#26251e] p-4 text-white">
+              <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full border border-white/15" />
+              <div className="relative flex h-full flex-col justify-between">
+                <div>
+                  <span className="eyebrow text-[#dfa88f]">Vista del invitado</span>
+                  <p className="mt-3 font-[var(--font-cormorant)] text-2xl italic">Sofía & Mateo</p>
+                  <p className="mt-1 text-[10px] text-white/60">Para: Familia López · 4 pases</p>
+                </div>
+                <div className="flex items-center justify-between border-t border-white/15 pt-3 text-[10px] text-white/75">
+                  <span>24 · 10 · 2026</span>
+                  <Eye className="h-3.5 w-3.5" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function HomePage() {
-  const [selectedCategory, setSelectedCategory] = useState<
-    'all' | EventCategory
-  >('all');
+  const [selectedCategory, setSelectedCategory] = useState<'all' | EventCategory>('all');
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   const filteredTemplates =
     selectedCategory === 'all'
       ? TEMPLATES_CATALOG
-      : TEMPLATES_CATALOG.filter((tpl) => tpl.category === selectedCategory);
+      : TEMPLATES_CATALOG.filter((template) => template.category === selectedCategory);
 
   return (
-    <div className="min-h-dvh bg-stone-950 text-stone-100 selection:bg-amber-500/30">
-      {/* HEADER STICKY PRO */}
-      <header className="sticky top-0 z-40 border-b border-white/10 bg-stone-950/85 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <Link href="/" className="flex cursor-pointer items-center gap-2.5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 text-stone-950 shadow-lg shadow-amber-500/20">
-              <Sparkles className="h-5 w-5" />
-            </div>
-            <div>
-              <span className="text-lg font-extrabold tracking-tight text-white">
-                Atelier<span className="text-amber-400">Invitaciones</span>
-              </span>
-              <span className="ml-2 hidden rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-0.5 text-[10px] font-bold tracking-wider text-amber-300 uppercase sm:inline-block">
-                SaaS & Agency Suite
-              </span>
-            </div>
+    <div className="min-h-dvh bg-[#f7f7f4] text-[#26251e]">
+      <header className="sticky top-0 z-40 border-b border-[#e6e5e0] bg-[#f7f7f4]/95 backdrop-blur-md">
+        <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between px-5 sm:px-8">
+          <Link href="/" className="shrink-0">
+            <BrandMark />
           </Link>
 
-          <nav className="hidden items-center gap-7 text-xs font-semibold tracking-wider text-stone-300 uppercase lg:flex">
-            <a
-              href="#diferenciadores"
-              className="cursor-pointer transition hover:text-amber-400"
-            >
-              Diferenciadores
-            </a>
-            <a
-              href="#como-funciona"
-              className="cursor-pointer transition hover:text-amber-400"
-            >
-              Cómo Funciona
-            </a>
-            <a
-              href="#templates"
-              className="cursor-pointer transition hover:text-amber-400"
-            >
-              10 Templates
-            </a>
-            <a
-              href="#comparativa"
-              className="cursor-pointer transition hover:text-amber-400"
-            >
-              Comparativa
-            </a>
-            <a
-              href="#faq"
-              className="cursor-pointer transition hover:text-amber-400"
-            >
-              Preguntas
-            </a>
+          <nav className="hidden items-center gap-6 text-sm text-[#5a5852] lg:flex" aria-label="Navegación principal">
+            <a href="#producto" className="transition-colors hover:text-[#26251e]">Producto</a>
+            <a href="#flujo" className="transition-colors hover:text-[#26251e]">Cómo funciona</a>
+            <a href="#templates" className="transition-colors hover:text-[#26251e]">Templates</a>
+            <a href="#faq" className="transition-colors hover:text-[#26251e]">Preguntas</a>
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <Link
               href="/boda-sofia-y-mateo?g=fam-lopez-8a2f"
-              className="hidden cursor-pointer items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-xs font-semibold text-stone-200 transition hover:bg-white/10 sm:inline-flex"
+              className="hidden h-10 items-center rounded-lg border border-[#cfcdc4] bg-white px-4 text-sm text-[#26251e] transition-colors hover:bg-[#fafaf7] sm:inline-flex"
             >
-              <Eye className="h-4 w-4 text-amber-400" />
-              Demo Invitado VIP
+              Ver demo
             </Link>
             <Link
               href="/login"
-              className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-amber-500 px-5 py-2.5 text-xs font-bold tracking-wider text-stone-950 uppercase shadow-lg shadow-amber-500/25 transition hover:bg-amber-400"
+              className="inline-flex h-10 items-center gap-2 rounded-lg bg-[#f54e00] px-4 text-sm font-medium text-white transition-colors hover:bg-[#d04200]"
             >
-              <LayoutDashboard className="h-4 w-4" />
-              Abrir Dashboard & Builder
+              Abrir panel
+              <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>
       </header>
 
-      {/* HERO PRINCIPAL EDITORIAL */}
-      <section className="relative overflow-hidden border-b border-white/10 px-6 pt-16 pb-24 sm:pt-24 sm:pb-32">
-        {/* Luces de fondo */}
-        <div className="pointer-events-none absolute -top-36 left-1/2 h-[460px] w-[920px] -translate-x-1/2 rounded-full bg-amber-500/12 blur-[130px]" />
-
-        <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-12">
-          {/* Columna Izquierda: Copy & CTAs */}
-          <div className="lg:col-span-7">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-xs font-semibold text-amber-300">
-              <Wand2 className="h-3.5 w-3.5" />
-              <span>
-                Plataforma Todo-en-Uno para Agencias, Wedding Planners y Eventos
-              </span>
-            </div>
-
-            <h1 className="text-4xl leading-[1.08] font-extrabold tracking-tight text-white sm:text-6xl">
-              Crea y Administra{' '}
-              <span className="bg-gradient-to-r from-amber-200 via-amber-400 to-amber-500 bg-clip-text text-transparent">
-                Invitaciones Digitales Premium
-              </span>{' '}
-              que Enamoran al Hacer Scroll.
-            </h1>
-
-            <p className="mt-6 max-w-2xl text-base leading-relaxed text-stone-300 sm:text-lg">
-              Olvídate de los PDFs estáticos y los formularios desordenados.
-              Diseña invitaciones con animaciones cinematográficas{' '}
-              <strong className="text-white">GSAP + Lenis</strong>, genera{' '}
-              <strong className="text-white">URLs únicas por cliente</strong>,
-              administra el historial completo por plantilla y controla el
-              acceso con <strong className="text-white">Pases QR</strong>.
-            </p>
-
-            <div className="mt-9 flex flex-wrap items-center gap-4">
-              <Link
-                href="/login"
-                className="inline-flex cursor-pointer items-center gap-2.5 rounded-2xl bg-amber-500 px-7 py-4 text-sm font-bold tracking-wider text-stone-950 uppercase shadow-xl shadow-amber-500/25 transition hover:bg-amber-400"
-              >
-                <Lock className="h-4 w-4" />
-                Entrar al Dashboard & Builder
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <a
-                href="#templates"
-                className="inline-flex cursor-pointer items-center gap-2 rounded-2xl border border-white/15 bg-white/5 px-6 py-4 text-sm font-semibold text-white transition hover:bg-white/10"
-              >
-                Explorar los 10 Templates
-              </a>
-            </div>
-
-            {/* Métricas de Confianza */}
-            <div className="mt-12 grid grid-cols-3 gap-6 border-t border-white/10 pt-8">
-              <div>
-                <p className="text-2xl font-extrabold text-amber-400 sm:text-3xl">
-                  10+
-                </p>
-                <p className="mt-1 text-xs text-stone-400">
-                  Templates Scrollytelling con historial por cliente
-                </p>
+      <main>
+        <section className="border-b border-[#e6e5e0]">
+          <div className="mx-auto grid max-w-[1200px] gap-12 px-5 py-16 sm:px-8 sm:py-20 lg:grid-cols-[.9fr_1.1fr] lg:items-center lg:py-24">
+            <div>
+              <p className="eyebrow text-[#f54e00]">Invitaciones digitales · Operación completa</p>
+              <h1 className="editorial-display mt-5 max-w-2xl text-[46px] leading-[1.02] sm:text-[64px] lg:text-[72px]">
+                Una invitación que ya conoce a cada invitado.
+              </h1>
+              <p className="mt-6 max-w-xl text-base leading-7 text-[#5a5852] sm:text-lg">
+                Diseña experiencias interactivas, controla confirmaciones y recibe a tus invitados con pases QR. Todo desde un solo lugar, sin perder el cuidado de un estudio boutique.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link
+                  href="/login"
+                  className="inline-flex h-11 items-center gap-2 rounded-lg bg-[#f54e00] px-5 text-sm font-medium text-white transition-colors hover:bg-[#d04200]"
+                >
+                  Crear una invitación
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link
+                  href="/boda-sofia-y-mateo?g=fam-lopez-8a2f"
+                  className="inline-flex h-11 items-center gap-2 rounded-lg border border-[#cfcdc4] bg-white px-5 text-sm font-medium text-[#26251e] transition-colors hover:bg-[#fafaf7]"
+                >
+                  <Eye className="h-4 w-4" />
+                  Abrir demo personalizada
+                </Link>
               </div>
-              <div>
-                <p className="text-2xl font-extrabold text-amber-400 sm:text-3xl">
-                  &lt; 1.2s
-                </p>
-                <p className="mt-1 text-xs text-stone-400">
-                  Carga instantánea en el navegador de WhatsApp
-                </p>
-              </div>
-              <div>
-                <p className="text-2xl font-extrabold text-amber-400 sm:text-3xl">
-                  100%
-                </p>
-                <p className="mt-1 text-xs text-stone-400">
-                  Control de cupos RSVP y Pases QR firmados
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Columna Derecha: Mockup Interactivo Multi-Capas */}
-          <div className="relative lg:col-span-5">
-            <div className="relative mx-auto max-w-md rounded-3xl border border-white/15 bg-stone-900/90 p-5 shadow-2xl">
-              <div className="mb-4 flex items-center justify-between border-b border-white/10 pb-3">
-                <div className="flex items-center gap-2">
-                  <span className="h-2.5 w-2.5 rounded-full bg-rose-500" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
-                </div>
-                <span className="rounded-md bg-stone-950 px-2.5 py-1 font-mono text-[11px] text-amber-300">
-                  dominioprincipal.com/boda-sofia-y-mateo
-                </span>
-              </div>
-
-              <div className="relative h-80 overflow-hidden rounded-2xl">
-                <img
-                  src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=900&q=80"
-                  alt="Preview Invitación"
-                  className="h-full w-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/30 to-transparent" />
-                <div className="absolute inset-x-0 bottom-0 p-6 text-center">
-                  <span className="inline-block rounded-full border border-amber-400/50 bg-stone-950/80 px-3 py-1 text-[10px] font-semibold tracking-widest text-amber-300 uppercase">
-                    Pase para Familia López (4 Adultos)
-                  </span>
-                  <h3 className="mt-2 font-serif text-3xl font-semibold text-white">
-                    Sofía & Mateo
-                  </h3>
-                  <p className="mt-1 text-xs tracking-widest text-stone-300 uppercase">
-                    San Miguel de Allende • 2026
-                  </p>
-                </div>
-              </div>
-
-              {/* Mini tarjetas de CTA interactivas */}
-              <div className="mt-4 grid grid-cols-3 gap-2.5 text-center text-[11px] font-semibold">
-                <div className="rounded-xl border border-white/10 bg-stone-950 p-2.5 text-stone-200">
-                  <MapPin className="mx-auto mb-1 h-4 w-4 text-amber-400" />
-                  Maps & Waze
-                </div>
-                <div className="rounded-xl border border-white/10 bg-stone-950 p-2.5 text-stone-200">
-                  <QrCode className="mx-auto mb-1 h-4 w-4 text-emerald-400" />
-                  Pase VIP QR
-                </div>
-                <div className="rounded-xl border border-white/10 bg-stone-950 p-2.5 text-stone-200">
-                  <Music className="mx-auto mb-1 h-4 w-4 text-pink-400" />
-                  Audio + DJ
-                </div>
-              </div>
-
-              <Link
-                href="/boda-sofia-y-mateo?g=fam-lopez-8a2f"
-                className="mt-4 flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-white/10 py-3 text-xs font-bold tracking-wider text-white uppercase transition hover:bg-amber-500 hover:text-stone-950"
-              >
-                <Eye className="h-4 w-4" />
-                Abrir Esta Invitación en Vivo
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* SECCIÓN DE DIFERENCIADORES (BENTO GRID PRO) */}
-      <section
-        id="diferenciadores"
-        className="mx-auto max-w-7xl px-6 py-24"
-      >
-        <div className="mx-auto max-w-3xl text-center">
-          <p className="text-xs font-bold tracking-[0.25em] text-amber-400 uppercase">
-            Ventajas Competitivas Reales
-          </p>
-          <h2 className="mt-2 text-3xl font-extrabold text-white sm:text-5xl">
-            Todo lo que tu Agencia o Evento Necesita en una Sola Plataforma
-          </h2>
-          <p className="mt-4 text-sm leading-relaxed text-stone-400 sm:text-base">
-            Diseñado para superar a las plataformas convencionales tanto en
-            estética visual como en control administrativo para múltiples
-            clientes.
-          </p>
-        </div>
-
-        <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {[
-            {
-              icon: FolderKanban,
-              badge: 'Multi-Cliente & Historial',
-              title: 'Historial de Invitaciones por Template',
-              desc: 'Selecciona cualquier plantilla (ej. Eternal Elegance) y consulta todas las invitaciones que has creado con ese diseño, con filtros por cliente, fecha y paginación.',
-            },
-            {
-              icon: Users,
-              badge: 'Cero Colados',
-              title: 'Smart Guest Links Nominales',
-              desc: 'Cada familia recibe un link personalizado (?g=fam-lopez) con su nombre impreso en el sobre y límite estricto de boletos en el formulario RSVP.',
-            },
-            {
-              icon: QrCode,
-              badge: 'Seguridad HMAC-SHA256',
-              title: 'Pase VIP QR + Escáner en Recepción',
-              desc: 'Al confirmar asistencia se genera un Pase QR descargable. El día del evento, el personal valida el QR en puerta y ve la mesa asignada.',
-            },
-            {
-              icon: Zap,
-              badge: 'GSAP + Lenis 60fps',
-              title: 'Scrollytelling y Sobre Lacre Interactivo',
-              desc: 'Apertura de sobre con sello personalizado, música de fondo automática, partículas en Canvas y revelados fotográficos suaves.',
-            },
-            {
-              icon: MapPin,
-              badge: 'Conversión Instantánea',
-              title: 'Botones CTA Directos (Maps, Waze, CLABE)',
-              desc: 'Rutas directas a Google Maps y Waze, agendado en Apple/Google Calendar (.ics), mesas de regalo y copia de CLABE bancaria en 1 clic.',
-            },
-            {
-              icon: Mic,
-              badge: 'Experiencia Social',
-              title: 'Audio Guestbook & DJ Playlist',
-              desc: 'Los invitados graban notas de voz de felicitación desde su navegador y votan por las canciones que no pueden faltar en la pista.',
-            },
-          ].map((item, idx) => {
-            const Icon = item.icon;
-            return (
-              <div
-                key={idx}
-                className="group rounded-3xl border border-white/10 bg-stone-900/60 p-7 transition hover:border-amber-500/40 hover:bg-stone-900"
-              >
-                <div className="mb-4 flex items-center justify-between">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/15 text-amber-400">
-                    <Icon className="h-6 w-6" />
+              <div className="mt-10 grid max-w-lg grid-cols-3 border-t border-[#e6e5e0] pt-5">
+                {[
+                  ['10', 'templates de autor'],
+                  ['12', 'secciones modulares'],
+                  ['1', 'flujo de principio a fin'],
+                ].map(([number, label]) => (
+                  <div key={label} className="pr-4">
+                    <p className="text-2xl font-normal tracking-[-0.03em]">{number}</p>
+                    <p className="mt-1 text-xs leading-4 text-[#807d72]">{label}</p>
                   </div>
-                  <span className="rounded-full border border-white/10 bg-stone-950 px-3 py-1 text-[10px] font-bold tracking-wider text-amber-300 uppercase">
-                    {item.badge}
-                  </span>
-                </div>
-                <h3 className="text-xl font-bold text-white">{item.title}</h3>
-                <p className="mt-2.5 text-sm leading-relaxed text-stone-400">
-                  {item.desc}
-                </p>
+                ))}
               </div>
-            );
-          })}
-        </div>
-      </section>
+            </div>
 
-      {/* SECCIÓN CÓMO FUNCIONA EN 3 PASOS */}
-      <section
-        id="como-funciona"
-        className="border-y border-white/10 bg-stone-900/40 px-6 py-24"
-      >
-        <div className="mx-auto max-w-6xl">
-          <div className="text-center">
-            <p className="text-xs font-bold tracking-[0.25em] text-amber-400 uppercase">
-              Flujo de Trabajo Ágil
+            <ProductPreview />
+          </div>
+        </section>
+
+        <section id="producto" className="mx-auto max-w-[1200px] px-5 py-20 sm:px-8">
+          <div className="grid gap-10 lg:grid-cols-[.75fr_1.25fr]">
+            <div>
+              <p className="eyebrow text-[#f54e00]">Pensado como sistema</p>
+              <h2 className="editorial-display mt-4 text-4xl leading-tight sm:text-5xl">
+                Belleza para quien recibe. Control para quien organiza.
+              </h2>
+              <p className="mt-5 max-w-md text-base leading-7 text-[#5a5852]">
+                La parte visible emociona; detrás, cada respuesta, pase y dato logístico queda listo para trabajar.
+              </p>
+            </div>
+
+            <div className="grid border-l border-t border-[#e6e5e0] sm:grid-cols-2">
+              {FEATURES.map((feature) => {
+                const Icon = feature.icon;
+                return (
+                  <article key={feature.number} className="min-h-64 border-b border-r border-[#e6e5e0] bg-white p-6 sm:p-7">
+                    <div className="flex items-center justify-between">
+                      <Icon className="h-5 w-5 text-[#f54e00]" strokeWidth={1.6} />
+                      <span className="mono-label text-[11px] text-[#a09c92]">{feature.number}</span>
+                    </div>
+                    <h3 className="mt-10 text-xl font-normal leading-7 tracking-[-0.015em]">{feature.title}</h3>
+                    <p className="mt-3 text-sm leading-6 text-[#5a5852]">{feature.description}</p>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        <section id="flujo" className="border-y border-[#e6e5e0] bg-[#fafaf7]">
+          <div className="mx-auto max-w-[1200px] px-5 py-20 sm:px-8">
+            <div className="max-w-2xl">
+              <p className="eyebrow text-[#f54e00]">Un flujo, cuatro momentos</p>
+              <h2 className="editorial-display mt-4 text-4xl leading-tight sm:text-5xl">
+                Desde la primera idea hasta la última persona en la puerta.
+              </h2>
+            </div>
+
+            <div className="mt-12 overflow-hidden rounded-xl border border-[#e6e5e0] bg-white">
+              {[
+                { icon: WandSparkles, phase: 'Diseñar', title: 'Elige un template y personaliza contenido, color y ritmo.', color: '#dfa88f' },
+                { icon: Users, phase: 'Invitar', title: 'Carga familias, asigna pases y envía links por WhatsApp.', color: '#9fbbe0' },
+                { icon: CalendarDays, phase: 'Confirmar', title: 'Recibe RSVP, restricciones y mensajes sin transcribir nada.', color: '#9fc9a2' },
+                { icon: QrCode, phase: 'Recibir', title: 'Escanea el pase y dirige a cada grupo a su mesa.', color: '#c0a8dd' },
+              ].map((step, index) => {
+                const Icon = step.icon;
+                return (
+                  <div key={step.phase} className="grid gap-4 border-b border-[#e6e5e0] p-5 last:border-b-0 sm:grid-cols-[80px_140px_1fr_auto] sm:items-center sm:px-7">
+                    <span className="mono-label text-xs text-[#a09c92]">0{index + 1}</span>
+                    <span className="inline-flex w-fit items-center gap-2 rounded-full px-3 py-1 text-[11px] font-medium uppercase tracking-[0.08em] text-[#26251e]" style={{ backgroundColor: step.color }}>
+                      <Icon className="h-3.5 w-3.5" />
+                      {step.phase}
+                    </span>
+                    <p className="text-base text-[#5a5852]">{step.title}</p>
+                    <ArrowRight className="hidden h-4 w-4 text-[#a09c92] sm:block" />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        <section id="templates" className="mx-auto max-w-[1200px] px-5 py-20 sm:px-8">
+          <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
+            <div className="max-w-2xl">
+              <p className="eyebrow text-[#f54e00]">Colección inicial</p>
+              <h2 className="editorial-display mt-4 text-4xl leading-tight sm:text-5xl">
+                Diez puntos de partida. Ninguna experiencia genérica.
+              </h2>
+            </div>
+            <p className="max-w-sm text-sm leading-6 text-[#5a5852]">
+              Cada template define su propia tipografía, paleta, sobre y coreografía; el contenido sigue siendo tuyo.
             </p>
-            <h2 className="mt-2 text-3xl font-extrabold text-white sm:text-4xl">
-              De Cero a una Invitación Publicada en Minutos
-            </h2>
           </div>
 
-          <div className="mt-14 grid gap-8 md:grid-cols-3">
-            {[
-              {
-                step: '01',
-                title: 'Elige un Template y Registra al Cliente',
-                desc: 'Selecciona una de las 10 plantillas premium, asigna el nombre del cliente, fecha del evento y genera su URL única (dominioprincipal.com/id).',
-              },
-              {
-                step: '02',
-                title: 'Personaliza en el Constructor Split-Screen',
-                desc: 'Modifica fotografías, tipografías, paleta de colores, ubicaciones Maps/Waze, mesa de regalos y activa o desactiva cualquiera de las 12 secciones.',
-              },
-              {
-                step: '03',
-                title: 'Envía por WhatsApp y Recibe Confirmaciones',
-                desc: 'Comparte los links personalizados por familia en 1 clic, monitorea las confirmaciones en tiempo real y escanea los pases QR el día del evento.',
-              },
-            ].map((st) => (
-              <div
-                key={st.step}
-                className="relative rounded-3xl border border-white/10 bg-stone-950 p-8"
+          <div className="mt-9 flex gap-2 overflow-x-auto pb-2" role="tablist" aria-label="Filtrar templates">
+            {CATEGORY_FILTERS.map((category) => (
+              <button
+                key={category.id}
+                type="button"
+                role="tab"
+                aria-selected={selectedCategory === category.id}
+                onClick={() => setSelectedCategory(category.id)}
+                className={`h-9 shrink-0 rounded-full px-4 text-xs font-medium transition-colors ${
+                  selectedCategory === category.id
+                    ? 'bg-[#26251e] text-[#f7f7f4]'
+                    : 'border border-[#cfcdc4] bg-white text-[#5a5852] hover:text-[#26251e]'
+                }`}
               >
-                <span className="font-mono text-4xl font-extrabold text-amber-500/30">
-                  {st.step}
-                </span>
-                <h3 className="mt-3 text-xl font-bold text-white">
-                  {st.title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-stone-400">
-                  {st.desc}
-                </p>
-              </div>
+                {category.label}
+              </button>
             ))}
           </div>
-        </div>
-      </section>
 
-      {/* CATÁLOGO INTERACTIVO DE LOS 10 TEMPLATES CON FILTROS */}
-      <section id="templates" className="mx-auto max-w-7xl px-6 py-24">
-        <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
-          <div>
-            <p className="text-xs font-bold tracking-[0.25em] text-amber-400 uppercase">
-              Colección Oficial
-            </p>
-            <h2 className="mt-2 text-3xl font-extrabold text-white sm:text-5xl">
-              10 Templates Iniciales de Diseño Premium
-            </h2>
-          </div>
-          <p className="max-w-md text-sm text-stone-400">
-            Filtra por tipo de celebración, prueba la experiencia animada en
-            vivo o selecciónalo para crear una nueva invitación de cliente en el
-            Dashboard.
-          </p>
-        </div>
-
-        {/* Barra de Filtros por Categoría */}
-        <div className="mt-8 flex flex-wrap gap-2">
-          {CATEGORY_FILTERS.map((cat) => (
-            <button
-              key={cat.id}
-              type="button"
-              onClick={() => setSelectedCategory(cat.id)}
-              className={`cursor-pointer rounded-full px-4 py-2 text-xs font-bold tracking-wider uppercase transition ${
-                selectedCategory === cat.id
-                  ? 'bg-amber-500 text-stone-950 shadow-md shadow-amber-500/20'
-                  : 'border border-white/10 bg-stone-900 text-stone-300 hover:border-white/25 hover:text-white'
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Grid de Templates */}
-        <div className="mt-10 grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredTemplates.map((tpl, index) => (
-            <div
-              key={tpl.id}
-              className="group flex flex-col overflow-hidden rounded-3xl border border-white/10 bg-stone-900/70 transition duration-300 hover:-translate-y-1 hover:border-amber-500/40"
-            >
-              <div className="relative h-60 overflow-hidden">
-                <img
-                  src={tpl.previewImage}
-                  alt={tpl.name}
-                  className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/25 to-transparent" />
-                <span className="absolute top-3.5 left-3.5 rounded-full bg-stone-950/85 px-3 py-1 text-[11px] font-semibold text-amber-300 backdrop-blur-md">
-                  #{index + 1} • {tpl.categoryLabel}
-                </span>
-                <span className="absolute top-3.5 right-3.5 rounded-full border border-white/20 bg-black/60 px-2.5 py-1 text-[10px] font-medium text-white backdrop-blur-md">
-                  {tpl.badge}
-                </span>
-              </div>
-
-              <div className="flex flex-1 flex-col justify-between p-6">
-                <div>
-                  <div className="mb-2 flex items-center justify-between">
-                    <h3 className="text-xl font-bold text-white">
-                      {tpl.name}
-                    </h3>
-                    <div className="flex items-center gap-1.5">
-                      {[
-                        tpl.colors.bgPrimary,
-                        tpl.colors.accentPrimary,
-                        tpl.colors.accentSecondary,
-                      ].map((hex, i) => (
-                        <span
-                          key={i}
-                          className="h-4 w-4 rounded-full border border-white/20"
-                          style={{ backgroundColor: hex }}
-                          title={hex}
-                        />
+          <div className="mt-7 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredTemplates.map((template, index) => (
+              <article key={template.id} className="group overflow-hidden rounded-xl border border-[#e6e5e0] bg-white">
+                <div className="relative aspect-[4/3] overflow-hidden bg-[#efeee8]">
+                  <img src={template.previewImage} alt={`Vista previa de ${template.name}`} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.025]" />
+                  <div className="absolute inset-x-0 top-0 flex items-center justify-between p-3">
+                    <span className="rounded-full bg-[#f7f7f4]/90 px-2.5 py-1 text-[10px] font-medium text-[#26251e] backdrop-blur-sm">
+                      {template.categoryLabel}
+                    </span>
+                    <span className="mono-label rounded-full bg-[#26251e]/85 px-2.5 py-1 text-[9px] text-white">0{index + 1}</span>
+                  </div>
+                </div>
+                <div className="p-5">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <h3 className="text-lg font-normal tracking-[-0.015em]">{template.name}</h3>
+                      <p className="mt-1 text-xs leading-5 text-[#807d72]">{template.description}</p>
+                    </div>
+                    <div className="flex shrink-0 gap-1.5 pt-1">
+                      {[template.colors.bgPrimary, template.colors.accentPrimary, template.colors.accentSecondary].map((color) => (
+                        <span key={color} className="h-3.5 w-3.5 rounded-full border border-[#e6e5e0]" style={{ backgroundColor: color }} />
                       ))}
                     </div>
                   </div>
-                  <p className="text-xs leading-relaxed text-stone-400">
-                    {tpl.description}
-                  </p>
-                  <p className="mt-3 text-[11px] font-semibold text-amber-400">
-                    ✦ Animación: {tpl.signatureAnimation}
-                  </p>
+                  <div className="mt-5 flex gap-2 border-t border-[#efeee8] pt-4">
+                    <Link href={`/demo-${template.id}?template=${template.id}&g=fam-invitada`} className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-lg border border-[#cfcdc4] text-xs font-medium transition-colors hover:bg-[#fafaf7]">
+                      <Eye className="h-3.5 w-3.5" />
+                      Ver demo
+                    </Link>
+                    <Link href={`/login?template=${template.id}`} className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-lg bg-[#f54e00] text-xs font-medium text-white transition-colors hover:bg-[#d04200]">
+                      Usar template
+                    </Link>
+                  </div>
                 </div>
+              </article>
+            ))}
+          </div>
+        </section>
 
-                <div className="mt-6 flex gap-2.5 pt-2">
-                  <Link
-                    href={`/demo-${tpl.id}?template=${tpl.id}&g=fam-invitada`}
-                    className="inline-flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-white/15"
-                  >
-                    <Eye className="h-3.5 w-3.5 text-amber-400" />
-                    Ver Demo
-                  </Link>
-                  <Link
-                    href={`/login?template=${tpl.id}`}
-                    className="inline-flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-amber-500 px-4 py-2.5 text-xs font-bold text-stone-950 transition hover:bg-amber-400"
-                  >
-                    Usar Template
-                  </Link>
-                </div>
+        <section className="border-y border-[#e6e5e0] bg-white">
+          <div className="mx-auto grid max-w-[1200px] gap-12 px-5 py-20 sm:px-8 lg:grid-cols-2 lg:items-center">
+            <div>
+              <p className="eyebrow text-[#f54e00]">Hecho para el día real</p>
+              <h2 className="editorial-display mt-4 text-4xl leading-tight sm:text-5xl">
+                Menos seguimiento manual. Más tiempo para cuidar la celebración.
+              </h2>
+              <div className="mt-8 space-y-4">
+                {[
+                  'Cupo exacto por familia o grupo',
+                  'Estado de cada invitación y confirmación',
+                  'Enlaces listos para compartir por WhatsApp',
+                  'Pases verificables y mesa visible en recepción',
+                ].map((item) => (
+                  <div key={item} className="flex items-center gap-3 border-b border-[#efeee8] pb-4 text-sm text-[#5a5852]">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#9fc9a2]/55 text-[#26251e]">
+                      <Check className="h-3 w-3" strokeWidth={2.5} />
+                    </span>
+                    {item}
+                  </div>
+                ))}
               </div>
             </div>
-          ))}
-        </div>
-      </section>
 
-      {/* SECCIÓN COMPARATIVA */}
-      <section
-        id="comparativa"
-        className="border-t border-white/10 bg-stone-900/30 px-6 py-24"
-      >
-        <div className="mx-auto max-w-5xl">
-          <div className="mb-12 text-center">
-            <p className="text-xs font-bold tracking-[0.25em] text-amber-400 uppercase">
-              Por Qué Elegirnos
-            </p>
-            <h2 className="mt-2 text-3xl font-extrabold text-white sm:text-4xl">
-              Atelier Invitaciones vs. Alternativas Tradicionales
-            </h2>
-          </div>
-
-          <div className="overflow-x-auto rounded-3xl border border-white/10 bg-stone-900">
-            <table className="w-full text-left text-sm">
-              <thead className="border-b border-white/10 bg-stone-950 text-xs uppercase">
-                <tr>
-                  <th className="px-6 py-4 text-stone-400">Característica</th>
-                  <th className="px-6 py-4 font-bold text-amber-400">
-                    Atelier Invitaciones Pro
-                  </th>
-                  <th className="px-6 py-4 text-stone-400">
-                    PDF / Imagen en Canva
-                  </th>
-                  <th className="px-6 py-4 text-stone-400">
-                    Sitios Genéricos WordPress
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/10 text-xs sm:text-sm">
-                {[
-                  [
-                    'Animaciones Scrollytelling 60fps (GSAP + Lenis)',
-                    'Incluido en los 10 templates',
-                    'Estático sin animación',
-                    'Básico y pesado al cargar',
-                  ],
-                  [
-                    'Historial de invitaciones organizadas por Template y Cliente',
-                    'Panel completo con filtros y paginación',
-                    'Archivos sueltos',
-                    'Manual por cada instalación',
-                  ],
-                  [
-                    'Links nominales con bloqueo de pases por familia',
-                    'Automático (?g=familia)',
-                    'No disponible',
-                    'Limitado',
-                  ],
-                  [
-                    'Pase VIP QR Criptográfico + Escáner en Recepción',
-                    'Incluido con firma HMAC',
-                    'No disponible',
-                    'Costo extra por evento',
-                  ],
-                  [
-                    'Audio Guestbook + DJ Playlist con Votación',
-                    'Integrado en la invitación',
-                    'No disponible',
-                    'No disponible',
-                  ],
-                ].map((row, idx) => (
-                  <tr key={idx} className="hover:bg-white/[0.02]">
-                    <td className="px-6 py-4 font-semibold text-white">
-                      {row[0]}
-                    </td>
-                    <td className="px-6 py-4 font-bold text-emerald-400">
-                      ✓ {row[1]}
-                    </td>
-                    <td className="px-6 py-4 text-stone-500">{row[2]}</td>
-                    <td className="px-6 py-4 text-stone-400">{row[3]}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      {/* PREGUNTAS FRECUENTES (FAQ) */}
-      <section id="faq" className="mx-auto max-w-4xl px-6 py-24">
-        <div className="mb-12 text-center">
-          <p className="text-xs font-bold tracking-[0.25em] text-amber-400 uppercase">
-            Resolvemos tus Dudas
-          </p>
-          <h2 className="mt-2 text-3xl font-extrabold text-white sm:text-4xl">
-            Preguntas Frecuentes
-          </h2>
-        </div>
-
-        <div className="space-y-4">
-          {FAQS.map((item, idx) => {
-            const isOpen = openFaq === idx;
-            return (
-              <div
-                key={idx}
-                className="overflow-hidden rounded-2xl border border-white/10 bg-stone-900/60"
-              >
-                <button
-                  type="button"
-                  onClick={() => setOpenFaq(isOpen ? null : idx)}
-                  className="flex w-full cursor-pointer items-center justify-between px-6 py-5 text-left font-bold text-white transition hover:bg-white/[0.02]"
-                >
-                  <span>{item.q}</span>
-                  <ChevronDown
-                    className={`h-5 w-5 shrink-0 text-amber-400 transition-transform ${
-                      isOpen ? 'rotate-180' : ''
-                    }`}
-                  />
-                </button>
-                {isOpen && (
-                  <div className="border-t border-white/10 px-6 py-4 text-sm leading-relaxed text-stone-300">
-                    {item.a}
-                  </div>
-                )}
+            <div className="rounded-xl bg-[#26251e] p-5 text-[#f7f7f4] sm:p-7">
+              <div className="flex items-center justify-between border-b border-white/15 pb-4">
+                <div>
+                  <p className="eyebrow text-[#dfa88f]">Pase de acceso</p>
+                  <p className="mt-1 text-lg font-normal">Familia López García</p>
+                </div>
+                <QrCode className="h-10 w-10 text-white" strokeWidth={1.4} />
               </div>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* CTA FINAL + FOOTER */}
-      <footer className="border-t border-white/10 bg-stone-900/80 px-6 py-16">
-        <div className="mx-auto max-w-5xl rounded-3xl border border-amber-500/30 bg-gradient-to-r from-stone-900 via-stone-900 to-amber-950/40 p-8 text-center sm:p-12">
-          <h2 className="text-2xl font-extrabold text-white sm:text-4xl">
-            ¿Listo para Crear y Administrar Invitaciones para tus Clientes?
-          </h2>
-          <p className="mx-auto mt-3 max-w-xl text-sm text-stone-300">
-            Inicia sesión en el panel de administración para gestionar el
-            historial de invitaciones por template, filtrar por cliente o fecha
-            y personalizar en vivo.
-          </p>
-          <div className="mt-7 flex flex-wrap justify-center gap-4">
-            <Link
-              href="/login"
-              className="inline-flex cursor-pointer items-center gap-2 rounded-2xl bg-amber-500 px-8 py-4 text-xs font-bold tracking-wider text-stone-950 uppercase shadow-lg shadow-amber-500/25 transition hover:bg-amber-400"
-            >
-              <LayoutDashboard className="h-4 w-4" />
-              Iniciar Sesión como Administrador
-            </Link>
+              <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden rounded-lg bg-white/15">
+                {[
+                  [Users, '4 asistentes', 'Cupo confirmado'],
+                  [MapPin, 'Mesa 08', 'Jardín central'],
+                  [Clock3, '17:00 hrs', 'Recepción'],
+                  [ShieldCheck, 'Validado', 'Firma segura'],
+                ].map(([Icon, value, label]) => {
+                  const CardIcon = Icon as typeof Users;
+                  return (
+                    <div key={String(value)} className="bg-[#26251e] p-4">
+                      <CardIcon className="h-4 w-4 text-[#dfa88f]" />
+                      <p className="mt-5 text-sm text-white">{String(value)}</p>
+                      <p className="mt-1 text-[10px] text-white/50">{String(label)}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
-        </div>
+        </section>
 
-        <div className="mx-auto mt-12 flex max-w-7xl flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 text-xs text-stone-500 sm:flex-row">
-          <p>
-            © 2026 Atelier Invitaciones Digitales. Todos los derechos
-            reservados.
-          </p>
-          <div className="flex gap-6">
-            <Link href="/login" className="cursor-pointer hover:text-stone-300">
-              Acceso Admin
-            </Link>
-            <Link
-              href="/boda-sofia-y-mateo?g=fam-lopez-8a2f"
-              className="cursor-pointer hover:text-stone-300"
-            >
-              Demo Invitación
-            </Link>
+        <section id="faq" className="mx-auto grid max-w-[1200px] gap-10 px-5 py-20 sm:px-8 lg:grid-cols-[.65fr_1.35fr]">
+          <div>
+            <p className="eyebrow text-[#f54e00]">Preguntas frecuentes</p>
+            <h2 className="editorial-display mt-4 text-4xl leading-tight sm:text-5xl">Lo esencial, antes de empezar.</h2>
           </div>
+          <div className="border-t border-[#e6e5e0]">
+            {FAQS.map((item, index) => {
+              const isOpen = openFaq === index;
+              return (
+                <div key={item.question} className="border-b border-[#e6e5e0]">
+                  <button type="button" onClick={() => setOpenFaq(isOpen ? null : index)} className="flex w-full items-center justify-between gap-6 py-5 text-left text-base font-medium">
+                    {item.question}
+                    <ChevronDown className={`h-4 w-4 shrink-0 text-[#807d72] transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  {isOpen && <p className="max-w-2xl pb-6 text-sm leading-6 text-[#5a5852]">{item.answer}</p>}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        <section className="border-t border-[#e6e5e0]">
+          <div className="mx-auto max-w-[1200px] px-5 py-20 sm:px-8">
+            <div className="flex flex-col items-start justify-between gap-8 rounded-xl bg-[#26251e] p-8 text-[#f7f7f4] sm:p-12 lg:flex-row lg:items-end">
+              <div className="max-w-2xl">
+                <p className="eyebrow text-[#dfa88f]">Tu próximo evento puede empezar aquí</p>
+                <h2 className="editorial-display mt-4 text-4xl leading-tight sm:text-5xl">Una experiencia memorable para ellos. Un sistema claro para ti.</h2>
+              </div>
+              <Link href="/login" className="inline-flex h-11 shrink-0 items-center gap-2 rounded-lg bg-[#f54e00] px-5 text-sm font-medium text-white transition-colors hover:bg-[#d04200]">
+                <LayoutDashboard className="h-4 w-4" />
+                Entrar al dashboard
+              </Link>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer className="border-t border-[#e6e5e0]">
+        <div className="mx-auto flex max-w-[1200px] flex-col gap-8 px-5 py-12 text-sm text-[#5a5852] sm:px-8 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <BrandMark />
+            <p className="mt-4 max-w-sm text-xs leading-5 text-[#807d72]">Invitaciones digitales interactivas, gestión de invitados y recepción en un solo espacio.</p>
+          </div>
+          <div className="flex flex-wrap gap-6 text-xs">
+            <a href="#producto" className="hover:text-[#26251e]">Producto</a>
+            <a href="#templates" className="hover:text-[#26251e]">Templates</a>
+            <Link href="/login" className="hover:text-[#26251e]">Acceso</Link>
+            <Link href="/boda-sofia-y-mateo?g=fam-lopez-8a2f" className="hover:text-[#26251e]">Demo</Link>
+          </div>
+          <p className="mono-label text-[10px] text-[#a09c92]">© 2026 ATELIER INVITACIONES</p>
         </div>
       </footer>
     </div>
