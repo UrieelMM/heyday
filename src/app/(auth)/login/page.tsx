@@ -18,6 +18,7 @@ import {
   getAdminSession,
   loginFakeAdmin,
 } from '@/lib/auth/fake-auth';
+import { HeyDayBrand } from '@/components/brand/HeyDayBrand';
 
 function LoginFormContent() {
   const router = useRouter();
@@ -66,15 +67,7 @@ function LoginFormContent() {
             <ArrowLeft className="h-4 w-4" />
             Volver al sitio
           </Link>
-          <div className="inline-flex items-center gap-2.5">
-            <span className="grid h-8 w-8 grid-cols-2 gap-0.5 rounded-md bg-[#cc785c] p-1.5">
-              <span className="rounded-[1px] bg-white/95" />
-              <span className="rounded-[1px] bg-white/65" />
-              <span className="rounded-[1px] bg-white/65" />
-              <span className="rounded-[1px] bg-white/95" />
-            </span>
-            <span className="text-sm font-medium tracking-[-0.02em] text-[#cc785c]">Atelier Invitaciones</span>
-          </div>
+          <HeyDayBrand />
         </div>
       </header>
 
@@ -148,7 +141,7 @@ function LoginFormContent() {
                     required
                     value={email}
                     onChange={(event) => setEmail(event.target.value)}
-                    placeholder="admin@atelierinvitaciones.com"
+                    placeholder="admin@heyday.party"
                     className="w-full rounded-lg border py-3 pr-4 pl-10 text-sm outline-none transition-colors focus:border-[#cc785c]"
                   />
                 </div>

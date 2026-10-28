@@ -1,5 +1,5 @@
 export const DEMO_ADMIN_USER = {
-  email: 'admin@atelierinvitaciones.com',
+  email: 'admin@heyday.party',
   password: 'Admin2026!',
   name: 'Administrador Principal',
   role: 'agency_admin',
@@ -19,7 +19,10 @@ export function getAdminSession(): AdminSession | null {
   try {
     const raw = window.localStorage.getItem(AUTH_STORAGE_KEY);
     if (!raw) return null;
-    return JSON.parse(raw) as AdminSession;
+    const session = JSON.parse(raw) as AdminSession;
+    return session.email === 'admin@atelierinvitaciones.com'
+      ? { ...session, email: DEMO_ADMIN_USER.email }
+      : session;
   } catch {
     return null;
   }
@@ -30,7 +33,7 @@ export function loginFakeAdmin(
   password: string
 ): { success: boolean; error?: string; session?: AdminSession } {
   if (
-    email.trim().toLowerCase() === DEMO_ADMIN_USER.email.toLowerCase() &&
+    [DEMO_ADMIN_USER.email, 'admin@atelierinvitaciones.com'].includes(email.trim().toLowerCase()) &&
     password === DEMO_ADMIN_USER.password
   ) {
     const session: AdminSession = {
@@ -49,7 +52,7 @@ export function loginFakeAdmin(
   return {
     success: false,
     error:
-      'Credenciales inválidas. Usa admin@atelierinvitaciones.com / Admin2026!',
+      'Credenciales inválidas. Usa admin@heyday.party / Admin2026!',
   };
 }
 

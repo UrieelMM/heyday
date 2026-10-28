@@ -44,6 +44,7 @@ import { buildWhatsappInviteUrl } from '@/lib/whatsapp/link-builder';
 import { getAdminSession, logoutFakeAdmin } from '@/lib/auth/fake-auth';
 import { slugify } from '@/lib/utils';
 import type { SectionId, TemplateId } from '@/types/invitation.types';
+import { HeyDayBrand } from '@/components/brand/HeyDayBrand';
 import './dashboard.css';
 
 const SECTION_LABELS: Record<SectionId, string> = {
@@ -98,7 +99,7 @@ function DashboardContent() {
   } = useBuilderStore();
 
   const [adminEmail, setAdminEmail] = useState<string>(
-    'admin@atelierinvitaciones.com'
+    'admin@heyday.party'
   );
   const [activeTab, setActiveTab] = useState<
     'history' | 'builder' | 'guests' | 'checkin'
@@ -395,16 +396,9 @@ function DashboardContent() {
       {/* TOPBAR DEL DASHBOARD */}
       <header className="dashboard-topbar sticky top-0 z-40 flex flex-wrap items-center justify-between gap-3 border-b border-[#e6dfd8] bg-[#faf9f5]/95 px-4 py-3 backdrop-blur-md sm:px-6">
         <div className="flex min-w-0 flex-1 flex-wrap items-center gap-3">
-          <Link href="/" className="flex cursor-pointer items-center gap-2">
-            <div className="grid h-8 w-8 grid-cols-2 gap-0.5 rounded-md bg-[#cc785c] p-1.5">
-              <span className="rounded-[1px] bg-white/95" />
-              <span className="rounded-[1px] bg-white/65" />
-              <span className="rounded-[1px] bg-white/65" />
-              <span className="rounded-[1px] bg-white/95" />
-            </div>
-            <span className="hidden text-sm font-medium tracking-[-0.02em] text-[#cc785c] sm:inline">
-              Atelier <span className="text-[#141413]">Admin</span>
-            </span>
+          <Link href="/" className="flex cursor-pointer items-center gap-2" aria-label="HeyDay, volver al inicio">
+            <HeyDayBrand />
+            <span className="hidden text-[10px] font-semibold uppercase tracking-[.12em] text-[#6c6a64] sm:inline">Admin</span>
           </Link>
 
           <div className="hidden h-5 w-px bg-[#e6dfd8] sm:block" />
@@ -518,7 +512,7 @@ function DashboardContent() {
           <section className="dashboard-history__hero" aria-label="Resumen del espacio de trabajo">
             <div className="dashboard-history__hero-inner">
               <div>
-                <p className="dashboard-history__eyebrow"><span /> Atelier / Espacio de trabajo</p>
+                <p className="dashboard-history__eyebrow"><span /> HeyDay / Espacio de trabajo</p>
                 <h1>Momentos extraordinarios, <em>perfectamente organizados.</em></h1>
                 <p>Diseña cada historia, acompaña a tus clientes y sigue cada confirmación desde un solo lugar.</p>
               </div>
@@ -1538,7 +1532,7 @@ function DashboardContent() {
               <tbody className="divide-y divide-white/10">
                 {activeGuests.map((g) => {
                   const invitePath = `/${slug}?template=${templateId}&g=${g.guestToken}`;
-                  const fullInviteUrl = `https://www.dominioprincipal.com${invitePath}`;
+                  const fullInviteUrl = `https://heyday.party${invitePath}`;
                   const waUrl = buildWhatsappInviteUrl({
                     phone: g.whatsappPhone || '525512345678',
                     groupName: g.groupName,
@@ -1830,7 +1824,7 @@ function DashboardContent() {
                 </label>
                 <div className="flex items-center rounded-xl border border-[#d7cfc4] bg-[#faf9f5] px-3.5 py-2.5 text-xs">
                   <span className="text-[#8e8b82]">
-                    www.dominioprincipal.com/
+                    heyday.party/
                   </span>
                   <input
                     type="text"

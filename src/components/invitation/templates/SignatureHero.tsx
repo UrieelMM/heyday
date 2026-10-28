@@ -59,7 +59,7 @@ export function SignatureHero({
           </svg>
         )}
         {templateId === 'modern-minimal-noir' && (
-          <div className="st-hero__editorial-rule" aria-hidden="true"><span>ATELIER / 2026</span><span>LOVE ISSUE Nº 01</span></div>
+          <div className="st-hero__editorial-rule" aria-hidden="true"><span>HEYDAY / 2026</span><span>LOVE ISSUE Nº 01</span></div>
         )}
         {templateId === 'neon-xv-euphoria' && (
           <div className="st-hero__orbit" aria-hidden="true"><i /><i /><i /></div>

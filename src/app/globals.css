@@ -93,6 +93,46 @@
 }
 
 @layer components {
+  .heyday-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    white-space: nowrap;
+  }
+
+  .heyday-brand > img {
+    width: 36px;
+    height: 36px;
+    flex: none;
+  }
+
+  .heyday-brand__word {
+    color: var(--color-ink);
+    font-family: var(--font-cormorant), Georgia, serif;
+    font-size: 31px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.075em;
+  }
+
+  .heyday-brand__word em {
+    color: var(--color-primary);
+    font-weight: 600;
+  }
+
+  .heyday-brand__spark {
+    display: inline-block;
+    margin-left: 3px;
+    color: var(--color-primary);
+    font-family: var(--font-inter), sans-serif;
+    font-size: 9px;
+    vertical-align: top;
+  }
+
+  .heyday-brand--light .heyday-brand__word {
+    color: var(--color-on-dark);
+  }
+
   .eyebrow {
     font-size: 0.6875rem;
     line-height: 1.4;

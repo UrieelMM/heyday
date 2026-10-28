@@ -79,9 +79,11 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: 'Atelier Invitaciones — Plataforma de Invitaciones Digitales Interactivas',
+  metadataBase: new URL('https://heyday.party'),
+  title: 'HeyDay — Invitaciones digitales para celebrar tu historia',
   description:
-    'Crea, personaliza y administra invitaciones digitales premium con animaciones scrollytelling, links por invitado, confirmación RSVP y pases QR.',
+    'Invitaciones digitales interactivas para tu celebración. Diseños únicos, invitados ilimitados, RSVP y pases digitales con QR.',
+  icons: { icon: '/icon.svg' },
 };
 
 export default function RootLayout({

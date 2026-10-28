@@ -36,7 +36,7 @@ export function buildIcsFileContent(event: CalendarEventInput): string {
   return [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//InvitacionesDigitales//ES',
+    'PRODID:-//HeyDay//heyday.party//ES',
     'BEGIN:VEVENT',
     `DTSTART:${formatIcsDate(start)}`,
     `DTEND:${formatIcsDate(end)}`,
