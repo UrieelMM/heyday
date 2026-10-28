@@ -41,7 +41,7 @@ import {
 import { TEMPLATES_CATALOG } from '@/lib/templates/templates-catalog';
 import { InvitationRenderer } from '@/components/invitation/core/InvitationRenderer';
 import { buildWhatsappInviteUrl } from '@/lib/whatsapp/link-builder';
-import { getAdminSession, logoutFakeAdmin } from '@/lib/auth/fake-auth';
+import { createClient } from '@/lib/supabase/client';
 import { slugify } from '@/lib/utils';
 import type { SectionId, TemplateId } from '@/types/invitation.types';
 import { HeyDayBrand } from '@/components/brand/HeyDayBrand';
@@ -99,7 +99,7 @@ function DashboardContent() {
   } = useBuilderStore();
 
   const [adminEmail, setAdminEmail] = useState<string>(
-    'admin@heyday.party'
+    'Administrador'
   );
   const [activeTab, setActiveTab] = useState<
     'history' | 'builder' | 'guests' | 'checkin'
@@ -153,12 +153,16 @@ function DashboardContent() {
 
   // Verificar sesión del administrador
   useEffect(() => {
-    const session = getAdminSession();
-    if (!session) {
-      router.replace('/login');
-      return;
-    }
-    setAdminEmail(session.email);
+    let active = true;
+    createClient().auth.getUser().then(({ data, error }) => {
+      if (!active) return;
+      if (error || !data.user) {
+        router.replace('/login');
+      } else {
+        setAdminEmail(data.user.email ?? 'Administrador');
+      }
+    });
+    return () => { active = false; };
   }, [router]);
 
   // Si viene ?template=... en la URL, filtrar por ese template
@@ -375,10 +379,15 @@ function DashboardContent() {
     toast.success(`Pase único creado para ${newGuestName}`);
   };
 
-  const handleLogout = () => {
-    logoutFakeAdmin();
-    toast.info('Sesión cerrada correctamente');
-    router.push('/login');
+  const handleLogout = async () => {
+    const { error } = await createClient().auth.signOut();
+    if (error) {
+      toast.error('No pudimos cerrar la sesión. Inténtalo de nuevo.');
+      return;
+    }
+    toast.success('Sesión cerrada correctamente');
+    router.replace('/login');
+    router.refresh();
   };
 
   const activeGuests = activeInvitationRecord?.guests || [];

@@ -3,16 +3,27 @@ import type { NextRequest } from 'next/server';
 import { updateSession } from '@/lib/supabase/middleware';
 
 export async function middleware(request: NextRequest) {
-  const { pathname, search } = request.nextUrl;
-  const supabaseResponse = await updateSession(request);
+  const { pathname } = request.nextUrl;
+  const { response: supabaseResponse, supabase, userId } = await updateSession(request);
 
   if (pathname.startsWith('/dashboard')) {
-    const adminCookie = request.cookies.get('atelier_admin_session')?.value;
-    if (adminCookie !== 'authenticated') {
+    let authorized = false;
+    if (userId) {
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', userId)
+        .maybeSingle();
+      authorized = !error && ['agency_admin', 'superadmin'].includes(profile?.role ?? '');
+    }
+
+    if (!authorized) {
       const loginUrl = new URL('/login', request.url);
-      if (search) {
-        loginUrl.search = search;
+      const template = request.nextUrl.searchParams.get('template');
+      if (template && /^[a-z0-9-]{1,60}$/.test(template)) {
+        loginUrl.searchParams.set('template', template);
       }
+      if (userId) loginUrl.searchParams.set('reason', 'unauthorized');
       const redirect = NextResponse.redirect(loginUrl);
       supabaseResponse.cookies.getAll().forEach((cookie) =>
         redirect.cookies.set(cookie)

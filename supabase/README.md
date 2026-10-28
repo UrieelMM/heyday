@@ -18,8 +18,8 @@ Las nueve migraciones de `supabase/migrations/` están ordenadas por timestamp p
 
 1. La CLI está instalada como dependencia de desarrollo y `supabase/config.toml` está inicializado. En una máquina nueva ejecuta `npx supabase login` y `npx supabase link --project-ref odpiybzxaviifydyqfbk`.
 2. Para futuras migraciones, crea un archivo SQL con un timestamp posterior, ejecuta `npx supabase db push --linked` y comprueba `npx supabase migration list --linked`. No vuelvas a ejecutar manualmente las nueve migraciones ya aplicadas.
-3. Crea tu usuario en **Authentication > Users** si aún no existe. El trigger crea su perfil con rol `client_host`, sin privilegios de administrador.
-4. Desde **SQL Editor**, promueve **solo tu cuenta** y verifica que la consulta devuelva una fila:
+3. La cuenta administradora `urieel.mm@gmail.com` ya existe en **Authentication > Users** con el correo confirmado y el rol `agency_admin`. El trigger crea cualquier cuenta nueva con rol `client_host`, sin privilegios de administrador.
+4. Para promover otra cuenta en el futuro, usa **SQL Editor** y comprueba que la consulta devuelva una fila:
 
 ```sql
 UPDATE public.profiles
@@ -48,10 +48,10 @@ WHERE id IN ('event-assets', 'guest-memories');
 
 El resultado esperado es **10 diseños**, RLS activo en las **10 tablas**, `event-assets` público y `guest-memories` privado.
 
-En la comprobación inicial, `auth.users` tenía **0 usuarios** y no había administradores. Para activar el acceso real, crea tu usuario en Supabase Auth y ejecuta el `UPDATE` de promoción anterior; comprueba que `RETURNING` devuelva una fila.
+El 28 de octubre de 2026 se verificó que la cuenta administradora tiene `email_confirmed = true` y `role = agency_admin`.
 
 ## Estado de la aplicación
 
-Los clientes de navegador y servidor ya usan la URL y la clave pública del proyecto, y `src/middleware.ts` renueva las sesiones de Supabase en `/login` y `/dashboard`. El dashboard todavía usa autenticación de demostración y guarda invitaciones en `localStorage`; las páginas públicas y el formulario RSVP también muestran datos de demostración. Configurar `.env.local` **no conecta automáticamente estos flujos a Supabase**. Esa integración requiere reemplazar la autenticación de prueba, leer y escribir datos desde el servidor, validar eventos publicados y tokens de invitados, y generar URLs firmadas para las fotos privadas. Los endpoints públicos deben devolver solo campos permitidos y usar la clave secret únicamente en el servidor.
+Los clientes de navegador y servidor ya usan la URL y la clave pública del proyecto. El login autentica con Supabase Auth y `src/middleware.ts` verifica la sesión y el rol de administrador antes de permitir `/dashboard`. El dashboard aún guarda invitaciones en `localStorage`; las páginas públicas y el formulario RSVP también muestran datos de demostración. Conectar esos flujos requiere leer y escribir datos desde el servidor, validar eventos publicados y tokens de invitados, y generar URLs firmadas para las fotos privadas. Los endpoints públicos deben devolver solo campos permitidos y usar la clave secret únicamente en el servidor.
 
 El límite de 50 fotos se aplica en la tabla `event_memories`. La carga del archivo y la creación del registro deben coordinarse desde el servidor para limpiar un archivo si la inserción falla. Las subidas anónimas directas a Storage están deshabilitadas.

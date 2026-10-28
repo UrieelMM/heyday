@@ -8,55 +8,84 @@ import {
   ArrowLeft,
   ArrowRight,
   Check,
-  KeyRound,
   Lock,
   Mail,
   ShieldCheck,
 } from 'lucide-react';
-import {
-  DEMO_ADMIN_USER,
-  getAdminSession,
-  loginFakeAdmin,
-} from '@/lib/auth/fake-auth';
+import { z } from 'zod';
+import { createClient } from '@/lib/supabase/client';
 import { HeyDayBrand } from '@/components/brand/HeyDayBrand';
+
+const loginSchema = z.object({
+  email: z.string().trim().toLowerCase().max(254).email(),
+  password: z.string().min(1).max(128),
+});
+
+function getLoginError(code?: string) {
+  if (code === 'email_not_confirmed') return 'Confirma tu correo antes de entrar.';
+  if (code === 'over_request_rate_limit' || code === 'over_email_send_rate_limit') {
+    return 'Demasiados intentos. Espera un momento e inténtalo de nuevo.';
+  }
+  return 'Correo o contraseña incorrectos.';
+}
 
 function LoginFormContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const templateParam = searchParams.get('template');
-  const targetUrl = templateParam
-    ? `/dashboard?template=${templateParam}`
+  const validTemplate = templateParam && /^[a-z0-9-]{1,60}$/.test(templateParam);
+  const targetUrl = validTemplate
+    ? `/dashboard?template=${encodeURIComponent(templateParam)}`
     : '/dashboard';
 
-  const [email, setEmail] = useState(DEMO_ADMIN_USER.email);
-  const [password, setPassword] = useState(DEMO_ADMIN_USER.password);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    getAdminSession();
-  }, []);
+    if (searchParams.get('reason') === 'unauthorized') {
+      toast.error('Esta cuenta no tiene acceso al dashboard.');
+    }
+  }, [searchParams]);
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    setIsSubmitting(true);
+    const parsed = loginSchema.safeParse({ email, password });
+    if (!parsed.success) {
+      toast.error(parsed.error.issues[0]?.path[0] === 'email'
+        ? 'Escribe un correo electrónico válido.'
+        : 'Escribe tu contraseña.');
+      return;
+    }
 
-    setTimeout(() => {
-      const result = loginFakeAdmin(email, password);
-      if (!result.success) {
-        toast.error(result.error);
-        setIsSubmitting(false);
+    setIsSubmitting(true);
+    try {
+      const supabase = createClient();
+      const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
+      if (error || !data.user) {
+        toast.error(getLoginError(error?.code));
+        return;
+      }
+
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', data.user.id)
+        .maybeSingle();
+      if (profileError || !['agency_admin', 'superadmin'].includes(profile?.role ?? '')) {
+        await supabase.auth.signOut();
+        toast.error('Esta cuenta no tiene acceso al dashboard.');
         return;
       }
 
       toast.success('Bienvenido al panel de administración');
-      router.push(targetUrl);
-    }, 350);
-  };
-
-  const handleQuickFill = () => {
-    setEmail(DEMO_ADMIN_USER.email);
-    setPassword(DEMO_ADMIN_USER.password);
-    toast.info('Acceso demo preparado');
+      router.replace(targetUrl);
+      router.refresh();
+    } catch {
+      toast.error('No pudimos iniciar sesión. Inténtalo de nuevo.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -115,22 +144,7 @@ function LoginFormContent() {
               </p>
             </div>
 
-            <div className="mb-6 flex items-center justify-between gap-4 rounded-lg border border-[#e6dfd8] bg-[#f5f0e8] p-3.5">
-              <div className="flex items-center gap-3">
-                <span className="flex h-8 w-8 items-center justify-center rounded-md bg-[#e8a55a]/55 text-[#141413]">
-                  <KeyRound className="h-4 w-4" />
-                </span>
-                <div>
-                  <p className="text-xs font-medium">Modo demo local</p>
-                  <p className="mt-0.5 text-[11px] text-[#6c6a64]">Acceso preparado para explorar el producto</p>
-                </div>
-              </div>
-              <button type="button" onClick={handleQuickFill} className="shrink-0 rounded-md border border-[#d7cfc4] bg-white px-3 py-2 text-xs font-medium transition-colors hover:bg-[#ebe6df]">
-                Rellenar
-              </button>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} noValidate className="space-y-5">
               <div>
                 <label htmlFor="admin-email" className="mb-2 block text-xs font-medium text-[#3d3d3a]">Correo electrónico</label>
                 <div className="relative">
@@ -139,9 +153,11 @@ function LoginFormContent() {
                     id="admin-email"
                     type="email"
                     required
+                    autoComplete="email"
+                    maxLength={254}
                     value={email}
                     onChange={(event) => setEmail(event.target.value)}
-                    placeholder="admin@heyday.party"
+                    placeholder="tu@correo.com"
                     className="w-full rounded-lg border py-3 pr-4 pl-10 text-sm outline-none transition-colors focus:border-[#cc785c]"
                   />
                 </div>
@@ -155,6 +171,8 @@ function LoginFormContent() {
                     id="admin-password"
                     type="password"
                     required
+                    autoComplete="current-password"
+                    maxLength={128}
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
                     placeholder="••••••••"
@@ -174,7 +192,7 @@ function LoginFormContent() {
             </form>
 
             <p className="mono-label mt-6 text-center text-[10px] text-[#8e8b82]">
-              DEMO LOCAL · LISTO PARA SUPABASE AUTH
+              ACCESO PRIVADO · HEYDAY
             </p>
           </div>
         </section>

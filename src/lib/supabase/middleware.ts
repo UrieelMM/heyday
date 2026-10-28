@@ -32,6 +32,10 @@ export async function updateSession(request: NextRequest) {
   });
 
   // Verifica el token y renueva las cookies antes de renderizar componentes de servidor.
-  await supabase.auth.getClaims();
-  return response;
+  const { data, error } = await supabase.auth.getClaims();
+  return {
+    response,
+    supabase,
+    userId: error ? null : (data?.claims.sub ?? null),
+  };
 }
