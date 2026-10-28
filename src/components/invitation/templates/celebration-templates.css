@@ -1,0 +1,200 @@
+.cs-root { position: relative; overflow: clip; }
+.cs-root .cs-hero { height: 225svh; position: relative; }
+.cs-root .cs-hero__stage { position: sticky; top: 0; height: 100svh; min-height: 530px; overflow: hidden; isolation: isolate; }
+.cs-root .cs-hero__texture, .cs-root .cs-hero__deco, .cs-root .cs-hero__play, .cs-root .cs-hero__olive, .cs-root .cs-hero__age, .cs-root .cs-hero__visual, .cs-root .cs-hero__copy, .cs-root .cs-hero__final { position: absolute; }
+.cs-root .cs-hero__visual { z-index: 1; overflow: hidden; will-change: left, top, width, height, border-radius; }
+.cs-root .cs-hero__visual img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.cs-root .cs-hero__visual-wash { position: absolute; inset: 0; pointer-events: none; }
+.cs-root .cs-hero__photo-label { position: absolute; z-index: 2; right: 18px; bottom: 17px; padding: 7px 10px; font-size: 10px; font-weight: 700; letter-spacing: .16em; }
+.cs-root .cs-hero__copy { z-index: 3; }
+.cs-root .cs-hero__copy h1 { margin: 0; overflow-wrap: anywhere; }
+.cs-root .cs-hero__eyebrow, .cs-root .cs-hero__event, .cs-root .cs-hero__date, .cs-root .cs-hero__scroll, .cs-root .cs-hero__final span { font-size: 11px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; }
+.cs-root .cs-hero__tagline { max-width: 480px; line-height: 1.55; }
+.cs-root .cs-hero__guest { font-size: 13px; }
+.cs-root .cs-hero__final { z-index: 4; left: 7%; bottom: 17%; max-width: 890px; opacity: 0; pointer-events: none; color: #fff; text-shadow: 0 3px 25px rgba(0,0,0,.6); }
+.cs-root .cs-hero__final p { margin: 12px 0 0; line-height: .95; }
+.cs-root .cs-hero__cta { position: absolute; z-index: 7; right: 6%; bottom: 6%; display: inline-flex; min-height: 48px; align-items: center; justify-content: center; gap: 17px; padding: 13px 20px; font-size: 11px; font-weight: 700; letter-spacing: .11em; text-transform: uppercase; transition: transform .25s, box-shadow .25s; }
+.cs-root .cs-hero__cta:hover { transform: translateY(-3px); }
+.cs-root .cs-hero__cta:focus-visible, .cs-root a:focus-visible, .cs-root button:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+.cs-root .cs-hero__scroll { position: absolute; z-index: 4; left: 6%; bottom: 7%; }
+.cs-root .st-story__word { display: inline; }
+.cs-root .st-timeline__line { transform-origin: top; }
+.cs-root .st-locations .grid:has(> .st-locations__card:only-child) { grid-template-columns: minmax(0, 640px); justify-content: center; }
+.cs-root .st-family__card, .cs-root .st-countdown__unit, .cs-root .st-gallery__photo { will-change: transform, opacity; }
+.cs-root section[id] { scroll-margin-top: 24px; }
+
+/* Golden Jubilee: mirrored Art Deco geometry and a measured gala rhythm. */
+.cs-root--golden-jubilee { font-family: var(--font-inter), sans-serif !important; background: #0d0d0d; color: #f5f0e6; }
+.cs-root--golden-jubilee .cs-hero__stage { background: #0d0b09; color: #f5f0e6; }
+.cs-root--golden-jubilee .cs-hero__texture { inset: 0; background: radial-gradient(circle at 58% 48%, rgba(175,117,37,.2), transparent 38%), repeating-linear-gradient(90deg, transparent 0 79px, rgba(229,193,88,.045) 80px 81px); }
+.cs-root--golden-jubilee .cs-hero__deco { inset: 4% 3%; z-index: 0; border: 1px solid rgba(229,193,88,.34); pointer-events: none; }
+.cs-root--golden-jubilee .cs-hero__deco::before, .cs-root--golden-jubilee .cs-hero__deco::after { content: ''; position: absolute; inset: 12px; border: 1px solid rgba(229,193,88,.22); }
+.cs-root--golden-jubilee .cs-hero__deco::after { inset: 25px; border-color: rgba(229,193,88,.12); }
+.cs-root--golden-jubilee .cs-hero__deco i { position: absolute; top: -1px; left: calc(20% * var(--i, 1)); width: 1px; height: 32%; background: linear-gradient(#e5c158, transparent); transform-origin: top; }
+.cs-root--golden-jubilee .cs-hero__deco i:nth-child(1) { --i: 1; transform: rotate(-26deg); }
+.cs-root--golden-jubilee .cs-hero__deco i:nth-child(2) { --i: 2; transform: rotate(-13deg); }
+.cs-root--golden-jubilee .cs-hero__deco i:nth-child(3) { --i: 3; }
+.cs-root--golden-jubilee .cs-hero__deco i:nth-child(4) { --i: 4; transform: rotate(13deg); }
+.cs-root--golden-jubilee .cs-hero__deco i:nth-child(5) { --i: 5; transform: rotate(26deg); }
+.cs-root--golden-jubilee .cs-hero__age { z-index: 0; left: 1%; bottom: 4%; font: 500 clamp(330px, 49vw, 740px)/.8 var(--font-cinzel), serif; letter-spacing: -.14em; color: rgba(229,193,88,.09); }
+.cs-root--golden-jubilee .cs-hero__visual { left: 50%; top: 11%; width: 43%; height: 78%; border: 1px solid rgba(229,193,88,.75); box-shadow: 0 0 0 10px rgba(229,193,88,.09), 0 25px 70px rgba(0,0,0,.5); }
+.cs-root--golden-jubilee .cs-hero__visual-wash { background: linear-gradient(0deg, rgba(9,7,5,.7), transparent 48%); }
+.cs-root--golden-jubilee .cs-hero__photo-label { color: #f5e2ad; border: 1px solid rgba(229,193,88,.48); background: rgba(10,8,6,.65); }
+.cs-root--golden-jubilee .cs-hero__copy { left: 7%; top: 21%; width: 49%; }
+.cs-root--golden-jubilee .cs-hero__eyebrow { margin-bottom: 65px; color: #e5c158; }
+.cs-root--golden-jubilee .cs-hero__event { color: #dbc896; }
+.cs-root--golden-jubilee .cs-hero__copy h1 { font: 500 clamp(65px, 7vw, 120px)/1.04 var(--font-cinzel), Georgia, serif; text-transform: uppercase; letter-spacing: -.055em; }
+.cs-root--golden-jubilee .cs-hero__age-line { margin: 13px 0 0; color: #e5c158; font: 500 16px/1.3 var(--font-cinzel), serif; text-transform: uppercase; letter-spacing: .2em; }
+.cs-root--golden-jubilee .cs-hero__tagline { margin-top: 30px; color: #e1d9c9; font-size: 15px; }
+.cs-root--golden-jubilee .cs-hero__date { margin-top: 26px; color: #e5c158; }
+.cs-root--golden-jubilee .cs-hero__final p { font: 500 clamp(55px, 6.4vw, 108px)/1.03 var(--font-cinzel), Georgia, serif; text-transform: uppercase; }
+.cs-root--golden-jubilee .cs-hero__cta { border: 1px solid #e5c158; background: #e5c158; color: #15110c; }
+.cs-root--golden-jubilee .cs-hero__scroll { color: #d8bd80; }
+.cs-root--golden-jubilee :is(h2,h3) { font-family: var(--font-cinzel), Georgia, serif !important; font-weight: 500 !important; text-transform: uppercase; letter-spacing: -.025em; }
+.cs-root--golden-jubilee .st-story { width: 100%; max-width: none; padding: 150px max(24px, calc((100% - 900px)/2)); background: #17130f; text-align: center; }
+.cs-root--golden-jubilee .st-story blockquote { font: 500 clamp(30px, 4.5vw, 59px)/1.24 var(--font-cinzel), Georgia, serif !important; }
+.cs-root--golden-jubilee .st-story > .grid > div { border: 1px solid rgba(229,193,88,.47) !important; border-radius: 0 !important; background: #252019 !important; color: #f5f0e6; }
+.cs-root--golden-jubilee .st-story > .grid > div p { color: #d1c6b1 !important; }
+.cs-root--golden-jubilee .st-countdown__unit { border-color: #9e7b4f !important; border-radius: 0 !important; background: #252019 !important; color: #f5f0e6; }
+.cs-root--golden-jubilee .st-countdown__unit span:last-child { color: #d2c5ae !important; }
+.cs-root--golden-jubilee .st-locations { background: #eee7da !important; color: #211a13; }
+.cs-root--golden-jubilee .st-locations__card { border-radius: 0 !important; background: #fffcf6 !important; color: #211a13; }
+.cs-root--golden-jubilee .st-locations__card > div > div > div:first-child { color: #795921 !important; }
+.cs-root--golden-jubilee .st-locations__card a:first-child { background: #795921 !important; color: #fff !important; }
+.cs-root--golden-jubilee .st-locations__card a:last-child { color: #211a13 !important; border-color: #9e7b4f !important; }
+.cs-root--golden-jubilee .st-locations__card p { color: #594b3d !important; }
+.cs-root--golden-jubilee .st-timeline__item { border-left: 1px solid #9e7b4f; padding-left: 18px; }
+.cs-root--golden-jubilee .st-gallery { background: #17130f !important; }
+.cs-root--golden-jubilee .st-gallery__photo { border: 1px solid rgba(229,193,88,.62); border-radius: 0 !important; }
+.cs-root--golden-jubilee .st-gallery .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.cs-root--golden-jubilee .st-dress > .grid > div { border-radius: 0 !important; border-color: #9e7b4f !important; background: #252019 !important; }
+.cs-root--golden-jubilee .st-dress > .grid > div p { color: #d1c6b1 !important; }
+.cs-root--golden-jubilee .st-rsvp > div { border-radius: 0 !important; border-color: #9e7b4f !important; background: #252019 !important; }
+.cs-root--golden-jubilee .st-rsvp input, .cs-root--golden-jubilee .st-rsvp select, .cs-root--golden-jubilee .st-rsvp textarea { background: #11100e !important; color: #f5f0e6 !important; }
+.cs-root--golden-jubilee .st-rsvp option { background: #11100e; color: #f5f0e6; }
+.cs-root--golden-jubilee .st-rsvp button[type=submit], .cs-root--golden-jubilee .st-countdown a:first-child { background: #795921 !important; color: #fff !important; }
+
+/* Fiesta Kids: bold paper shapes and playful bento blocks. */
+.cs-root--fiesta-kids-adventure { font-family: var(--font-jakarta), sans-serif !important; background: #fffaf0; color: #26384a; }
+.cs-root--fiesta-kids-adventure .cs-hero__stage { background: #ffe9b2; color: #26384a; }
+.cs-root--fiesta-kids-adventure .cs-hero__texture { inset: 0; background: radial-gradient(circle at 14% 20%, #fff6d5 0 8%, transparent 8.2%), radial-gradient(circle at 89% 7%, rgba(78,205,196,.48) 0 12%, transparent 12.3%), repeating-linear-gradient(100deg, transparent 0 40px, rgba(255,107,107,.035) 40px 43px); }
+.cs-root--fiesta-kids-adventure .cs-hero__play { inset: 0; z-index: 0; pointer-events: none; }
+.cs-root--fiesta-kids-adventure .cs-hero__play i { position: absolute; font-style: normal; line-height: 1; }
+.cs-root--fiesta-kids-adventure .cs-hero__play-sun { top: 1%; left: -4%; color: #f6ac34; font-size: clamp(190px, 28vw, 390px); }
+.cs-root--fiesta-kids-adventure .cs-hero__play-star { right: 2%; top: 3%; color: #f36958; font-size: clamp(70px, 11vw, 160px); }
+.cs-root--fiesta-kids-adventure .cs-hero__play-doodle { bottom: 3%; left: 5%; color: #24a9a4; font-size: clamp(70px, 10vw, 130px); transform: rotate(-13deg); }
+.cs-root--fiesta-kids-adventure .cs-hero__age { z-index: 0; left: 2%; bottom: -6%; color: rgba(24,98,151,.1); font: 700 clamp(390px, 55vw, 800px)/1 var(--font-fredoka), sans-serif; }
+.cs-root--fiesta-kids-adventure .cs-hero__visual { left: 48%; top: 15%; width: 45%; height: 68%; border: 10px solid #fffdf7; border-radius: 40px; box-shadow: 16px 18px 0 #f36958; rotate: 4deg; }
+.cs-root--fiesta-kids-adventure .cs-hero__visual-wash { background: linear-gradient(0deg, rgba(10,48,76,.42), transparent 35%); }
+.cs-root--fiesta-kids-adventure .cs-hero__photo-label { color: #26384a; border-radius: 100px; background: #fffdf7; }
+.cs-root--fiesta-kids-adventure .cs-hero__copy { left: 6%; top: 17%; width: 49%; }
+.cs-root--fiesta-kids-adventure .cs-hero__eyebrow { display: inline-block; margin-bottom: 57px; padding: 9px 14px; border-radius: 100px; background: #26384a; color: #fff; }
+.cs-root--fiesta-kids-adventure .cs-hero__event { color: #a93d45; }
+.cs-root--fiesta-kids-adventure .cs-hero__copy h1 { font: 700 clamp(82px, 8.3vw, 142px)/.9 var(--font-fredoka), sans-serif; letter-spacing: -.075em; color: #245d84; }
+.cs-root--fiesta-kids-adventure .cs-hero__age-line { margin: 14px 0 0; font: 700 clamp(19px, 2.2vw, 29px)/1.2 var(--font-fredoka), sans-serif; color: #bb444b; }
+.cs-root--fiesta-kids-adventure .cs-hero__tagline { margin-top: 25px; font-size: 17px; font-weight: 600; }
+.cs-root--fiesta-kids-adventure .cs-hero__date { margin-top: 24px; color: #9b3d47; }
+.cs-root--fiesta-kids-adventure .cs-hero__final p { font: 700 clamp(62px, 8vw, 130px)/.9 var(--font-fredoka), sans-serif; }
+.cs-root--fiesta-kids-adventure .cs-hero__cta { border: 3px solid #26384a; border-radius: 100px; background: #ffcd55; color: #26384a; box-shadow: 6px 7px 0 #26384a; }
+.cs-root--fiesta-kids-adventure .cs-hero__scroll { color: #7b4044; }
+.cs-root--fiesta-kids-adventure :is(h2,h3) { font-family: var(--font-fredoka), sans-serif !important; font-weight: 600 !important; letter-spacing: -.025em; }
+.cs-root--fiesta-kids-adventure .st-story { width: 100%; max-width: none; padding: 130px max(24px, calc((100% - 900px)/2)); background: #fff1c8; }
+.cs-root--fiesta-kids-adventure .st-story blockquote { font: 600 clamp(35px, 5vw, 68px)/1.15 var(--font-fredoka), sans-serif !important; }
+.cs-root--fiesta-kids-adventure .st-story > .grid > div, .cs-root--fiesta-kids-adventure .st-family__card, .cs-root--fiesta-kids-adventure .st-locations__card, .cs-root--fiesta-kids-adventure .st-dress > .grid > div { border: 3px solid #26384a !important; border-radius: 28px !important; background: #fffdf7 !important; box-shadow: 7px 8px 0 #4ecdc4; color: #26384a; }
+.cs-root--fiesta-kids-adventure .st-family { background: #c7efe9 !important; }
+.cs-root--fiesta-kids-adventure .st-countdown__unit { border: 3px solid #26384a !important; border-radius: 20px !important; background: #ffcd55 !important; color: #26384a; box-shadow: 5px 6px 0 #4ecdc4; }
+.cs-root--fiesta-kids-adventure .st-countdown__unit:nth-child(2n) { background: #bfeee7 !important; }
+.cs-root--fiesta-kids-adventure .st-countdown__unit span:last-child { color: #34445c !important; }
+.cs-root--fiesta-kids-adventure .st-locations { background: #fff1c8 !important; }
+.cs-root--fiesta-kids-adventure .st-locations__card a:first-child, .cs-root--fiesta-kids-adventure .st-rsvp button[type=submit], .cs-root--fiesta-kids-adventure .st-countdown a:first-child { background: #b84444 !important; color: #fff !important; }
+.cs-root--fiesta-kids-adventure .st-locations__card a:last-child { color: #26384a !important; border-color: #26384a !important; }
+.cs-root--fiesta-kids-adventure .st-locations__card p { color: #34445c !important; }
+.cs-root--fiesta-kids-adventure .st-timeline__item { border-radius: 18px; padding: 15px 19px; background: #e5f5ee; }
+.cs-root--fiesta-kids-adventure .st-timeline__item:nth-child(2n) { background: #ffefd0; }
+.cs-root--fiesta-kids-adventure .st-gallery { background: #d9f1ec !important; }
+.cs-root--fiesta-kids-adventure .st-gallery .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.cs-root--fiesta-kids-adventure .st-gallery__photo { border: 8px solid #fffdf7; border-radius: 25px !important; box-shadow: 8px 10px 0 #f5ac72; }
+.cs-root--fiesta-kids-adventure .st-gallery__photo:nth-child(2) { rotate: 3deg; }
+.cs-root--fiesta-kids-adventure .st-dress { background: #fff1c8; }
+.cs-root--fiesta-kids-adventure .st-rsvp > div { border: 3px solid #26384a !important; border-radius: 28px !important; background: #fffdf7 !important; box-shadow: 9px 10px 0 #4ecdc4; }
+
+/* Celestial Grace: water, candlelight and quiet olive branches. */
+.cs-root--celestial-baptism { font-family: var(--font-jakarta), sans-serif !important; background: #f8fafc; color: #1e2d3d; }
+.cs-root--celestial-baptism .cs-hero__stage { background: #f2f7fa; color: #1e2d3d; }
+.cs-root--celestial-baptism .cs-hero__texture { inset: 0; background: radial-gradient(ellipse at 70% 12%, rgba(255,255,255,.9) 0 18%, transparent 47%), radial-gradient(ellipse at 5% 100%, rgba(173,205,224,.54), transparent 50%), repeating-linear-gradient(90deg, transparent 0 116px, rgba(127,166,196,.045) 117px 118px); }
+.cs-root--celestial-baptism .cs-hero__olive { z-index: 2; left: 39%; bottom: -4%; width: auto; height: 52%; stroke: #78927c; stroke-width: 1.3; opacity: .58; pointer-events: none; transform-origin: bottom; }
+.cs-root--celestial-baptism .cs-hero__visual { left: 53%; top: 10%; width: 40%; height: 77%; border: 1px solid #c9a96e; border-radius: 50%; box-shadow: 0 0 0 15px rgba(255,255,255,.42), 0 26px 70px rgba(62,91,109,.19); }
+.cs-root--celestial-baptism .cs-hero__visual-wash { background: linear-gradient(0deg, rgba(24,43,57,.72), transparent 52%); }
+.cs-root--celestial-baptism .cs-hero__photo-label { color: #1e2d3d; border-radius: 100px; background: rgba(255,255,255,.88); }
+.cs-root--celestial-baptism .cs-hero__copy { left: 7%; top: 22%; width: 47%; }
+.cs-root--celestial-baptism .cs-hero__eyebrow { margin-bottom: 72px; color: #80633b; }
+.cs-root--celestial-baptism .cs-hero__event { color: #5b7083; }
+.cs-root--celestial-baptism .cs-hero__copy h1 { font: 400 clamp(86px, 9vw, 150px)/.86 var(--font-cormorant), Georgia, serif; letter-spacing: -.06em; }
+.cs-root--celestial-baptism .cs-hero__tagline { margin-top: 27px; font: italic 400 27px/1.2 var(--font-cormorant), Georgia, serif; }
+.cs-root--celestial-baptism .cs-hero__date { margin-top: 27px; color: #80633b; }
+.cs-root--celestial-baptism .cs-hero__final p { font: italic 400 clamp(64px, 8vw, 125px)/.92 var(--font-cormorant), Georgia, serif; }
+.cs-root--celestial-baptism .cs-hero__cta { border: 1px solid #80633b; border-radius: 100px; background: #80633b; color: #fff; }
+.cs-root--celestial-baptism .cs-hero__scroll { color: #5b7083; }
+.cs-root--celestial-baptism :is(h2,h3) { font-family: var(--font-cormorant), Georgia, serif !important; font-weight: 600 !important; letter-spacing: -.03em; }
+.cs-root--celestial-baptism .st-story { width: 100%; max-width: none; padding: 145px max(24px, calc((100% - 850px)/2)); background: #fff; }
+.cs-root--celestial-baptism .st-story blockquote { font: italic 400 clamp(38px, 5vw, 68px)/1.19 var(--font-cormorant), Georgia, serif !important; }
+.cs-root--celestial-baptism .st-story > .grid > div { border: 1px solid #c7d6de !important; border-radius: 4px 38px 4px 38px !important; background: #f4f8fa !important; }
+.cs-root--celestial-baptism .st-family { background: #e9f2f7 !important; }
+.cs-root--celestial-baptism .st-family__card { border: 1px solid #b8cdd7 !important; border-radius: 40px 4px 40px 4px !important; background: #fff !important; }
+.cs-root--celestial-baptism .st-countdown__unit { border: 1px solid #b8cdd7 !important; border-radius: 50% !important; background: #fff !important; color: #1e2d3d; }
+.cs-root--celestial-baptism .st-countdown__unit span:last-child { color: #4e677a !important; }
+.cs-root--celestial-baptism .st-locations { background: #f0f6f9 !important; }
+.cs-root--celestial-baptism .st-locations__card { border: 1px solid #b8cdd7 !important; border-radius: 4px 42px 4px 42px !important; background: #fff !important; }
+.cs-root--celestial-baptism .st-locations__card a:first-child, .cs-root--celestial-baptism .st-rsvp button[type=submit], .cs-root--celestial-baptism .st-countdown a:first-child { background: #80633b !important; color: #fff !important; }
+.cs-root--celestial-baptism .st-locations__card a:last-child { color: #1e2d3d !important; border-color: #80633b !important; }
+.cs-root--celestial-baptism .st-locations__card p { color: #4e677a !important; }
+.cs-root--celestial-baptism .st-timeline__item { border-bottom: 1px solid #b8cdd7; padding-bottom: 16px; }
+.cs-root--celestial-baptism .st-gallery { background: #edf4f8 !important; }
+.cs-root--celestial-baptism .st-gallery .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.cs-root--celestial-baptism .st-gallery__photo { border: 9px solid #fff; border-radius: 2px !important; box-shadow: 0 16px 25px rgba(62,91,109,.15); }
+.cs-root--celestial-baptism .st-dress { background: #f4f8fa; }
+.cs-root--celestial-baptism .st-dress > .grid > div { border-color: #b8cdd7 !important; border-radius: 4px 30px 4px 30px !important; background: #fff !important; }
+.cs-root--celestial-baptism .st-rsvp > div { border: 1px solid #b8cdd7 !important; border-radius: 4px 40px 4px 40px !important; background: #fff !important; box-shadow: 0 16px 30px rgba(62,91,109,.12) !important; }
+
+@media (max-width: 700px) {
+  .cs-root .cs-hero__stage { min-height: 560px; }
+  .cs-root .cs-hero__copy { left: 7%; top: 10%; width: 86%; }
+  .cs-root .cs-hero__eyebrow { margin-bottom: 19px; }
+  .cs-root .cs-hero__tagline { margin-top: 13px; font-size: 13px; }
+  .cs-root .cs-hero__date { margin-top: 13px; font-size: 10px; }
+  .cs-root .cs-hero__final { left: 7%; right: 7%; bottom: 23%; }
+  .cs-root .cs-hero__cta { left: 7%; right: 7%; bottom: 4%; width: auto; }
+  .cs-root .cs-hero__scroll { display: none; }
+  .cs-root .st-countdown__unit span:last-child { font-size: 9px !important; letter-spacing: .04em !important; }
+  .cs-root--golden-jubilee .cs-hero__visual { left: 14%; top: 48%; width: 72%; height: 40%; }
+  .cs-root--golden-jubilee .cs-hero__copy h1 { font-size: clamp(42px, 11vw, 72px); }
+  .cs-root--golden-jubilee .cs-hero__age { left: -6%; bottom: 2%; font-size: 110vw; }
+  .cs-root--golden-jubilee .cs-hero__final p { font-size: clamp(48px, 11vw, 80px); }
+  .cs-root--fiesta-kids-adventure .cs-hero__visual { left: 10%; top: 46%; width: 79%; height: 40%; border-width: 7px; }
+  .cs-root--fiesta-kids-adventure .cs-hero__copy h1 { font-size: clamp(62px, 17vw, 88px); }
+  .cs-root--fiesta-kids-adventure .cs-hero__play-sun { top: -1%; left: -12%; }
+  .cs-root--fiesta-kids-adventure .cs-hero__age { bottom: 0; font-size: 130vw; }
+  .cs-root--fiesta-kids-adventure .cs-hero__final p { font-size: clamp(48px, 12vw, 85px); }
+  .cs-root--celestial-baptism .cs-hero__visual { left: 15%; top: 47%; width: 70%; height: 41%; }
+  .cs-root--celestial-baptism .cs-hero__photo-label { right: 50%; bottom: 64px; transform: translateX(50%); white-space: nowrap; }
+  .cs-root--celestial-baptism .cs-hero__copy h1 { font-size: clamp(65px, 16vw, 95px); }
+  .cs-root--celestial-baptism .cs-hero__tagline { font-size: 20px; }
+  .cs-root--celestial-baptism .cs-hero__olive { left: -10%; bottom: 4%; height: 39%; }
+  .cs-root--celestial-baptism .cs-hero__final p { font-size: clamp(55px, 13vw, 88px); }
+}
+
+@media (max-width: 370px) {
+  .cs-root .cs-hero__stage { min-height: 530px; }
+  .cs-root .cs-hero__event { font-size: 9px; }
+  .cs-root--golden-jubilee .cs-hero__copy h1 { font-size: 40px; }
+  .cs-root--fiesta-kids-adventure .cs-hero__copy h1 { font-size: 58px; }
+  .cs-root--celestial-baptism .cs-hero__copy h1 { font-size: 64px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-root .cs-hero { height: auto; min-height: 100svh; }
+  .cs-root .cs-hero__stage { position: relative; height: 100svh; }
+  .cs-root .cs-hero__final { display: none; }
+  .cs-root .cs-hero__visual, .cs-root .cs-hero__copy, .cs-root .st-family__card, .cs-root .st-countdown__unit, .cs-root .st-gallery__photo { will-change: auto; }
+  .cs-root *, .cs-root *::before, .cs-root *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}

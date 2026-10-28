@@ -32,13 +32,17 @@ import {
   buildGoogleCalendarUrl,
   buildIcsFileContent,
 } from '@/lib/calendar/ics-generator';
+import { isCelebrationTemplateId } from '@/lib/templates/celebration-config';
 import { AmbientParticlesCanvas } from './AmbientParticlesCanvas';
 import { EnvelopeOpener } from './EnvelopeOpener';
 import { FloatingAudioPlayer } from './FloatingAudioPlayer';
 import { EternalEleganceExperience } from '../templates/EternalEleganceExperience';
 import { SignatureHero } from '../templates/SignatureHero';
 import { setupSignatureScenes } from '../templates/signature-scenes';
+import { CelebrationHero } from '../templates/CelebrationHero';
+import { setupCelebrationScenes } from '../templates/celebration-scenes';
 import '../templates/signature-templates.css';
+import '../templates/celebration-templates.css';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -74,6 +78,8 @@ function StandardInvitationRenderer({
   const [copiedClabe, setCopiedClabe] = useState(false);
   const signatureTemplateId = templateId === 'boho-terracotta' || templateId === 'modern-minimal-noir' || templateId === 'neon-xv-euphoria'
     ? templateId : null;
+  const celebrationTemplateId = isCelebrationTemplateId(templateId) ? templateId : null;
+  const hasSceneTemplate = Boolean(signatureTemplateId || celebrationTemplateId);
 
   // Estado Cuenta Regresiva
   const [timeLeft, setTimeLeft] = useState({
@@ -86,7 +92,7 @@ function StandardInvitationRenderer({
   // Estado DJ Song Requests
   const [songQuery, setSongQuery] = useState('');
   const [songArtist, setSongArtist] = useState('');
-  const [songsList, setSongsList] = useState(signatureTemplateId ? [] : [
+  const [songsList, setSongsList] = useState(hasSceneTemplate ? [] : [
     {
       id: '1',
       title: 'September',
@@ -111,8 +117,8 @@ function StandardInvitationRenderer({
   ]);
 
   useEffect(() => {
-    if (signatureTemplateId) setSongsList([]);
-  }, [templateId, signatureTemplateId]);
+    if (hasSceneTemplate) setSongsList([]);
+  }, [templateId, hasSceneTemplate]);
 
   // Estado RSVP y Pase VIP QR
   const maxAdults = guestGroup ? guestGroup.allocatedAdults : 4;
@@ -170,6 +176,10 @@ function StandardInvitationRenderer({
         setupSignatureScenes(root, signatureTemplateId);
         return;
       }
+      if (celebrationTemplateId) {
+        setupCelebrationScenes(root, celebrationTemplateId);
+        return;
+      }
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
       const sections = gsap.utils.toArray<HTMLElement>('.inv-reveal-section');
@@ -209,7 +219,7 @@ function StandardInvitationRenderer({
         );
       });
     },
-    { scope: containerRef, dependencies: [isEnvelopeOpen, templateId, signatureTemplateId] }
+    { scope: containerRef, dependencies: [isEnvelopeOpen, templateId, signatureTemplateId, celebrationTemplateId] }
   );
 
   const { colors, fonts } = config.theme;
@@ -266,7 +276,7 @@ function StandardInvitationRenderer({
     ]);
     setSongQuery('');
     setSongArtist('');
-    toast.success(signatureTemplateId ? 'Sugerencia añadida a esta vista previa.' : '¡Canción agregada a la playlist de la fiesta!');
+    toast.success(hasSceneTemplate ? 'Sugerencia añadida a esta vista previa.' : '¡Canción agregada a la playlist de la fiesta!');
   };
 
   const handleSubmitRsvp = (e: React.FormEvent) => {
@@ -278,14 +288,14 @@ function StandardInvitationRenderer({
 
     if (willAttend === 'no') {
       setGeneratedPass(null);
-      toast.success(signatureTemplateId
+      toast.success(hasSceneTemplate
         ? 'Tu respuesta se muestra sólo en esta vista previa; aún no se ha enviado.'
         : 'Hemos registrado tu respuesta. ¡Gracias por avisarnos con tiempo!');
       return;
     }
 
     const tokenFragment = guestGroup?.guestToken || 'open-pass';
-    const qrPayload = signatureTemplateId
+    const qrPayload = hasSceneTemplate
       ? `DEMO:${slug}:${confirmedAdults}:${confirmedChildren}`
       : `INV1:${slug}:${tokenFragment}:${confirmedAdults}:${confirmedChildren}:9f8a7b6c5d4e3f21`;
 
@@ -294,9 +304,9 @@ function StandardInvitationRenderer({
       groupName: rsvpName.trim(),
       adults: confirmedAdults,
       children: confirmedChildren,
-      tableName: guestGroup?.tableName || (signatureTemplateId ? 'Mesa por asignar' : 'Mesa 4 • Recepción Principal'),
+      tableName: guestGroup?.tableName || (hasSceneTemplate ? 'Mesa por asignar' : 'Mesa 4 • Recepción Principal'),
     });
-    toast.success(signatureTemplateId
+    toast.success(hasSceneTemplate
       ? 'Pase de muestra generado. Esta respuesta aún no se ha enviado.'
       : '¡Asistencia confirmada! Tu Pase VIP QR ha sido generado.');
   };
@@ -309,7 +319,7 @@ function StandardInvitationRenderer({
         color: colors.textPrimary,
         fontFamily: fonts.bodyFont,
       }}
-      className={`relative min-h-dvh w-full overflow-x-hidden selection:bg-amber-500/20${signatureTemplateId ? ` st-root st-root--${signatureTemplateId}` : ''}`}
+      className={`relative min-h-dvh w-full overflow-x-hidden selection:bg-amber-500/20${signatureTemplateId ? ` st-root st-root--${signatureTemplateId}` : ''}${celebrationTemplateId ? ` cs-root cs-root--${celebrationTemplateId}` : ''}`}
     >
       {/* 1. Sobre de Apertura Interactivo */}
       {!isBuilderPreview && (
@@ -346,7 +356,16 @@ function StandardInvitationRenderer({
           actionHref={isSectionEnabled('quote_story') ? '#st-story' : isSectionEnabled('rsvp') ? '#st-rsvp' : isSectionEnabled('locations') ? '#st-locations' : '#st-hero'}
         />
       )}
-      {isSectionEnabled('hero') && !signatureTemplateId && (
+      {isSectionEnabled('hero') && celebrationTemplateId && (
+        <CelebrationHero
+          templateId={celebrationTemplateId}
+          config={config}
+          eventDate={eventDate}
+          guestGroup={guestGroup}
+          actionHref={isSectionEnabled('quote_story') ? '#st-story' : isSectionEnabled('rsvp') ? '#st-rsvp' : isSectionEnabled('locations') ? '#st-locations' : '#cs-hero'}
+        />
+      )}
+      {isSectionEnabled('hero') && !hasSceneTemplate && (
         <section className="relative flex min-h-dvh flex-col items-center justify-end overflow-hidden px-6 pb-16 pt-28 text-center">
           <div className="absolute inset-0 z-0 overflow-hidden">
             <img
@@ -421,9 +440,9 @@ function StandardInvitationRenderer({
           <blockquote
             className="text-2xl leading-relaxed italic sm:text-3xl"
             style={{ fontFamily: fonts.headingFont }}
-            aria-label={signatureTemplateId ? content.quoteStory.quoteText : undefined}
+            aria-label={hasSceneTemplate ? content.quoteStory.quoteText : undefined}
           >
-            {signatureTemplateId ? (
+            {hasSceneTemplate ? (
               <span>
                 {content.quoteStory.quoteText.split(/(\s+)/).map((part, index) =>
                   /^\s+$/.test(part) ? part : <span className="st-story__word" aria-hidden="true" key={index}>{part}</span>
@@ -533,13 +552,25 @@ function StandardInvitationRenderer({
             className="mb-2 text-xs font-semibold tracking-[0.25em] uppercase"
             style={{ color: colors.accentPrimary }}
           >
-            Falta cada vez menos
+            {celebrationTemplateId === 'golden-jubilee'
+              ? 'La noche se acerca'
+              : celebrationTemplateId === 'fiesta-kids-adventure'
+                ? 'Prepara tu mochila'
+                : celebrationTemplateId === 'celestial-baptism'
+                  ? 'Con ilusión esperamos'
+                  : 'Falta cada vez menos'}
           </p>
           <h2
             className="mb-10 text-3xl font-semibold sm:text-4xl"
             style={{ fontFamily: fonts.headingFont }}
           >
-            Cuenta Regresiva para el Gran Día
+            {celebrationTemplateId === 'golden-jubilee'
+              ? 'Cuenta regresiva para el brindis'
+              : celebrationTemplateId === 'fiesta-kids-adventure'
+                ? 'La aventura empieza en'
+                : celebrationTemplateId === 'celestial-baptism'
+                  ? 'Falta para este día de gracia'
+                  : 'Cuenta Regresiva para el Gran Día'}
           </h2>
 
           <div className="mx-auto grid max-w-lg grid-cols-4 gap-3 sm:gap-5">
@@ -623,13 +654,25 @@ function StandardInvitationRenderer({
                 className="mb-2 text-xs font-semibold tracking-[0.25em] uppercase"
                 style={{ color: colors.accentPrimary }}
               >
-                Dónde y Cuándo
+                {celebrationTemplateId === 'golden-jubilee'
+                  ? 'La cita de gala'
+                  : celebrationTemplateId === 'fiesta-kids-adventure'
+                    ? 'Punto de encuentro'
+                    : celebrationTemplateId === 'celestial-baptism'
+                      ? 'Ceremonia y encuentro'
+                      : 'Dónde y Cuándo'}
               </p>
               <h2
                 className="text-3xl font-semibold sm:text-4xl"
                 style={{ fontFamily: fonts.headingFont }}
               >
-                Ubicaciones del Evento
+                {celebrationTemplateId === 'golden-jubilee'
+                  ? 'Donde brindaremos'
+                  : celebrationTemplateId === 'fiesta-kids-adventure'
+                    ? 'El lugar de la aventura'
+                    : celebrationTemplateId === 'celestial-baptism'
+                      ? 'Dónde compartiremos este día'
+                      : 'Ubicaciones del Evento'}
               </h2>
             </div>
 
@@ -647,7 +690,7 @@ function StandardInvitationRenderer({
                     <div className="h-52 w-full overflow-hidden">
                       <img
                         src={loc.imageUrl}
-                        alt={loc.venueName}
+                        alt={celebrationTemplateId ? `Concepto visual de ${loc.title}` : loc.venueName}
                         className="inv-mask-image h-full w-full object-cover"
                       />
                     </div>
@@ -719,13 +762,25 @@ function StandardInvitationRenderer({
               className="mb-2 text-xs font-semibold tracking-[0.25em] uppercase"
               style={{ color: colors.accentPrimary }}
             >
-              Minuto a Minuto
+              {celebrationTemplateId === 'golden-jubilee'
+                ? 'La velada'
+                : celebrationTemplateId === 'fiesta-kids-adventure'
+                  ? 'El mapa de la fiesta'
+                  : celebrationTemplateId === 'celestial-baptism'
+                    ? 'Los momentos de este día'
+                    : 'Minuto a Minuto'}
             </p>
             <h2
               className="text-3xl font-semibold sm:text-4xl"
               style={{ fontFamily: fonts.headingFont }}
             >
-              Itinerario del Evento
+              {celebrationTemplateId === 'golden-jubilee'
+                ? 'Una noche para recordar'
+                : celebrationTemplateId === 'fiesta-kids-adventure'
+                  ? 'Nuestra ruta de aventura'
+                  : celebrationTemplateId === 'celestial-baptism'
+                    ? 'Ceremonia y celebración'
+                    : 'Itinerario del Evento'}
             </h2>
           </div>
 
@@ -783,13 +838,25 @@ function StandardInvitationRenderer({
                 className="mb-2 text-xs font-semibold tracking-[0.25em] uppercase"
                 style={{ color: colors.accentPrimary }}
               >
-                Momentos Inolvidables
+                {celebrationTemplateId === 'golden-jubilee'
+                  ? 'Detalles dorados'
+                  : celebrationTemplateId === 'fiesta-kids-adventure'
+                    ? 'Asómate a la aventura'
+                    : celebrationTemplateId === 'celestial-baptism'
+                      ? 'Luz y significado'
+                      : 'Momentos Inolvidables'}
               </p>
               <h2
                 className="text-3xl font-semibold sm:text-4xl"
                 style={{ fontFamily: fonts.headingFont }}
               >
-                Nuestra Galería
+                {celebrationTemplateId === 'golden-jubilee'
+                  ? 'Momentos de la noche'
+                  : celebrationTemplateId === 'fiesta-kids-adventure'
+                    ? 'Nuestro mundo de aventura'
+                    : celebrationTemplateId === 'celestial-baptism'
+                      ? 'Detalles de este día'
+                      : 'Nuestra Galería'}
               </h2>
             </div>
 
@@ -823,7 +890,11 @@ function StandardInvitationRenderer({
             className="mb-2 text-xs font-semibold tracking-[0.25em] uppercase"
             style={{ color: colors.accentPrimary }}
           >
-            Dress Code
+            {celebrationTemplateId === 'fiesta-kids-adventure'
+              ? 'Listos para jugar'
+              : celebrationTemplateId === 'celestial-baptism'
+                ? 'Para acompañarnos'
+                : 'Dress Code'}
           </p>
           <h2
             className="mb-8 text-3xl font-semibold sm:text-4xl"
@@ -841,7 +912,7 @@ function StandardInvitationRenderer({
               }}
             >
               <h3 className="text-sm font-bold tracking-widest uppercase">
-                Mujeres
+                {celebrationTemplateId === 'fiesta-kids-adventure' ? 'Peques' : 'Mujeres'}
               </h3>
               <p
                 className="mt-2 text-sm leading-relaxed"
@@ -858,7 +929,7 @@ function StandardInvitationRenderer({
               }}
             >
               <h3 className="text-sm font-bold tracking-widest uppercase">
-                Hombres
+                {celebrationTemplateId === 'fiesta-kids-adventure' ? 'Adultos' : 'Hombres'}
               </h3>
               <p
                 className="mt-2 text-sm leading-relaxed"
@@ -1181,7 +1252,7 @@ function StandardInvitationRenderer({
                   </div>
                 </form>
 
-                {signatureTemplateId && <p className="mb-3 text-xs opacity-75">Vista previa local: tus sugerencias no se envían.</p>}
+                {hasSceneTemplate && <p className="mb-3 text-xs opacity-75">Vista previa local: tus sugerencias no se envían.</p>}
                 <div className="space-y-2.5">
                   {songsList.slice(0, 4).map((song) => (
                     <div
@@ -1299,7 +1370,7 @@ function StandardInvitationRenderer({
                 className="text-3xl font-semibold sm:text-4xl"
                 style={{ fontFamily: fonts.headingFont }}
               >
-                {signatureTemplateId ? 'Vista previa de confirmación' : 'Confirmación de Asistencia (RSVP)'}
+                {hasSceneTemplate ? 'Vista previa de confirmación' : 'Confirmación de Asistencia (RSVP)'}
               </h2>
               <p
                 className="mt-2 text-sm"
@@ -1311,7 +1382,7 @@ function StandardInvitationRenderer({
                         ? ` y ${guestGroup.allocatedChildren} niños`
                         : ''
                     })`
-                  : signatureTemplateId
+                  : hasSceneTemplate
                     ? 'Prueba el formulario y genera un pase de muestra. No se enviará tu respuesta.'
                     : 'Por favor confirma tu asistencia para generar tu Pase Digital con Código QR'}
               </p>
@@ -1482,7 +1553,7 @@ function StandardInvitationRenderer({
                   }}
                   className="w-full rounded-xl py-4 text-xs font-bold tracking-[0.2em] uppercase shadow-lg transition-transform hover:scale-[1.01] active:scale-[0.99]"
                 >
-                  {signatureTemplateId ? 'Generar pase de muestra' : 'Confirmar Asistencia y Generar Pase QR'}
+                  {hasSceneTemplate ? 'Generar pase de muestra' : 'Confirmar Asistencia y Generar Pase QR'}
                 </button>
               </form>
             ) : (
@@ -1502,7 +1573,7 @@ function StandardInvitationRenderer({
                   }}
                 >
                   <Ticket className="h-4 w-4" />
-                  <span>{signatureTemplateId ? 'Pase de muestra · sin registro' : 'Pase de Acceso VIP Confirmado'}</span>
+                  <span>{hasSceneTemplate ? 'Pase de muestra · sin registro' : 'Pase de Acceso VIP Confirmado'}</span>
                 </div>
 
                 <h3
@@ -1515,7 +1586,7 @@ function StandardInvitationRenderer({
                   className="mt-1 text-xs tracking-wider uppercase"
                   style={{ color: colors.textMuted }}
                 >
-                  {signatureTemplateId ? 'Muestra para' : 'Válido por'} {generatedPass.adults} Adultos
+                  {hasSceneTemplate ? 'Muestra para' : 'Válido por'} {generatedPass.adults} Adultos
                   {generatedPass.children > 0
                     ? ` y ${generatedPass.children} Niños`
                     : ''}{' '}

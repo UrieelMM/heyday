@@ -5,6 +5,7 @@ import type {
   InvitationConfig,
   TemplateId,
 } from '@/types/invitation.types';
+import { applyCelebrationDefaults, isCelebrationTemplateId } from './celebration-config';
 
 export interface TemplateMetadata {
   id: TemplateId;
@@ -161,10 +162,9 @@ export const TEMPLATES_CATALOG: TemplateMetadata[] = [
     categoryLabel: 'Cumpleaños 30s, 40s, 50s / Aniversario',
     badge: 'Gala Nocturna',
     description:
-      'Sofisticación Art Déco en negro ónix y dorado imperial con burbujas ascendentes y números monumentales con parallax.',
-    signatureAnimation: 'Champagne Bubbles + Monumental Parallax',
-    previewImage:
-      'https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=1000&q=80',
+      'Cumpleaños adulto de gala inspirado en la geometría Art Déco: un salón dorado se abre hacia el brindis de una vida.',
+    signatureAnimation: 'Art Deco Frame Expansion + Golden Chapters',
+    previewImage: '/images/golden-jubilee/deco-ballroom.jpg',
     colors: {
       bgPrimary: '#0D0D0D',
       bgSecondary: '#171614',
@@ -174,7 +174,7 @@ export const TEMPLATES_CATALOG: TemplateMetadata[] = [
       accentSecondary: '#9E7B4F',
     },
     fonts: {
-      headingFont: 'Playfair Display',
+      headingFont: 'Cinzel',
       scriptFont: 'Pinyon Script',
       bodyFont: 'Inter',
     },
@@ -188,16 +188,15 @@ export const TEMPLATES_CATALOG: TemplateMetadata[] = [
     categoryLabel: 'Cumpleaños Infantil',
     badge: 'Interactivo',
     description:
-      'Diseño alegre estilo Bento con tarjetas redondeadas, animaciones con rebote elástico y explosión de confeti al abrir.',
-    signatureAnimation: 'Elastic Bento Bounce + Confetti Burst',
-    previewImage:
-      'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1000&q=80',
+      'Cumpleaños infantil como cuento de exploración en papel recortado: sol, camino y tarjetas llenas de juego.',
+    signatureAnimation: 'Paper Adventure Hero + Playful Bento Scroll',
+    previewImage: '/images/fiesta-kids-adventure/paper-adventure.jpg',
     colors: {
       bgPrimary: '#FFFDF7',
       bgSecondary: '#FFF3D6',
       textPrimary: '#1E293B',
       textMuted: '#64748B',
-      accentPrimary: '#FF6B6B',
+      accentPrimary: '#B84444',
       accentSecondary: '#4ECDC4',
     },
     fonts: {
@@ -215,16 +214,15 @@ export const TEMPLATES_CATALOG: TemplateMetadata[] = [
     categoryLabel: 'Bautizo / Primera Comunión',
     badge: 'Ceremonia Religiosa',
     description:
-      'Etérea y luminosa en azul cielo empolvado, blanco nube y dorado suave, con protagonismo para padres y padrinos.',
-    signatureAnimation: 'Soft Cloud Parallax + Olive Branch SVG',
-    previewImage:
-      'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1000&q=80',
+      'Bautizo o Primera Comunión con agua o cáliz, vela, lino blanco y ramas de olivo; una invitación luminosa centrada en la fe y la familia.',
+    signatureAnimation: 'Baptismal Light Reveal + Olive Branch Scroll',
+    previewImage: '/images/celestial-grace/baptism-font.jpg',
     colors: {
       bgPrimary: '#F8FAFC',
       bgSecondary: '#EDF4F8',
       textPrimary: '#1E2D3D',
       textMuted: '#5B7083',
-      accentPrimary: '#C9A96E',
+      accentPrimary: '#80633B',
       accentSecondary: '#7FA6C4',
     },
     fonts: {
@@ -538,6 +536,10 @@ export function createDefaultInvitationConfig(
       },
     },
   };
+
+  if (isCelebrationTemplateId(templateId)) {
+    applyCelebrationDefaults(config, templateId, customTitle);
+  }
 
   if (templateId === 'boho-terracotta') {
     config.content.hero = {

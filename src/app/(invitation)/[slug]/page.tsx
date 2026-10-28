@@ -40,6 +40,12 @@ const DEMO_GUEST_GROUPS: Record<string, GuestGroup> = {
   },
 };
 
+const CELEBRATION_DEMO_DATES: Partial<Record<TemplateId, string>> = {
+  'golden-jubilee': '2026-12-19T20:00:00-06:00',
+  'fiesta-kids-adventure': '2026-12-19T13:30:00-06:00',
+  'celestial-baptism': '2026-12-19T12:00:00-06:00',
+};
+
 function resolveTemplateAndTitle(slug: string, queryTemplate?: string): {
   templateId: TemplateId;
   title: string;
@@ -138,7 +144,7 @@ export default async function PublicInvitationPage({
     <PublicInvitationClientView
       slug={slug}
       fallbackTemplateId={templateId}
-      fallbackEventDate="2026-12-19T17:00:00-06:00"
+      fallbackEventDate={CELEBRATION_DEMO_DATES[templateId] || '2026-12-19T17:00:00-06:00'}
       fallbackConfig={config}
       fallbackGuestGroup={guestGroup}
       guestToken={g}
