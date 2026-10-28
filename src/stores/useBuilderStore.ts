@@ -9,11 +9,15 @@ import {
   createDefaultInvitationConfig,
   TEMPLATES_CATALOG,
 } from '@/lib/templates/templates-catalog';
+import type { ClientInvitationRecord } from '@/stores/useEventsStore';
 
 export type BuilderViewport = 'mobile' | 'tablet' | 'desktop';
 
 interface BuilderState {
   eventId: string;
+  clientName: string;
+  clientEmail: string;
+  clientPhone: string;
   slug: string;
   title: string;
   eventDate: string;
@@ -24,13 +28,27 @@ interface BuilderState {
   config: InvitationConfig;
   isDirty: boolean;
 
+  loadInvitationRecord: (record: ClientInvitationRecord) => void;
   setTemplate: (templateId: TemplateId) => void;
   setViewport: (viewport: BuilderViewport) => void;
   setActiveSection: (section: SectionId) => void;
   setPreviewEnvelopeOpen: (open: boolean) => void;
-  setMeta: (meta: Partial<{ slug: string; title: string; eventDate: string }>) => void;
-  updateThemeColors: (colors: Partial<InvitationConfig['theme']['colors']>) => void;
-  updateEnvelope: (envelope: Partial<InvitationConfig['theme']['envelope']>) => void;
+  setMeta: (
+    meta: Partial<{
+      slug: string;
+      title: string;
+      clientName: string;
+      clientEmail: string;
+      clientPhone: string;
+      eventDate: string;
+    }>
+  ) => void;
+  updateThemeColors: (
+    colors: Partial<InvitationConfig['theme']['colors']>
+  ) => void;
+  updateEnvelope: (
+    envelope: Partial<InvitationConfig['theme']['envelope']>
+  ) => void;
   toggleSection: (sectionId: SectionId) => void;
   reorderSections: (sectionsOrder: InvitationConfig['sectionsOrder']) => void;
   updateHero: (hero: Partial<InvitationConfig['content']['hero']>) => void;
@@ -46,16 +64,33 @@ interface BuilderState {
 
 export const useBuilderStore = create<BuilderState>()(
   temporal((set) => ({
-    eventId: 'demo-event-001',
+    eventId: 'inv-001',
+    clientName: 'Sofía Villarreal & Mateo Mendoza',
+    clientEmail: 'sofia.villarreal@email.com',
+    clientPhone: '+52 55 1234 5678',
     slug: 'boda-sofia-y-mateo',
     title: 'Sofía & Mateo',
-    eventDate: '2026-12-19T17:00:00-06:00',
+    eventDate: '2026-11-14T17:00:00-06:00',
     templateId: 'eternal-elegance',
     viewport: 'mobile',
     activeSection: 'hero',
     previewEnvelopeOpen: true,
     config: createDefaultInvitationConfig('eternal-elegance', 'Sofía & Mateo'),
     isDirty: false,
+
+    loadInvitationRecord: (record) =>
+      set({
+        eventId: record.id,
+        clientName: record.clientName,
+        clientEmail: record.clientEmail,
+        clientPhone: record.clientPhone,
+        slug: record.slug,
+        title: record.title,
+        eventDate: record.eventDate,
+        templateId: record.templateId,
+        config: structuredClone(record.config),
+        isDirty: false,
+      }),
 
     setTemplate: (templateId) =>
       set((state) => {
@@ -84,7 +119,8 @@ export const useBuilderStore = create<BuilderState>()(
 
     setViewport: (viewport) => set({ viewport }),
     setActiveSection: (activeSection) => set({ activeSection }),
-    setPreviewEnvelopeOpen: (previewEnvelopeOpen) => set({ previewEnvelopeOpen }),
+    setPreviewEnvelopeOpen: (previewEnvelopeOpen) =>
+      set({ previewEnvelopeOpen }),
     setMeta: (meta) => set((state) => ({ ...state, ...meta, isDirty: true })),
 
     updateThemeColors: (colors) =>
@@ -150,7 +186,10 @@ export const useBuilderStore = create<BuilderState>()(
           ...state.config,
           content: {
             ...state.config.content,
-            quoteStory: { ...state.config.content.quoteStory, ...quoteStory },
+            quoteStory: {
+              ...state.config.content.quoteStory,
+              ...quoteStory,
+            },
           },
         },
       })),

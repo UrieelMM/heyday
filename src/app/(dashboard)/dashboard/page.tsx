@@ -1,31 +1,49 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { Suspense, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import {
+  Calendar,
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
   Copy,
   ExternalLink,
   Eye,
+  Filter,
+  FolderKanban,
   Layout,
+  LogOut,
   Monitor,
   Palette,
+  Plus,
   QrCode,
+  Redo2,
+  Search,
   Send,
   Smartphone,
   Sparkles,
   Tablet,
+  Trash2,
   Undo2,
-  Redo2,
+  UserCheck,
   Users,
   Wand2,
+  X,
 } from 'lucide-react';
 import { useBuilderStore } from '@/stores/useBuilderStore';
+import {
+  useEventsStore,
+  type ClientInvitationRecord,
+} from '@/stores/useEventsStore';
 import { TEMPLATES_CATALOG } from '@/lib/templates/templates-catalog';
 import { InvitationRenderer } from '@/components/invitation/core/InvitationRenderer';
 import { buildWhatsappInviteUrl } from '@/lib/whatsapp/link-builder';
-import type { GuestGroup, SectionId, TemplateId } from '@/types/invitation.types';
+import { getAdminSession, logoutFakeAdmin } from '@/lib/auth/fake-auth';
+import { slugify } from '@/lib/utils';
+import type { SectionId, TemplateId } from '@/types/invitation.types';
 
 const SECTION_LABELS: Record<SectionId, string> = {
   hero: '1. Portada Principal (Hero)',
@@ -42,8 +60,23 @@ const SECTION_LABELS: Record<SectionId, string> = {
   rsvp: '12. Confirmación RSVP + Pase QR',
 };
 
-export default function DashboardBuilderPage() {
+function DashboardContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialTemplateParam = searchParams.get(
+    'template'
+  ) as TemplateId | null;
+
   const {
+    invitations,
+    addInvitation,
+    updateInvitation,
+    deleteInvitation,
+  } = useEventsStore();
+
+  const {
+    eventId,
+    clientName,
     slug,
     title,
     eventDate,
@@ -51,6 +84,7 @@ export default function DashboardBuilderPage() {
     viewport,
     config,
     previewEnvelopeOpen,
+    loadInvitationRecord,
     setTemplate,
     setViewport,
     setPreviewEnvelopeOpen,
@@ -62,120 +96,305 @@ export default function DashboardBuilderPage() {
     updateDressCode,
   } = useBuilderStore();
 
-  const [activeTab, setActiveTab] = useState<'builder' | 'guests' | 'checkin'>(
-    'builder'
+  const [adminEmail, setAdminEmail] = useState<string>(
+    'admin@atelierinvitaciones.com'
   );
+  const [activeTab, setActiveTab] = useState<
+    'history' | 'builder' | 'guests' | 'checkin'
+  >('history');
   const [inspectorTab, setInspectorTab] = useState<
     'templates' | 'colors' | 'content' | 'sections'
   >('templates');
 
-  // Lista interactiva de invitados en el CRM del Dashboard
-  const [guests, setGuests] = useState<GuestGroup[]>([
-    {
-      id: '1',
-      eventId: 'demo-event-001',
-      guestToken: 'fam-lopez-8a2f',
-      groupName: 'Familia López García',
-      whatsappPhone: '525512345678',
-      groupTag: 'Familia Novia',
-      allocatedAdults: 4,
-      allocatedChildren: 1,
-      rsvpStatus: 'confirmed',
-      confirmedAdults: 4,
-      confirmedChildren: 1,
-      tableName: 'Mesa 4',
-      checkedInCount: 0,
-    },
-    {
-      id: '2',
-      eventId: 'demo-event-001',
-      guestToken: 'fam-mendoza-3b9c',
-      groupName: 'Familia Mendoza Ruiz',
-      whatsappPhone: '525587654321',
-      groupTag: 'Familia Novio',
-      allocatedAdults: 2,
-      allocatedChildren: 0,
-      rsvpStatus: 'viewed',
-      confirmedAdults: 0,
-      confirmedChildren: 0,
-      tableName: 'Mesa 2',
-      checkedInCount: 0,
-    },
-    {
-      id: '3',
-      eventId: 'demo-event-001',
-      guestToken: 'ing-carlos-torres',
-      groupName: 'Ing. Carlos Torres y Sra.',
-      whatsappPhone: '525511223344',
-      groupTag: 'Amigos VIP',
-      allocatedAdults: 2,
-      allocatedChildren: 0,
-      rsvpStatus: 'confirmed',
-      confirmedAdults: 2,
-      confirmedChildren: 0,
-      tableName: 'Mesa 1',
-      checkedInCount: 2,
-    },
-  ]);
+  // Estado de Filtros y Paginación para el Historial por Template y Cliente
+  const [selectedHistoryTemplate, setSelectedHistoryTemplate] = useState<
+    'all' | TemplateId
+  >(initialTemplateParam || 'all');
+  const [clientQuery, setClientQuery] = useState('');
+  const [dateFilterField, setDateFilterField] = useState<
+    'eventDate' | 'createdAt'
+  >('eventDate');
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
+  const [statusFilter, setStatusFilter] = useState<
+    'all' | 'published' | 'draft' | 'archived'
+  >('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
 
+  // Modal de Crear Nueva Invitación para un Cliente
+  const [isNewModalOpen, setIsNewModalOpen] = useState(false);
+  const [newForm, setNewForm] = useState<{
+    clientName: string;
+    clientEmail: string;
+    clientPhone: string;
+    title: string;
+    slug: string;
+    templateId: TemplateId;
+    eventDate: string;
+  }>({
+    clientName: '',
+    clientEmail: '',
+    clientPhone: '+52 55 ',
+    title: '',
+    slug: '',
+    templateId: initialTemplateParam || 'eternal-elegance',
+    eventDate: '2026-12-19',
+  });
+
+  // Formulario para Agregar Pase de Invitado al Cliente Activo
   const [newGuestName, setNewGuestName] = useState('');
   const [newGuestPhone, setNewGuestPhone] = useState('');
   const [newGuestAdults, setNewGuestAdults] = useState(2);
   const [newGuestChildren, setNewGuestChildren] = useState(0);
   const [newGuestTable, setNewGuestTable] = useState('Mesa 5');
 
+  // Verificar sesión del administrador
+  useEffect(() => {
+    const session = getAdminSession();
+    if (!session) {
+      router.replace('/login');
+      return;
+    }
+    setAdminEmail(session.email);
+  }, [router]);
+
+  // Si viene ?template=... en la URL, filtrar por ese template
+  useEffect(() => {
+    if (
+      initialTemplateParam &&
+      TEMPLATES_CATALOG.some((t) => t.id === initialTemplateParam)
+    ) {
+      setSelectedHistoryTemplate(initialTemplateParam);
+      setNewForm((prev) => ({ ...prev, templateId: initialTemplateParam }));
+    }
+  }, [initialTemplateParam]);
+
+  // Invitación activa seleccionada para CRM / Check-in
+  const activeInvitationRecord = useMemo(
+    () =>
+      invitations.find((inv) => inv.id === eventId) || invitations[0],
+    [invitations, eventId]
+  );
+
+  // Contadores de invitaciones creadas por cada uno de los 10 templates
+  const templateCounts = useMemo(() => {
+    const counts: Record<string, number> = { all: invitations.length };
+    for (const tpl of TEMPLATES_CATALOG) {
+      counts[tpl.id] = invitations.filter(
+        (inv) => inv.templateId === tpl.id
+      ).length;
+    }
+    return counts;
+  }, [invitations]);
+
+  // Filtrado por Template, Cliente (nombre, email, título, slug) y Rango de Fechas
+  const filteredInvitations = useMemo(() => {
+    return invitations.filter((inv) => {
+      if (
+        selectedHistoryTemplate !== 'all' &&
+        inv.templateId !== selectedHistoryTemplate
+      ) {
+        return false;
+      }
+
+      if (statusFilter !== 'all' && inv.status !== statusFilter) {
+        return false;
+      }
+
+      if (clientQuery.trim()) {
+        const q = clientQuery.toLowerCase().trim();
+        const matchesClient = inv.clientName.toLowerCase().includes(q);
+        const matchesTitle = inv.title.toLowerCase().includes(q);
+        const matchesSlug = inv.slug.toLowerCase().includes(q);
+        const matchesEmail = inv.clientEmail.toLowerCase().includes(q);
+        if (!matchesClient && !matchesTitle && !matchesSlug && !matchesEmail) {
+          return false;
+        }
+      }
+
+      const targetDateIso =
+        dateFilterField === 'eventDate' ? inv.eventDate : inv.createdAt;
+      const targetDay = targetDateIso.slice(0, 10);
+
+      if (dateFrom && targetDay < dateFrom) {
+        return false;
+      }
+      if (dateTo && targetDay > dateTo) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [
+    invitations,
+    selectedHistoryTemplate,
+    statusFilter,
+    clientQuery,
+    dateFilterField,
+    dateFrom,
+    dateTo,
+  ]);
+
+  // Resetear a la página 1 cuando cambian los filtros
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [
+    selectedHistoryTemplate,
+    statusFilter,
+    clientQuery,
+    dateFilterField,
+    dateFrom,
+    dateTo,
+    pageSize,
+  ]);
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredInvitations.length / pageSize)
+  );
+  const safePage = Math.min(currentPage, totalPages);
+  const paginatedInvitations = useMemo(() => {
+    const start = (safePage - 1) * pageSize;
+    return filteredInvitations.slice(start, start + pageSize);
+  }, [filteredInvitations, safePage, pageSize]);
+
+  // Historial específico del template que está activo dentro del Builder
+  const builderTemplateHistory = useMemo(
+    () => invitations.filter((inv) => inv.templateId === templateId),
+    [invitations, templateId]
+  );
+
+  const handleOpenInBuilder = (record: ClientInvitationRecord) => {
+    loadInvitationRecord(record);
+    setActiveTab('builder');
+    toast.success(
+      `Editando invitación de ${record.clientName} (${record.title})`
+    );
+  };
+
+  const handleSaveCurrentBuilder = () => {
+    updateInvitation(eventId, {
+      slug,
+      clientName,
+      title,
+      templateId,
+      eventDate,
+      config: structuredClone(config),
+    });
+    toast.success(
+      `¡Cambios guardados en el historial de ${templateId} para ${clientName}!`
+    );
+  };
+
+  const handleCreateNewInvitation = (
+    e: React.FormEvent,
+    openBuilderAfter = true
+  ) => {
+    e.preventDefault();
+    if (!newForm.clientName.trim() || !newForm.title.trim()) {
+      toast.error('Completa el nombre del cliente y el título del evento');
+      return;
+    }
+
+    const cleanSlug =
+      slugify(newForm.slug || newForm.title) || `evento-${Date.now()}`;
+
+    const duplicate = invitations.some(
+      (i) => i.slug.toLowerCase() === cleanSlug.toLowerCase()
+    );
+    const finalSlug = duplicate
+      ? `${cleanSlug}-${Math.floor(100 + Math.random() * 900)}`
+      : cleanSlug;
+
+    const created = addInvitation({
+      clientName: newForm.clientName.trim(),
+      clientEmail: newForm.clientEmail.trim() || 'cliente@email.com',
+      clientPhone: newForm.clientPhone.trim() || '+52 55 0000 0000',
+      title: newForm.title.trim(),
+      slug: finalSlug,
+      templateId: newForm.templateId,
+      eventDate: `${newForm.eventDate}T17:00:00-06:00`,
+    });
+
+    setSelectedHistoryTemplate(newForm.templateId);
+    setIsNewModalOpen(false);
+    setNewForm({
+      clientName: '',
+      clientEmail: '',
+      clientPhone: '+52 55 ',
+      title: '',
+      slug: '',
+      templateId: newForm.templateId,
+      eventDate: '2026-12-19',
+    });
+
+    toast.success(
+      `Invitación creada para ${created.clientName} con el template ${created.templateId}`
+    );
+
+    if (openBuilderAfter) {
+      loadInvitationRecord(created);
+      setActiveTab('builder');
+    }
+  };
+
   const handleAddGuestGroup = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newGuestName.trim()) return;
+    if (!newGuestName.trim() || !activeInvitationRecord) return;
     const token =
       'fam-' +
-      newGuestName
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/[^a-z0-9]+/g, '-')
-        .slice(0, 14) +
+      slugify(newGuestName).slice(0, 14) +
       '-' +
       Math.random().toString(36).slice(2, 6);
 
-    setGuests((prev) => [
+    const updatedGuests = [
       {
         id: String(Date.now()),
-        eventId: 'demo-event-001',
+        eventId: activeInvitationRecord.id,
         guestToken: token,
         groupName: newGuestName.trim(),
         whatsappPhone: newGuestPhone.trim() || '525500000000',
         groupTag: 'Invitado',
         allocatedAdults: newGuestAdults,
         allocatedChildren: newGuestChildren,
-        rsvpStatus: 'pending',
+        rsvpStatus: 'pending' as const,
         confirmedAdults: 0,
         confirmedChildren: 0,
         tableName: newGuestTable,
         checkedInCount: 0,
       },
-      ...prev,
-    ]);
+      ...activeInvitationRecord.guests,
+    ];
+
+    updateInvitation(activeInvitationRecord.id, { guests: updatedGuests });
     setNewGuestName('');
     setNewGuestPhone('');
     toast.success(`Pase único creado para ${newGuestName}`);
   };
 
-  const totalAllocated = guests.reduce(
+  const handleLogout = () => {
+    logoutFakeAdmin();
+    toast.info('Sesión cerrada correctamente');
+    router.push('/login');
+  };
+
+  const activeGuests = activeInvitationRecord?.guests || [];
+  const totalAllocated = activeGuests.reduce(
     (acc, g) => acc + g.allocatedAdults + g.allocatedChildren,
     0
   );
-  const totalConfirmed = guests.reduce(
+  const totalConfirmed = activeGuests.reduce(
     (acc, g) => acc + g.confirmedAdults + g.confirmedChildren,
     0
   );
 
   return (
     <div className="flex min-h-dvh flex-col bg-stone-950 text-stone-100">
-      {/* Topbar del Dashboard */}
+      {/* TOPBAR DEL DASHBOARD */}
       <header className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 bg-stone-900/90 px-6 py-3.5 backdrop-blur-md">
-        <div className="flex items-center gap-4">
-          <Link href="/" className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-4">
+          <Link href="/" className="flex cursor-pointer items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500 text-stone-950">
               <Sparkles className="h-4 w-4" />
             </div>
@@ -184,14 +403,26 @@ export default function DashboardBuilderPage() {
             </span>
           </Link>
 
-          <div className="h-5 w-px bg-white/15" />
+          <div className="hidden h-5 w-px bg-white/15 sm:block" />
 
-          {/* Navegación de Módulos del Evento */}
-          <div className="flex rounded-xl border border-white/10 bg-stone-950 p-1">
+          {/* Navegación de Módulos */}
+          <div className="flex flex-wrap rounded-xl border border-white/10 bg-stone-950 p-1">
+            <button
+              type="button"
+              onClick={() => setActiveTab('history')}
+              className={`inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition ${
+                activeTab === 'history'
+                  ? 'bg-amber-500 text-stone-950'
+                  : 'text-stone-400 hover:text-white'
+              }`}
+            >
+              <FolderKanban className="h-3.5 w-3.5" />
+              Clientes & Historial por Template ({invitations.length})
+            </button>
             <button
               type="button"
               onClick={() => setActiveTab('builder')}
-              className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition ${
+              className={`inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition ${
                 activeTab === 'builder'
                   ? 'bg-amber-500 text-stone-950'
                   : 'text-stone-400 hover:text-white'
@@ -203,71 +434,566 @@ export default function DashboardBuilderPage() {
             <button
               type="button"
               onClick={() => setActiveTab('guests')}
-              className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition ${
+              className={`inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition ${
                 activeTab === 'guests'
                   ? 'bg-amber-500 text-stone-950'
                   : 'text-stone-400 hover:text-white'
               }`}
             >
               <Users className="h-3.5 w-3.5" />
-              Invitados & Links WhatsApp ({guests.length})
+              Invitados de {title} ({activeGuests.length})
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('checkin')}
-              className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition ${
+              className={`inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition ${
                 activeTab === 'checkin'
                   ? 'bg-amber-500 text-stone-950'
                   : 'text-stone-400 hover:text-white'
               }`}
             >
               <QrCode className="h-3.5 w-3.5" />
-              Recepción & Escáner QR
+              Recepción QR
             </button>
           </div>
         </div>
 
-        {/* URL Personalizada Activa + Botón Publicar */}
-        <div className="flex items-center gap-3">
-          <div className="hidden items-center gap-2 rounded-xl border border-white/10 bg-stone-950 px-3 py-1.5 text-xs lg:flex">
-            <span className="text-stone-500">URL cliente:</span>
-            <code className="font-semibold text-amber-400">
-              dominioprincipal.com/{slug}
-            </code>
-            <Link
-              href={`/${slug}?template=${templateId}&g=fam-lopez-8a2f`}
-              target="_blank"
-              className="ml-1 inline-flex items-center gap-1 text-stone-300 hover:text-white"
+        {/* Acciones Derecha: Crear Nueva Invitación + Guardar + Logout */}
+        <div className="flex items-center gap-2.5">
+          <button
+            type="button"
+            onClick={() => {
+              setNewForm((prev) => ({
+                ...prev,
+                templateId:
+                  selectedHistoryTemplate !== 'all'
+                    ? selectedHistoryTemplate
+                    : templateId,
+              }));
+              setIsNewModalOpen(true);
+            }}
+            className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-amber-500/40 bg-amber-500/15 px-3.5 py-2 text-xs font-bold text-amber-300 transition hover:bg-amber-500 hover:text-stone-950"
+          >
+            <Plus className="h-4 w-4" />
+            Nueva Invitación de Cliente
+          </button>
+
+          {activeTab === 'builder' && (
+            <button
+              type="button"
+              onClick={handleSaveCurrentBuilder}
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl bg-amber-500 px-4 py-2 text-xs font-bold tracking-wider text-stone-950 uppercase shadow-md transition hover:bg-amber-400"
             >
-              <ExternalLink className="h-3.5 w-3.5" />
-            </Link>
+              <CheckCircle2 className="h-4 w-4" />
+              Guardar Cambios
+            </button>
+          )}
+
+          <div className="hidden items-center gap-2 rounded-xl border border-white/10 bg-stone-950 px-3 py-1.5 text-xs xl:flex">
+            <UserCheck className="h-3.5 w-3.5 text-emerald-400" />
+            <span className="text-stone-400">{adminEmail}</span>
           </div>
 
           <button
             type="button"
-            onClick={() =>
-              toast.success(
-                `¡Invitación publicada en /${slug}! Caché Edge ISR revalidado.`
-              )
-            }
-            className="inline-flex items-center gap-1.5 rounded-xl bg-amber-500 px-4 py-2 text-xs font-bold tracking-wider text-stone-950 uppercase shadow-md transition hover:bg-amber-400"
+            onClick={handleLogout}
+            title="Cerrar sesión"
+            className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold text-stone-300 transition hover:bg-rose-500/20 hover:text-rose-300"
           >
-            <CheckCircle2 className="h-4 w-4" />
-            Guardar y Publicar
+            <LogOut className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Salir</span>
           </button>
         </div>
       </header>
 
-      {/* VISTA 1: CONSTRUCTOR VISUAL SPLIT-SCREEN EN TIEMPO REAL */}
+      {/* =====================================================================
+          VISTA 1: HISTORIAL DE INVITACIONES POR TEMPLATE Y CLIENTES
+      ===================================================================== */}
+      {activeTab === 'history' && (
+        <div className="mx-auto grid w-full max-w-7xl flex-1 gap-6 p-6 lg:grid-cols-12">
+          {/* Columna Izquierda: Selector de los 10 Templates con Historial */}
+          <aside className="space-y-3 lg:col-span-3">
+            <div className="rounded-2xl border border-white/10 bg-stone-900/70 p-4">
+              <h2 className="text-xs font-bold tracking-wider text-amber-400 uppercase">
+                Historial por Template
+              </h2>
+              <p className="mt-1 text-xs text-stone-400">
+                Selecciona una plantilla para ver todas las invitaciones de
+                clientes creadas con ella:
+              </p>
+
+              <div className="mt-4 space-y-1.5">
+                <button
+                  type="button"
+                  onClick={() => setSelectedHistoryTemplate('all')}
+                  className={`flex w-full cursor-pointer items-center justify-between rounded-xl px-3.5 py-2.5 text-left text-xs font-semibold transition ${
+                    selectedHistoryTemplate === 'all'
+                      ? 'bg-amber-500 text-stone-950 font-bold'
+                      : 'text-stone-300 hover:bg-white/5'
+                  }`}
+                >
+                  <span>Todos los Templates</span>
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-[10px] ${
+                      selectedHistoryTemplate === 'all'
+                        ? 'bg-stone-950/20 text-stone-950'
+                        : 'bg-stone-800 text-stone-300'
+                    }`}
+                  >
+                    {templateCounts.all}
+                  </span>
+                </button>
+
+                {TEMPLATES_CATALOG.map((tpl, idx) => {
+                  const isSelected = selectedHistoryTemplate === tpl.id;
+                  const count = templateCounts[tpl.id] || 0;
+                  return (
+                    <button
+                      key={tpl.id}
+                      type="button"
+                      onClick={() => setSelectedHistoryTemplate(tpl.id)}
+                      className={`flex w-full cursor-pointer items-center justify-between rounded-xl px-3 py-2 text-left text-xs transition ${
+                        isSelected
+                          ? 'bg-amber-500 font-bold text-stone-950 shadow-sm'
+                          : 'text-stone-300 hover:bg-white/5'
+                      }`}
+                    >
+                      <span className="truncate">
+                        {idx + 1}. {tpl.name}
+                      </span>
+                      <span
+                        className={`ml-2 shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                          isSelected
+                            ? 'bg-stone-950/20 text-stone-950'
+                            : 'bg-stone-800 text-amber-300'
+                        }`}
+                      >
+                        {count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </aside>
+
+          {/* Columna Derecha: Filtros por Cliente/Fecha + Tabla Paginada */}
+          <div className="flex flex-col space-y-5 lg:col-span-9">
+            {/* Cabecera del Template Activo */}
+            <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-white/10 bg-stone-900/80 p-5">
+              <div>
+                <span className="text-xs font-bold tracking-wider text-amber-400 uppercase">
+                  {selectedHistoryTemplate === 'all'
+                    ? 'Historial Global Multi-Cliente'
+                    : `Historial del Template: ${
+                        TEMPLATES_CATALOG.find(
+                          (t) => t.id === selectedHistoryTemplate
+                        )?.name
+                      }`}
+                </span>
+                <h1 className="mt-0.5 text-2xl font-extrabold text-white">
+                  {selectedHistoryTemplate === 'all'
+                    ? 'Todas las Invitaciones de Clientes'
+                    : `Invitaciones creadas con ${
+                        TEMPLATES_CATALOG.find(
+                          (t) => t.id === selectedHistoryTemplate
+                        )?.name
+                      }`}
+                </h1>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setNewForm((prev) => ({
+                    ...prev,
+                    templateId:
+                      selectedHistoryTemplate !== 'all'
+                        ? selectedHistoryTemplate
+                        : 'eternal-elegance',
+                  }));
+                  setIsNewModalOpen(true);
+                }}
+                className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-amber-500 px-4 py-2.5 text-xs font-bold tracking-wider text-stone-950 uppercase shadow-lg shadow-amber-500/20 transition hover:bg-amber-400"
+              >
+                <Plus className="h-4 w-4" />
+                {selectedHistoryTemplate === 'all'
+                  ? 'Crear Invitación de Cliente'
+                  : `Nueva con ${
+                      TEMPLATES_CATALOG.find(
+                        (t) => t.id === selectedHistoryTemplate
+                      )?.name
+                    }`}
+              </button>
+            </div>
+
+            {/* Barra de Filtros: Cliente, Rango de Fechas y Estado */}
+            <div className="grid gap-3 rounded-2xl border border-white/10 bg-stone-900/60 p-4 sm:grid-cols-12">
+              {/* Búsqueda por Cliente / Evento / URL */}
+              <div className="sm:col-span-4">
+                <label className="mb-1 block text-[11px] font-semibold text-stone-400 uppercase">
+                  Filtrar por Cliente, Evento o Slug
+                </label>
+                <div className="relative">
+                  <Search className="pointer-events-none absolute top-2.5 left-3 h-4 w-4 text-stone-500" />
+                  <input
+                    type="text"
+                    value={clientQuery}
+                    onChange={(e) => setClientQuery(e.target.value)}
+                    placeholder="Ej. Sofía, Camila, XV, boda-sofia..."
+                    className="w-full rounded-xl border border-white/15 bg-stone-950 py-2 pr-3 pl-9 text-xs text-white outline-none focus:border-amber-500"
+                  />
+                </div>
+              </div>
+
+              {/* Tipo de Fecha */}
+              <div className="sm:col-span-2">
+                <label className="mb-1 block text-[11px] font-semibold text-stone-400 uppercase">
+                  Campo de Fecha
+                </label>
+                <select
+                  value={dateFilterField}
+                  onChange={(e) =>
+                    setDateFilterField(
+                      e.target.value as 'eventDate' | 'createdAt'
+                    )
+                  }
+                  className="w-full rounded-xl border border-white/15 bg-stone-950 px-3 py-2 text-xs text-white outline-none focus:border-amber-500"
+                >
+                  <option value="eventDate">Fecha de Evento</option>
+                  <option value="createdAt">Fecha Creada</option>
+                </select>
+              </div>
+
+              {/* Fecha Desde */}
+              <div className="sm:col-span-2">
+                <label className="mb-1 block text-[11px] font-semibold text-stone-400 uppercase">
+                  Desde
+                </label>
+                <input
+                  type="date"
+                  value={dateFrom}
+                  onChange={(e) => setDateFrom(e.target.value)}
+                  className="w-full rounded-xl border border-white/15 bg-stone-950 px-2.5 py-2 text-xs text-white outline-none focus:border-amber-500"
+                />
+              </div>
+
+              {/* Fecha Hasta */}
+              <div className="sm:col-span-2">
+                <label className="mb-1 block text-[11px] font-semibold text-stone-400 uppercase">
+                  Hasta
+                </label>
+                <input
+                  type="date"
+                  value={dateTo}
+                  onChange={(e) => setDateTo(e.target.value)}
+                  className="w-full rounded-xl border border-white/15 bg-stone-950 px-2.5 py-2 text-xs text-white outline-none focus:border-amber-500"
+                />
+              </div>
+
+              {/* Estado + Botón Limpiar */}
+              <div className="flex items-end gap-2 sm:col-span-2">
+                <div className="flex-1">
+                  <label className="mb-1 block text-[11px] font-semibold text-stone-400 uppercase">
+                    Estado
+                  </label>
+                  <select
+                    value={statusFilter}
+                    onChange={(e) =>
+                      setStatusFilter(
+                        e.target.value as
+                          | 'all'
+                          | 'published'
+                          | 'draft'
+                          | 'archived'
+                      )
+                    }
+                    className="w-full rounded-xl border border-white/15 bg-stone-950 px-2.5 py-2 text-xs text-white outline-none focus:border-amber-500"
+                  >
+                    <option value="all">Todos</option>
+                    <option value="published">Publicadas</option>
+                    <option value="draft">Borradores</option>
+                    <option value="archived">Archivadas</option>
+                  </select>
+                </div>
+
+                {(clientQuery ||
+                  dateFrom ||
+                  dateTo ||
+                  statusFilter !== 'all') && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setClientQuery('');
+                      setDateFrom('');
+                      setDateTo('');
+                      setStatusFilter('all');
+                    }}
+                    title="Limpiar filtros"
+                    className="cursor-pointer rounded-xl border border-white/15 bg-stone-950 p-2 text-stone-400 hover:text-white"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Tabla del Historial de Invitaciones */}
+            <div className="overflow-x-auto rounded-2xl border border-white/10 bg-stone-900">
+              <table className="w-full text-left text-sm">
+                <thead className="border-b border-white/10 bg-stone-950/70 text-[11px] font-bold tracking-wider text-stone-400 uppercase">
+                  <tr>
+                    <th className="px-5 py-3.5">Cliente & Evento</th>
+                    <th className="px-5 py-3.5">Template Usado</th>
+                    <th className="px-5 py-3.5">Fecha Evento / Creada</th>
+                    <th className="px-5 py-3.5">URL Personalizada</th>
+                    <th className="px-5 py-3.5">Estado</th>
+                    <th className="px-5 py-3.5 text-right">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/10">
+                  {paginatedInvitations.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan={6}
+                        className="px-6 py-12 text-center text-sm text-stone-400"
+                      >
+                        No se encontraron invitaciones con los filtros
+                        seleccionados.
+                      </td>
+                    </tr>
+                  ) : (
+                    paginatedInvitations.map((inv) => {
+                      const tplInfo = TEMPLATES_CATALOG.find(
+                        (t) => t.id === inv.templateId
+                      );
+                      const isCurrentInBuilder = inv.id === eventId;
+
+                      return (
+                        <tr
+                          key={inv.id}
+                          className={`transition hover:bg-white/[0.03] ${
+                            isCurrentInBuilder ? 'bg-amber-500/[0.05]' : ''
+                          }`}
+                        >
+                          <td className="px-5 py-4">
+                            <div className="flex items-center gap-2">
+                              <span className="font-bold text-white">
+                                {inv.clientName}
+                              </span>
+                              {isCurrentInBuilder && (
+                                <span className="rounded-full bg-amber-500/20 px-2 py-0.5 text-[10px] font-bold text-amber-300">
+                                  En Editor
+                                </span>
+                              )}
+                            </div>
+                            <span className="block text-xs text-stone-400">
+                              Evento: {inv.title} • {inv.clientPhone}
+                            </span>
+                          </td>
+
+                          <td className="px-5 py-4">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setSelectedHistoryTemplate(inv.templateId)
+                              }
+                              className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-white/10 bg-stone-950 px-2.5 py-1 text-xs font-semibold text-amber-300 hover:border-amber-500/40"
+                            >
+                              <span>{tplInfo?.name || inv.templateId}</span>
+                            </button>
+                          </td>
+
+                          <td className="px-5 py-4 text-xs">
+                            <p className="font-semibold text-stone-200">
+                              Evento: {inv.eventDate.slice(0, 10)}
+                            </p>
+                            <p className="text-stone-500">
+                              Creada: {inv.createdAt.slice(0, 10)}
+                            </p>
+                          </td>
+
+                          <td className="px-5 py-4">
+                            <Link
+                              href={`/${inv.slug}?template=${inv.templateId}&g=fam-lopez-8a2f`}
+                              target="_blank"
+                              className="inline-flex cursor-pointer items-center gap-1 font-mono text-xs text-amber-400 hover:underline"
+                            >
+                              <span>/{inv.slug}</span>
+                              <ExternalLink className="h-3 w-3" />
+                            </Link>
+                            <span className="block text-[11px] text-stone-500">
+                              {inv.viewsCount} aperturas
+                            </span>
+                          </td>
+
+                          <td className="px-5 py-4">
+                            <span
+                              className={`inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
+                                inv.status === 'published'
+                                  ? 'bg-emerald-500/15 text-emerald-400'
+                                  : 'bg-amber-500/15 text-amber-300'
+                              }`}
+                            >
+                              {inv.status === 'published'
+                                ? 'Publicada'
+                                : 'Borrador'}
+                            </span>
+                          </td>
+
+                          <td className="px-5 py-4 text-right">
+                            <div className="inline-flex items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={() => handleOpenInBuilder(inv)}
+                                className="inline-flex cursor-pointer items-center gap-1 rounded-xl bg-amber-500 px-3 py-1.5 text-xs font-bold text-stone-950 transition hover:bg-amber-400"
+                              >
+                                <Wand2 className="h-3.5 w-3.5" />
+                                Personalizar
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  loadInvitationRecord(inv);
+                                  setActiveTab('guests');
+                                }}
+                                className="inline-flex cursor-pointer items-center gap-1 rounded-xl border border-white/15 bg-white/5 px-2.5 py-1.5 text-xs font-semibold text-stone-200 transition hover:bg-white/10"
+                              >
+                                <Users className="h-3.5 w-3.5" />
+                                Invitados
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  deleteInvitation(inv.id);
+                                  toast.info('Invitación eliminada del historial');
+                                }}
+                                title="Eliminar invitación"
+                                className="cursor-pointer rounded-xl border border-white/10 p-1.5 text-stone-400 transition hover:border-rose-500/40 hover:text-rose-400"
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+
+              {/* Controles de Paginación */}
+              <div className="flex flex-wrap items-center justify-between gap-4 border-t border-white/10 bg-stone-950/60 px-5 py-3.5 text-xs">
+                <div className="flex items-center gap-3 text-stone-400">
+                  <span>
+                    Mostrando{' '}
+                    <strong className="text-white">
+                      {filteredInvitations.length === 0
+                        ? 0
+                        : (safePage - 1) * pageSize + 1}
+                    </strong>{' '}
+                    –{' '}
+                    <strong className="text-white">
+                      {Math.min(
+                        safePage * pageSize,
+                        filteredInvitations.length
+                      )}
+                    </strong>{' '}
+                    de{' '}
+                    <strong className="text-white">
+                      {filteredInvitations.length}
+                    </strong>{' '}
+                    invitaciones
+                  </span>
+
+                  <select
+                    value={pageSize}
+                    onChange={(e) => setPageSize(Number(e.target.value))}
+                    className="rounded-lg border border-white/15 bg-stone-900 px-2 py-1 text-xs text-white outline-none"
+                  >
+                    <option value={5}>5 por página</option>
+                    <option value={10}>10 por página</option>
+                    <option value={20}>20 por página</option>
+                  </select>
+                </div>
+
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    disabled={safePage <= 1}
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-white/15 bg-stone-900 px-3 py-1.5 font-semibold text-stone-300 transition hover:bg-white/10 disabled:opacity-40"
+                  >
+                    <ChevronLeft className="h-3.5 w-3.5" />
+                    Anterior
+                  </button>
+
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                    (pageNum) => (
+                      <button
+                        key={pageNum}
+                        type="button"
+                        onClick={() => setCurrentPage(pageNum)}
+                        className={`h-8 w-8 cursor-pointer rounded-lg text-xs font-bold transition ${
+                          pageNum === safePage
+                            ? 'bg-amber-500 text-stone-950'
+                            : 'border border-white/10 bg-stone-900 text-stone-300 hover:bg-white/10'
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    )
+                  )}
+
+                  <button
+                    type="button"
+                    disabled={safePage >= totalPages}
+                    onClick={() =>
+                      setCurrentPage((p) => Math.min(totalPages, p + 1))
+                    }
+                    className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-white/15 bg-stone-900 px-3 py-1.5 font-semibold text-stone-300 transition hover:bg-white/10 disabled:opacity-40"
+                  >
+                    Siguiente
+                    <ChevronRight className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =====================================================================
+          VISTA 2: CONSTRUCTOR VISUAL SPLIT-SCREEN EN TIEMPO REAL
+      ===================================================================== */}
       {activeTab === 'builder' && (
         <div className="flex flex-1 overflow-hidden">
           {/* Panel Inspector Izquierdo */}
           <aside className="flex w-full max-w-md flex-col border-r border-white/10 bg-stone-900/60">
+            {/* Tarjeta de Cliente Activo en el Builder */}
+            <div className="border-b border-white/10 bg-stone-950/90 px-4 py-3">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold tracking-wider text-amber-400 uppercase">
+                  Cliente Activo en Editor
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('history')}
+                  className="cursor-pointer text-[11px] font-semibold text-stone-400 underline hover:text-white"
+                >
+                  Cambiar cliente ({invitations.length})
+                </button>
+              </div>
+              <p className="mt-0.5 truncate text-sm font-bold text-white">
+                {clientName} — <span className="text-amber-300">/{slug}</span>
+              </p>
+            </div>
+
             {/* Sub-tabs del Inspector */}
             <div className="grid grid-cols-4 border-b border-white/10 bg-stone-950/60 p-1.5 text-xs font-semibold">
               {[
                 { id: 'templates', label: '10 Templates', icon: Sparkles },
-                { id: 'colors', label: 'Colores/Sobre', icon: Palette },
+                { id: 'colors', label: 'Colores/URL', icon: Palette },
                 { id: 'content', label: 'Textos/Fotos', icon: Layout },
                 { id: 'sections', label: 'Secciones', icon: Eye },
               ].map((t) => {
@@ -281,7 +1007,7 @@ export default function DashboardBuilderPage() {
                         t.id as 'templates' | 'colors' | 'content' | 'sections'
                       )
                     }
-                    className={`flex flex-col items-center gap-1 rounded-lg py-2 transition ${
+                    className={`flex cursor-pointer flex-col items-center gap-1 rounded-lg py-2 transition ${
                       inspectorTab === t.id
                         ? 'bg-white/10 text-amber-400'
                         : 'text-stone-400 hover:text-white'
@@ -297,16 +1023,57 @@ export default function DashboardBuilderPage() {
             {/* Contenido del Inspector */}
             <div className="flex-1 space-y-5 overflow-y-auto p-5">
               {inspectorTab === 'templates' && (
-                <div className="space-y-3">
+                <div className="space-y-4">
+                  {/* Historial rápido de invitaciones creadas con el template seleccionado */}
+                  <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-3.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-bold text-amber-300 uppercase">
+                        Historial en {templateId} ({builderTemplateHistory.length}
+                        )
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedHistoryTemplate(templateId);
+                          setActiveTab('history');
+                        }}
+                        className="cursor-pointer text-[11px] font-semibold text-white underline"
+                      >
+                        Ver todas / Filtrar
+                      </button>
+                    </div>
+                    <div className="mt-2.5 max-h-32 space-y-1.5 overflow-y-auto">
+                      {builderTemplateHistory.map((item) => (
+                        <button
+                          key={item.id}
+                          type="button"
+                          onClick={() => handleOpenInBuilder(item)}
+                          className={`flex w-full cursor-pointer items-center justify-between rounded-lg px-2.5 py-1.5 text-left text-xs transition ${
+                            item.id === eventId
+                              ? 'bg-amber-500 font-bold text-stone-950'
+                              : 'bg-stone-950/70 text-stone-200 hover:bg-stone-950'
+                          }`}
+                        >
+                          <span className="truncate">{item.clientName}</span>
+                          <span className="ml-2 shrink-0 font-mono text-[10px] opacity-80">
+                            {item.eventDate.slice(0, 10)}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
                   <p className="text-xs text-stone-400">
-                    Cambia de plantilla en 1 clic conservando tus datos:
+                    Selecciona un template (muestra cuántas invitaciones has
+                    creado con cada uno):
                   </p>
+
                   {TEMPLATES_CATALOG.map((tpl) => (
                     <button
                       key={tpl.id}
                       type="button"
                       onClick={() => setTemplate(tpl.id as TemplateId)}
-                      className={`flex w-full items-center gap-3.5 rounded-2xl border p-3 text-left transition ${
+                      className={`flex w-full cursor-pointer items-center gap-3.5 rounded-2xl border p-3 text-left transition ${
                         templateId === tpl.id
                           ? 'border-amber-500 bg-amber-500/10'
                           : 'border-white/10 bg-stone-950/60 hover:border-white/25'
@@ -322,12 +1089,12 @@ export default function DashboardBuilderPage() {
                           <p className="truncate text-sm font-bold text-white">
                             {tpl.name}
                           </p>
-                          <span className="text-[10px] text-amber-400">
-                            {tpl.categoryLabel}
+                          <span className="rounded-full bg-stone-800 px-2 py-0.5 text-[10px] font-bold text-amber-300">
+                            {templateCounts[tpl.id] || 0} creadas
                           </span>
                         </div>
                         <p className="mt-0.5 line-clamp-1 text-xs text-stone-400">
-                          {tpl.signatureAnimation}
+                          {tpl.categoryLabel} • {tpl.signatureAnimation}
                         </p>
                       </div>
                     </button>
@@ -338,7 +1105,19 @@ export default function DashboardBuilderPage() {
               {inspectorTab === 'colors' && (
                 <div className="space-y-5">
                   <div>
-                    <label className="mb-2 block text-xs font-bold tracking-wider text-stone-300 uppercase">
+                    <label className="mb-1.5 block text-xs font-bold tracking-wider text-stone-300 uppercase">
+                      Nombre del Cliente
+                    </label>
+                    <input
+                      type="text"
+                      value={clientName}
+                      onChange={(e) => setMeta({ clientName: e.target.value })}
+                      className="w-full rounded-xl border border-white/15 bg-stone-950 px-3.5 py-2 text-sm text-white outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-1.5 block text-xs font-bold tracking-wider text-stone-300 uppercase">
                       URL Personalizada (Slug del Cliente)
                     </label>
                     <div className="flex items-center rounded-xl border border-white/15 bg-stone-950 px-3 py-2 text-xs">
@@ -492,7 +1271,7 @@ export default function DashboardBuilderPage() {
                         type="checkbox"
                         checked={sec.enabled}
                         onChange={() => toggleSection(sec.id)}
-                        className="h-4 w-4 accent-amber-500"
+                        className="h-4 w-4 cursor-pointer accent-amber-500"
                       />
                     </div>
                   ))}
@@ -503,13 +1282,12 @@ export default function DashboardBuilderPage() {
 
           {/* Lienzo Central de Previsualización Interactiva */}
           <main className="flex flex-1 flex-col bg-stone-950">
-            {/* Barra de Controles del Lienzo (Viewport Responsive + Sobre) */}
             <div className="flex items-center justify-between border-b border-white/10 bg-stone-900/40 px-6 py-2.5">
               <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={() => useBuilderStore.temporal.getState().undo()}
-                  className="rounded-lg border border-white/10 p-1.5 text-stone-400 hover:text-white"
+                  className="cursor-pointer rounded-lg border border-white/10 p-1.5 text-stone-400 hover:text-white"
                   title="Deshacer (Undo)"
                 >
                   <Undo2 className="h-4 w-4" />
@@ -517,7 +1295,7 @@ export default function DashboardBuilderPage() {
                 <button
                   type="button"
                   onClick={() => useBuilderStore.temporal.getState().redo()}
-                  className="rounded-lg border border-white/10 p-1.5 text-stone-400 hover:text-white"
+                  className="cursor-pointer rounded-lg border border-white/10 p-1.5 text-stone-400 hover:text-white"
                   title="Rehacer (Redo)"
                 >
                   <Redo2 className="h-4 w-4" />
@@ -525,12 +1303,20 @@ export default function DashboardBuilderPage() {
                 <button
                   type="button"
                   onClick={() => setPreviewEnvelopeOpen(!previewEnvelopeOpen)}
-                  className="ml-2 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-300"
+                  className="ml-2 cursor-pointer rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-300"
                 >
                   {previewEnvelopeOpen
                     ? 'Probar Sobre Cerrado'
                     : 'Abrir Sobre en Preview'}
                 </button>
+                <Link
+                  href={`/${slug}?template=${templateId}&g=fam-lopez-8a2f`}
+                  target="_blank"
+                  className="ml-2 inline-flex cursor-pointer items-center gap-1 rounded-lg border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-stone-300 hover:text-white"
+                >
+                  <span>Ver URL Pública (/{slug})</span>
+                  <ExternalLink className="h-3 w-3" />
+                </Link>
               </div>
 
               <div className="flex items-center gap-1 rounded-xl border border-white/10 bg-stone-900 p-1">
@@ -547,7 +1333,7 @@ export default function DashboardBuilderPage() {
                       onClick={() =>
                         setViewport(vp.id as 'mobile' | 'tablet' | 'desktop')
                       }
-                      className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1 text-xs font-medium transition ${
+                      className={`inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1 text-xs font-medium transition ${
                         viewport === vp.id
                           ? 'bg-amber-500 text-stone-950'
                           : 'text-stone-400 hover:text-white'
@@ -561,7 +1347,6 @@ export default function DashboardBuilderPage() {
               </div>
             </div>
 
-            {/* Marco del Dispositivo */}
             <div className="flex flex-1 items-start justify-center overflow-y-auto p-4 sm:p-8">
               <div
                 className={`relative overflow-y-auto rounded-3xl border border-white/15 shadow-2xl transition-all duration-300 ${
@@ -585,17 +1370,36 @@ export default function DashboardBuilderPage() {
         </div>
       )}
 
-      {/* VISTA 2: CRM DE INVITADOS Y GENERADOR DE LINKS ÚNICOS POR WHATSAPP */}
+      {/* =====================================================================
+          VISTA 3: CRM DE INVITADOS Y LINKS WHATSAPP DEL CLIENTE ACTIVO
+      ===================================================================== */}
       {activeTab === 'guests' && (
         <div className="mx-auto w-full max-w-6xl space-y-8 p-6 sm:p-10">
-          {/* KPIs */}
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span className="text-xs font-bold tracking-wider text-amber-400 uppercase">
+                CRM de Invitados del Cliente
+              </span>
+              <h2 className="text-2xl font-extrabold text-white">
+                {activeInvitationRecord?.clientName} ({title})
+              </h2>
+            </div>
+            <button
+              type="button"
+              onClick={() => setActiveTab('history')}
+              className="cursor-pointer rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-xs font-semibold text-stone-200 hover:bg-white/10"
+            >
+              Cambiar de Cliente / Invitación
+            </button>
+          </div>
+
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="rounded-2xl border border-white/10 bg-stone-900 p-5">
               <span className="text-xs text-stone-400 uppercase">
                 Familias / Grupos en Lista
               </span>
               <p className="mt-1 text-3xl font-bold text-white">
-                {guests.length} Grupos
+                {activeGuests.length} Grupos
               </p>
               <span className="text-xs text-amber-400">
                 {totalAllocated} pases asignados en total
@@ -614,18 +1418,17 @@ export default function DashboardBuilderPage() {
             </div>
             <div className="rounded-2xl border border-white/10 bg-stone-900 p-5">
               <span className="text-xs text-stone-400 uppercase">
-                Protección de Cupo Activa
+                URL Base del Cliente
               </span>
-              <p className="mt-1 text-lg font-bold text-white">
-                Smart Guest Links (?g=token)
+              <p className="mt-1 truncate font-mono text-base font-bold text-amber-400">
+                /{slug}
               </p>
               <span className="text-xs text-stone-400">
-                Impide que confirmen más boletos de los asignados
+                Smart Guest Links activos (?g=token)
               </span>
             </div>
           </div>
 
-          {/* Formulario para Crear Pase Personalizado */}
           <form
             onSubmit={handleAddGuestGroup}
             className="grid gap-4 rounded-2xl border border-white/10 bg-stone-900/70 p-6 sm:grid-cols-6"
@@ -692,14 +1495,13 @@ export default function DashboardBuilderPage() {
             <div className="flex items-end">
               <button
                 type="submit"
-                className="w-full rounded-xl bg-amber-500 py-2.5 text-xs font-bold tracking-wider text-stone-950 uppercase transition hover:bg-amber-400"
+                className="w-full cursor-pointer rounded-xl bg-amber-500 py-2.5 text-xs font-bold tracking-wider text-stone-950 uppercase transition hover:bg-amber-400"
               >
                 + Crear Pase Único
               </button>
             </div>
           </form>
 
-          {/* Tabla de Invitados con Despachador de WhatsApp */}
           <div className="overflow-x-auto rounded-2xl border border-white/10 bg-stone-900">
             <table className="w-full text-left text-sm">
               <thead className="border-b border-white/10 bg-stone-950/60 text-xs text-stone-400 uppercase">
@@ -713,7 +1515,7 @@ export default function DashboardBuilderPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/10">
-                {guests.map((g) => {
+                {activeGuests.map((g) => {
                   const invitePath = `/${slug}?template=${templateId}&g=${g.guestToken}`;
                   const fullInviteUrl = `https://www.dominioprincipal.com${invitePath}`;
                   const waUrl = buildWhatsappInviteUrl({
@@ -763,7 +1565,7 @@ export default function DashboardBuilderPage() {
                         <Link
                           href={invitePath}
                           target="_blank"
-                          className="inline-flex items-center gap-1 text-xs font-medium text-amber-400 hover:underline"
+                          className="inline-flex cursor-pointer items-center gap-1 text-xs font-medium text-amber-400 hover:underline"
                         >
                           <span>Abrir sobre personalizado</span>
                           <ExternalLink className="h-3 w-3" />
@@ -779,7 +1581,7 @@ export default function DashboardBuilderPage() {
                               );
                               toast.success('Link único copiado');
                             }}
-                            className="inline-flex items-center gap-1 rounded-lg border border-white/15 px-2.5 py-1.5 text-xs text-stone-200 hover:bg-white/10"
+                            className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-white/15 px-2.5 py-1.5 text-xs text-stone-200 hover:bg-white/10"
                           >
                             <Copy className="h-3.5 w-3.5" />
                             Copiar Link
@@ -788,7 +1590,7 @@ export default function DashboardBuilderPage() {
                             href={waUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-500"
+                            className="inline-flex cursor-pointer items-center gap-1 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-500"
                           >
                             <Send className="h-3.5 w-3.5" />
                             WhatsApp
@@ -804,7 +1606,9 @@ export default function DashboardBuilderPage() {
         </div>
       )}
 
-      {/* VISTA 3: RECEPCIÓN Y ESCÁNER DE PASES QR (HOSTESS MODE) */}
+      {/* =====================================================================
+          VISTA 4: RECEPCIÓN Y ESCÁNER DE PASES QR
+      ===================================================================== */}
       {activeTab === 'checkin' && (
         <div className="mx-auto w-full max-w-4xl space-y-6 p-6 sm:p-10">
           <div className="rounded-3xl border border-white/10 bg-stone-900 p-8 text-center">
@@ -812,16 +1616,15 @@ export default function DashboardBuilderPage() {
               <QrCode className="h-8 w-8" />
             </div>
             <h2 className="text-2xl font-bold text-white">
-              Modo Recepción — Verificador Criptográfico de Pases QR
+              Modo Recepción — {title} ({clientName})
             </h2>
             <p className="mx-auto mt-2 max-w-xl text-sm text-stone-400">
-              El día del evento, el personal en puerta escanea el código QR del
-              invitado para validar su firma HMAC-SHA256, confirmar el número de
-              personas autorizadas y mostrar su mesa asignada al instante.
+              Valida la firma HMAC-SHA256 de los códigos QR en la puerta del
+              evento y asigna el ingreso en tiempo real.
             </p>
 
-            <div className="mt-8 grid gap-4 text-left sm:grid-cols-3">
-              {guests.map((g) => (
+            <div className="mt-8 grid gap-4 text-left sm:grid-cols-2">
+              {activeGuests.map((g) => (
                 <div
                   key={g.id}
                   className="flex flex-col justify-between rounded-2xl border border-white/10 bg-stone-950 p-5"
@@ -841,8 +1644,9 @@ export default function DashboardBuilderPage() {
                   <button
                     type="button"
                     onClick={() => {
-                      setGuests((prev) =>
-                        prev.map((item) =>
+                      if (!activeInvitationRecord) return;
+                      const updated = activeInvitationRecord.guests.map(
+                        (item) =>
                           item.id === g.id
                             ? {
                                 ...item,
@@ -850,13 +1654,15 @@ export default function DashboardBuilderPage() {
                                   item.allocatedAdults + item.allocatedChildren,
                               }
                             : item
-                        )
                       );
+                      updateInvitation(activeInvitationRecord.id, {
+                        guests: updated,
+                      });
                       toast.success(
                         `Check-in validado: ${g.groupName} -> Pasar a ${g.tableName}`
                       );
                     }}
-                    className="mt-4 w-full rounded-xl bg-white/10 py-2 text-xs font-semibold text-white transition hover:bg-amber-500 hover:text-stone-950"
+                    className="mt-4 w-full cursor-pointer rounded-xl bg-white/10 py-2.5 text-xs font-semibold text-white transition hover:bg-amber-500 hover:text-stone-950"
                   >
                     Simular Escaneo QR en Puerta
                   </button>
@@ -866,6 +1672,195 @@ export default function DashboardBuilderPage() {
           </div>
         </div>
       )}
+
+      {/* =====================================================================
+          MODAL: CREAR NUEVA INVITACIÓN DE CLIENTE (GUARDADO POR TEMPLATE)
+      ===================================================================== */}
+      {isNewModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-lg rounded-3xl border border-white/15 bg-stone-900 p-6 shadow-2xl sm:p-8">
+            <div className="mb-5 flex items-center justify-between">
+              <div>
+                <span className="text-xs font-bold tracking-wider text-amber-400 uppercase">
+                  Registro Multi-Cliente
+                </span>
+                <h3 className="text-xl font-bold text-white">
+                  Crear Nueva Invitación y Guardar en Template
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsNewModalOpen(false)}
+                className="cursor-pointer rounded-lg p-1.5 text-stone-400 hover:bg-white/10 hover:text-white"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form
+              onSubmit={(e) => handleCreateNewInvitation(e, true)}
+              className="space-y-4"
+            >
+              <div>
+                <label className="mb-1 block text-xs font-semibold text-stone-300">
+                  1. Selecciona el Template (Se guardará en su historial)
+                </label>
+                <select
+                  value={newForm.templateId}
+                  onChange={(e) =>
+                    setNewForm((prev) => ({
+                      ...prev,
+                      templateId: e.target.value as TemplateId,
+                    }))
+                  }
+                  className="w-full rounded-xl border border-white/15 bg-stone-950 px-3.5 py-2.5 text-sm text-white outline-none focus:border-amber-500"
+                >
+                  {TEMPLATES_CATALOG.map((tpl) => (
+                    <option key={tpl.id} value={tpl.id}>
+                      {tpl.name} — ({tpl.categoryLabel})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label className="mb-1 block text-xs font-semibold text-stone-300">
+                    2. Nombre del Cliente
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={newForm.clientName}
+                    onChange={(e) =>
+                      setNewForm((prev) => ({
+                        ...prev,
+                        clientName: e.target.value,
+                      }))
+                    }
+                    placeholder="Ej. Familia Garza / Lucía y Fer"
+                    className="w-full rounded-xl border border-white/15 bg-stone-950 px-3.5 py-2.5 text-sm text-white outline-none focus:border-amber-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-1 block text-xs font-semibold text-stone-300">
+                    Teléfono WhatsApp del Cliente
+                  </label>
+                  <input
+                    type="tel"
+                    value={newForm.clientPhone}
+                    onChange={(e) =>
+                      setNewForm((prev) => ({
+                        ...prev,
+                        clientPhone: e.target.value,
+                      }))
+                    }
+                    placeholder="+52 55 1234 5678"
+                    className="w-full rounded-xl border border-white/15 bg-stone-950 px-3.5 py-2.5 text-sm text-white outline-none focus:border-amber-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label className="mb-1 block text-xs font-semibold text-stone-300">
+                    3. Título del Evento (Festejados)
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={newForm.title}
+                    onChange={(e) => {
+                      const titleVal = e.target.value;
+                      setNewForm((prev) => ({
+                        ...prev,
+                        title: titleVal,
+                        slug: slugify(titleVal),
+                      }));
+                    }}
+                    placeholder="Ej. Boda Lucía & Fernando"
+                    className="w-full rounded-xl border border-white/15 bg-stone-950 px-3.5 py-2.5 text-sm text-white outline-none focus:border-amber-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-1 block text-xs font-semibold text-stone-300">
+                    Fecha del Evento
+                  </label>
+                  <input
+                    type="date"
+                    required
+                    value={newForm.eventDate}
+                    onChange={(e) =>
+                      setNewForm((prev) => ({
+                        ...prev,
+                        eventDate: e.target.value,
+                      }))
+                    }
+                    className="w-full rounded-xl border border-white/15 bg-stone-950 px-3.5 py-2.5 text-sm text-white outline-none focus:border-amber-500"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-1 block text-xs font-semibold text-stone-300">
+                  4. URL Personalizada del Cliente
+                </label>
+                <div className="flex items-center rounded-xl border border-white/15 bg-stone-950 px-3.5 py-2.5 text-xs">
+                  <span className="text-stone-500">
+                    www.dominioprincipal.com/
+                  </span>
+                  <input
+                    type="text"
+                    required
+                    value={newForm.slug}
+                    onChange={(e) =>
+                      setNewForm((prev) => ({
+                        ...prev,
+                        slug: slugify(e.target.value),
+                      }))
+                    }
+                    placeholder="boda-lucia-y-fernando"
+                    className="ml-1 flex-1 bg-transparent font-mono font-bold text-amber-400 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsNewModalOpen(false)}
+                  className="cursor-pointer rounded-xl border border-white/15 px-4 py-2.5 text-xs font-semibold text-stone-300 hover:bg-white/10"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl bg-amber-500 px-5 py-2.5 text-xs font-bold tracking-wider text-stone-950 uppercase shadow-lg transition hover:bg-amber-400"
+                >
+                  <Wand2 className="h-4 w-4" />
+                  Guardar en Historial y Personalizar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-dvh items-center justify-center bg-stone-950 text-stone-400">
+          Cargando Dashboard...
+        </div>
+      }
+    >
+      <DashboardContent />
+    </Suspense>
   );
 }

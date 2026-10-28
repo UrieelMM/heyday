@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
-import { InvitationRenderer } from '@/components/invitation/core/InvitationRenderer';
-import { SmoothScrollProvider } from '@/components/invitation/core/SmoothScrollProvider';
+import { PublicInvitationClientView } from '@/components/invitation/core/PublicInvitationClientView';
 import {
   createDefaultInvitationConfig,
   TEMPLATES_CATALOG,
 } from '@/lib/templates/templates-catalog';
+import { INITIAL_CLIENT_INVITATIONS } from '@/stores/useEventsStore';
 import type { GuestGroup, TemplateId } from '@/types/invitation.types';
 
 const DEMO_GUEST_GROUPS: Record<string, GuestGroup> = {
@@ -44,6 +44,16 @@ function resolveTemplateAndTitle(slug: string, queryTemplate?: string): {
   templateId: TemplateId;
   title: string;
 } {
+  const seedMatch = INITIAL_CLIENT_INVITATIONS.find(
+    (inv) => inv.slug.toLowerCase() === slug.toLowerCase()
+  );
+  if (seedMatch && !queryTemplate) {
+    return {
+      templateId: seedMatch.templateId,
+      title: seedMatch.title,
+    };
+  }
+
   const validTemplate = TEMPLATES_CATALOG.find(
     (t) => t.id === queryTemplate || slug === `demo-${t.id}`
   );
@@ -125,14 +135,13 @@ export default async function PublicInvitationPage({
     : null;
 
   return (
-    <SmoothScrollProvider>
-      <InvitationRenderer
-        slug={slug}
-        templateId={templateId}
-        eventDate="2026-12-19T17:00:00-06:00"
-        config={config}
-        guestGroup={guestGroup}
-      />
-    </SmoothScrollProvider>
+    <PublicInvitationClientView
+      slug={slug}
+      fallbackTemplateId={templateId}
+      fallbackEventDate="2026-12-19T17:00:00-06:00"
+      fallbackConfig={config}
+      fallbackGuestGroup={guestGroup}
+      guestToken={g}
+    />
   );
 }

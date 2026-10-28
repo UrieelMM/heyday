@@ -11,4 +11,24 @@
     margin: 0;
     padding: 0;
   }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled),
+  a[href],
+  select,
+  summary,
+  label[for],
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="color"] {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [role="button"]:disabled {
+    cursor: not-allowed;
+  }
 }
