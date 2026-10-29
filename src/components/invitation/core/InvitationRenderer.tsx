@@ -40,7 +40,10 @@ import {
 import { AmbientParticlesCanvas } from './AmbientParticlesCanvas';
 import { EnvelopeOpener } from './EnvelopeOpener';
 import { FloatingAudioPlayer } from './FloatingAudioPlayer';
+import { SharedAlbum } from './SharedAlbum';
+import { SocialFeatures } from './SocialFeatures';
 import { EternalEleganceExperience } from '../templates/EternalEleganceExperience';
+import { RoyalXVEnchantedExperience } from '../templates/RoyalXVEnchantedExperience';
 import { SignatureHero } from '../templates/SignatureHero';
 import { setupSignatureScenes } from '../templates/signature-scenes';
 import { CelebrationHero } from '../templates/CelebrationHero';
@@ -66,6 +69,10 @@ interface InvitationRendererProps {
 export function InvitationRenderer(props: InvitationRendererProps) {
   if (props.templateId === 'eternal-elegance') {
     return <EternalEleganceExperience {...props} />;
+  }
+
+  if (props.templateId === 'royal-xv-enchanted') {
+    return <RoyalXVEnchantedExperience {...props} />;
   }
 
   return <StandardInvitationRenderer {...props} />;
@@ -97,37 +104,6 @@ function StandardInvitationRenderer({
     minutes: 0,
     seconds: 0,
   });
-
-  // Estado DJ Song Requests
-  const [songQuery, setSongQuery] = useState('');
-  const [songArtist, setSongArtist] = useState('');
-  const [songsList, setSongsList] = useState(hasSceneTemplate ? [] : [
-    {
-      id: '1',
-      title: 'September',
-      artist: 'Earth, Wind & Fire',
-      suggestedBy: 'Familia Villarreal',
-      votes: 14,
-    },
-    {
-      id: '2',
-      title: 'Vivir Mi Vida',
-      artist: 'Marc Anthony',
-      suggestedBy: 'Tíos Mendoza',
-      votes: 11,
-    },
-    {
-      id: '3',
-      title: 'Can’t Stop the Feeling!',
-      artist: 'Justin Timberlake',
-      suggestedBy: 'Amigos Uni',
-      votes: 9,
-    },
-  ]);
-
-  useEffect(() => {
-    if (hasSceneTemplate) setSongsList([]);
-  }, [templateId, hasSceneTemplate]);
 
   // Estado RSVP y Pase VIP QR
   const maxAdults = guestGroup ? guestGroup.allocatedAdults : 4;
@@ -274,54 +250,16 @@ function StandardInvitationRenderer({
     toast.success('Archivo de calendario descargado');
   };
 
-  const handleAddSong = (e: React.FormEvent) => {
+  const handleSubmitRsvp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!songQuery.trim()) return;
-    setSongsList((prev) => [
-      {
-        id: String(Date.now()),
-        title: songQuery.trim(),
-        artist: songArtist.trim() || 'Artista invitado',
-        suggestedBy: rsvpName || guestGroup?.groupName || 'Invitado',
-        votes: 1,
-      },
-      ...prev,
-    ]);
-    setSongQuery('');
-    setSongArtist('');
-    toast.success(hasSceneTemplate ? 'Sugerencia añadida a esta vista previa.' : '¡Canción agregada a la playlist de la fiesta!');
-  };
-
-  const handleSubmitRsvp = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!rsvpName.trim()) {
-      toast.error('Por favor ingresa tu nombre o familia');
-      return;
-    }
-
-    if (willAttend === 'no') {
-      setGeneratedPass(null);
-      toast.success(hasSceneTemplate
-        ? 'Tu respuesta se muestra sólo en esta vista previa; aún no se ha enviado.'
-        : 'Hemos registrado tu respuesta. ¡Gracias por avisarnos con tiempo!');
-      return;
-    }
-
-    const tokenFragment = guestGroup?.guestToken || 'open-pass';
-    const qrPayload = hasSceneTemplate
-      ? `DEMO:${slug}:${confirmedAdults}:${confirmedChildren}`
-      : `INV1:${slug}:${tokenFragment}:${confirmedAdults}:${confirmedChildren}:9f8a7b6c5d4e3f21`;
-
-    setGeneratedPass({
-      qrPayload,
-      groupName: rsvpName.trim(),
-      adults: confirmedAdults,
-      children: confirmedChildren,
-      tableName: guestGroup?.tableName || (hasSceneTemplate ? 'Mesa por asignar' : 'Mesa 4 • Recepción Principal'),
-    });
-    toast.success(hasSceneTemplate
-      ? 'Pase de muestra generado. Esta respuesta aún no se ha enviado.'
-      : '¡Asistencia confirmada! Tu Pase VIP QR ha sido generado.');
+    if (isBuilderPreview || !guestGroup) { toast.error('Abre tu enlace personal para confirmar'); return; }
+    try {
+      const response = await fetch(`/api/public/invitations/${encodeURIComponent(slug)}/rsvp`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ guestToken: guestGroup.guestToken, groupName: rsvpName, willAttend: willAttend === 'yes', confirmedAdults, confirmedChildren }) });
+      const result = await response.json(); if (!response.ok) throw new Error(result.error);
+      if (!result.pass) { setGeneratedPass(null); toast.success('Gracias por avisarnos'); return; }
+      setGeneratedPass({ qrPayload: result.pass.qrPayload, groupName: result.pass.groupName, adults: confirmedAdults, children: confirmedChildren, tableName: result.pass.tableName || 'Mesa por asignar' });
+      toast.success('Asistencia confirmada');
+    } catch (err) { toast.error(err instanceof Error ? err.message : 'No se pudo guardar tu respuesta'); }
   };
 
   return (
@@ -1191,187 +1129,9 @@ function StandardInvitationRenderer({
         )}
 
       {/* SECCIÓN 11: FEATURES DIFERENCIADORAS — DJ PLAYLIST & AUDIO GUESTBOOK */}
-      {isSectionEnabled('social_features') && (content.socialFeatures.enableSongRequests || content.socialFeatures.enableAudioGuestbook) && (
-        <section
-          className="inv-reveal-section st-social px-6 py-20"
-          style={{ backgroundColor: colors.bgSecondary }}
-        >
-          <div className="mx-auto max-w-4xl">
-            <div className="mb-10 text-center">
-              <span
-                className="text-xs font-bold tracking-[0.25em] uppercase"
-                style={{ color: colors.accentPrimary }}
-              >
-                Experiencia Interactiva
-              </span>
-              <h2
-                className="mt-1 text-3xl font-semibold sm:text-4xl"
-                style={{ fontFamily: fonts.headingFont }}
-              >
-                {content.socialFeatures.enableSongRequests && content.socialFeatures.enableAudioGuestbook
-                  ? 'Playlist y mensajes de voz'
-                  : content.socialFeatures.enableSongRequests
-                    ? (templateId === 'neon-xv-euphoria' ? 'La playlist de mi fiesta' : 'La música de nuestra celebración')
-                    : 'Mensajes de voz'}
-              </h2>
-              {content.socialFeatures.hashtag && (
-                <p
-                  className="mt-2 text-sm font-semibold"
-                  style={{ color: colors.accentPrimary }}
-                >
-                  Comparte tus historias usando {content.socialFeatures.hashtag}
-                </p>
-              )}
-            </div>
+      {isSectionEnabled('social_features') && <section className="mx-auto max-w-4xl px-6 py-12"><h2 className="mb-4 text-2xl">Álbum compartido</h2><SharedAlbum slug={slug} token={guestGroup?.guestToken} preview={isBuilderPreview} /></section>}
 
-            <div className="grid gap-8 md:grid-cols-2">
-              {/* DJ Playlist Colaborativa */}
-              {content.socialFeatures.enableSongRequests && <div
-                className="rounded-3xl border p-6"
-                style={{
-                  backgroundColor: colors.bgPrimary,
-                  borderColor: `${colors.accentPrimary}35`,
-                }}
-              >
-                <div className="mb-4 flex items-center gap-2">
-                  <Music
-                    className="h-5 w-5"
-                    style={{ color: colors.accentPrimary }}
-                  />
-                  <h3 className="text-lg font-semibold">
-                    ¿Qué canción no puede faltar en la pista?
-                  </h3>
-                </div>
-
-                <form onSubmit={handleAddSong} className="mb-5 space-y-2.5">
-                  <input
-                    type="text"
-                    value={songQuery}
-                    onChange={(e) => setSongQuery(e.target.value)}
-                    placeholder="Nombre de la canción..."
-                    className="w-full rounded-xl border bg-transparent px-3.5 py-2.5 text-base outline-none"
-                    style={{ borderColor: `${colors.accentPrimary}44` }}
-                  />
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={songArtist}
-                      onChange={(e) => setSongArtist(e.target.value)}
-                      placeholder="Artista o grupo..."
-                      className="flex-1 rounded-xl border bg-transparent px-3.5 py-2.5 text-base outline-none"
-                      style={{ borderColor: `${colors.accentPrimary}44` }}
-                    />
-                    <button
-                      type="submit"
-                      style={{
-                        backgroundColor: colors.accentPrimary,
-                        color: '#FFFFFF',
-                      }}
-                      className="rounded-xl px-4 py-2.5 text-xs font-semibold tracking-wider uppercase"
-                    >
-                      Sugerir
-                    </button>
-                  </div>
-                </form>
-
-                {hasSceneTemplate && <p className="mb-3 text-xs opacity-75">Vista previa local: tus sugerencias no se envían.</p>}
-                <div className="space-y-2.5">
-                  {songsList.slice(0, 4).map((song) => (
-                    <div
-                      key={song.id}
-                      className="flex items-center justify-between rounded-xl border px-3.5 py-2.5 text-sm"
-                      style={{
-                        backgroundColor: colors.bgSecondary,
-                        borderColor: `${colors.accentPrimary}25`,
-                      }}
-                    >
-                      <div>
-                        <p className="font-semibold">{song.title}</p>
-                        <p className="text-xs opacity-75">
-                          {song.artist} • Por {song.suggestedBy}
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setSongsList((prev) =>
-                            prev.map((s) =>
-                              s.id === song.id
-                                ? { ...s, votes: s.votes + 1 }
-                                : s
-                            )
-                          )
-                        }
-                        className="inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-semibold"
-                        style={{ borderColor: `${colors.accentPrimary}55` }}
-                      >
-                        <Heart
-                          className="h-3.5 w-3.5"
-                          style={{ color: colors.accentPrimary }}
-                        />
-                        <span>{song.votes}</span>
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>}
-
-              {/* Audio Guestbook */}
-              {content.socialFeatures.enableAudioGuestbook && <div
-                className="flex flex-col justify-between rounded-3xl border p-6"
-                style={{
-                  backgroundColor: colors.bgPrimary,
-                  borderColor: `${colors.accentPrimary}35`,
-                }}
-              >
-                <div>
-                  <div className="mb-3 flex items-center gap-2">
-                    <Mic
-                      className="h-5 w-5"
-                      style={{ color: colors.accentPrimary }}
-                    />
-                    <h3 className="text-lg font-semibold">
-                      Audio Guestbook (Libro de Firmas Vocal)
-                    </h3>
-                  </div>
-                  <p
-                    className="text-sm leading-relaxed"
-                    style={{ color: colors.textMuted }}
-                  >
-                    Graba una nota de voz de hasta 45 segundos con tus mejores
-                    deseos. Los festejados podrán escuchar tu mensaje en su
-                    álbum digital de recuerdos.
-                  </p>
-                </div>
-
-                <div
-                  className="my-6 flex flex-col items-center justify-center rounded-2xl border border-dashed p-6 text-center"
-                  style={{ borderColor: `${colors.accentPrimary}66` }}
-                >
-                  <button
-                    type="button"
-                    onClick={() =>
-                      toast.info(
-                        'Grabadora lista: mantén presionado en tu móvil para grabar tu felicitación.'
-                      )
-                    }
-                    style={{
-                      backgroundColor: colors.accentPrimary,
-                      color: '#FFFFFF',
-                    }}
-                    className="flex h-16 w-16 items-center justify-center rounded-full shadow-lg transition-transform hover:scale-105 active:scale-95"
-                  >
-                    <Mic className="h-7 w-7" />
-                  </button>
-                  <span className="mt-3 text-xs font-semibold tracking-wider uppercase">
-                    Toca para grabar mensaje de voz
-                  </span>
-                </div>
-              </div>}
-            </div>
-          </div>
-        </section>
-      )}
+      {isSectionEnabled('social_features') && <section className="mx-auto max-w-4xl px-6 py-12"><SocialFeatures slug={slug} token={guestGroup?.guestToken} preview={isBuilderPreview} songsEnabled={content.socialFeatures.enableSongRequests} audioEnabled={content.socialFeatures.enableAudioGuestbook} /></section>}
 
       {/* SECCIÓN 12: MÓDULO RSVP INTELIGENTE + PASE VIP QR */}
       {isSectionEnabled('rsvp') && (
@@ -1392,7 +1152,7 @@ function StandardInvitationRenderer({
                 className="text-3xl font-semibold sm:text-4xl"
                 style={{ fontFamily: fonts.headingFont }}
               >
-                {hasSceneTemplate ? 'Vista previa de confirmación' : 'Confirmación de Asistencia (RSVP)'}
+                Confirmación de asistencia
               </h2>
               <p
                 className="mt-2 text-sm"
@@ -1405,7 +1165,7 @@ function StandardInvitationRenderer({
                         : ''
                     })`
                   : hasSceneTemplate
-                    ? 'Prueba el formulario y genera un pase de muestra. No se enviará tu respuesta.'
+                    ? 'Usa tu enlace personal para confirmar tu asistencia.'
                     : 'Por favor confirma tu asistencia para generar tu Pase Digital con Código QR'}
               </p>
             </div>
@@ -1575,11 +1335,11 @@ function StandardInvitationRenderer({
                   }}
                   className="w-full rounded-xl py-4 text-xs font-bold tracking-[0.2em] uppercase shadow-lg transition-transform hover:scale-[1.01] active:scale-[0.99]"
                 >
-                  {hasSceneTemplate ? 'Generar pase de muestra' : 'Confirmar Asistencia y Generar Pase QR'}
+                  Confirmar asistencia y generar pase QR
                 </button>
               </form>
             ) : (
-              /* Pase de muestra local para los templates de firma */
+              /* Pase confirmado */
               <div
                 className="rounded-2xl border p-6 text-center"
                 style={{
@@ -1595,7 +1355,7 @@ function StandardInvitationRenderer({
                   }}
                 >
                   <Ticket className="h-4 w-4" />
-                  <span>{hasSceneTemplate ? 'Pase de muestra · sin registro' : 'Pase de Acceso VIP Confirmado'}</span>
+                  <span>Pase de acceso confirmado</span>
                 </div>
 
                 <h3

@@ -110,17 +110,16 @@ export const TEMPLATES_CATALOG: TemplateMetadata[] = [
     categoryLabel: 'XV Años Gala Real',
     badge: 'Favorito XV Años',
     description:
-      'Romántica e imperial en rosa cuarzo, oro rosa metálico y ciruela, con partículas de destellos dorados y cortejo de honor.',
-    signatureAnimation: 'Golden Sparkle Canvas + SVG Crown Draw',
-    previewImage:
-      'https://images.unsplash.com/photo-1566737236500-c8ac43014a67?auto=format&fit=crop&w=1000&q=80',
+      'Un jardín encantado de lavanda, ciruela y rosa empolvado: mariposas, destellos y una experiencia de XV años con carácter propio.',
+    signatureAnimation: 'Cinematic XV Portal + Scroll Chapters',
+    previewImage: '/images/royal-xv/enchanted-portal.jpg',
     colors: {
-      bgPrimary: '#FFF9FB',
-      bgSecondary: '#F9EBEF',
-      textPrimary: '#2D1920',
-      textMuted: '#734F5A',
-      accentPrimary: '#D4AF37',
-      accentSecondary: '#B76E79',
+      bgPrimary: '#FAF5FA',
+      bgSecondary: '#F1E5F2',
+      textPrimary: '#35223F',
+      textMuted: '#725D79',
+      accentPrimary: '#9A5C86',
+      accentSecondary: '#C88FA6',
     },
     fonts: {
       headingFont: 'Cinzel',
@@ -128,7 +127,7 @@ export const TEMPLATES_CATALOG: TemplateMetadata[] = [
       bodyFont: 'Plus Jakarta Sans',
     },
     envelopeVariant: 'wax-seal-classic',
-    ambientEffect: 'gold-sparkles',
+    ambientEffect: 'soft-stars',
   },
   {
     id: 'neon-xv-euphoria',
@@ -688,6 +687,68 @@ export function createDefaultInvitationConfig(
     config.content.rsvp.customConfirmationMessage = 'Este pase es una vista previa local. La asistencia aún no se ha enviado.';
   }
 
+  if (templateId === 'royal-xv-enchanted') {
+    const quinceName = customTitle.replace(/^mis\s*xv\s*[:—-]?\s*/i, '').trim() || customTitle;
+    const venueAddress = 'Vizcaínas 21, Centro Histórico, 06080 Ciudad de México';
+    const mapQuery = encodeURIComponent(`Colegio de las Vizcaínas, ${venueAddress}`);
+    config.content.hero = {
+      ...config.content.hero,
+      badgeText: 'UNA NOCHE PARA RECORDAR',
+      tagline: 'Una noche de ensueño • Ciudad de México',
+      coverImageUrl: '/images/royal-xv/enchanted-portal.jpg',
+      focalPoint: { x: 50, y: 46 },
+    };
+    config.content.quoteStory = {
+      quoteText: 'Hay momentos que parecen sacados de un cuento. Este es el comienzo de uno que quiero vivir contigo.',
+      quoteAuthor: quinceName,
+      storyBlocks: [
+        { title: 'Un nuevo capítulo', description: 'Quince años de sueños, aventuras y personas que han hecho mi mundo más bonito.' },
+        { title: 'Mi noche especial', description: 'Una celebración para bailar, reír y crear recuerdos que duren para siempre.' },
+      ],
+    };
+    config.content.vipParents = {
+      blessingMessage: 'Con el amor de mi familia y la alegría de compartir este momento contigo',
+      groups: [
+        { groupTitle: 'Mis papás', names: ['Patricia Salazar', 'Alejandro Ríos'] },
+        { groupTitle: 'Mis padrinos', names: ['Mariana Salazar', 'Roberto Ríos'] },
+      ],
+    };
+    config.content.locations = [{
+      id: 'loc-royal-xv', type: 'reception', title: 'Ceremonia y celebración',
+      venueName: 'Colegio de las Vizcaínas', time: '18:00 HRS', address: venueAddress,
+      imageUrl: '/images/royal-xv/enchanted-garden.jpg',
+      coordinates: { lat: 19.4285, lng: -99.1417 },
+      googleMapsUrl: `https://www.google.com/maps/search/?api=1&query=${mapQuery}`,
+      wazeUrl: `https://waze.com/ul?q=${mapQuery}&navigate=yes`,
+    }];
+    config.content.timeline = [
+      { id: 'xv-1', time: '18:00 HRS', title: 'La bienvenida', description: 'Lleguen con tiempo para encontrarnos y tomar fotos.', icon: 'cocktail' },
+      { id: 'xv-2', time: '19:00 HRS', title: 'Mi gran entrada', description: 'El momento que he esperado tanto tiempo.', icon: 'party' },
+      { id: 'xv-3', time: '20:00 HRS', title: 'Vals y brindis', description: 'Un instante para compartir con quienes más quiero.', icon: 'waltz' },
+      { id: 'xv-4', time: '21:00 HRS', title: '¡A bailar!', description: 'La pista es nuestra hasta que se apaguen las estrellas.', icon: 'party' },
+    ];
+    config.content.gallery = {
+      layout: 'polaroid-scatter',
+      images: [
+        { url: '/images/royal-xv/enchanted-garden.jpg', caption: 'Mi noche soñada' },
+        { url: '/images/royal-xv/enchanted-details.jpg', caption: 'Los pequeños detalles' },
+        { url: '/images/royal-xv/enchanted-ballroom.jpg', caption: 'Una fiesta para recordar' },
+      ],
+    };
+    config.content.dressCode = {
+      title: 'Formal, con un toque de magia', womenNotes: 'Vestido de noche o conjunto formal en el color que te haga sentir increíble.',
+      menNotes: 'Traje formal o saco con tu mejor estilo.',
+      reservedColors: [{ name: 'Lavanda', hex: '#B99ACB' }, { name: 'Lila', hex: '#8C6FA4' }],
+      reservedNote: 'Los tonos lavanda y lila están reservados para la quinceañera.',
+    };
+    config.content.gifts = {
+      introMessage: 'Tu compañía es mi regalo favorito. Si deseas tener un detalle, habrá un espacio para lluvia de sobres durante la celebración.',
+      registries: [], cashEnvelopeAtVenue: true,
+    };
+    config.content.accommodation = [];
+    config.content.socialFeatures = { enableSongRequests: true, enableAudioGuestbook: false, enableLiveDisposableCamera: true, hashtag: `#XV${quinceName.replace(/\s+/g, '')}` };
+    config.content.rsvp.customConfirmationMessage = '¡Qué emoción que me acompañes! Guarda tu pase digital para mostrarlo al llegar.';
+  }
 
   return config;
 }

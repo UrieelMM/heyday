@@ -1,6 +1,6 @@
 # Migraciones de HeyDay
 
-Las nueve migraciones de `supabase/migrations/` están ordenadas por timestamp para usarse con Supabase CLI. Se aplicaron al proyecto `odpiybzxaviifydyqfbk` (`heyday.party`) el 28 de octubre de 2026. `supabase migration list --linked` confirmó que las nueve versiones locales y remotas coinciden. Una consulta posterior devolvió 10 diseños, 10 tablas con RLS y 2 buckets.
+Las migraciones de `supabase/migrations/` están ordenadas por timestamp para usarse con Supabase CLI. Las primeras once se aplicaron al proyecto `odpiybzxaviifydyqfbk` (`heyday.party`) el 28 de octubre de 2026. La migración 12, que activa la retención de álbumes y la eliminación futura, debe revisarse y aplicarse expresamente antes del despliegue.
 
 | Orden | Migración | Contenido |
 | --- | --- | --- |
@@ -13,6 +13,9 @@ Las nueve migraciones de `supabase/migrations/` están ordenadas por timestamp p
 | 7 | `20261028000700_storage_buckets.sql` | Assets públicos y recuerdos privados, hasta 8 MB por archivo |
 | 8 | `20261028000800_rpc_functions_and_views.sql` | Vista y funciones de historial y métricas |
 | 9 | `20261028000900_seed_templates.sql` | Los diez diseños del catálogo actual de la app |
+| 10 | `20261028001000_guest_photo_quota.sql` | Cuota de fotos por pase |
+| 11 | `20261028001100_social_checkin.sql` | Votos, audio y check-in |
+| 12 | `20261028001200_album_retention.sql` | Miniaturas, enlaces y caducidad del álbum |
 
 ## Para continuar el desarrollo
 
@@ -52,6 +55,10 @@ El 28 de octubre de 2026 se verificó que la cuenta administradora tiene `email_
 
 ## Estado de la aplicación
 
-Los clientes de navegador y servidor ya usan la URL y la clave pública del proyecto. El login autentica con Supabase Auth y `src/middleware.ts` verifica la sesión y el rol de administrador antes de permitir `/dashboard`. El dashboard aún guarda invitaciones en `localStorage`; las páginas públicas y el formulario RSVP también muestran datos de demostración. Conectar esos flujos requiere leer y escribir datos desde el servidor, validar eventos publicados y tokens de invitados, y generar URLs firmadas para las fotos privadas. Los endpoints públicos deben devolver solo campos permitidos y usar la clave secret únicamente en el servidor.
+El dashboard utiliza Supabase con la sesión del administrador para cargar y gestionar invitaciones y pases. Las invitaciones se crean como borrador y se publican desde el historial. El servidor usa `SUPABASE_SECRET_KEY` para leer invitaciones publicadas, confirmar asistencia y administrar el álbum privado. Configura esta variable también en el entorno de producción; nunca la expongas al navegador.
 
-El límite de 50 fotos se aplica en la tabla `event_memories`. La carga del archivo y la creación del registro deben coordinarse desde el servidor para limpiar un archivo si la inserción falla. Las subidas anónimas directas a Storage están deshabilitadas.
+La migración `20261028001000_guest_photo_quota.sql` limita el álbum a 50 fotos por evento y 5 por grupo de invitados, incluso en cargas concurrentes. El enlace personal identifica al grupo y es necesario para acceder al álbum y confirmar asistencia. Las imágenes de portada y galería se guardan en `event-assets`; los recuerdos se guardan en `guest-memories`. Ambos aceptan JPG, PNG y WebP de hasta 8 MB por foto. La eliminación de una invitación elimina también los archivos almacenados bajo su carpeta.
+
+La migración `20261028001100_social_checkin.sql` agrega votos únicos por pase, un límite de tres mensajes de voz por grupo y registro de entradas con bloqueo transaccional. Los invitados acceden a canciones y voz con su enlace personal; el organizador puede escuchar mensajes y ver fotos y canciones en Recepción. El escáner requiere cámara y un origen seguro (HTTPS o localhost). Las visitas se contabilizan una vez por pestaña y sesión del navegador; no son visitantes únicos verificados. Activa las funciones sociales deseadas en el constructor y guarda los cambios.
+
+La migración `20261028001200_album_retention.sql` inicia, al crear cada invitación, una vigencia de seis meses para sus fotos. La carga convierte las imágenes a WebP de alta calidad y genera miniaturas. El cron de Vercel llama diariamente a `/api/cron/photo-retention`: envía mediante Resend un recordatorio a 1 mes, 15 días y 7 días (por ahora a `PHOTO_RETENTION_TEST_EMAIL`), y elimina originales y miniaturas al vencer. Cada correo incluye el enlace privado `/api/albums/download/[token]`, que genera el ZIP por streaming. Configura `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `CRON_SECRET` y `NEXT_PUBLIC_APP_URL` en producción. La aplicación admite temporalmente `NEXT_PUBLIC_RESEND_API_KEY`, pero debe migrarse a `RESEND_API_KEY` para que la credencial no se exponga al navegador.

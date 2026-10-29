@@ -52,6 +52,8 @@ interface BuilderState {
   toggleSection: (sectionId: SectionId) => void;
   reorderSections: (sectionsOrder: InvitationConfig['sectionsOrder']) => void;
   updateHero: (hero: Partial<InvitationConfig['content']['hero']>) => void;
+  updateSocialFeatures: (patch: Partial<InvitationConfig['content']['socialFeatures']>) => void;
+  updateGallery: (images: InvitationConfig['content']['gallery']['images']) => void;
   updateQuoteStory: (
     quoteStory: Partial<InvitationConfig['content']['quoteStory']>
   ) => void;
@@ -178,6 +180,10 @@ export const useBuilderStore = create<BuilderState>()(
           },
         },
       })),
+
+    updateSocialFeatures: (patch) => set((state) => ({ isDirty: true, config: { ...state.config, content: { ...state.config.content, socialFeatures: { ...state.config.content.socialFeatures, ...patch } } } })),
+
+    updateGallery: (images) => set((state) => ({ isDirty: true, config: { ...state.config, content: { ...state.config.content, gallery: { ...state.config.content.gallery, images } } } })),
 
     updateQuoteStory: (quoteStory) =>
       set((state) => ({

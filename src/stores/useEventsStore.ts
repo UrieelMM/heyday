@@ -1,433 +1,69 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import type {
-  EventCategory,
-  GuestGroup,
-  InvitationConfig,
-  TemplateId,
-} from '@/types/invitation.types';
-import {
-  createDefaultInvitationConfig,
-  TEMPLATES_CATALOG,
-} from '@/lib/templates/templates-catalog';
-import { refreshCelebrationConfig } from '@/lib/templates/refresh-celebration-config';
+import { createClient } from '@/lib/supabase/client';
+import { createDefaultInvitationConfig, TEMPLATES_CATALOG } from '@/lib/templates/templates-catalog';
+import type { EventCategory, GuestGroup, InvitationConfig, TemplateId } from '@/types/invitation.types';
 
 export interface ClientInvitationRecord {
-  id: string;
-  slug: string;
-  clientName: string;
-  clientEmail: string;
-  clientPhone: string;
-  title: string;
-  category: EventCategory;
-  templateId: TemplateId;
-  status: 'published' | 'draft' | 'archived';
-  eventDate: string;
-  createdAt: string;
-  updatedAt: string;
-  viewsCount: number;
-  config: InvitationConfig;
-  guests: GuestGroup[];
+  id: string; slug: string; clientName: string; clientEmail: string; clientPhone: string;
+  title: string; category: EventCategory; templateId: TemplateId; status: 'published' | 'draft' | 'archived';
+  eventDate: string; createdAt: string; updatedAt: string; viewsCount: number;
+  config: InvitationConfig; guests: GuestGroup[];
 }
-
-function buildSeedRecord(params: {
-  id: string;
-  slug: string;
-  clientName: string;
-  clientEmail: string;
-  clientPhone: string;
-  title: string;
-  templateId: TemplateId;
-  status: 'published' | 'draft' | 'archived';
-  eventDate: string;
-  createdAt: string;
-  viewsCount: number;
-  tagline?: string;
-}): ClientInvitationRecord {
-  const tpl =
-    TEMPLATES_CATALOG.find((t) => t.id === params.templateId) ||
-    TEMPLATES_CATALOG[0];
-  const config = createDefaultInvitationConfig(params.templateId, params.title);
-  if (params.tagline) {
-    config.content.hero.tagline = params.tagline;
-  }
-
-  return {
-    id: params.id,
-    slug: params.slug,
-    clientName: params.clientName,
-    clientEmail: params.clientEmail,
-    clientPhone: params.clientPhone,
-    title: params.title,
-    category: tpl.category,
-    templateId: params.templateId,
-    status: params.status,
-    eventDate: params.eventDate,
-    createdAt: params.createdAt,
-    updatedAt: params.createdAt,
-    viewsCount: params.viewsCount,
-    config,
-    guests: [
-      {
-        id: `${params.id}-g1`,
-        eventId: params.id,
-        guestToken: 'fam-lopez-8a2f',
-        groupName: 'Familia López García',
-        whatsappPhone: '525512345678',
-        groupTag: 'Familia Principal',
-        allocatedAdults: 4,
-        allocatedChildren: 1,
-        rsvpStatus: 'confirmed',
-        confirmedAdults: 4,
-        confirmedChildren: 1,
-        tableName: 'Mesa 1',
-        checkedInCount: 0,
-      },
-      {
-        id: `${params.id}-g2`,
-        eventId: params.id,
-        guestToken: 'fam-mendoza-3b9c',
-        groupName: 'Familia Mendoza Ruiz',
-        whatsappPhone: '525587654321',
-        groupTag: 'Amigos VIP',
-        allocatedAdults: 2,
-        allocatedChildren: 0,
-        rsvpStatus: 'viewed',
-        confirmedAdults: 0,
-        confirmedChildren: 0,
-        tableName: 'Mesa 2',
-        checkedInCount: 0,
-      },
-    ],
-  };
+type NewInvitation = Pick<ClientInvitationRecord, 'clientName' | 'clientEmail' | 'clientPhone' | 'title' | 'slug' | 'templateId' | 'eventDate'>;
+type Patch = Partial<Pick<ClientInvitationRecord, 'slug' | 'clientName' | 'clientEmail' | 'clientPhone' | 'title' | 'templateId' | 'status' | 'eventDate' | 'config' | 'guests'>>;
+// Database rows are converted at the boundary; no private data is persisted in the browser.
+function guest(row: any): GuestGroup {
+  return { id: row.id, eventId: row.event_id, guestToken: row.guest_token, groupName: row.group_name, whatsappPhone: row.whatsapp_phone || '', groupTag: row.group_tag || '', allocatedAdults: row.allocated_adults, allocatedChildren: row.allocated_children, rsvpStatus: row.rsvp_status, confirmedAdults: row.confirmed_adults, confirmedChildren: row.confirmed_children, tableName: row.table_name_fallback || '', checkedInCount: row.checked_in_count };
 }
-
-export const INITIAL_CLIENT_INVITATIONS: ClientInvitationRecord[] = [
-  buildSeedRecord({
-    id: 'inv-001',
-    slug: 'boda-sofia-y-mateo',
-    clientName: 'Sofía Villarreal & Mateo Mendoza',
-    clientEmail: 'sofia.villarreal@email.com',
-    clientPhone: '+52 55 1234 5678',
-    title: 'Sofía & Mateo',
-    templateId: 'eternal-elegance',
-    status: 'published',
-    eventDate: '2026-11-14T17:00:00-06:00',
-    createdAt: '2026-10-01T10:30:00-06:00',
-    viewsCount: 342,
-    tagline: '14 de Noviembre de 2026 • San Miguel de Allende, Gto.',
-  }),
-  buildSeedRecord({
-    id: 'inv-002',
-    slug: 'boda-camila-y-diego',
-    clientName: 'Camila Elizondo & Diego Garza',
-    clientEmail: 'camila.elizondo@email.com',
-    clientPhone: '+52 81 2345 6789',
-    title: 'Camila & Diego',
-    templateId: 'eternal-elegance',
-    status: 'published',
-    eventDate: '2026-12-05T18:00:00-06:00',
-    createdAt: '2026-10-05T14:20:00-06:00',
-    viewsCount: 289,
-    tagline: '05 de Diciembre de 2026 • Monterrey, N.L.',
-  }),
-  buildSeedRecord({
-    id: 'inv-003',
-    slug: 'boda-valeria-y-sebastian',
-    clientName: 'Valeria Montes & Sebastián Herrera',
-    clientEmail: 'valeria.montes@email.com',
-    clientPhone: '+52 33 9876 5432',
-    title: 'Valeria & Sebastián',
-    templateId: 'eternal-elegance',
-    status: 'draft',
-    eventDate: '2027-01-23T16:30:00-06:00',
-    createdAt: '2026-10-12T09:15:00-06:00',
-    viewsCount: 45,
-    tagline: '23 de Enero de 2027 • Hacienda Labor de Rivera, Jal.',
-  }),
-  buildSeedRecord({
-    id: 'inv-004',
-    slug: 'boda-andrea-y-rodrigo',
-    clientName: 'Andrea Solís & Rodrigo Altamirano',
-    clientEmail: 'andrea.solis@email.com',
-    clientPhone: '+52 55 4433 2211',
-    title: 'Andrea & Rodrigo',
-    templateId: 'boho-terracotta',
-    status: 'published',
-    eventDate: '2026-11-28T16:00:00-06:00',
-    createdAt: '2026-10-08T11:00:00-06:00',
-    viewsCount: 412,
-    tagline: '28 de Noviembre de 2026 • Valle de Guadalupe, B.C.',
-  }),
-  buildSeedRecord({
-    id: 'inv-005',
-    slug: 'boda-mariana-y-javier',
-    clientName: 'Mariana Cárdenas & Javier Orozco',
-    clientEmail: 'mariana.cardenas@email.com',
-    clientPhone: '+52 999 112 2334',
-    title: 'Mariana & Javier',
-    templateId: 'boho-terracotta',
-    status: 'published',
-    eventDate: '2027-02-14T17:30:00-06:00',
-    createdAt: '2026-10-15T16:40:00-06:00',
-    viewsCount: 198,
-    tagline: '14 de Febrero de 2027 • Mérida, Yucatán',
-  }),
-  buildSeedRecord({
-    id: 'inv-006',
-    slug: 'boda-civil-fernanda-y-luis',
-    clientName: 'Fernanda Ríos & Luis Castrejón',
-    clientEmail: 'fer.rios@email.com',
-    clientPhone: '+52 55 6677 8899',
-    title: 'Fernanda & Luis',
-    templateId: 'modern-minimal-noir',
-    status: 'published',
-    eventDate: '2026-11-20T19:00:00-06:00',
-    createdAt: '2026-10-10T12:10:00-06:00',
-    viewsCount: 230,
-    tagline: '20 de Noviembre de 2026 • Museo Soumaya, CDMX',
-  }),
-  buildSeedRecord({
-    id: 'inv-007',
-    slug: 'xv-valentina-imperial',
-    clientName: 'Familia Salazar (XV Valentina)',
-    clientEmail: 'patricia.salazar@email.com',
-    clientPhone: '+52 55 3344 5566',
-    title: 'Mis XV: Valentina',
-    templateId: 'royal-xv-enchanted',
-    status: 'published',
-    eventDate: '2026-12-12T18:00:00-06:00',
-    createdAt: '2026-10-14T18:00:00-06:00',
-    viewsCount: 520,
-    tagline: '12 de Diciembre de 2026 • Colegio de las Vizcaínas, CDMX',
-  }),
-  buildSeedRecord({
-    id: 'inv-008',
-    slug: 'xv-regina-gala',
-    clientName: 'Familia Domínguez (XV Regina)',
-    clientEmail: 'jorge.dominguez@email.com',
-    clientPhone: '+52 222 445 6677',
-    title: 'Mis XV: Regina',
-    templateId: 'royal-xv-enchanted',
-    status: 'published',
-    eventDate: '2027-01-16T19:00:00-06:00',
-    createdAt: '2026-10-18T13:25:00-06:00',
-    viewsCount: 310,
-    tagline: '16 de Enero de 2027 • Cholula, Puebla',
-  }),
-  buildSeedRecord({
-    id: 'inv-009',
-    slug: 'xv-isabella-neon',
-    clientName: 'Familia Cervantes (XV Isabella)',
-    clientEmail: 'claudia.cervantes@email.com',
-    clientPhone: '+52 33 5566 7788',
-    title: 'Isabella XV Night',
-    templateId: 'neon-xv-euphoria',
-    status: 'published',
-    eventDate: '2026-11-27T20:30:00-06:00',
-    createdAt: '2026-10-19T15:50:00-06:00',
-    viewsCount: 475,
-    tagline: '27 de Noviembre de 2026 • Zapopan, Jalisco',
-  }),
-  buildSeedRecord({
-    id: 'inv-010',
-    slug: '50-aniversario-alejandro',
-    clientName: 'Arq. Alejandro Navarro',
-    clientEmail: 'alejandro.navarro@email.com',
-    clientPhone: '+52 55 9988 7766',
-    title: 'Los 50 de Alejandro',
-    templateId: 'golden-jubilee',
-    status: 'published',
-    eventDate: '2026-11-21T20:00:00-06:00',
-    createdAt: '2026-10-20T10:00:00-06:00',
-    viewsCount: 185,
-    tagline: '21 de Noviembre de 2026 • Lomas de Chapultepec, CDMX',
-  }),
-  buildSeedRecord({
-    id: 'inv-011',
-    slug: 'cumple-leo-6-aventura',
-    clientName: 'Mariana y Daniel (Papás de Leo)',
-    clientEmail: 'daniel.perez@email.com',
-    clientPhone: '+52 55 2233 4455',
-    title: '¡Leo Cumple 6 Años!',
-    templateId: 'fiesta-kids-adventure',
-    status: 'published',
-    eventDate: '2026-11-15T13:30:00-06:00',
-    createdAt: '2026-10-21T17:10:00-06:00',
-    viewsCount: 164,
-    tagline: '15 de Noviembre de 2026 • Jardín Las Lomas',
-  }),
-  buildSeedRecord({
-    id: 'inv-012',
-    slug: 'bautizo-santiago-2026',
-    clientName: 'Familia Ibarra Morales',
-    clientEmail: 'ibarra.familia@email.com',
-    clientPhone: '+52 442 334 5566',
-    title: 'Mi Bautizo: Santiago',
-    templateId: 'celestial-baptism',
-    status: 'published',
-    eventDate: '2026-12-06T12:00:00-06:00',
-    createdAt: '2026-10-22T11:30:00-06:00',
-    viewsCount: 215,
-    tagline: '06 de Diciembre de 2026 • Querétaro, Qro.',
-  }),
-  buildSeedRecord({
-    id: 'inv-013',
-    slug: 'baby-shower-julieta',
-    clientName: 'Paulina & Emiliano',
-    clientEmail: 'paulina.vega@email.com',
-    clientPhone: '+52 55 7788 9900',
-    title: 'Baby Shower de Julieta',
-    templateId: 'sweet-oh-baby',
-    status: 'published',
-    eventDate: '2026-11-22T10:30:00-06:00',
-    createdAt: '2026-10-24T09:45:00-06:00',
-    viewsCount: 142,
-    tagline: '22 de Noviembre de 2026 • Polanco, CDMX',
-  }),
-  buildSeedRecord({
-    id: 'inv-014',
-    slug: 'graduacion-medicina-2026',
-    clientName: 'Comité Generación Medicina 2026',
-    clientEmail: 'comite.medicina26@email.com',
-    clientPhone: '+52 55 1199 8822',
-    title: 'Gala de Graduación Medicina 2022–2026',
-    templateId: 'grad-gala-night',
-    status: 'published',
-    eventDate: '2026-12-18T20:00:00-06:00',
-    createdAt: '2026-10-25T19:00:00-06:00',
-    viewsCount: 890,
-    tagline: '18 de Diciembre de 2026 • Expo Santa Fe, CDMX',
-  }),
-];
-
-interface EventsStoreState {
-  invitations: ClientInvitationRecord[];
-  addInvitation: (input: {
-    clientName: string;
-    clientEmail: string;
-    clientPhone: string;
-    title: string;
-    slug: string;
-    templateId: TemplateId;
-    eventDate: string;
-  }) => ClientInvitationRecord;
-  updateInvitation: (
-    id: string,
-    patch: Partial<
-      Pick<
-        ClientInvitationRecord,
-        | 'slug'
-        | 'clientName'
-        | 'clientEmail'
-        | 'clientPhone'
-        | 'title'
-        | 'templateId'
-        | 'status'
-        | 'eventDate'
-        | 'config'
-        | 'guests'
-      >
-    >
-  ) => void;
-  deleteInvitation: (id: string) => void;
-  getBySlug: (slug: string) => ClientInvitationRecord | undefined;
+function record(row: any): ClientInvitationRecord {
+  return { id: row.id, slug: row.slug, clientName: row.client_name, clientEmail: row.client_email || '', clientPhone: row.client_phone || '', title: row.title, category: row.category, templateId: row.template_id, status: row.status, eventDate: row.event_date, createdAt: row.created_at, updatedAt: row.updated_at, viewsCount: row.views_count, config: row.config, guests: (row.guest_groups || []).map(guest) };
 }
-
-export const useEventsStore = create<EventsStoreState>()(
-  persist(
-    (set, get) => ({
-      invitations: INITIAL_CLIENT_INVITATIONS,
-
-      addInvitation: (input) => {
-        const tpl =
-          TEMPLATES_CATALOG.find((t) => t.id === input.templateId) ||
-          TEMPLATES_CATALOG[0];
-        const now = new Date().toISOString();
-        const id = `inv-${Date.now()}`;
-        const config = createDefaultInvitationConfig(
-          input.templateId,
-          input.title
-        );
-
-        const newRecord: ClientInvitationRecord = {
-          id,
-          slug: input.slug,
-          clientName: input.clientName,
-          clientEmail: input.clientEmail,
-          clientPhone: input.clientPhone,
-          title: input.title,
-          category: tpl.category,
-          templateId: input.templateId,
-          status: 'published',
-          eventDate: input.eventDate,
-          createdAt: now,
-          updatedAt: now,
-          viewsCount: 1,
-          config,
-          guests: [
-            {
-              id: `${id}-g1`,
-              eventId: id,
-              guestToken: 'fam-invitada-vip',
-              groupName: `Invitados de ${input.title}`,
-              whatsappPhone: input.clientPhone.replace(/[^\d]/g, ''),
-              groupTag: 'VIP',
-              allocatedAdults: 2,
-              allocatedChildren: 0,
-              rsvpStatus: 'pending',
-              confirmedAdults: 0,
-              confirmedChildren: 0,
-              tableName: 'Mesa 1',
-              checkedInCount: 0,
-            },
-          ],
-        };
-
-        set((state) => ({
-          invitations: [newRecord, ...state.invitations],
-        }));
-
-        return newRecord;
-      },
-
-      updateInvitation: (id, patch) =>
-        set((state) => ({
-          invitations: state.invitations.map((item) =>
-            item.id === id
-              ? {
-                  ...item,
-                  ...patch,
-                  updatedAt: new Date().toISOString(),
-                }
-              : item
-          ),
-        })),
-
-      deleteInvitation: (id) =>
-        set((state) => ({
-          invitations: state.invitations.filter((item) => item.id !== id),
-        })),
-
-      getBySlug: (slug) =>
-        get().invitations.find(
-          (item) => item.slug.toLowerCase() === slug.toLowerCase()
-        ),
-    }),
-    {
-      name: 'atelier-client-invitations-v1',
-      merge: (persistedState, currentState) => {
-        const savedInvitations = (persistedState as Partial<EventsStoreState> | undefined)?.invitations;
-        if (!Array.isArray(savedInvitations)) return currentState;
-
-        return {
-          ...currentState,
-          invitations: savedInvitations.map((record) => {
-            const config = refreshCelebrationConfig(record.config, record.templateId, record.title);
-            return config === record.config ? record : { ...record, config };
-          }),
-        };
-      },
+interface State {
+  invitations: ClientInvitationRecord[]; loading: boolean; error: string | null;
+  load: () => Promise<void>; addInvitation: (input: NewInvitation) => Promise<ClientInvitationRecord>;
+  updateInvitation: (id: string, patch: Patch) => Promise<void>; deleteInvitation: (id: string) => Promise<void>;
+}
+export const useEventsStore = create<State>((set, get) => ({
+  invitations: [], loading: true, error: null,
+  load: async () => {
+    set({ loading: true, error: null });
+    try {
+      const { data, error } = await createClient().from('events').select('id,slug,client_name,client_email,client_phone,title,category,template_id,status,event_date,created_at,updated_at,views_count,config,guest_groups(*)').order('created_at', { ascending: false });
+      if (error) throw error;
+      set({ invitations: (data || []).map(record), loading: false });
+    } catch (error) { set({ loading: false, error: error instanceof Error ? error.message : 'Error de conexión' }); }
+  },
+  addInvitation: async (input) => {
+    const template = TEMPLATES_CATALOG.find(t => t.id === input.templateId);
+    if (!template) throw new Error('Plantilla inválida');
+    const { data, error } = await createClient().from('events').insert({ client_name: input.clientName, client_email: input.clientEmail || null, client_phone: input.clientPhone || null, title: input.title, slug: input.slug, template_id: input.templateId, category: template.category, event_date: input.eventDate, status: 'draft', config: createDefaultInvitationConfig(input.templateId, input.title) }).select('id,slug,client_name,client_email,client_phone,title,category,template_id,status,event_date,created_at,updated_at,views_count,config,guest_groups(*)').single();
+    if (error) throw new Error(error.code === '23505' ? 'Esta URL ya está en uso' : error.message);
+    const created = record(data); set(state => ({ invitations: [created, ...state.invitations] })); return created;
+  },
+  updateInvitation: async (id, patch) => {
+    const db = createClient();
+    const { guests, ...eventPatch } = patch;
+    const fields: Record<string, unknown> = {};
+    const names: Record<string, string> = { clientName: 'client_name', clientEmail: 'client_email', clientPhone: 'client_phone', templateId: 'template_id', eventDate: 'event_date' };
+    for (const [key, value] of Object.entries(eventPatch)) fields[names[key] || key] = value;
+    if (patch.templateId) fields.category = TEMPLATES_CATALOG.find(t => t.id === patch.templateId)?.category;
+    if (Object.keys(fields).length) { const { error } = await db.from('events').update(fields).eq('id', id).select('id').single(); if (error) throw new Error(error.message); }
+    if (guests) {
+      const existing = get().invitations.find(i => i.id === id)?.guests || [];
+      for (const g of guests) {
+        const old = existing.find(x => x.id === g.id);
+        if (old && JSON.stringify(old) === JSON.stringify(g)) continue;
+        const values = { event_id: id, guest_token: g.guestToken, group_name: g.groupName, whatsapp_phone: g.whatsappPhone || null, group_tag: g.groupTag || null, allocated_adults: g.allocatedAdults, allocated_children: g.allocatedChildren, rsvp_status: g.rsvpStatus, confirmed_adults: g.confirmedAdults, confirmed_children: g.confirmedChildren, table_name_fallback: g.tableName, checked_in_count: g.checkedInCount };
+        const result = old ? await db.from('guest_groups').update(values).eq('id', g.id) : await db.from('guest_groups').insert(values);
+        if (result.error) throw new Error(result.error.message);
+      }
     }
-  )
-);
+    await get().load();
+    if (get().error) throw new Error(get().error!);
+  },
+  deleteInvitation: async (id) => {
+    const response = await fetch(`/api/admin/invitations/${encodeURIComponent(id)}`, { method: 'DELETE' });
+    if (!response.ok) { const result = await response.json(); throw new Error(result.error || 'No se pudo eliminar'); }
+    set(state => ({ invitations: state.invitations.filter(i => i.id !== id) }));
+  },
+}));

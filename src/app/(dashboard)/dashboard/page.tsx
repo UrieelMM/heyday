@@ -44,6 +44,8 @@ import { buildWhatsappInviteUrl } from '@/lib/whatsapp/link-builder';
 import { createClient } from '@/lib/supabase/client';
 import { slugify } from '@/lib/utils';
 import type { SectionId, TemplateId } from '@/types/invitation.types';
+import { EventReception } from '@/components/dashboard/EventReception';
+import { EventMemories } from '@/components/dashboard/EventMemories';
 import { HeyDayBrand } from '@/components/brand/HeyDayBrand';
 import './dashboard.css';
 
@@ -70,7 +72,7 @@ function DashboardContent() {
   ) as TemplateId | null;
 
   const {
-    invitations,
+    invitations, loading, error, load,
     addInvitation,
     updateInvitation,
     deleteInvitation,
@@ -95,9 +97,12 @@ function DashboardContent() {
     updateEnvelope,
     toggleSection,
     updateHero,
+    updateGallery,
+    updateSocialFeatures,
     updateDressCode,
   } = useBuilderStore();
 
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [adminEmail, setAdminEmail] = useState<string>(
     'Administrador'
   );
@@ -150,6 +155,8 @@ function DashboardContent() {
   const [newGuestAdults, setNewGuestAdults] = useState(2);
   const [newGuestChildren, setNewGuestChildren] = useState(0);
   const [newGuestTable, setNewGuestTable] = useState('Mesa 5');
+
+  useEffect(() => { void load(); }, [load]);
 
   // Verificar sesión del administrador
   useEffect(() => {
@@ -279,8 +286,8 @@ function DashboardContent() {
     );
   };
 
-  const handleSaveCurrentBuilder = () => {
-    updateInvitation(eventId, {
+  const handleSaveCurrentBuilder = async () => {
+    try { await updateInvitation(eventId, {
       slug,
       clientName,
       title,
@@ -288,12 +295,11 @@ function DashboardContent() {
       eventDate,
       config: structuredClone(config),
     });
-    toast.success(
-      `¡Cambios guardados en el historial de ${templateId} para ${clientName}!`
-    );
+    toast.success(`Cambios guardados para ${clientName}`);
+    } catch (err) { toast.error(err instanceof Error ? err.message : 'No se pudieron guardar los cambios'); }
   };
 
-  const handleCreateNewInvitation = (
+  const handleCreateNewInvitation = async (
     e: React.FormEvent,
     openBuilderAfter = true
   ) => {
@@ -313,10 +319,11 @@ function DashboardContent() {
       ? `${cleanSlug}-${Math.floor(100 + Math.random() * 900)}`
       : cleanSlug;
 
-    const created = addInvitation({
+    try {
+    const created = await addInvitation({
       clientName: newForm.clientName.trim(),
-      clientEmail: newForm.clientEmail.trim() || 'cliente@email.com',
-      clientPhone: newForm.clientPhone.trim() || '+52 55 0000 0000',
+      clientEmail: newForm.clientEmail.trim(),
+      clientPhone: newForm.clientPhone.trim(),
       title: newForm.title.trim(),
       slug: finalSlug,
       templateId: newForm.templateId,
@@ -343,9 +350,10 @@ function DashboardContent() {
       loadInvitationRecord(created);
       setActiveTab('builder');
     }
+    } catch (err) { toast.error(err instanceof Error ? err.message : 'No se pudo crear la invitación'); }
   };
 
-  const handleAddGuestGroup = (e: React.FormEvent) => {
+  const handleAddGuestGroup = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newGuestName.trim() || !activeInvitationRecord) return;
     const token =
@@ -373,10 +381,11 @@ function DashboardContent() {
       ...activeInvitationRecord.guests,
     ];
 
-    updateInvitation(activeInvitationRecord.id, { guests: updatedGuests });
+    try { await updateInvitation(activeInvitationRecord.id, { guests: updatedGuests });
     setNewGuestName('');
     setNewGuestPhone('');
     toast.success(`Pase único creado para ${newGuestName}`);
+    } catch (err) { toast.error(err instanceof Error ? err.message : 'No se pudo crear el pase'); }
   };
 
   const handleLogout = async () => {
@@ -402,6 +411,8 @@ function DashboardContent() {
 
   return (
     <div className="dashboard-shell flex min-h-dvh flex-col overflow-x-hidden bg-[#faf9f5] text-[#141413]">
+      {loading && <div role="status" className="px-5 py-2 text-sm">Cargando invitaciones…</div>}
+      {error && <div role="alert" className="px-5 py-2 text-sm text-red-700">No se pudieron cargar las invitaciones: {error} <button onClick={() => void load()} className="underline">Reintentar</button></div>}
       {/* TOPBAR DEL DASHBOARD */}
       <header className="dashboard-topbar sticky top-0 z-40 flex flex-wrap items-center justify-between gap-3 border-b border-[#e6dfd8] bg-[#faf9f5]/95 px-4 py-3 backdrop-blur-md sm:px-6">
         <div className="flex min-w-0 flex-1 flex-wrap items-center gap-3">
@@ -865,6 +876,7 @@ function DashboardContent() {
 
                           <td className="px-5 py-4 text-right">
                             <div className="inline-flex items-center gap-2">
+                              <button type="button" className="rounded-xl border border-[#d7cfc4] px-2 py-1.5 text-xs" onClick={async () => { try { await updateInvitation(inv.id, { status: inv.status === 'published' ? 'draft' : 'published' }); toast.success(inv.status === 'published' ? 'Invitación retirada' : 'Invitación publicada'); } catch (err) { toast.error(err instanceof Error ? err.message : 'No se pudo cambiar el estado'); } }}>{inv.status === 'published' ? 'Retirar' : 'Publicar'}</button>
                               <button
                                 type="button"
                                 onClick={() => handleOpenInBuilder(inv)}
@@ -886,9 +898,9 @@ function DashboardContent() {
                               </button>
                               <button
                                 type="button"
-                                onClick={() => {
-                                  deleteInvitation(inv.id);
-                                  toast.info('Invitación eliminada del historial');
+                                onClick={async () => {
+                                  if (!window.confirm(`¿Eliminar la invitación de ${inv.clientName}?`)) return;
+                                  try { await deleteInvitation(inv.id); toast.success('Invitación eliminada'); } catch (err) { toast.error(err instanceof Error ? err.message : 'No se pudo eliminar'); }
                                 }}
                                 title="Eliminar invitación"
                                 className="cursor-pointer rounded-xl border border-[#e6dfd8] p-1.5 text-[#6c6a64] transition hover:border-[#c64545]/40 hover:text-[#c64545]"
@@ -1251,6 +1263,13 @@ function DashboardContent() {
                     <label className="mb-1 block text-xs font-semibold text-[#3d3d3a]">
                       URL Fotografía de Portada
                     </label>
+                    <input type="file" accept="image/jpeg,image/png,image/webp" disabled={uploadingPhoto || !invitations.some(i => i.id === eventId)} className="mb-2 block w-full text-xs" onChange={async (e) => {
+                      const file = e.target.files?.[0]; e.target.value = ''; if (!file) return;
+                      if (file.size > 8 * 1024 * 1024) { toast.error('Cada foto puede pesar hasta 8 MB'); return; }
+                      setUploadingPhoto(true);
+                      try { const form = new FormData(); form.set('eventId', eventId); form.set('file', file); const response = await fetch('/api/admin/assets', { method: 'POST', body: form }); const result = await response.json(); if (!response.ok) throw new Error(result.error); updateHero({ coverImageUrl: result.url }); toast.success('Foto subida. Guarda los cambios para aplicarla.'); } catch (err) { toast.error(err instanceof Error ? err.message : 'No se pudo subir la foto'); } finally { setUploadingPhoto(false); }
+                    }} />
+                    <p className="mb-2 text-xs text-[#6c6a64]">{uploadingPhoto ? 'Subiendo foto…' : 'JPG, PNG o WebP · máximo 8 MB'}</p>
                     <input
                       type="url"
                       value={config.content.hero.coverImageUrl}
@@ -1259,6 +1278,18 @@ function DashboardContent() {
                       }
                       className="w-full rounded-xl border border-[#d7cfc4] bg-[#faf9f5] px-3.5 py-2 text-sm text-[#141413] outline-none"
                     />
+                  </div>
+
+                  <div>
+                    <label className="mb-1 block text-xs font-semibold text-[#3d3d3a]">Fotos de la galería</label>
+                    <input type="file" accept="image/jpeg,image/png,image/webp" disabled={uploadingPhoto || !invitations.some(i => i.id === eventId)} className="block w-full text-xs" onChange={async e => {
+                      const file = e.target.files?.[0]; e.target.value = ''; if (!file) return;
+                      if (file.size > 8 * 1024 * 1024) { toast.error('Cada foto puede pesar hasta 8 MB'); return; }
+                      setUploadingPhoto(true);
+                      try { const form = new FormData(); form.set('eventId', eventId); form.set('file', file); const response = await fetch('/api/admin/assets', { method: 'POST', body: form }); const result = await response.json(); if (!response.ok) throw new Error(result.error); updateGallery([...useBuilderStore.getState().config.content.gallery.images, { url: result.url }]); toast.success('Foto subida. Guarda los cambios para aplicarla.'); } catch (err) { toast.error(err instanceof Error ? err.message : 'No se pudo subir la foto'); } finally { setUploadingPhoto(false); }
+                    }} />
+                    <p className="my-2 text-xs text-[#6c6a64]">JPG, PNG o WebP · máximo 8 MB por foto</p>
+                    <div className="grid grid-cols-3 gap-2">{config.content.gallery.images.map((photo, index) => <div key={`${photo.url}-${index}`} className="relative"><img src={photo.url} alt={`Foto ${index + 1}`} className="aspect-square w-full rounded-lg object-cover" /><button type="button" aria-label={`Quitar foto ${index + 1}`} className="absolute right-1 top-1 rounded-full bg-white px-2 text-sm" onClick={() => updateGallery(config.content.gallery.images.filter((_, i) => i !== index))}>×</button></div>)}</div>
                   </div>
 
                   <div>
@@ -1282,6 +1313,7 @@ function DashboardContent() {
                   <p className="text-xs text-[#6c6a64]">
                     Activa o desactiva cualquiera de los 12 bloques modulares:
                   </p>
+                  <div className="rounded-xl border border-[#e6dfd8] bg-white p-3 text-xs"><p className="mb-2 font-semibold">Funciones sociales</p><label className="flex items-center justify-between py-1">Sugerencias de canciones<input type="checkbox" checked={config.content.socialFeatures.enableSongRequests} onChange={e => updateSocialFeatures({ enableSongRequests: e.target.checked })} className="h-4 w-4 accent-[#cc785c]" /></label><label className="flex items-center justify-between py-1">Mensajes de voz<input type="checkbox" checked={config.content.socialFeatures.enableAudioGuestbook} onChange={e => updateSocialFeatures({ enableAudioGuestbook: e.target.checked })} className="h-4 w-4 accent-[#cc785c]" /></label><p className="mt-2 text-[#6c6a64]">Activa también la sección social y guarda los cambios.</p></div>
                   {config.sectionsOrder.map((sec) => (
                     <div
                       key={sec.id}
@@ -1640,60 +1672,16 @@ function DashboardContent() {
               <QrCode className="h-8 w-8" />
             </div>
             <h2 className="text-2xl font-bold text-[#141413]">
-              Modo Recepción — {title} ({clientName})
+              Modo Recepción — {activeInvitationRecord?.title || 'Selecciona una invitación'}
             </h2>
             <p className="mx-auto mt-2 max-w-xl text-sm text-[#6c6a64]">
-              Valida la firma HMAC-SHA256 de los códigos QR en la puerta del
-              evento y asigna el ingreso en tiempo real.
+              Escanea el pase para validar la confirmación y registrar la entrada.
             </p>
 
-            <div className="mt-8 grid gap-4 text-left sm:grid-cols-2">
-              {activeGuests.map((g) => (
-                <div
-                  key={g.id}
-                  className="flex flex-col justify-between rounded-xl border border-[#e6dfd8] bg-[#faf9f5] p-5"
-                >
-                  <div>
-                    <span className="text-[11px] font-bold tracking-wider text-[#cc785c] uppercase">
-                      {g.tableName}
-                    </span>
-                    <h3 className="mt-1 font-bold text-[#141413]">
-                      {g.groupName}
-                    </h3>
-                    <p className="mt-1 text-xs text-[#6c6a64]">
-                      Ingresaron: {g.checkedInCount} de{' '}
-                      {g.allocatedAdults + g.allocatedChildren} pases
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (!activeInvitationRecord) return;
-                      const updated = activeInvitationRecord.guests.map(
-                        (item) =>
-                          item.id === g.id
-                            ? {
-                                ...item,
-                                checkedInCount:
-                                  item.allocatedAdults + item.allocatedChildren,
-                              }
-                            : item
-                      );
-                      updateInvitation(activeInvitationRecord.id, {
-                        guests: updated,
-                      });
-                      toast.success(
-                        `Check-in validado: ${g.groupName} -> Pasar a ${g.tableName}`
-                      );
-                    }}
-                    className="mt-4 w-full cursor-pointer rounded-xl bg-[#ebe6df] py-2.5 text-xs font-semibold text-white transition hover:bg-[#cc785c] hover:text-white"
-                  >
-                    Simular Escaneo QR en Puerta
-                  </button>
-                </div>
-              ))}
-            </div>
+            {activeInvitationRecord ? <EventReception key={activeInvitationRecord.id} eventId={activeInvitationRecord.id} onCheckedIn={load} /> : <p className="mt-4 text-sm">Selecciona una invitación para registrar entradas.</p>}
+
           </div>
+          {activeInvitationRecord && <EventMemories key={activeInvitationRecord.id} eventId={activeInvitationRecord.id} />}
         </div>
       )}
 

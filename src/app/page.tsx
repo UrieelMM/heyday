@@ -7,7 +7,6 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
   ArrowRight,
-  CalendarDays,
   Camera,
   Check,
   ChevronDown,
@@ -26,6 +25,7 @@ import {
 import { HeyDayBrand } from '@/components/brand/HeyDayBrand';
 import { TEMPLATES_CATALOG } from '@/lib/templates/templates-catalog';
 import type { EventCategory } from '@/types/invitation.types';
+// @ts-expect-error Next.js handles global CSS imports at build time.
 import './landing.css';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -125,7 +125,7 @@ function InvitationPreview() {
         <span className="landing-invitation-preview__seal"><Heart size={18} strokeWidth={1.6} /></span>
         <span><small>INVITACIÓN PARA</small><strong>Familia López García</strong><small>4 pases reservados para ustedes</small></span>
       </div>
-      <div className="landing-invitation-preview__ticket"><QrCode size={23} /><span><strong>Confirmación lista</strong><small>Tu lugar nos espera</small></span><Check size={17} /></div>
+      <div className="landing-invitation-preview__ticket"><QrCode size={23} /><span><strong>Confirmación lista</strong><small>Tu lugar te espera</small></span><Check size={17} /></div>
     </div>
   );
 }
@@ -426,7 +426,7 @@ export default function HomePage() {
       </footer>
 
       <a className="landing-whatsapp-float" href={CONTACT_URL} target="_blank" rel="noopener noreferrer" aria-label="Contactar a HeyDay por WhatsApp">
-        <WhatsAppIcon size={26} /><span>¿Hablamos?</span>
+        <WhatsAppIcon size={26} /><span>Contratar</span>
       </a>
     </div>
   );

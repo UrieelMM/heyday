@@ -1,68 +1,14 @@
 'use client';
-
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect } from 'react';
 import { InvitationRenderer } from './InvitationRenderer';
 import { SmoothScrollProvider } from './SmoothScrollProvider';
-import { useEventsStore } from '@/stores/useEventsStore';
-import { refreshCelebrationConfig } from '@/lib/templates/refresh-celebration-config';
-import type {
-  GuestGroup,
-  InvitationConfig,
-  TemplateId,
-} from '@/types/invitation.types';
-
-interface PublicInvitationClientViewProps {
-  slug: string;
-  fallbackTemplateId: TemplateId;
-  fallbackEventDate: string;
-  fallbackConfig: InvitationConfig;
-  fallbackGuestGroup: GuestGroup | null;
-  guestToken?: string;
-}
-
-export function PublicInvitationClientView({
-  slug,
-  fallbackTemplateId,
-  fallbackEventDate,
-  fallbackConfig,
-  fallbackGuestGroup,
-  guestToken,
-}: PublicInvitationClientViewProps) {
-  const [hydrated, setHydrated] = useState(false);
-  const savedRecord = useEventsStore((state) =>
-    hydrated
-      ? state.invitations.find((record) => record.slug.toLowerCase() === slug.toLowerCase())
-      : undefined
-  );
-
+import type { GuestGroup, InvitationConfig, TemplateId } from '@/types/invitation.types';
+export function PublicInvitationClientView({ slug, fallbackTemplateId, fallbackEventDate, fallbackConfig, fallbackGuestGroup, demo = false }: { slug: string; fallbackTemplateId: TemplateId; fallbackEventDate: string; fallbackConfig: InvitationConfig; fallbackGuestGroup: GuestGroup | null; guestToken?: string; demo?: boolean }) {
   useEffect(() => {
-    setHydrated(true);
-  }, []);
-
-  const activeTemplateId = savedRecord?.templateId || fallbackTemplateId;
-  const activeEventDate = savedRecord?.eventDate || fallbackEventDate;
-  const activeConfig = useMemo(
-    () => savedRecord
-      ? refreshCelebrationConfig(savedRecord.config, savedRecord.templateId, savedRecord.title)
-      : fallbackConfig,
-    [savedRecord, fallbackConfig]
-  );
-
-  const activeGuestGroup =
-    savedRecord && guestToken
-      ? savedRecord.guests.find((g) => g.guestToken === guestToken) ||
-        fallbackGuestGroup
-      : fallbackGuestGroup;
-
-  return (
-    <SmoothScrollProvider>
-      <InvitationRenderer
-        slug={slug}
-        templateId={activeTemplateId}
-        eventDate={activeEventDate}
-        config={activeConfig}
-        guestGroup={activeGuestGroup}
-      />
-    </SmoothScrollProvider>
-  );
+    if (demo) return;
+    const key = `heyday-view:${slug}`;
+    try { if (sessionStorage.getItem(key)) return; sessionStorage.setItem(key, '1'); } catch { /* Storage can be blocked. */ }
+    void fetch(`/api/public/invitations/${encodeURIComponent(slug)}/view`, { method: 'POST', keepalive: true }).then(response => { if (!response.ok) { try { sessionStorage.removeItem(key); } catch {} } }).catch(() => { try { sessionStorage.removeItem(key); } catch {} });
+  }, [slug, demo]);
+  return <SmoothScrollProvider><InvitationRenderer slug={slug} templateId={fallbackTemplateId} eventDate={fallbackEventDate} config={fallbackConfig} guestGroup={fallbackGuestGroup} /></SmoothScrollProvider>;
 }

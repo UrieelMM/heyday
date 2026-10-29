@@ -1,4 +1,6 @@
 'use client';
+import { SharedAlbum } from '../core/SharedAlbum';
+import { SocialFeatures } from '../core/SocialFeatures';
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
@@ -17,8 +19,11 @@ import {
   Copy,
   Gift,
   Heart,
+  ImagePlus,
+  MapPin,
   Music2,
   Navigation,
+  Sparkles,
   Volume2,
 } from 'lucide-react';
 import type { GuestGroup, InvitationConfig } from '@/types/invitation.types';
@@ -72,6 +77,25 @@ function Botanical({ className = '' }: { className?: string }) {
   );
 }
 
+function WeddingRings({ className = '' }: { className?: string }) {
+  return (
+    <svg className={`ee-rings ${className}`} viewBox="0 0 220 150" fill="none" aria-hidden="true">
+      <ellipse className="ee-draw" cx="84" cy="79" rx="58" ry="53" />
+      <ellipse className="ee-draw" cx="136" cy="79" rx="58" ry="53" />
+      <path className="ee-draw" d="M110 6v17M102 14h16M36 17l8 11M30 29l12 5M188 17l-8 11M194 29l-12 5M109 128v16M101 136h16" />
+      <path className="ee-draw" d="M83 37l5 7-5 7-5-7 5-7ZM138 107l5 7-5 7-5-7 5-7Z" />
+    </svg>
+  );
+}
+
+function Flourish() {
+  return (
+    <svg className="ee-flourish ee-reveal" viewBox="0 0 180 28" fill="none" aria-hidden="true">
+      <path className="ee-draw" d="M1 14h53c12 0 19-4 26-13M179 14h-53c-12 0-19-4-26-13M80 27c4-5 7-10 10-13 3 3 6 8 10 13M90 8l5 6-5 6-5-6 5-6Z" />
+    </svg>
+  );
+}
+
 function Diamond() {
   return <span className="ee-diamond" aria-hidden="true" />;
 }
@@ -80,7 +104,8 @@ function SectionIntro({ eyebrow, title, align = 'center' }: { eyebrow: string; t
   return (
     <div className={`ee-section-intro ${align === 'left' ? 'ee-section-intro--left' : ''}`}>
       <div className="ee-overline ee-reveal"><Diamond />{eyebrow}<Diamond /></div>
-      <h2 className="ee-heading ee-reveal">{title}</h2>
+      <h2 className="ee-heading">{title}</h2>
+      <Flourish />
     </div>
   );
 }
@@ -120,38 +145,80 @@ function Opening({ config, eventDate, guestGroup, isOpen, onOpen }: {
             <p className="ee-opening__script">Estás invitado a celebrar</p>
             <h1 className="ee-opening__title">{config.content.hero.mainTitle}</h1>
             <p className="ee-opening__date">{formatDate(eventDate)} · {config.content.hero.tagline.split('•').slice(1).join('•').trim() || config.content.hero.tagline}</p>
-            {guestGroup && <p className="ee-opening__recipient">Una invitación para <strong>{guestGroup.groupName}</strong></p>}
-            <motion.button
-              type="button"
-              className="ee-envelope"
-              onClick={() => setOpening(true)}
-              disabled={opening}
-              animate={opening ? { y: 30, scale: 1.08, opacity: 0 } : { y: 0, scale: 1, opacity: 1 }}
-              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-              aria-label="Abrir invitación de boda"
+            <motion.div
+              className={`ee-envelope${opening ? ' ee-envelope--opening' : ''}`}
+              animate={opening ? { y: 25, scale: 1.04, opacity: 0 } : { y: 0, scale: 1, opacity: 1 }}
+              transition={{ duration: 0.62, delay: opening ? 0.25 : 0, ease: [0.22, 1, 0.36, 1] }}
             >
-              <span className="ee-envelope__flap" />
-              <span className="ee-envelope__fold ee-envelope__fold--left" />
-              <span className="ee-envelope__fold ee-envelope__fold--right" />
-              <span className="ee-envelope__card">
-                <span>Para</span>
-                <strong>{guestGroup?.groupName || 'nuestros seres queridos'}</strong>
-                {guestGroup && <small>{guestGroup.allocatedAdults + guestGroup.allocatedChildren} pases reservados</small>}
+              <span className="ee-envelope__fold ee-envelope__fold--left" aria-hidden="true" />
+              <span className="ee-envelope__fold ee-envelope__fold--right" aria-hidden="true" />
+              <span className="ee-envelope__fold ee-envelope__fold--bottom" aria-hidden="true" />
+              <span className="ee-envelope__flap" aria-hidden="true" />
+              <span className="ee-envelope__seal" aria-hidden="true">{config.theme.envelope.sealMonogram}</span>
+              <span className="ee-envelope__address">
+                <span className="ee-envelope__label">CON AMOR PARA</span>
+                <strong className="ee-envelope__name">{guestGroup?.groupName || 'Nuestros seres queridos'}</strong>
+                <span className="ee-envelope__passes">{guestGroup ? `${guestGroup.allocatedAdults + guestGroup.allocatedChildren} pases reservados` : 'Un lugar muy especial espera por ti'}</span>
               </span>
-              <motion.span
-                className="ee-envelope__seal"
-                animate={opening ? { rotate: 22, scale: 0 } : { rotate: [0, -5, 5, 0], scale: [1, 1.04, 1] }}
-                transition={opening ? { duration: 0.5 } : { duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-              >
-                {config.theme.envelope.sealMonogram}
-              </motion.span>
+            </motion.div>
+            <motion.button type="button" className="ee-opening__button" onClick={() => setOpening(true)} disabled={opening} whileHover={{ y: -3 }} whileTap={{ scale: 0.98 }}>
+              Abrir nuestra invitación <ArrowRight size={16} />
             </motion.button>
-            <p className="ee-opening__hint">Toca el sello para abrir la invitación</p>
             {config.audio.enabled && <p className="ee-opening__audio"><Volume2 size={13} /> Una experiencia con música</p>}
           </div>
         </motion.div>
       )}
     </AnimatePresence>
+  );
+}
+
+type WeddingLocation = InvitationConfig['content']['locations'][number];
+
+function MapServiceIcon({ service }: { service: 'uber' | 'apple' | 'google' | 'waze' }) {
+  if (service === 'uber') return <span className="ee-map-service__uber" aria-hidden="true">U</span>;
+  if (service === 'apple') return <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M17.5 12.8c0-2 1.6-3 1.7-3.1-.9-1.3-2.3-1.5-2.8-1.5-1.2-.1-2.3.7-2.9.7-.6 0-1.5-.7-2.5-.7-1.3 0-2.5.8-3.2 2-1.4 2.4-.4 5.9 1 7.8.7.9 1.4 1.9 2.4 1.9s1.4-.6 2.7-.6 1.7.6 2.7.6 1.7-.9 2.3-1.9c.8-1.1 1.1-2.2 1.1-2.3-.1 0-2.5-.9-2.5-2.9ZM14.8 6.9c.5-.7.9-1.6.8-2.5-.8 0-1.8.5-2.4 1.2-.5.6-1 1.5-.9 2.4.9.1 1.9-.4 2.5-1.1Z" /></svg>;
+  if (service === 'google') return <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M12 22s7-7.7 7-13a7 7 0 0 0-14 0c0 5.3 7 13 7 13Z" /><path fill="#34A853" d="M5 9c0 5.3 7 13 7 13V2a7 7 0 0 0-7 7Z" /><path fill="#FBBC04" d="M5 9c0 2.1 1.1 4.7 2.5 7L15.6 3a7 7 0 0 0-10.6 6Z" /><circle cx="12" cy="9" r="2.8" fill="#fff" /></svg>;
+  return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M4 14c0-5 3.6-8.5 8.5-8.5 5 0 8 3.5 8 8v2c0 1.4-1.1 2.5-2.5 2.5H9l-2 2v-2.5C5.2 17 4 15.8 4 14Z" /><path d="M9 12.4h.1m6 0h.1M9 15c1.4 1.5 4.8 1.5 6.2 0" strokeLinecap="round" /><circle cx="10" cy="20" r="1" /><circle cx="17" cy="20" r="1" /></svg>;
+}
+
+function LocationDirections({ locations }: { locations: WeddingLocation[] }) {
+  const [selectedId, setSelectedId] = useState(locations[0].id);
+  const location = locations.find((item) => item.id === selectedId) || locations[0];
+  const { lat, lng } = location.coordinates;
+  const coordinate = `${lat},${lng}`;
+  const destinationName = encodeURIComponent(location.venueName);
+  const services = [
+    { id: 'uber' as const, name: 'Uber', url: `https://m.uber.com/ul/?action=setPickup&pickup=my_location&dropoff%5Blatitude%5D=${lat}&dropoff%5Blongitude%5D=${lng}&dropoff%5Bnickname%5D=${destinationName}` },
+    { id: 'apple' as const, name: 'Apple Maps', url: `https://maps.apple.com/?daddr=${encodeURIComponent(coordinate)}&dirflg=d` },
+    { id: 'google' as const, name: 'Google Maps', url: `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(coordinate)}&travelmode=driving` },
+    { id: 'waze' as const, name: 'Waze', url: location.wazeUrl || `https://waze.com/ul?ll=${encodeURIComponent(coordinate)}&navigate=yes` },
+  ];
+
+  return (
+    <div id="directions" className="ee-directions ee-reveal">
+      <div className="ee-directions__heading">
+        <div><span className="ee-small-index">TU CAMINO HACIA NOSOTROS</span><h3>Encuentra el camino</h3></div>
+        <p>Elige el momento al que nos acompañarás y abre tu ruta favorita.</p>
+      </div>
+      <div className="ee-directions__tabs" role="tablist" aria-label="Seleccionar ubicación">
+        {locations.map((item, index) => <button key={item.id} type="button" role="tab" aria-selected={item.id === location.id} className={item.id === location.id ? 'is-active' : ''} onClick={() => setSelectedId(item.id)}><span>0{index + 1}</span>{item.title}</button>)}
+      </div>
+      <div className="ee-directions__body">
+        <div className="ee-directions__map">
+          <iframe key={location.id} title={`Mapa de ${location.venueName}`} src={`https://maps.google.com/maps?q=${encodeURIComponent(coordinate)}&z=15&output=embed`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+          <div className="ee-directions__map-label"><MapPin size={16} /> {location.venueName}</div>
+        </div>
+        <div className="ee-directions__detail">
+          <span className="ee-directions__pin"><MapPin size={23} strokeWidth={1.3} /></span>
+          <span className="ee-small-index">{location.title} · {location.time}</span>
+          <h4>{location.venueName}</h4>
+          <p>{location.address}</p>
+          <div className="ee-directions__services">
+            {services.map((service) => <a key={service.id} href={service.url} target="_blank" rel="noopener noreferrer" aria-label={`Abrir ruta a ${location.venueName} en ${service.name}`}><MapServiceIcon service={service.id} /><span>{service.name}</span><ArrowRight size={14} /></a>)}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -169,12 +236,6 @@ export function EternalEleganceExperience({
   const [activeSection, setActiveSection] = useState('hero');
   const [copiedClabe, setCopiedClabe] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-  const [songs, setSongs] = useState([
-    { id: '1', title: 'September', artist: 'Earth, Wind & Fire', votes: 14 },
-    { id: '2', title: 'Vivir Mi Vida', artist: 'Marc Anthony', votes: 11 },
-  ]);
-  const [songTitle, setSongTitle] = useState('');
-  const [songArtist, setSongArtist] = useState('');
   const [rsvpName, setRsvpName] = useState(guestGroup?.groupName || '');
   const [rsvpPhone, setRsvpPhone] = useState(guestGroup?.whatsappPhone || '');
   const [willAttend, setWillAttend] = useState<'yes' | 'no'>('yes');
@@ -248,14 +309,14 @@ export function EternalEleganceExperience({
         });
       });
 
-      root.querySelectorAll<HTMLElement>('.ee-photo img').forEach((image) => {
+      root.querySelectorAll<HTMLElement>('.ee-photo:not(.ee-hero__photo) img').forEach((image) => {
         gsap.fromTo(image, { scale: 1.13, yPercent: -3 }, {
           scale: 1, yPercent: 3, ease: 'none',
           scrollTrigger: { trigger: image.parentElement, start: 'top bottom', end: 'bottom top', scrub: 0.7, ...scrollerOption },
         });
       });
 
-      root.querySelectorAll<HTMLElement>('.ee-botanical').forEach((botanical) => {
+      root.querySelectorAll<SVGElement>('.ee-botanical, .ee-rings, .ee-flourish').forEach((botanical) => {
         const paths = botanical.querySelectorAll<SVGPathElement>('.ee-draw');
         paths.forEach((path) => {
           const length = path.getTotalLength();
@@ -279,12 +340,57 @@ export function EternalEleganceExperience({
         scrollTrigger: { trigger: timelineList, start: 'top 65%', end: 'bottom 65%', scrub: 0.4, ...scrollerOption },
       });
 
-      const heroPhoto = root.querySelector('.ee-hero__photo');
       const hero = root.querySelector('.ee-hero');
-      if (heroPhoto && hero) gsap.fromTo(heroPhoto,
-        { clipPath: 'inset(8% 10% 8% 10% round 48% 48% 0 0)' },
-        { clipPath: 'inset(0% 0% 0% 0% round 48% 48% 0 0)', ease: 'none',
-          scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: 0.7, ...scrollerOption } });
+      if (hero) {
+        const heroTimeline = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom bottom', scrub: 1, invalidateOnRefresh: true, ...scrollerOption } })
+          .to(root.querySelector('.ee-hero__copy'), { y: -80, opacity: 0, duration: .57 }, 0)
+          .to(root.querySelector('.ee-hero__watermark'), { scale: 1.35, rotate: -12, opacity: 0, duration: 1 }, 0)
+          .to(root.querySelector('.ee-hero__visual'), { left: '0%', top: '0%', width: '100%', height: '100%', maxWidth: 'none', padding: 0, clipPath: 'inset(0% 0% 0% 0% round 0px)', duration: 1 }, 0)
+          .to(root.querySelector('.ee-hero__visual'), { '--ee-wash-opacity': .76, duration: .65 }, .28)
+          .to(root.querySelector('.ee-hero__photo'), { maxHeight: 'none', clipPath: 'inset(0% 0% 0% 0% round 0px)', borderRadius: 0, duration: 1 }, 0)
+          .to(root.querySelector('.ee-hero__photo img'), { scale: 1.1, yPercent: -4, duration: 1 }, 0)
+          .to(root.querySelector('.ee-hero__visual-frame'), { opacity: 0, duration: .35 }, 0)
+          .to(root.querySelector('.ee-hero__branch'), { y: -110, rotate: 40, opacity: 0, duration: .7 }, 0)
+          .fromTo(root.querySelector('.ee-hero__final'), { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: .4 }, .57);
+        const heroScroll = root.querySelector('.ee-hero__scroll');
+        if (heroScroll) heroTimeline.to(heroScroll, { opacity: 0, duration: .25 }, 0);
+      }
+
+      root.querySelectorAll<HTMLElement>('.ee-section-intro .ee-heading').forEach((heading) => {
+        gsap.fromTo(heading, { scale: .86, opacity: .3 }, { scale: 1, opacity: 1, ease: 'none', scrollTrigger: { trigger: heading, start: 'top 96%', end: 'top 46%', scrub: .75, ...scrollerOption } });
+      });
+      const quoteWords = root.querySelectorAll<HTMLElement>('.ee-story__word');
+      const quote = root.querySelector('.ee-story__quote');
+      if (quote && quoteWords.length) gsap.to(quoteWords, { opacity: 1, stagger: .06, ease: 'none', scrollTrigger: { trigger: quote, start: 'top 80%', end: 'bottom 43%', scrub: .6, ...scrollerOption } });
+      root.querySelectorAll<HTMLElement>('.ee-family__grid article').forEach((card, index) => {
+        gsap.fromTo(card, { y: 88, rotate: index % 2 ? 5 : -5, scale: .88, opacity: .25 }, { y: 0, rotate: 0, scale: 1, opacity: 1, ease: 'none', scrollTrigger: { trigger: card, start: 'top 94%', end: 'top 52%', scrub: .75, ...scrollerOption } });
+      });
+      const clock = root.querySelector('.ee-countdown__clock');
+      if (clock) gsap.fromTo(clock.children, { scale: .64, y: 40, opacity: .15 }, { scale: 1, y: 0, opacity: 1, stagger: .11, ease: 'none', scrollTrigger: { trigger: clock, start: 'top 89%', end: 'center 54%', scrub: .8, ...scrollerOption } });
+      root.querySelectorAll<HTMLElement>('.ee-location__photo').forEach((photo) => {
+        gsap.fromTo(photo, { clipPath: 'inset(16% 16% 16% 16% round 46% 46% 0 0)', scale: .88 }, { clipPath: 'inset(0% 0% 0% 0% round 0px)', scale: 1, ease: 'none', scrollTrigger: { trigger: photo, start: 'top 95%', end: 'center 52%', scrub: .85, ...scrollerOption } });
+      });
+      const map = root.querySelector('.ee-directions__map');
+      if (map) gsap.fromTo(map, { clipPath: 'inset(12% 12% 12% 12% round 46% 46% 0 0)', scale: .9 }, { clipPath: 'inset(0% 0% 0% 0% round 0px)', scale: 1, ease: 'none', scrollTrigger: { trigger: map, start: 'top 96%', end: 'center 52%', scrub: .85, ...scrollerOption } });
+      root.querySelectorAll<HTMLElement>('.ee-timeline__item').forEach((item) => {
+        gsap.fromTo(item, { x: 45, opacity: .2, scale: .92 }, { x: 0, opacity: 1, scale: 1, ease: 'none', scrollTrigger: { trigger: item, start: 'top 91%', end: 'top 55%', scrub: .7, ...scrollerOption } });
+      });
+      root.querySelectorAll<HTMLElement>('.ee-gallery__item').forEach((photo, index) => {
+        gsap.fromTo(photo, { y: 100 + index * 14, x: index % 2 ? 38 : -38, rotate: index % 2 ? 8 : -8, opacity: .3 }, { y: 0, x: 0, rotate: [0, 0, -1.2, 1.2][index % 4], opacity: 1, ease: 'none', scrollTrigger: { trigger: photo, start: 'top 98%', end: 'top 53%', scrub: .8, ...scrollerOption } });
+      });
+      root.querySelectorAll<HTMLElement>('.ee-album__photo').forEach((photo, index) => {
+        gsap.fromTo(photo, { x: index === 1 ? 80 : -80, y: 75, rotate: index === 1 ? 20 : -20, opacity: .3 }, { x: 0, y: 0, rotate: [-8, 9, -3][index] || 0, opacity: 1, ease: 'none', scrollTrigger: { trigger: '.ee-album__collage', start: 'top 92%', end: 'center 52%', scrub: .75, ...scrollerOption } });
+      });
+      const dressDetails = root.querySelector('.ee-dress__details');
+      if (dressDetails) gsap.fromTo(dressDetails.children, { y: 80, rotateY: 22, opacity: .2 }, { y: 0, rotateY: 0, opacity: 1, stagger: .15, ease: 'none', scrollTrigger: { trigger: dressDetails, start: 'top 92%', end: 'center 54%', scrub: .8, ...scrollerOption } });
+      root.querySelectorAll<HTMLElement>('.ee-memories__panel').forEach((panel, index) => {
+        gsap.fromTo(panel, { xPercent: index ? 14 : -14, opacity: .2 }, { xPercent: 0, opacity: 1, ease: 'none', scrollTrigger: { trigger: panel, start: 'top 96%', end: 'center 62%', scrub: .8, ...scrollerOption } });
+      });
+      const rsvpCard = root.querySelector('.ee-rsvp__card');
+      if (rsvpCard) gsap.fromTo(rsvpCard, { y: 90, scale: .86, opacity: .3 }, { y: 0, scale: 1, opacity: 1, ease: 'none', scrollTrigger: { trigger: rsvpCard, start: 'top 96%', end: 'center 55%', scrub: .85, ...scrollerOption } });
+      root.querySelectorAll<SVGElement>('.ee-section > .ee-botanical, .ee-section > .ee-rings').forEach((ornament) => {
+        gsap.fromTo(ornament, { y: -24 }, { y: 24, ease: 'none', scrollTrigger: { trigger: ornament.parentElement, start: 'top bottom', end: 'bottom top', scrub: .9, ...scrollerOption } });
+      });
     }
 
     ScrollTrigger.create({
@@ -336,31 +442,15 @@ export function EternalEleganceExperience({
     }
   };
 
-  const addSong = (event: React.FormEvent) => {
+  const submitRsvp = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!songTitle.trim()) return;
-    setSongs((current) => [{ id: String(Date.now()), title: songTitle.trim(), artist: songArtist.trim() || 'Artista', votes: 1 }, ...current]);
-    setSongTitle('');
-    setSongArtist('');
-    toast.success('Canción agregada a la lista de esta vista');
-  };
-
-  const submitRsvp = (event: React.FormEvent) => {
-    event.preventDefault();
-    if (!rsvpName.trim()) return;
-    if (willAttend === 'no') {
-      setPass(null);
-      toast.success('Gracias por avisarnos');
-      return;
-    }
-    if (adults + children < 1) {
-      toast.error('Selecciona al menos una persona para confirmar');
-      return;
-    }
-    setPass({
-      name: rsvpName.trim(), adults, children,
-      payload: `DEMO:${slug}:${guestGroup?.guestToken || 'invitado'}:${adults}:${children}`,
-    });
+    if (isBuilderPreview || !guestGroup) { toast.error('Abre tu enlace personal para confirmar'); return; }
+    try {
+      const response = await fetch(`/api/public/invitations/${encodeURIComponent(slug)}/rsvp`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ guestToken: guestGroup.guestToken, groupName: rsvpName, willAttend: willAttend === 'yes', confirmedAdults: adults, confirmedChildren: children, dietaryNotes, guestMessage }) });
+      const result = await response.json(); if (!response.ok) throw new Error(result.error);
+      if (result.pass) setPass({ name: result.pass.groupName, adults, children, payload: result.pass.qrPayload });
+      else { setPass(null); toast.success('Gracias por avisarnos'); }
+    } catch (err) { toast.error(err instanceof Error ? err.message : 'No se pudo guardar tu respuesta'); }
   };
 
   const style = {
@@ -397,6 +487,10 @@ export function EternalEleganceExperience({
       <main>
         {isSectionEnabled('hero') && (
           <section id="hero" className="ee-hero">
+            <div className="ee-hero__stage">
+            <span className="ee-hero__watermark" aria-hidden="true">∞</span>
+            <span className="ee-hero__rule ee-hero__rule--top" aria-hidden="true" />
+            <span className="ee-hero__rule ee-hero__rule--bottom" aria-hidden="true" />
             <div className="ee-hero__side-note"><span>EST. 2026</span><span>UNA HISTORIA PARA SIEMPRE</span></div>
             <div className="ee-hero__copy">
               <p className="ee-overline ee-entrance"><Diamond /> {content.hero.badgeText} <Diamond /></p>
@@ -409,23 +503,27 @@ export function EternalEleganceExperience({
               {isSectionEnabled('rsvp') && <a className="ee-button ee-button--outline ee-entrance" href="#rsvp">Confirma tu asistencia <ArrowRight size={16} /></a>}
             </div>
             <div className="ee-hero__visual">
+              <span className="ee-hero__visual-frame" aria-hidden="true" />
               <div className="ee-hero__photo ee-photo">
                 <img src={content.hero.coverImageUrl} alt={`Celebración de ${content.hero.mainTitle}`} fetchPriority="high" decoding="async" style={{ objectPosition: `${content.hero.focalPoint.x}% ${content.hero.focalPoint.y}%` }} />
               </div>
               <span className="ee-hero__photo-caption">EL COMIENZO DE NUESTRO PARA SIEMPRE</span>
               <Botanical className="ee-hero__branch" />
             </div>
+            <div className="ee-hero__final"><span>CAPÍTULO UNO · EL GRAN DÍA</span><p>El comienzo de<br /><em>nuestro para siempre.</em></p>{isSectionEnabled('quote_story') && <a href="#story">Nuestra historia <ArrowDown size={16} /></a>}</div>
             {isSectionEnabled('quote_story') && <a className="ee-hero__scroll" href="#story" aria-label="Descubrir nuestra historia"><span>DESLIZA PARA DESCUBRIR</span><ArrowDown size={16} /></a>}
+            </div>
           </section>
         )}
 
         {isSectionEnabled('quote_story') && (
           <section id="story" className="ee-story ee-section">
             <Botanical className="ee-story__branch" />
+            <WeddingRings className="ee-story__rings" />
             <div className="ee-story__inner">
               <p className="ee-overline ee-reveal"><Diamond /> NUESTRA HISTORIA <Diamond /></p>
               <span className="ee-story__quote-mark ee-reveal">“</span>
-              <blockquote className="ee-story__quote ee-reveal">{content.quoteStory.quoteText.replace(/^[“\"]|[”\"]$/g, '')}</blockquote>
+              <blockquote className="ee-story__quote" aria-label={content.quoteStory.quoteText}><span aria-hidden="true">{content.quoteStory.quoteText.replace(/^[“\"]|[”\"]$/g, '').split(/\s+/).map((word, index) => <span className="ee-story__word" key={`${word}-${index}`}>{word} </span>)}</span></blockquote>
               {content.quoteStory.quoteAuthor && <p className="ee-story__author ee-reveal">— {content.quoteStory.quoteAuthor}</p>}
               {content.quoteStory.storyBlocks && content.quoteStory.storyBlocks.length > 0 && (
                 <div className="ee-story__chapters ee-stagger">
@@ -444,9 +542,10 @@ export function EternalEleganceExperience({
 
         {isSectionEnabled('vip_parents') && content.vipParents.groups.length > 0 && (
           <section id="family" className="ee-family ee-section">
+            <WeddingRings className="ee-family__rings" />
             <SectionIntro eyebrow="CON AMOR Y GRATITUD" title="Junto a quienes nos dieron alas" />
             <p className="ee-family__blessing ee-reveal">{content.vipParents.blessingMessage}</p>
-            <div className="ee-family__grid ee-stagger">
+            <div className="ee-family__grid">
               {content.vipParents.groups.map((group, index) => (
                 <article key={`${group.groupTitle}-${index}`}>
                   <span className="ee-small-index">0{index + 1} / {group.groupTitle}</span>
@@ -463,7 +562,7 @@ export function EternalEleganceExperience({
             <Botanical className="ee-countdown__branch ee-countdown__branch--left" />
             <Botanical className="ee-countdown__branch ee-countdown__branch--right" />
             <SectionIntro eyebrow="CUENTA REGRESIVA" title="El gran día se acerca" />
-            <div className="ee-countdown__clock ee-stagger" aria-label="Tiempo restante para el evento">
+            <div className="ee-countdown__clock" aria-label="Tiempo restante para el evento">
               {[
                 ['DÍAS', timeLeft.days], ['HORAS', timeLeft.hours], ['MINUTOS', timeLeft.minutes], ['SEGUNDOS', timeLeft.seconds],
               ].map(([label, value]) => (
@@ -479,6 +578,7 @@ export function EternalEleganceExperience({
 
         {isSectionEnabled('locations') && content.locations.length > 0 && (
           <section id="locations" className="ee-locations ee-section">
+            <Botanical className="ee-locations__branch" />
             <SectionIntro eyebrow="EL ESCENARIO" title="Dónde celebraremos" />
             <div className="ee-locations__grid">
               {content.locations.map((location, index) => (
@@ -501,16 +601,18 @@ export function EternalEleganceExperience({
                 </article>
               ))}
             </div>
+            <LocationDirections locations={content.locations} />
           </section>
         )}
 
         {isSectionEnabled('timeline') && content.timeline.length > 0 && (
           <section id="timeline" className="ee-timeline ee-section">
+            <Botanical className="ee-timeline__branch" />
             <div className="ee-timeline__intro"><SectionIntro eyebrow="EL PROGRAMA" title="Un día para recordar" align="left" /><p className="ee-reveal">Cada momento fue pensado para compartirlo con ustedes.</p></div>
             <div className="ee-timeline__list">
               <span className="ee-timeline__line"><span className="ee-timeline__line-fill" /></span>
               {content.timeline.map((item, index) => (
-                <article key={item.id} className="ee-timeline__item ee-reveal">
+                <article key={item.id} className="ee-timeline__item">
                   <span className="ee-timeline__dot"><Diamond /></span>
                   <time>{item.time}</time>
                   <div><span className="ee-small-index">MOMENTO 0{index + 1}</span><h3>{item.title}</h3>{item.description && <p>{item.description}</p>}</div>
@@ -522,8 +624,9 @@ export function EternalEleganceExperience({
 
         {isSectionEnabled('gallery') && content.gallery.images.length > 0 && (
           <section id="gallery" className="ee-gallery ee-section">
+            <WeddingRings className="ee-gallery__rings" />
             <SectionIntro eyebrow="INSTANTES QUE GUARDAMOS" title="Nuestra historia en imágenes" />
-            <div className="ee-gallery__grid ee-stagger">
+            <div className="ee-gallery__grid">
               {content.gallery.images.map((photo, index) => (
                 <figure key={`${photo.url}-${index}`} className={`ee-gallery__item ee-gallery__item--${index % 4}`}>
                   <div className="ee-photo"><img src={photo.url} alt={photo.caption || `Recuerdo ${index + 1}`} loading="lazy" decoding="async" /></div>
@@ -535,11 +638,15 @@ export function EternalEleganceExperience({
           </section>
         )}
 
+        {isSectionEnabled('gallery') && <section className="ee-album ee-section"><SectionIntro eyebrow="RECUERDOS DESDE TU MIRADA" title="Un álbum para todos" /><SharedAlbum slug={slug} token={guestGroup?.guestToken} preview={isBuilderPreview} /></section>}
+
         {isSectionEnabled('dress_code') && (
           <section id="dress-code" className="ee-dress ee-section">
+            <Botanical className="ee-dress__branch ee-dress__branch--left" />
+            <Botanical className="ee-dress__branch ee-dress__branch--right" />
             <div className="ee-dress__inner">
               <SectionIntro eyebrow="CÓDIGO DE VESTIMENTA" title={content.dressCode.title} />
-              <div className="ee-dress__details ee-stagger">
+              <div className="ee-dress__details">
                 <div><span className="ee-small-index">PARA ELLAS</span><p>{content.dressCode.womenNotes}</p></div>
                 <div><span className="ee-small-index">PARA ELLOS</span><p>{content.dressCode.menNotes}</p></div>
               </div>
@@ -557,6 +664,7 @@ export function EternalEleganceExperience({
         {isSectionEnabled('gifts') && (
           <section id="gifts" className="ee-gifts ee-section">
             <Botanical className="ee-gifts__branch" />
+            <WeddingRings className="ee-gifts__rings" />
             <SectionIntro eyebrow="UN DETALLE CON CARIÑO" title="Mesa de regalos" />
             <p className="ee-gifts__intro ee-reveal">{content.gifts.introMessage}</p>
             <div className="ee-gifts__options ee-stagger">
@@ -581,6 +689,7 @@ export function EternalEleganceExperience({
 
         {isSectionEnabled('accommodation') && content.accommodation.length > 0 && (
           <section id="accommodation" className="ee-stay ee-section">
+            <Botanical className="ee-stay__branch" />
             <div className="ee-stay__intro"><SectionIntro eyebrow="PARA QUIENES NOS VISITAN" title="Quédense un poco más" align="left" /><p className="ee-reveal">Algunas opciones para disfrutar San Miguel de Allende con calma.</p></div>
             <div className="ee-stay__list ee-stagger">
               {content.accommodation.map((hotel, index) => (
@@ -596,31 +705,10 @@ export function EternalEleganceExperience({
 
         {isSectionEnabled('social_features') && (content.socialFeatures.enableSongRequests || content.socialFeatures.enableAudioGuestbook) && (
           <section id="memories" className="ee-memories ee-section">
+            <WeddingRings className="ee-memories__rings" />
             <SectionIntro eyebrow="LA CELEBRACIÓN CONTINÚA" title="Hagamos recuerdos juntos" />
             {content.socialFeatures.hashtag && <p className="ee-memories__hashtag ee-reveal">{content.socialFeatures.hashtag}</p>}
-            <div className="ee-memories__grid">
-              {content.socialFeatures.enableSongRequests && (
-                <div className="ee-memories__panel ee-reveal">
-                  <Music2 size={25} strokeWidth={1.3} />
-                  <h3>La música de nuestra noche</h3>
-                  <p>¿Qué canción no puede faltar en la pista?</p>
-                  <form onSubmit={addSong} className="ee-memories__form">
-                    <label className="sr-only" htmlFor="ee-song">Canción</label><input id="ee-song" value={songTitle} onChange={(event) => setSongTitle(event.target.value)} placeholder="Nombre de la canción" required />
-                    <label className="sr-only" htmlFor="ee-artist">Artista</label><input id="ee-artist" value={songArtist} onChange={(event) => setSongArtist(event.target.value)} placeholder="Artista" />
-                    <button type="submit" aria-label="Sugerir canción"><ArrowRight size={19} /></button>
-                  </form>
-                  <div className="ee-song-list">{songs.map((song) => <div key={song.id}><span><strong>{song.title}</strong><small>{song.artist}</small></span><button type="button" onClick={() => setSongs((current) => current.map((item) => item.id === song.id ? { ...item, votes: item.votes + 1 } : item))} aria-label={`Votar por ${song.title}`}><Heart size={14} /> {song.votes}</button></div>)}</div>
-                </div>
-              )}
-              {content.socialFeatures.enableAudioGuestbook && (
-                <div className="ee-memories__panel ee-memories__panel--voice ee-reveal">
-                  <span className="ee-memories__wave" aria-hidden="true">||||||||||||||||</span>
-                  <h3>Tu voz, nuestro recuerdo</h3>
-                  <p>Déjanos unas palabras que podamos volver a escuchar.</p>
-                  <button type="button" className="ee-button ee-button--outline" onClick={() => toast.info('Grabación de voz disponible próximamente')}><Volume2 size={16} /> Dejar un mensaje</button>
-                </div>
-              )}
-            </div>
+            <SocialFeatures slug={slug} token={guestGroup?.guestToken} preview={isBuilderPreview} songsEnabled={content.socialFeatures.enableSongRequests} audioEnabled={content.socialFeatures.enableAudioGuestbook} />
           </section>
         )}
 
@@ -628,7 +716,7 @@ export function EternalEleganceExperience({
           <section id="rsvp" className="ee-rsvp ee-section">
             <Botanical className="ee-rsvp__branch ee-rsvp__branch--left" />
             <Botanical className="ee-rsvp__branch ee-rsvp__branch--right" />
-            <div className="ee-rsvp__card ee-reveal">
+            <div className="ee-rsvp__card">
               <SectionIntro eyebrow="TE ESPERAMOS CON AMOR" title="Confirma tu asistencia" />
               <p className="ee-rsvp__intro">{guestGroup ? `Una invitación reservada especialmente para ${guestGroup.groupName}. Tienen ${guestGroup.allocatedAdults + guestGroup.allocatedChildren} pases asignados.` : 'Nos encantará compartir este día contigo. Confirma para preparar tu lugar.'}</p>
               {!pass ? (
@@ -645,7 +733,7 @@ export function EternalEleganceExperience({
                   {willAttend === 'yes' && content.rsvp.askDietaryRestrictions && <label>Restricciones alimentarias (opcional)<input value={dietaryNotes} onChange={(event) => setDietaryNotes(event.target.value)} placeholder="Cuéntanos si necesitas algo especial" /></label>}
                   <label>Déjanos un mensaje (opcional)<textarea rows={3} value={guestMessage} onChange={(event) => setGuestMessage(event.target.value)} placeholder="Unas palabras para nosotros" /></label>
                   <button className="ee-button ee-button--dark ee-rsvp__submit" type="submit">Enviar mi respuesta <ArrowRight size={17} /></button>
-                  <small>Esta invitación es una demostración visual. Las respuestas no se guardan.</small>
+                  <small>Usa tu enlace personal para guardar tu respuesta.</small>
                 </form>
               ) : (
                 <div className="ee-rsvp__pass">
@@ -663,6 +751,8 @@ export function EternalEleganceExperience({
       </main>
 
       <footer className="ee-footer">
+        <Botanical className="ee-footer__branch ee-footer__branch--left" />
+        <Botanical className="ee-footer__branch ee-footer__branch--right" />
         <span className="ee-footer__symbol">∞</span>
         <p>{content.hero.mainTitle}</p>
         <small>{dateText} · Gracias por ser parte de nuestra historia</small>

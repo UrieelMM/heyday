@@ -1,0 +1,2 @@
+# Vercel ejecutaba esta tarea a las 15:00 UTC; el contenedor conserva ese horario.
+0 15 * * * /usr/local/bin/run-photo-retention

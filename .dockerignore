@@ -1,0 +1,15 @@
+.git
+.gitignore
+.next
+.next-dev
+node_modules
+npm-debug.log*
+.env*
+!.env.example
+!.env.production.example
+coverage
+build
+out
+*.tsbuildinfo
+.DS_Store
+supabase/.temp

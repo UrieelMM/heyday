@@ -1,6 +1,9 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+  // Empaqueta únicamente el servidor y las dependencias necesarias para
+  // ejecutar Next.js en la imagen final de Docker.
+  output: 'standalone',
   distDir: process.env.NODE_ENV === 'development' ? '.next-dev' : '.next',
   async redirects() {
     return [

@@ -79,7 +79,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://heyday.party'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://heyday.party'),
   title: 'HeyDay — Invitaciones digitales para celebrar tu historia',
   description:
     'Invitaciones digitales interactivas para tu celebración. Diseños únicos, invitados ilimitados, RSVP y pases digitales con QR.',
