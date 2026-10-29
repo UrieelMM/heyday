@@ -6,6 +6,7 @@ import type {
   TemplateId,
 } from '@/types/invitation.types';
 import { applyCelebrationDefaults, isCelebrationTemplateId } from './celebration-config';
+import { applyOccasionDefaults, isOccasionTemplateId } from './occasion-config';
 
 export interface TemplateMetadata {
   id: TemplateId;
@@ -238,12 +239,11 @@ export const TEMPLATES_CATALOG: TemplateMetadata[] = [
     name: 'Sweet Oh Baby!',
     category: 'baby_shower',
     categoryLabel: 'Baby Shower / Gender Reveal',
-    badge: 'Incluye Votación Reveal',
+    badge: 'Móvil de Ensueño',
     description:
-      'Tonos pastel salvia y durazno cálido con módulo interactivo para que los invitados voten Team Niña o Team Niño.',
-    signatureAnimation: 'Floating Nursery Elements + Live Poll',
-    previewImage:
-      'https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=1000&q=80',
+      'Baby shower editorial en salvia y durazno, con un móvil artesanal que flota y se abre hacia una tarde llena de buenos deseos.',
+    signatureAnimation: 'Floating Nursery Mobile + Paper Chapters',
+    previewImage: '/images/sweet-oh-baby/nursery-mobile.jpg',
     colors: {
       bgPrimary: '#FCF9F5',
       bgSecondary: '#F2EFE9',
@@ -269,8 +269,7 @@ export const TEMPLATES_CATALOG: TemplateMetadata[] = [
     description:
       'Solemne y ejecutiva en azul marino noche y oro académico, diseñada para cenas de graduación con control de boletos QR.',
     signatureAnimation: 'Academic Crest Reveal + Timeline Scrub',
-    previewImage:
-      'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1000&q=80',
+    previewImage: '/images/grad-gala-night/prestige-stage.jpg',
     colors: {
       bgPrimary: '#0B132B',
       bgSecondary: '#1C2541',
@@ -539,6 +538,10 @@ export function createDefaultInvitationConfig(
 
   if (isCelebrationTemplateId(templateId)) {
     applyCelebrationDefaults(config, templateId, customTitle);
+  }
+
+  if (isOccasionTemplateId(templateId)) {
+    applyOccasionDefaults(config, templateId, customTitle);
   }
 
   if (templateId === 'boho-terracotta') {

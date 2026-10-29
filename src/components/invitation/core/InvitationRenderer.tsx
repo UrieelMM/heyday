@@ -33,6 +33,10 @@ import {
   buildIcsFileContent,
 } from '@/lib/calendar/ics-generator';
 import { isCelebrationTemplateId } from '@/lib/templates/celebration-config';
+import {
+  isOccasionTemplateId,
+  occasionSectionCopy,
+} from '@/lib/templates/occasion-config';
 import { AmbientParticlesCanvas } from './AmbientParticlesCanvas';
 import { EnvelopeOpener } from './EnvelopeOpener';
 import { FloatingAudioPlayer } from './FloatingAudioPlayer';
@@ -41,8 +45,11 @@ import { SignatureHero } from '../templates/SignatureHero';
 import { setupSignatureScenes } from '../templates/signature-scenes';
 import { CelebrationHero } from '../templates/CelebrationHero';
 import { setupCelebrationScenes } from '../templates/celebration-scenes';
+import { OccasionHero } from '../templates/OccasionHero';
+import { setupOccasionScenes } from '../templates/occasion-scenes';
 import '../templates/signature-templates.css';
 import '../templates/celebration-templates.css';
+import '../templates/occasion-templates.css';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -79,7 +86,9 @@ function StandardInvitationRenderer({
   const signatureTemplateId = templateId === 'boho-terracotta' || templateId === 'modern-minimal-noir' || templateId === 'neon-xv-euphoria'
     ? templateId : null;
   const celebrationTemplateId = isCelebrationTemplateId(templateId) ? templateId : null;
-  const hasSceneTemplate = Boolean(signatureTemplateId || celebrationTemplateId);
+  const occasionTemplateId = isOccasionTemplateId(templateId) ? templateId : null;
+  const hasSceneTemplate = Boolean(signatureTemplateId || celebrationTemplateId || occasionTemplateId);
+  const occasionCopy = occasionTemplateId ? occasionSectionCopy[occasionTemplateId] : null;
 
   // Estado Cuenta Regresiva
   const [timeLeft, setTimeLeft] = useState({
@@ -180,6 +189,10 @@ function StandardInvitationRenderer({
         setupCelebrationScenes(root, celebrationTemplateId);
         return;
       }
+      if (occasionTemplateId) {
+        setupOccasionScenes(root, occasionTemplateId);
+        return;
+      }
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
       const sections = gsap.utils.toArray<HTMLElement>('.inv-reveal-section');
@@ -219,7 +232,7 @@ function StandardInvitationRenderer({
         );
       });
     },
-    { scope: containerRef, dependencies: [isEnvelopeOpen, templateId, signatureTemplateId, celebrationTemplateId] }
+    { scope: containerRef, dependencies: [isEnvelopeOpen, templateId, signatureTemplateId, celebrationTemplateId, occasionTemplateId] }
   );
 
   const { colors, fonts } = config.theme;
@@ -319,7 +332,7 @@ function StandardInvitationRenderer({
         color: colors.textPrimary,
         fontFamily: fonts.bodyFont,
       }}
-      className={`relative min-h-dvh w-full overflow-x-hidden selection:bg-amber-500/20${signatureTemplateId ? ` st-root st-root--${signatureTemplateId}` : ''}${celebrationTemplateId ? ` cs-root cs-root--${celebrationTemplateId}` : ''}`}
+      className={`relative min-h-dvh w-full overflow-x-hidden selection:bg-amber-500/20${signatureTemplateId ? ` st-root st-root--${signatureTemplateId}` : ''}${celebrationTemplateId ? ` cs-root cs-root--${celebrationTemplateId}` : ''}${occasionTemplateId ? ` oc-root oc-root--${occasionTemplateId}` : ''}`}
     >
       {/* 1. Sobre de Apertura Interactivo */}
       {!isBuilderPreview && (
@@ -363,6 +376,15 @@ function StandardInvitationRenderer({
           eventDate={eventDate}
           guestGroup={guestGroup}
           actionHref={isSectionEnabled('quote_story') ? '#st-story' : isSectionEnabled('rsvp') ? '#st-rsvp' : isSectionEnabled('locations') ? '#st-locations' : '#cs-hero'}
+        />
+      )}
+      {isSectionEnabled('hero') && occasionTemplateId && (
+        <OccasionHero
+          templateId={occasionTemplateId}
+          config={config}
+          eventDate={eventDate}
+          guestGroup={guestGroup}
+          actionHref={isSectionEnabled('quote_story') ? '#st-story' : isSectionEnabled('rsvp') ? '#st-rsvp' : isSectionEnabled('locations') ? '#st-locations' : '#oc-hero'}
         />
       )}
       {isSectionEnabled('hero') && !hasSceneTemplate && (
@@ -552,25 +574,25 @@ function StandardInvitationRenderer({
             className="mb-2 text-xs font-semibold tracking-[0.25em] uppercase"
             style={{ color: colors.accentPrimary }}
           >
-            {celebrationTemplateId === 'golden-jubilee'
+            {occasionCopy?.countdownEyebrow ?? (celebrationTemplateId === 'golden-jubilee'
               ? 'La noche se acerca'
               : celebrationTemplateId === 'fiesta-kids-adventure'
                 ? 'Prepara tu mochila'
                 : celebrationTemplateId === 'celestial-baptism'
                   ? 'Con ilusión esperamos'
-                  : 'Falta cada vez menos'}
+                  : 'Falta cada vez menos')}
           </p>
           <h2
             className="mb-10 text-3xl font-semibold sm:text-4xl"
             style={{ fontFamily: fonts.headingFont }}
           >
-            {celebrationTemplateId === 'golden-jubilee'
+            {occasionCopy?.countdownTitle ?? (celebrationTemplateId === 'golden-jubilee'
               ? 'Cuenta regresiva para el brindis'
               : celebrationTemplateId === 'fiesta-kids-adventure'
                 ? 'La aventura empieza en'
                 : celebrationTemplateId === 'celestial-baptism'
                   ? 'Falta para este día de gracia'
-                  : 'Cuenta Regresiva para el Gran Día'}
+                  : 'Cuenta Regresiva para el Gran Día')}
           </h2>
 
           <div className="mx-auto grid max-w-lg grid-cols-4 gap-3 sm:gap-5">
@@ -654,25 +676,25 @@ function StandardInvitationRenderer({
                 className="mb-2 text-xs font-semibold tracking-[0.25em] uppercase"
                 style={{ color: colors.accentPrimary }}
               >
-                {celebrationTemplateId === 'golden-jubilee'
+                {occasionCopy?.locationEyebrow ?? (celebrationTemplateId === 'golden-jubilee'
                   ? 'La cita de gala'
                   : celebrationTemplateId === 'fiesta-kids-adventure'
                     ? 'Punto de encuentro'
                     : celebrationTemplateId === 'celestial-baptism'
                       ? 'Ceremonia y encuentro'
-                      : 'Dónde y Cuándo'}
+                      : 'Dónde y Cuándo')}
               </p>
               <h2
                 className="text-3xl font-semibold sm:text-4xl"
                 style={{ fontFamily: fonts.headingFont }}
               >
-                {celebrationTemplateId === 'golden-jubilee'
+                {occasionCopy?.locationTitle ?? (celebrationTemplateId === 'golden-jubilee'
                   ? 'Donde brindaremos'
                   : celebrationTemplateId === 'fiesta-kids-adventure'
                     ? 'El lugar de la aventura'
                     : celebrationTemplateId === 'celestial-baptism'
                       ? 'Dónde compartiremos este día'
-                      : 'Ubicaciones del Evento'}
+                      : 'Ubicaciones del Evento')}
               </h2>
             </div>
 
@@ -762,25 +784,25 @@ function StandardInvitationRenderer({
               className="mb-2 text-xs font-semibold tracking-[0.25em] uppercase"
               style={{ color: colors.accentPrimary }}
             >
-              {celebrationTemplateId === 'golden-jubilee'
+              {occasionCopy?.timelineEyebrow ?? (celebrationTemplateId === 'golden-jubilee'
                 ? 'La velada'
                 : celebrationTemplateId === 'fiesta-kids-adventure'
                   ? 'El mapa de la fiesta'
                   : celebrationTemplateId === 'celestial-baptism'
                     ? 'Los momentos de este día'
-                    : 'Minuto a Minuto'}
+                    : 'Minuto a Minuto')}
             </p>
             <h2
               className="text-3xl font-semibold sm:text-4xl"
               style={{ fontFamily: fonts.headingFont }}
             >
-              {celebrationTemplateId === 'golden-jubilee'
+              {occasionCopy?.timelineTitle ?? (celebrationTemplateId === 'golden-jubilee'
                 ? 'Una noche para recordar'
                 : celebrationTemplateId === 'fiesta-kids-adventure'
                   ? 'Nuestra ruta de aventura'
                   : celebrationTemplateId === 'celestial-baptism'
                     ? 'Ceremonia y celebración'
-                    : 'Itinerario del Evento'}
+                    : 'Itinerario del Evento')}
             </h2>
           </div>
 
@@ -838,25 +860,25 @@ function StandardInvitationRenderer({
                 className="mb-2 text-xs font-semibold tracking-[0.25em] uppercase"
                 style={{ color: colors.accentPrimary }}
               >
-                {celebrationTemplateId === 'golden-jubilee'
+                {occasionCopy?.galleryEyebrow ?? (celebrationTemplateId === 'golden-jubilee'
                   ? 'Detalles dorados'
                   : celebrationTemplateId === 'fiesta-kids-adventure'
                     ? 'Asómate a la aventura'
                     : celebrationTemplateId === 'celestial-baptism'
                       ? 'Luz y significado'
-                      : 'Momentos Inolvidables'}
+                      : 'Momentos Inolvidables')}
               </p>
               <h2
                 className="text-3xl font-semibold sm:text-4xl"
                 style={{ fontFamily: fonts.headingFont }}
               >
-                {celebrationTemplateId === 'golden-jubilee'
+                {occasionCopy?.galleryTitle ?? (celebrationTemplateId === 'golden-jubilee'
                   ? 'Momentos de la noche'
                   : celebrationTemplateId === 'fiesta-kids-adventure'
                     ? 'Nuestro mundo de aventura'
                     : celebrationTemplateId === 'celestial-baptism'
                       ? 'Detalles de este día'
-                      : 'Nuestra Galería'}
+                      : 'Nuestra Galería')}
               </h2>
             </div>
 
@@ -890,11 +912,11 @@ function StandardInvitationRenderer({
             className="mb-2 text-xs font-semibold tracking-[0.25em] uppercase"
             style={{ color: colors.accentPrimary }}
           >
-            {celebrationTemplateId === 'fiesta-kids-adventure'
+            {occasionCopy?.dressEyebrow ?? (celebrationTemplateId === 'fiesta-kids-adventure'
               ? 'Listos para jugar'
               : celebrationTemplateId === 'celestial-baptism'
                 ? 'Para acompañarnos'
-                : 'Dress Code'}
+                : 'Dress Code')}
           </p>
           <h2
             className="mb-8 text-3xl font-semibold sm:text-4xl"
@@ -912,7 +934,7 @@ function StandardInvitationRenderer({
               }}
             >
               <h3 className="text-sm font-bold tracking-widest uppercase">
-                {celebrationTemplateId === 'fiesta-kids-adventure' ? 'Peques' : 'Mujeres'}
+                {occasionCopy?.dressLeft ?? (celebrationTemplateId === 'fiesta-kids-adventure' ? 'Peques' : 'Mujeres')}
               </h3>
               <p
                 className="mt-2 text-sm leading-relaxed"
@@ -929,7 +951,7 @@ function StandardInvitationRenderer({
               }}
             >
               <h3 className="text-sm font-bold tracking-widest uppercase">
-                {celebrationTemplateId === 'fiesta-kids-adventure' ? 'Adultos' : 'Hombres'}
+                {occasionCopy?.dressRight ?? (celebrationTemplateId === 'fiesta-kids-adventure' ? 'Adultos' : 'Hombres')}
               </h3>
               <p
                 className="mt-2 text-sm leading-relaxed"
@@ -984,7 +1006,7 @@ function StandardInvitationRenderer({
               className="mb-3 text-3xl font-semibold sm:text-4xl"
               style={{ fontFamily: fonts.headingFont }}
             >
-              Mesa de Regalos y Lluvia de Sobres
+              {occasionCopy?.giftsTitle ?? 'Mesa de Regalos y Lluvia de Sobres'}
             </h2>
             <p
               className="mx-auto mb-10 max-w-2xl text-sm leading-relaxed"

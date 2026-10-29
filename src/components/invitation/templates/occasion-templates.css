@@ -1,0 +1,212 @@
+.oc-root { overflow-x: clip; }
+.oc-root .oc-hero { position: relative; height: 188svh; }
+.oc-root .oc-hero__stage { position: sticky; top: 0; height: 100svh; min-height: 620px; overflow: hidden; isolation: isolate; }
+.oc-root .oc-hero__texture,
+.oc-root .oc-hero__mobile,
+.oc-root .oc-hero__crest,
+.oc-root .oc-hero__visual,
+.oc-root .oc-hero__copy,
+.oc-root .oc-hero__final,
+.oc-root .oc-hero__credential { position: absolute; }
+.oc-root .oc-hero__texture { z-index: 0; pointer-events: none; }
+.oc-root .oc-hero__visual { z-index: 2; overflow: hidden; will-change: inset, width, height, transform, clip-path; }
+.oc-root .oc-hero__visual img { width: 100%; height: 100%; object-fit: cover; }
+.oc-root .oc-hero__visual-wash { position: absolute; inset: 0; pointer-events: none; }
+.oc-root .oc-hero__photo-label { position: absolute; right: 20px; bottom: 18px; padding: 9px 12px; font-size: 8px; font-weight: 700; letter-spacing: .18em; }
+.oc-root .oc-hero__copy { z-index: 3; will-change: transform, opacity; }
+.oc-root .oc-hero__eyebrow,
+.oc-root .oc-hero__event,
+.oc-root .oc-hero__date,
+.oc-root .oc-hero__guest { font-size: 10px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; }
+.oc-root .oc-hero__eyebrow { margin: 0; }
+.oc-root .oc-hero__event { margin: 0 0 9px; }
+.oc-root .oc-hero__copy h1 { margin: 0; }
+.oc-root .oc-hero__tagline { max-width: 470px; margin: 24px 0 0; line-height: 1.7; }
+.oc-root .oc-hero__guest { margin: 18px 0 0; letter-spacing: .08em; text-transform: none; }
+.oc-root .oc-hero__date { margin: 23px 0 0; }
+.oc-root .oc-hero__final { z-index: 4; top: 50%; left: 50%; width: min(88%, 920px); color: #fff; text-align: center; transform: translate(-50%, -50%); opacity: 0; pointer-events: none; }
+.oc-root .oc-hero__final span { font-size: 9px; font-weight: 700; letter-spacing: .3em; }
+.oc-root .oc-hero__final p { margin: 18px 0 0; }
+.oc-root .oc-hero__cta { position: absolute; z-index: 6; bottom: 5%; left: 7%; display: inline-flex; min-height: 46px; align-items: center; justify-content: center; padding: 0 20px; font-size: 9px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; }
+.oc-root .oc-hero__scroll { position: absolute; z-index: 6; right: 4%; bottom: 6%; font-size: 8px; font-weight: 700; letter-spacing: .2em; }
+.oc-root .st-story__word { transition: color .2s; }
+.oc-root .st-story > .grid > div,
+.oc-root .st-family__card,
+.oc-root .st-countdown__unit,
+.oc-root .st-locations__card,
+.oc-root .st-timeline__item,
+.oc-root .st-gallery__photo { will-change: transform, opacity; }
+.oc-root .st-locations__card { will-change: transform, opacity, clip-path; }
+.oc-root .st-locations .grid:has(> .st-locations__card:only-child) { grid-template-columns: minmax(0, 680px); justify-content: center; }
+.oc-root section[id] { scroll-margin-top: 22px; }
+
+/* Sweet Oh Baby: a tactile nursery mobile with a slow, weightless rhythm. */
+.oc-root--sweet-oh-baby { font-family: var(--font-jakarta), sans-serif !important; background: #fcf9f5; color: #3d352e; }
+.oc-root--sweet-oh-baby .oc-hero__stage { background: #f7efe5; color: #3d352e; }
+.oc-root--sweet-oh-baby .oc-hero__texture { inset: 0; background: radial-gradient(circle at 13% 18%, rgba(255,255,255,.94) 0 8%, transparent 8.2%), radial-gradient(circle at 89% 8%, rgba(183,216,232,.42) 0 12%, transparent 12.2%), radial-gradient(ellipse at 7% 100%, rgba(244,162,140,.36), transparent 42%), repeating-linear-gradient(94deg, transparent 0 79px, rgba(90,70,52,.025) 80px 81px); }
+.oc-root--sweet-oh-baby .oc-hero__mobile { z-index: 1; top: -7%; left: 28%; width: 37%; height: 72%; pointer-events: none; }
+.oc-root--sweet-oh-baby .oc-hero__mobile-bar { position: absolute; top: 9%; left: 12%; width: 76%; height: 1px; background: #9c7f5d; transform-origin: center; }
+.oc-root--sweet-oh-baby .oc-hero__mobile-bar::before,
+.oc-root--sweet-oh-baby .oc-hero__mobile-bar::after { content: ''; position: absolute; top: 0; width: 1px; height: 250px; background: linear-gradient(#9c7f5d, rgba(156,127,93,.08)); }
+.oc-root--sweet-oh-baby .oc-hero__mobile-bar::before { left: 13%; transform: rotate(6deg); transform-origin: top; }
+.oc-root--sweet-oh-baby .oc-hero__mobile-bar::after { right: 13%; transform: rotate(-7deg); transform-origin: top; }
+.oc-root--sweet-oh-baby .oc-hero__mobile i { position: absolute; z-index: 1; display: grid; place-items: center; font-style: normal; line-height: 1; filter: drop-shadow(0 12px 18px rgba(97,78,61,.12)); will-change: transform; }
+.oc-root--sweet-oh-baby .oc-hero__mobile i::before { content: ''; position: absolute; bottom: 100%; left: 50%; width: 1px; background: rgba(126,105,82,.34); }
+.oc-root--sweet-oh-baby .oc-hero__mobile-moon { top: 28%; left: 20%; color: #f4a28c; font-size: clamp(92px, 12vw, 160px); }
+.oc-root--sweet-oh-baby .oc-hero__mobile-moon::before { height: 130px; }
+.oc-root--sweet-oh-baby .oc-hero__mobile-cloud { top: 45%; right: 5%; color: #8fb9a8; font-size: clamp(75px, 10vw, 130px); }
+.oc-root--sweet-oh-baby .oc-hero__mobile-cloud::before { height: 215px; }
+.oc-root--sweet-oh-baby .oc-hero__mobile-star { top: 22%; right: 26%; color: #c59b5c; font-size: clamp(42px, 6vw, 75px); }
+.oc-root--sweet-oh-baby .oc-hero__mobile-star::before { height: 105px; }
+.oc-root--sweet-oh-baby .oc-hero__visual { left: 53%; top: 9%; width: 39%; height: 80%; border: 11px solid rgba(255,255,255,.82); border-radius: 48% 48% 18px 18px; box-shadow: 0 26px 70px rgba(82,67,53,.18); rotate: 1.5deg; }
+.oc-root--sweet-oh-baby .oc-hero__visual-wash { background: linear-gradient(0deg, rgba(55,46,37,.52), transparent 45%); }
+.oc-root--sweet-oh-baby .oc-hero__photo-label { border-radius: 99px; background: rgba(255,251,246,.9); color: #675446; }
+.oc-root--sweet-oh-baby .oc-hero__copy { top: 19%; left: 7%; width: 49%; }
+.oc-root--sweet-oh-baby .oc-hero__eyebrow { margin-bottom: 70px; color: #876c52; }
+.oc-root--sweet-oh-baby .oc-hero__event { color: #7c8f7f; }
+.oc-root--sweet-oh-baby .oc-hero__copy h1 { font: italic 600 clamp(72px, 8.5vw, 136px)/.88 var(--font-playfair), Georgia, serif; letter-spacing: -.07em; }
+.oc-root--sweet-oh-baby .oc-hero__tagline { color: #6f6258; font-size: 15px; }
+.oc-root--sweet-oh-baby .oc-hero__date { color: #9d6a5e; }
+.oc-root--sweet-oh-baby .oc-hero__final p { font: italic 600 clamp(58px, 7.2vw, 116px)/.96 var(--font-playfair), Georgia, serif; text-wrap: balance; }
+.oc-root--sweet-oh-baby .oc-hero__cta { border: 1px solid #6e8878; border-radius: 100px; background: #6e8878; color: #fff; }
+.oc-root--sweet-oh-baby .oc-hero__scroll { color: #775f4f; }
+.oc-root--sweet-oh-baby :is(h2,h3) { font-family: var(--font-playfair), Georgia, serif !important; letter-spacing: -.025em; }
+.oc-root--sweet-oh-baby .st-story { width: 100%; max-width: none; padding: 145px max(24px, calc((100% - 880px)/2)); background: #fffdf9; }
+.oc-root--sweet-oh-baby .st-story > div:first-child { height: 75px !important; background: linear-gradient(#8fb9a8 0 45%, #f4a28c 45% 100%) !important; }
+.oc-root--sweet-oh-baby .st-story blockquote { font: italic 500 clamp(37px, 5.2vw, 69px)/1.16 var(--font-playfair), Georgia, serif !important; }
+.oc-root--sweet-oh-baby .st-story > .grid > div { border: 1px solid rgba(143,185,168,.58) !important; border-radius: 48px 8px 48px 8px !important; background: #f7f2e9 !important; }
+.oc-root--sweet-oh-baby .st-family { background: #e8f0ea !important; }
+.oc-root--sweet-oh-baby .st-family__card { border: 1px solid rgba(124,143,127,.46) !important; border-radius: 50% 50% 24px 24px !important; background: #fffdfa !important; box-shadow: 0 17px 35px rgba(82,104,88,.08); }
+.oc-root--sweet-oh-baby .st-countdown { position: relative; }
+.oc-root--sweet-oh-baby .st-countdown::before { content: '☾'; position: absolute; z-index: -1; top: 2%; left: 0; color: rgba(244,162,140,.12); font: 400 clamp(180px, 31vw, 430px)/1 Georgia, serif; }
+.oc-root--sweet-oh-baby .st-countdown__unit { aspect-ratio: 1; border: 1px solid rgba(143,185,168,.68) !important; border-radius: 50% !important; background: #fffdf9 !important; color: #3d352e; }
+.oc-root--sweet-oh-baby .st-countdown__unit:nth-child(2n) { border-color: rgba(244,162,140,.7) !important; }
+.oc-root--sweet-oh-baby .st-countdown__unit span:last-child { color: #77695d !important; }
+.oc-root--sweet-oh-baby .st-countdown a:first-child,
+.oc-root--sweet-oh-baby .st-locations__card a:first-child,
+.oc-root--sweet-oh-baby .st-rsvp button[type=submit] { background: #6e8878 !important; color: #fff !important; }
+.oc-root--sweet-oh-baby .st-locations { background: #f3eadf !important; }
+.oc-root--sweet-oh-baby .st-locations__card { border: 8px solid #fffdf9 !important; border-radius: 46% 46% 22px 22px !important; background: #fffdf9 !important; box-shadow: 0 24px 55px rgba(91,72,53,.12); }
+.oc-root--sweet-oh-baby .st-locations__card a:last-child { border-color: #8fb9a8 !important; color: #3d352e !important; }
+.oc-root--sweet-oh-baby .st-locations__card p { color: #74665c !important; }
+.oc-root--sweet-oh-baby .st-timeline__line { background: linear-gradient(#8fb9a8, #f4a28c) !important; }
+.oc-root--sweet-oh-baby .st-timeline__item { padding: 14px 17px; border-radius: 17px; background: #f4f0e9; }
+.oc-root--sweet-oh-baby .st-timeline__item:nth-child(2n) { background: #edf3ee; }
+.oc-root--sweet-oh-baby .st-gallery { background: #e7efe9 !important; }
+.oc-root--sweet-oh-baby .st-gallery .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 780px; margin-inline: auto; }
+.oc-root--sweet-oh-baby .st-gallery__photo { border: 9px solid #fffdf9; border-radius: 46% 46% 18px 18px !important; box-shadow: 0 18px 35px rgba(74,92,78,.13); }
+.oc-root--sweet-oh-baby .st-gallery__photo:nth-child(2) { border-radius: 18px 18px 46% 46% !important; }
+.oc-root--sweet-oh-baby .st-dress > .grid > div { border-color: rgba(143,185,168,.58) !important; border-radius: 35px 8px 35px 8px !important; background: #f7f2e9 !important; }
+.oc-root--sweet-oh-baby .st-gifts { background: #edf3ee !important; }
+.oc-root--sweet-oh-baby .st-gifts .rounded-2xl,
+.oc-root--sweet-oh-baby .st-rsvp > div { border-color: rgba(143,185,168,.55) !important; border-radius: 35px 8px 35px 8px !important; background: #fffdf9 !important; }
+
+/* Grad & Gala: a ceremonial program, architectural crest and disciplined procession. */
+.oc-root--grad-gala-night { font-family: var(--font-inter), sans-serif !important; background: #0b132b; color: #f8f6ee; }
+.oc-root--grad-gala-night .oc-hero__stage { background: #091126; color: #f8f6ee; }
+.oc-root--grad-gala-night .oc-hero__texture { inset: 0; background: radial-gradient(circle at 68% 48%, rgba(212,175,55,.14), transparent 34%), linear-gradient(112deg, transparent 0 52%, rgba(91,192,190,.05) 52.1% 52.3%, transparent 52.4%), repeating-linear-gradient(90deg, transparent 0 89px, rgba(212,175,55,.045) 90px 91px); }
+.oc-root--grad-gala-night .oc-hero__crest { z-index: 1; top: 5%; left: 27%; width: min(31vw, 410px); stroke: rgba(212,175,55,.34); stroke-width: 1.2; pointer-events: none; transform-origin: center; }
+.oc-root--grad-gala-night .oc-hero__visual { left: 51%; top: 9%; width: 42%; height: 81%; clip-path: polygon(8% 0, 92% 0, 100% 11%, 100% 86%, 50% 100%, 0 86%, 0 11%); box-shadow: 0 27px 75px rgba(0,0,0,.48); }
+.oc-root--grad-gala-night .oc-hero__visual::before { content: ''; position: absolute; z-index: 2; inset: 12px; border: 1px solid rgba(212,175,55,.62); pointer-events: none; }
+.oc-root--grad-gala-night .oc-hero__visual-wash { background: linear-gradient(0deg, rgba(4,9,22,.78), transparent 54%); }
+.oc-root--grad-gala-night .oc-hero__photo-label { border: 1px solid rgba(212,175,55,.55); background: rgba(7,14,34,.76); color: #f1d985; }
+.oc-root--grad-gala-night .oc-hero__copy { top: 18%; left: 7%; width: 50%; }
+.oc-root--grad-gala-night .oc-hero__eyebrow { margin-bottom: 70px; color: #d4af37; }
+.oc-root--grad-gala-night .oc-hero__event { color: #85c4c1; }
+.oc-root--grad-gala-night .oc-hero__copy h1 { max-width: 720px; font: 500 clamp(57px, 6.6vw, 108px)/.98 var(--font-cinzel), Georgia, serif; text-transform: uppercase; letter-spacing: -.055em; text-wrap: balance; }
+.oc-root--grad-gala-night .oc-hero__tagline { color: #c6cedc; font-size: 14px; }
+.oc-root--grad-gala-night .oc-hero__date { color: #d4af37; }
+.oc-root--grad-gala-night .oc-hero__credential { z-index: 4; left: 7%; bottom: 14%; width: 255px; padding: 15px 18px; border: 1px solid rgba(212,175,55,.68); background: rgba(11,19,43,.72); color: #f8f6ee; box-shadow: 0 16px 35px rgba(0,0,0,.25); rotate: -2deg; will-change: transform, opacity; }
+.oc-root--grad-gala-night .oc-hero__credential span,
+.oc-root--grad-gala-night .oc-hero__credential small { display: block; color: #d4af37; font-size: 7px; font-weight: 700; letter-spacing: .18em; }
+.oc-root--grad-gala-night .oc-hero__credential strong { display: block; margin: 5px 0; font: 500 28px/1 var(--font-cinzel), serif; letter-spacing: .18em; }
+.oc-root--grad-gala-night .oc-hero__final p { font: 500 clamp(48px, 6vw, 96px)/1.03 var(--font-cinzel), Georgia, serif; text-transform: uppercase; text-wrap: balance; }
+.oc-root--grad-gala-night .oc-hero__cta { border: 1px solid #d4af37; background: #d4af37; color: #0b132b; }
+.oc-root--grad-gala-night .oc-hero__scroll { color: #a7b3ca; }
+.oc-root--grad-gala-night :is(h2,h3) { font-family: var(--font-cinzel), Georgia, serif !important; font-weight: 500 !important; text-transform: uppercase; letter-spacing: -.02em; }
+.oc-root--grad-gala-night .st-story { width: 100%; max-width: none; padding: 150px max(24px, calc((100% - 920px)/2)); background: #111b37; }
+.oc-root--grad-gala-night .st-story > div:first-child { height: 84px !important; background: linear-gradient(#d4af37 0 58%, #5bc0be 58% 64%, transparent 64%) !important; }
+.oc-root--grad-gala-night .st-story blockquote { font: 500 clamp(33px, 4.5vw, 60px)/1.25 var(--font-cinzel), Georgia, serif !important; }
+.oc-root--grad-gala-night .st-story > .grid > div { border: 1px solid rgba(212,175,55,.43) !important; border-radius: 0 !important; background: #162342 !important; color: #f8f6ee; }
+.oc-root--grad-gala-night .st-story > .grid > div p { color: #abb7ca !important; }
+.oc-root--grad-gala-night .st-countdown__unit { border: 1px solid rgba(212,175,55,.5) !important; border-radius: 0 !important; background: #14213e !important; color: #f8f6ee; }
+.oc-root--grad-gala-night .st-countdown__unit span:first-child { color: #f1d985; }
+.oc-root--grad-gala-night .st-countdown__unit span:last-child { color: #aeb9cc !important; }
+.oc-root--grad-gala-night .st-countdown a:first-child,
+.oc-root--grad-gala-night .st-locations__card a:first-child,
+.oc-root--grad-gala-night .st-rsvp button[type=submit] { background: #b79427 !important; color: #071025 !important; }
+.oc-root--grad-gala-night .st-countdown button { border-radius: 0 !important; border-color: #d4af37 !important; color: #f8f6ee !important; }
+.oc-root--grad-gala-night .st-locations { background: #e9e6dd !important; color: #0b132b; }
+.oc-root--grad-gala-night .st-locations__card { border: 1px solid #a98d39 !important; border-radius: 0 !important; background: #f9f7f1 !important; color: #0b132b; box-shadow: 16px 16px 0 #0b132b; }
+.oc-root--grad-gala-night .st-locations__card a { border-radius: 0 !important; }
+.oc-root--grad-gala-night .st-locations__card a:last-child { border-color: #0b132b !important; color: #0b132b !important; }
+.oc-root--grad-gala-night .st-locations__card p { color: #4d5668 !important; }
+.oc-root--grad-gala-night .st-timeline { max-width: 850px; }
+.oc-root--grad-gala-night .st-timeline__line { background: linear-gradient(#d4af37, #5bc0be) !important; }
+.oc-root--grad-gala-night .st-timeline__item { padding: 18px 20px; border: 1px solid rgba(212,175,55,.25); border-left: 3px solid #d4af37; background: #101b37; }
+.oc-root--grad-gala-night .st-gallery { background: #070d1e !important; }
+.oc-root--grad-gala-night .st-gallery .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 900px; margin-inline: auto; }
+.oc-root--grad-gala-night .st-gallery__photo { border: 1px solid rgba(212,175,55,.68); border-radius: 0 !important; box-shadow: 0 25px 60px rgba(0,0,0,.34); }
+.oc-root--grad-gala-night .st-dress { max-width: 900px; }
+.oc-root--grad-gala-night .st-dress > .grid > div { border-color: rgba(212,175,55,.45) !important; border-radius: 0 !important; background: #14213e !important; }
+.oc-root--grad-gala-night .st-dress > .grid > div p { color: #b5bfd0 !important; }
+.oc-root--grad-gala-night .st-social,
+.oc-root--grad-gala-night .st-gifts { background: #111b37 !important; }
+.oc-root--grad-gala-night .st-social .rounded-3xl,
+.oc-root--grad-gala-night .st-rsvp > div { border-color: rgba(212,175,55,.48) !important; border-radius: 0 !important; background: #14213e !important; color: #f8f6ee; box-shadow: 0 25px 70px rgba(0,0,0,.35) !important; }
+.oc-root--grad-gala-night .st-rsvp input,
+.oc-root--grad-gala-night .st-rsvp select,
+.oc-root--grad-gala-night .st-rsvp textarea { border-radius: 0 !important; background: #091126 !important; color: #f8f6ee !important; }
+.oc-root--grad-gala-night .st-rsvp option { background: #091126; color: #f8f6ee; }
+
+@media (max-width: 760px) {
+  .oc-root .oc-hero__stage { min-height: 575px; }
+  .oc-root .oc-hero__copy { top: 9%; left: 7%; width: 86%; }
+  .oc-root .oc-hero__eyebrow { margin-bottom: 19px; }
+  .oc-root .oc-hero__tagline { margin-top: 12px; font-size: 12px; line-height: 1.5; }
+  .oc-root .oc-hero__date { margin-top: 11px; font-size: 9px; }
+  .oc-root .oc-hero__guest { margin-top: 9px; font-size: 9px; }
+  .oc-root .oc-hero__final { bottom: 21%; top: auto; width: 86%; transform: translateX(-50%); }
+  .oc-root .oc-hero__cta { right: 7%; bottom: 4%; width: auto; }
+  .oc-root .oc-hero__scroll { display: none; }
+  .oc-root .st-countdown__unit { min-width: 0; padding-block: 14px !important; }
+  .oc-root .st-countdown__unit span:last-child { font-size: 8px !important; letter-spacing: .03em !important; }
+  .oc-root--sweet-oh-baby .oc-hero__visual { left: 12%; top: 47%; width: 76%; height: 41%; border-width: 7px; }
+  .oc-root--sweet-oh-baby .oc-hero__copy h1 { font-size: clamp(54px, 15vw, 80px); }
+  .oc-root--sweet-oh-baby .oc-hero__mobile { top: 25%; left: -8%; width: 78%; height: 56%; opacity: .72; }
+  .oc-root--sweet-oh-baby .oc-hero__final p { font-size: clamp(44px, 11vw, 72px); }
+  .oc-root--grad-gala-night .oc-hero__visual { left: 11%; top: 46%; width: 78%; height: 43%; }
+  .oc-root--grad-gala-night .oc-hero__copy h1 { font-size: clamp(43px, 11vw, 67px); }
+  .oc-root--grad-gala-night .oc-hero__crest { top: 16%; left: 38%; width: 58vw; }
+  .oc-root--grad-gala-night .oc-hero__credential { display: none; }
+  .oc-root--grad-gala-night .oc-hero__final p { font-size: clamp(38px, 9.5vw, 62px); }
+  .oc-root--sweet-oh-baby .st-gallery .grid,
+  .oc-root--grad-gala-night .st-gallery .grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 370px) {
+  .oc-root .oc-hero__stage { min-height: 535px; }
+  .oc-root .oc-hero__event { font-size: 8px; }
+  .oc-root--sweet-oh-baby .oc-hero__copy h1 { font-size: 50px; }
+  .oc-root--grad-gala-night .oc-hero__copy h1 { font-size: 39px; }
+}
+
+@media (max-height: 700px) and (min-width: 761px) {
+  .oc-root .oc-hero__copy { top: 12%; }
+  .oc-root .oc-hero__eyebrow { margin-bottom: 35px; }
+  .oc-root .oc-hero__credential { bottom: 10%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .oc-root .oc-hero { height: auto; min-height: 100svh; }
+  .oc-root .oc-hero__stage { position: relative; height: 100svh; }
+  .oc-root .oc-hero__final { display: none; }
+  .oc-root .oc-hero__visual,
+  .oc-root .oc-hero__copy,
+  .oc-root .st-family__card,
+  .oc-root .st-countdown__unit,
+  .oc-root .st-gallery__photo { will-change: auto; }
+  .oc-root *,
+  .oc-root *::before,
+  .oc-root *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
