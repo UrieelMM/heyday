@@ -347,6 +347,7 @@ export function createDefaultInvitationConfig(
         mainTitle: customTitle,
         tagline: '24 de Octubre de 2026 • San Miguel de Allende, Gto.',
         coverImageUrl: tpl.previewImage,
+        coverVideoUrl: '',
         focalPoint: { x: 50, y: 35 },
       },
       quoteStory: {

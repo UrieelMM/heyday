@@ -10,7 +10,7 @@
 .oc-root .oc-hero__credential { position: absolute; }
 .oc-root .oc-hero__texture { z-index: 0; pointer-events: none; }
 .oc-root .oc-hero__visual { z-index: 2; overflow: hidden; will-change: inset, width, height, transform, clip-path; }
-.oc-root .oc-hero__visual img { width: 100%; height: 100%; object-fit: cover; }
+.oc-root .oc-hero__visual :is(img, video) { width: 100%; height: 100%; object-fit: cover; }
 .oc-root .oc-hero__visual-wash { position: absolute; inset: 0; pointer-events: none; }
 .oc-root .oc-hero__photo-label { position: absolute; right: 20px; bottom: 18px; padding: 9px 12px; font-size: 8px; font-weight: 700; letter-spacing: .18em; }
 .oc-root .oc-hero__copy { z-index: 3; will-change: transform, opacity; }

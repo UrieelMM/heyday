@@ -529,7 +529,7 @@
 .ee-hero__visual::after { position: absolute; z-index: 2; inset: 0; background: linear-gradient(0deg, rgba(22, 16, 12, .78), rgba(22, 16, 12, .16) 45%, rgba(22, 16, 12, .42)); content: ''; opacity: var(--ee-wash-opacity); pointer-events: none; }
 .ee-hero__visual-frame { position: absolute; z-index: 2; inset: 0 5px 0 0; border: 1px solid var(--ee-bronze); border-radius: 48% 48% 0 0; pointer-events: none; }
 .ee-hero__photo { width: 100%; height: 100%; max-height: none; aspect-ratio: auto; }
-.ee-hero__photo img { width: 100%; height: 100%; object-fit: cover; }
+.ee-hero__photo :is(img, video) { width: 100%; height: 100%; object-fit: cover; }
 .ee-hero__photo-caption { z-index: 3; }
 .ee-hero__branch { z-index: 3; }
 .ee-hero__final { position: absolute; z-index: 5; top: 50%; left: 50%; width: min(90%, 1000px); color: white; opacity: 0; text-align: center; transform: translate(-50%, -50%); pointer-events: none; }

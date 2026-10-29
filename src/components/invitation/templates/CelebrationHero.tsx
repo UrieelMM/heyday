@@ -1,5 +1,6 @@
 import type { GuestGroup, InvitationConfig } from '@/types/invitation.types';
 import { celebrationAge, celebrationName, isFirstCommunion, type CelebrationTemplateId } from '@/lib/templates/celebration-config';
+import { HeroMedia } from '../core/HeroMedia';
 
 const heroCopy = {
   'golden-jubilee': {
@@ -54,7 +55,7 @@ export function CelebrationHero({
         {age && <span className="cs-hero__age" aria-hidden="true">{age}</span>}
 
         <div className="cs-hero__visual">
-          <img src={hero.coverImageUrl} alt={`Imagen de la celebración de ${hero.mainTitle}`} style={{ objectPosition: `${hero.focalPoint.x}% ${hero.focalPoint.y}%` }} fetchPriority="high" />
+          <HeroMedia hero={hero} alt={`Imagen de la celebración de ${hero.mainTitle}`} />
           <div className="cs-hero__visual-wash" aria-hidden="true" />
           <span className="cs-hero__photo-label" aria-hidden="true">{copy.label}</span>
         </div>

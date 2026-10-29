@@ -103,6 +103,7 @@ function DashboardContent() {
   } = useBuilderStore();
 
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [shareAccess, setShareAccess] = useState<{ slug: string; pin: string } | null>(null);
   const [adminEmail, setAdminEmail] = useState<string>(
     'Administrador'
   );
@@ -279,11 +280,16 @@ function DashboardContent() {
   );
 
   const handleOpenInBuilder = (record: ClientInvitationRecord) => {
-    loadInvitationRecord(record);
-    setActiveTab('builder');
-    toast.success(
-      `Editando invitación de ${record.clientName} (${record.title})`
-    );
+    router.push(`/editar/${encodeURIComponent(record.slug)}`);
+  };
+
+  const handleGenerateAccess = async (record: ClientInvitationRecord) => {
+    try {
+      const response = await fetch(`/api/admin/invitations/${encodeURIComponent(record.id)}/pin`, { method: 'POST' });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'No se pudo generar el acceso');
+      setShareAccess({ slug: result.slug, pin: result.pin });
+    } catch (error) { toast.error(error instanceof Error ? error.message : 'No se pudo generar el acceso'); }
   };
 
   const handleSaveCurrentBuilder = async () => {
@@ -320,7 +326,7 @@ function DashboardContent() {
       : cleanSlug;
 
     try {
-    const created = await addInvitation({
+    const { invitation: created, pin } = await addInvitation({
       clientName: newForm.clientName.trim(),
       clientEmail: newForm.clientEmail.trim(),
       clientPhone: newForm.clientPhone.trim(),
@@ -332,6 +338,7 @@ function DashboardContent() {
 
     setSelectedHistoryTemplate(newForm.templateId);
     setIsNewModalOpen(false);
+    setShareAccess({ slug: created.slug, pin });
     setNewForm({
       clientName: '',
       clientEmail: '',
@@ -346,10 +353,7 @@ function DashboardContent() {
       `Invitación creada para ${created.clientName} con el template ${created.templateId}`
     );
 
-    if (openBuilderAfter) {
-      loadInvitationRecord(created);
-      setActiveTab('builder');
-    }
+    if (openBuilderAfter) loadInvitationRecord(created);
     } catch (err) { toast.error(err instanceof Error ? err.message : 'No se pudo crear la invitación'); }
   };
 
@@ -439,7 +443,7 @@ function DashboardContent() {
             </button>
             <button
               type="button"
-              onClick={() => setActiveTab('builder')}
+              onClick={() => activeInvitationRecord ? handleOpenInBuilder(activeInvitationRecord) : setIsNewModalOpen(true)}
               className={`inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition ${
                 activeTab === 'builder'
                   ? 'bg-[#cc785c] text-white'
@@ -447,11 +451,11 @@ function DashboardContent() {
               }`}
             >
               <Wand2 className="h-3.5 w-3.5" />
-              <span className="whitespace-nowrap">Constructor</span>
+              <span className="whitespace-nowrap">Editor</span>
             </button>
             <button
               type="button"
-              onClick={() => setActiveTab('guests')}
+              onClick={() => activeInvitationRecord ? router.push(`/editar/${encodeURIComponent(activeInvitationRecord.slug)}?tab=guests`) : setIsNewModalOpen(true)}
               className={`inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition ${
                 activeTab === 'guests'
                   ? 'bg-[#cc785c] text-white'
@@ -848,13 +852,23 @@ function DashboardContent() {
 
                           <td className="px-5 py-4">
                             <Link
-                              href={`/invitacion/${inv.slug}?template=${inv.templateId}&g=fam-lopez-8a2f`}
+                              href={`/invitacion/${encodeURIComponent(inv.slug)}`}
                               target="_blank"
                               className="inline-flex cursor-pointer items-center gap-1 font-mono text-xs text-[#cc785c] hover:underline"
+                              title={
+                                inv.status === 'published'
+                                  ? 'Abrir invitación pública'
+                                  : 'Vista previa privada para administradores'
+                              }
                             >
                               <span>/invitacion/{inv.slug}</span>
                               <ExternalLink className="h-3 w-3" />
                             </Link>
+                            {inv.status !== 'published' && (
+                              <span className="block text-[11px] text-[#a9583e]">
+                                Vista previa privada · publica para compartir
+                              </span>
+                            )}
                             <span className="block text-[11px] text-[#8e8b82]">
                               {inv.viewsCount} aperturas
                             </span>
@@ -887,15 +901,13 @@ function DashboardContent() {
                               </button>
                               <button
                                 type="button"
-                                onClick={() => {
-                                  loadInvitationRecord(inv);
-                                  setActiveTab('guests');
-                                }}
+                                onClick={() => router.push(`/editar/${encodeURIComponent(inv.slug)}?tab=guests`)}
                                 className="inline-flex cursor-pointer items-center gap-1 rounded-xl border border-[#d7cfc4] bg-white px-2.5 py-1.5 text-xs font-semibold text-[#141413] transition hover:bg-[#ebe6df]"
                               >
                                 <Users className="h-3.5 w-3.5" />
                                 Invitados
                               </button>
+                              <button type="button" onClick={() => void handleGenerateAccess(inv)} className="rounded-xl border border-[#d7cfc4] bg-white px-2.5 py-1.5 text-xs font-semibold text-[#141413] hover:bg-[#ebe6df]" title="Genera un PIN nuevo y desactiva el anterior">Generar acceso</button>
                               <button
                                 type="button"
                                 onClick={async () => {
@@ -1261,7 +1273,7 @@ function DashboardContent() {
 
                   <div>
                     <label className="mb-1 block text-xs font-semibold text-[#3d3d3a]">
-                      URL Fotografía de Portada
+                      Fotografía de portada
                     </label>
                     <input type="file" accept="image/jpeg,image/png,image/webp" disabled={uploadingPhoto || !invitations.some(i => i.id === eventId)} className="mb-2 block w-full text-xs" onChange={async (e) => {
                       const file = e.target.files?.[0]; e.target.value = ''; if (!file) return;
@@ -1270,14 +1282,7 @@ function DashboardContent() {
                       try { const form = new FormData(); form.set('eventId', eventId); form.set('file', file); const response = await fetch('/api/admin/assets', { method: 'POST', body: form }); const result = await response.json(); if (!response.ok) throw new Error(result.error); updateHero({ coverImageUrl: result.url }); toast.success('Foto subida. Guarda los cambios para aplicarla.'); } catch (err) { toast.error(err instanceof Error ? err.message : 'No se pudo subir la foto'); } finally { setUploadingPhoto(false); }
                     }} />
                     <p className="mb-2 text-xs text-[#6c6a64]">{uploadingPhoto ? 'Subiendo foto…' : 'JPG, PNG o WebP · máximo 8 MB'}</p>
-                    <input
-                      type="url"
-                      value={config.content.hero.coverImageUrl}
-                      onChange={(e) =>
-                        updateHero({ coverImageUrl: e.target.value })
-                      }
-                      className="w-full rounded-xl border border-[#d7cfc4] bg-[#faf9f5] px-3.5 py-2 text-sm text-[#141413] outline-none"
-                    />
+                    {config.content.hero.coverImageUrl && <img src={config.content.hero.coverImageUrl} alt="Portada actual" className="h-28 w-full rounded-xl object-cover" />}
                   </div>
 
                   <div>
@@ -1365,11 +1370,15 @@ function DashboardContent() {
                     : 'Abrir Sobre en Preview'}
                 </button>
                 <Link
-                  href={`/invitacion/${slug}?template=${templateId}&g=fam-lopez-8a2f`}
+                  href={`/invitacion/${encodeURIComponent(slug)}`}
                   target="_blank"
                   className="ml-2 inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[#e6dfd8] bg-white px-3 py-1 text-xs font-medium text-[#3d3d3a] hover:text-[#141413]"
                 >
-                  <span>Ver URL Pública (/{slug})</span>
+                  <span>
+                    {activeInvitationRecord?.status === 'published'
+                      ? `Ver URL Pública (/${slug})`
+                      : `Vista previa privada (/${slug})`}
+                  </span>
                   <ExternalLink className="h-3 w-3" />
                 </Link>
               </div>
@@ -1572,7 +1581,7 @@ function DashboardContent() {
               </thead>
               <tbody className="divide-y divide-white/10">
                 {activeGuests.map((g) => {
-                  const invitePath = `/invitacion/${slug}?template=${templateId}&g=${g.guestToken}`;
+                  const invitePath = `/invitacion/${encodeURIComponent(slug)}?g=${encodeURIComponent(g.guestToken)}`;
                   const fullInviteUrl = `https://heyday.party${invitePath}`;
                   const waUrl = buildWhatsappInviteUrl({
                     phone: g.whatsappPhone || '525512345678',
@@ -1688,6 +1697,24 @@ function DashboardContent() {
       {/* =====================================================================
           MODAL: CREAR NUEVA INVITACIÓN DE CLIENTE (GUARDADO POR TEMPLATE)
       ===================================================================== */}
+      {shareAccess && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[#141413]/75 p-4" role="dialog" aria-modal="true" aria-label="Acceso del cliente">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl sm:p-8">
+            <p className="text-xs font-bold uppercase tracking-widest text-[#a9583e]">Acceso del cliente</p>
+            <h2 className="mt-2 text-2xl font-semibold text-[#141413]">Invitación lista para compartir</h2>
+            <p className="mt-3 text-sm text-[#6c6a64]">Guarda estos datos. El PIN se muestra una sola vez y un PIN nuevo invalida el anterior.</p>
+            <div className="mt-5 space-y-3 rounded-xl bg-[#f5f0e8] p-4 text-sm">
+              <div><span className="block text-xs font-bold text-[#6c6a64]">URL DE EDICIÓN</span><span className="break-all font-medium">{typeof window !== 'undefined' ? window.location.origin : ''}/editar/{shareAccess.slug}</span></div>
+              <div><span className="block text-xs font-bold text-[#6c6a64]">CONTRASEÑA</span><strong className="font-mono text-3xl tracking-[.25em]">{shareAccess.pin}</strong></div>
+            </div>
+            <div className="mt-6 flex flex-wrap gap-2">
+              <button type="button" onClick={async () => { await navigator.clipboard.writeText(`Edita tu invitación aquí: ${window.location.origin}/editar/${shareAccess.slug}\nContraseña: ${shareAccess.pin}`); toast.success('Acceso copiado'); }} className="inline-flex items-center gap-2 rounded-lg bg-[#cc785c] px-4 py-2.5 text-sm font-semibold text-white"><Copy className="h-4 w-4" />Copiar URL y contraseña</button>
+              <Link href={`/editar/${encodeURIComponent(shareAccess.slug)}`} className="rounded-lg border border-[#d7cfc4] px-4 py-2.5 text-sm font-semibold">Abrir editor</Link>
+              <button type="button" onClick={() => setShareAccess(null)} className="rounded-lg px-4 py-2.5 text-sm">Cerrar</button>
+            </div>
+          </div>
+        </div>
+      )}
       {isNewModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#141413]/70 p-4 backdrop-blur-sm">
           <div className="w-full max-w-lg rounded-xl border border-[#d7cfc4] bg-white p-6  sm:p-8">

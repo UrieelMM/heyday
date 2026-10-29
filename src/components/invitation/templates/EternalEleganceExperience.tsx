@@ -26,9 +26,11 @@ import {
   Sparkles,
   Volume2,
 } from 'lucide-react';
+import { sectionHeading } from '@/lib/templates/section-heading';
 import type { GuestGroup, InvitationConfig } from '@/types/invitation.types';
 import { buildGoogleCalendarUrl, buildIcsFileContent } from '@/lib/calendar/ics-generator';
 import { FloatingAudioPlayer } from '../core/FloatingAudioPlayer';
+import { HeroMedia } from '../core/HeroMedia';
 import './eternal-elegance.css';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -348,7 +350,7 @@ export function EternalEleganceExperience({
           .to(root.querySelector('.ee-hero__visual'), { left: '0%', top: '0%', width: '100%', height: '100%', maxWidth: 'none', padding: 0, clipPath: 'inset(0% 0% 0% 0% round 0px)', duration: 1 }, 0)
           .to(root.querySelector('.ee-hero__visual'), { '--ee-wash-opacity': .76, duration: .65 }, .28)
           .to(root.querySelector('.ee-hero__photo'), { maxHeight: 'none', clipPath: 'inset(0% 0% 0% 0% round 0px)', borderRadius: 0, duration: 1 }, 0)
-          .to(root.querySelector('.ee-hero__photo img'), { scale: 1.1, yPercent: -4, duration: 1 }, 0)
+          .to(root.querySelector('.ee-hero__photo img, .ee-hero__photo video'), { scale: 1.1, yPercent: -4, duration: 1 }, 0)
           .to(root.querySelector('.ee-hero__visual-frame'), { opacity: 0, duration: .35 }, 0)
           .to(root.querySelector('.ee-hero__branch'), { y: -110, rotate: 40, opacity: 0, duration: .7 }, 0)
           .fromTo(root.querySelector('.ee-hero__final'), { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: .4 }, .57);
@@ -505,7 +507,7 @@ export function EternalEleganceExperience({
             <div className="ee-hero__visual">
               <span className="ee-hero__visual-frame" aria-hidden="true" />
               <div className="ee-hero__photo ee-photo">
-                <img src={content.hero.coverImageUrl} alt={`Celebración de ${content.hero.mainTitle}`} fetchPriority="high" decoding="async" style={{ objectPosition: `${content.hero.focalPoint.x}% ${content.hero.focalPoint.y}%` }} />
+                <HeroMedia hero={content.hero} alt={`Celebración de ${content.hero.mainTitle}`} />
               </div>
               <span className="ee-hero__photo-caption">EL COMIENZO DE NUESTRO PARA SIEMPRE</span>
               <Botanical className="ee-hero__branch" />
@@ -521,7 +523,7 @@ export function EternalEleganceExperience({
             <Botanical className="ee-story__branch" />
             <WeddingRings className="ee-story__rings" />
             <div className="ee-story__inner">
-              <p className="ee-overline ee-reveal"><Diamond /> NUESTRA HISTORIA <Diamond /></p>
+              <p className="ee-overline ee-reveal"><Diamond /> {sectionHeading(config, 'quote_story', 'eyebrow', 'NUESTRA HISTORIA')} <Diamond /></p>
               <span className="ee-story__quote-mark ee-reveal">“</span>
               <blockquote className="ee-story__quote" aria-label={content.quoteStory.quoteText}><span aria-hidden="true">{content.quoteStory.quoteText.replace(/^[“\"]|[”\"]$/g, '').split(/\s+/).map((word, index) => <span className="ee-story__word" key={`${word}-${index}`}>{word} </span>)}</span></blockquote>
               {content.quoteStory.quoteAuthor && <p className="ee-story__author ee-reveal">— {content.quoteStory.quoteAuthor}</p>}
@@ -543,7 +545,7 @@ export function EternalEleganceExperience({
         {isSectionEnabled('vip_parents') && content.vipParents.groups.length > 0 && (
           <section id="family" className="ee-family ee-section">
             <WeddingRings className="ee-family__rings" />
-            <SectionIntro eyebrow="CON AMOR Y GRATITUD" title="Junto a quienes nos dieron alas" />
+            <SectionIntro eyebrow={sectionHeading(config, 'vip_parents', 'eyebrow', 'CON AMOR Y GRATITUD')} title={sectionHeading(config, 'vip_parents', 'title', 'Junto a quienes nos dieron alas')} />
             <p className="ee-family__blessing ee-reveal">{content.vipParents.blessingMessage}</p>
             <div className="ee-family__grid">
               {content.vipParents.groups.map((group, index) => (
@@ -561,7 +563,7 @@ export function EternalEleganceExperience({
           <section id="countdown" className="ee-countdown ee-section">
             <Botanical className="ee-countdown__branch ee-countdown__branch--left" />
             <Botanical className="ee-countdown__branch ee-countdown__branch--right" />
-            <SectionIntro eyebrow="CUENTA REGRESIVA" title="El gran día se acerca" />
+            <SectionIntro eyebrow={sectionHeading(config, 'countdown', 'eyebrow', 'CUENTA REGRESIVA')} title={sectionHeading(config, 'countdown', 'title', 'El gran día se acerca')} />
             <div className="ee-countdown__clock" aria-label="Tiempo restante para el evento">
               {[
                 ['DÍAS', timeLeft.days], ['HORAS', timeLeft.hours], ['MINUTOS', timeLeft.minutes], ['SEGUNDOS', timeLeft.seconds],
@@ -579,7 +581,7 @@ export function EternalEleganceExperience({
         {isSectionEnabled('locations') && content.locations.length > 0 && (
           <section id="locations" className="ee-locations ee-section">
             <Botanical className="ee-locations__branch" />
-            <SectionIntro eyebrow="EL ESCENARIO" title="Dónde celebraremos" />
+            <SectionIntro eyebrow={sectionHeading(config, 'locations', 'eyebrow', 'EL ESCENARIO')} title={sectionHeading(config, 'locations', 'title', 'Dónde celebraremos')} />
             <div className="ee-locations__grid">
               {content.locations.map((location, index) => (
                 <article className="ee-location ee-reveal" key={location.id}>
@@ -608,7 +610,7 @@ export function EternalEleganceExperience({
         {isSectionEnabled('timeline') && content.timeline.length > 0 && (
           <section id="timeline" className="ee-timeline ee-section">
             <Botanical className="ee-timeline__branch" />
-            <div className="ee-timeline__intro"><SectionIntro eyebrow="EL PROGRAMA" title="Un día para recordar" align="left" /><p className="ee-reveal">Cada momento fue pensado para compartirlo con ustedes.</p></div>
+            <div className="ee-timeline__intro"><SectionIntro eyebrow={sectionHeading(config, 'timeline', 'eyebrow', 'EL PROGRAMA')} title={sectionHeading(config, 'timeline', 'title', 'Un día para recordar')} align="left" /><p className="ee-reveal">Cada momento fue pensado para compartirlo con ustedes.</p></div>
             <div className="ee-timeline__list">
               <span className="ee-timeline__line"><span className="ee-timeline__line-fill" /></span>
               {content.timeline.map((item, index) => (
@@ -625,7 +627,7 @@ export function EternalEleganceExperience({
         {isSectionEnabled('gallery') && content.gallery.images.length > 0 && (
           <section id="gallery" className="ee-gallery ee-section">
             <WeddingRings className="ee-gallery__rings" />
-            <SectionIntro eyebrow="INSTANTES QUE GUARDAMOS" title="Nuestra historia en imágenes" />
+            <SectionIntro eyebrow={sectionHeading(config, 'gallery', 'eyebrow', 'INSTANTES QUE GUARDAMOS')} title={sectionHeading(config, 'gallery', 'title', 'Nuestra historia en imágenes')} />
             <div className="ee-gallery__grid">
               {content.gallery.images.map((photo, index) => (
                 <figure key={`${photo.url}-${index}`} className={`ee-gallery__item ee-gallery__item--${index % 4}`}>
@@ -645,7 +647,7 @@ export function EternalEleganceExperience({
             <Botanical className="ee-dress__branch ee-dress__branch--left" />
             <Botanical className="ee-dress__branch ee-dress__branch--right" />
             <div className="ee-dress__inner">
-              <SectionIntro eyebrow="CÓDIGO DE VESTIMENTA" title={content.dressCode.title} />
+              <SectionIntro eyebrow={sectionHeading(config, 'dress_code', 'eyebrow', 'CÓDIGO DE VESTIMENTA')} title={sectionHeading(config, 'dress_code', 'title', content.dressCode.title)} />
               <div className="ee-dress__details">
                 <div><span className="ee-small-index">PARA ELLAS</span><p>{content.dressCode.womenNotes}</p></div>
                 <div><span className="ee-small-index">PARA ELLOS</span><p>{content.dressCode.menNotes}</p></div>
@@ -665,7 +667,7 @@ export function EternalEleganceExperience({
           <section id="gifts" className="ee-gifts ee-section">
             <Botanical className="ee-gifts__branch" />
             <WeddingRings className="ee-gifts__rings" />
-            <SectionIntro eyebrow="UN DETALLE CON CARIÑO" title="Mesa de regalos" />
+            <SectionIntro eyebrow={sectionHeading(config, 'gifts', 'eyebrow', 'UN DETALLE CON CARIÑO')} title={sectionHeading(config, 'gifts', 'title', 'Mesa de regalos')} />
             <p className="ee-gifts__intro ee-reveal">{content.gifts.introMessage}</p>
             <div className="ee-gifts__options ee-stagger">
               {content.gifts.registries.map((registry) => (
@@ -690,7 +692,7 @@ export function EternalEleganceExperience({
         {isSectionEnabled('accommodation') && content.accommodation.length > 0 && (
           <section id="accommodation" className="ee-stay ee-section">
             <Botanical className="ee-stay__branch" />
-            <div className="ee-stay__intro"><SectionIntro eyebrow="PARA QUIENES NOS VISITAN" title="Quédense un poco más" align="left" /><p className="ee-reveal">Algunas opciones para disfrutar San Miguel de Allende con calma.</p></div>
+            <div className="ee-stay__intro"><SectionIntro eyebrow={sectionHeading(config, 'accommodation', 'eyebrow', 'PARA QUIENES NOS VISITAN')} title={sectionHeading(config, 'accommodation', 'title', 'Quédense un poco más')} align="left" /><p className="ee-reveal">Algunas opciones para disfrutar San Miguel de Allende con calma.</p></div>
             <div className="ee-stay__list ee-stagger">
               {content.accommodation.map((hotel, index) => (
                 <article key={`${hotel.hotelName}-${index}`}>
@@ -706,7 +708,7 @@ export function EternalEleganceExperience({
         {isSectionEnabled('social_features') && (content.socialFeatures.enableSongRequests || content.socialFeatures.enableAudioGuestbook) && (
           <section id="memories" className="ee-memories ee-section">
             <WeddingRings className="ee-memories__rings" />
-            <SectionIntro eyebrow="LA CELEBRACIÓN CONTINÚA" title="Hagamos recuerdos juntos" />
+            <SectionIntro eyebrow={sectionHeading(config, 'social_features', 'eyebrow', 'LA CELEBRACIÓN CONTINÚA')} title={sectionHeading(config, 'social_features', 'title', 'Hagamos recuerdos juntos')} />
             {content.socialFeatures.hashtag && <p className="ee-memories__hashtag ee-reveal">{content.socialFeatures.hashtag}</p>}
             <SocialFeatures slug={slug} token={guestGroup?.guestToken} preview={isBuilderPreview} songsEnabled={content.socialFeatures.enableSongRequests} audioEnabled={content.socialFeatures.enableAudioGuestbook} />
           </section>
@@ -717,7 +719,7 @@ export function EternalEleganceExperience({
             <Botanical className="ee-rsvp__branch ee-rsvp__branch--left" />
             <Botanical className="ee-rsvp__branch ee-rsvp__branch--right" />
             <div className="ee-rsvp__card">
-              <SectionIntro eyebrow="TE ESPERAMOS CON AMOR" title="Confirma tu asistencia" />
+              <SectionIntro eyebrow={sectionHeading(config, 'rsvp', 'eyebrow', 'TE ESPERAMOS CON AMOR')} title={sectionHeading(config, 'rsvp', 'title', 'Confirma tu asistencia')} />
               <p className="ee-rsvp__intro">{guestGroup ? `Una invitación reservada especialmente para ${guestGroup.groupName}. Tienen ${guestGroup.allocatedAdults + guestGroup.allocatedChildren} pases asignados.` : 'Nos encantará compartir este día contigo. Confirma para preparar tu lugar.'}</p>
               {!pass ? (
                 <form onSubmit={submitRsvp} className="ee-rsvp__form">

@@ -1,4 +1,5 @@
 import type { GuestGroup, InvitationConfig } from '@/types/invitation.types';
+import { HeroMedia } from '../core/HeroMedia';
 import type { OccasionTemplateId } from '@/lib/templates/occasion-config';
 
 const heroCopy = {
@@ -61,16 +62,9 @@ export function OccasionHero({
         )}
 
         <div className="oc-hero__visual">
-          <img
-            src={hero.coverImageUrl}
-            alt={
-              templateId === 'sweet-oh-baby'
-                ? 'Móvil artesanal de luna, nubes y estrellas para baby shower'
-                : 'Escenario azul marino y oro preparado para una ceremonia de graduación'
-            }
-            style={{ objectPosition: `${hero.focalPoint.x}% ${hero.focalPoint.y}%` }}
-            fetchPriority="high"
-          />
+          <HeroMedia hero={hero} alt={templateId === 'sweet-oh-baby'
+            ? 'Móvil artesanal de luna, nubes y estrellas para baby shower'
+            : 'Escenario azul marino y oro preparado para una ceremonia de graduación'} />
           <div className="oc-hero__visual-wash" aria-hidden="true" />
           <span className="oc-hero__photo-label" aria-hidden="true">
             {copy.label}

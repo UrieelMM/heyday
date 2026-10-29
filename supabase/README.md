@@ -1,6 +1,6 @@
 # Migraciones de HeyDay
 
-Las migraciones de `supabase/migrations/` están ordenadas por timestamp para usarse con Supabase CLI. Las primeras once se aplicaron al proyecto `odpiybzxaviifydyqfbk` (`heyday.party`) el 28 de octubre de 2026. La migración 12, que activa la retención de álbumes y la eliminación futura, debe revisarse y aplicarse expresamente antes del despliegue.
+Las migraciones de `supabase/migrations/` están ordenadas por timestamp para usarse con Supabase CLI. Las primeras once se aplicaron al proyecto `odpiybzxaviifydyqfbk` (`heyday.party`) el 28 de octubre de 2026. La migración 13 se aplicó y registró en el historial el 29 de octubre de 2026. La migración 12, que activa la retención de álbumes y la eliminación futura, sigue pendiente de revisión expresa.
 
 | Orden | Migración | Contenido |
 | --- | --- | --- |
@@ -16,6 +16,7 @@ Las migraciones de `supabase/migrations/` están ordenadas por timestamp para us
 | 10 | `20261028001000_guest_photo_quota.sql` | Cuota de fotos por pase |
 | 11 | `20261028001100_social_checkin.sql` | Votos, audio y check-in |
 | 12 | `20261028001200_album_retention.sql` | Miniaturas, enlaces y caducidad del álbum |
+| 13 | `20261029000100_client_editor_pin.sql` | PIN individual de 4 dígitos, límite de intentos y audio/video en el bucket de assets |
 
 ## Para continuar el desarrollo
 
@@ -34,6 +35,8 @@ RETURNING id, email, role;
 5. `.env.local` contiene la URL y la clave **publishable** entregadas para este proyecto. Cuando se implemente el acceso del servidor a datos privados, agrega la clave **secret** en `SUPABASE_SECRET_KEY`. Esa clave y `QR_MASTER_SECRET` son exclusivamente del servidor y nunca deben llevar el prefijo `NEXT_PUBLIC_`.
 
 No combines `supabase db push` con cambios de esquema desde SQL Editor: el editor no registra las migraciones en el historial de la CLI. El `UPDATE` anterior cambia datos, no el esquema. Para futuras modificaciones, crea un archivo de migración con un timestamp posterior.
+
+La migración 13 es independiente de la 12 y se aplicó exclusivamente mediante SQL Editor, con su versión `20261029000100` registrada en `supabase_migrations.schema_migrations` en la misma transacción. La comprobación posterior confirmó cuatro columnas de PIN, `event-assets` con límite de 30 MB y la función de intentos accesible solo para `service_role`. No ejecutes `supabase db push` mientras la 12 esté pendiente, pues también la aplicaría. El PIN se muestra una sola vez al crear la invitación o al pulsar **Generar acceso** para una invitación antigua. Cambiarlo invalida la sesión anterior. Configura `EDITOR_SESSION_SECRET` en producción para firmar las sesiones de clientes; si no está definido, el servidor utiliza `SUPABASE_SECRET_KEY`.
 
 ## Comprobaciones después de migrar
 

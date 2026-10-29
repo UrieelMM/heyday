@@ -1,4 +1,5 @@
 import type { GuestGroup, InvitationConfig, TemplateId } from '@/types/invitation.types';
+import { HeroMedia } from '../core/HeroMedia';
 
 type SignatureId = Extract<TemplateId, 'boho-terracotta' | 'modern-minimal-noir' | 'neon-xv-euphoria'>;
 
@@ -66,12 +67,7 @@ export function SignatureHero({
         )}
 
         <div className="st-hero__visual">
-          <img
-            src={hero.coverImageUrl}
-            alt={templateId === 'neon-xv-euphoria' ? 'Luces de una celebración nocturna de XV años' : `Escena de ${hero.mainTitle}`}
-            style={{ objectPosition: `${hero.focalPoint.x}% ${hero.focalPoint.y}%` }}
-            fetchPriority="high"
-          />
+          <HeroMedia hero={hero} alt={templateId === 'neon-xv-euphoria' ? 'Luces de una celebración nocturna de XV años' : `Escena de ${hero.mainTitle}`} />
           <div className="st-hero__visual-wash" aria-hidden="true" />
           {templateId === 'boho-terracotta' && <span className="st-hero__photo-label" aria-hidden="true">amor en cada detalle · edición destino</span>}
           {templateId === 'modern-minimal-noir' && <span className="st-hero__photo-label" aria-hidden="true">FIG. 01 — EL COMIENZO</span>}

@@ -83,6 +83,7 @@ export interface InvitationConfig {
     enabled: boolean;
   }>;
   content: {
+    sectionHeadings?: Partial<Record<SectionId, { eyebrow?: string; title?: string }>>;
     hero: {
       badgeText: string;
       mainTitle: string;

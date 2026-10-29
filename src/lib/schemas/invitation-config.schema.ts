@@ -56,6 +56,7 @@ export const invitationConfigSchema = z.object({
     })
   ),
   content: z.object({
+    sectionHeadings: z.record(z.enum(['hero', 'quote_story', 'vip_parents', 'countdown', 'locations', 'timeline', 'gallery', 'dress_code', 'gifts', 'accommodation', 'social_features', 'rsvp']), z.object({ eyebrow: z.string().max(120).optional(), title: z.string().max(160).optional() })).optional(),
     hero: z.object({
       badgeText: z.string(),
       mainTitle: z.string().min(1),

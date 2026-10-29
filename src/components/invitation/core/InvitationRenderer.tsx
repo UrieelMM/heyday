@@ -40,6 +40,7 @@ import {
 import { AmbientParticlesCanvas } from './AmbientParticlesCanvas';
 import { EnvelopeOpener } from './EnvelopeOpener';
 import { FloatingAudioPlayer } from './FloatingAudioPlayer';
+import { HeroMedia } from './HeroMedia';
 import { SharedAlbum } from './SharedAlbum';
 import { SocialFeatures } from './SocialFeatures';
 import { EternalEleganceExperience } from '../templates/EternalEleganceExperience';
@@ -328,14 +329,7 @@ function StandardInvitationRenderer({
       {isSectionEnabled('hero') && !hasSceneTemplate && (
         <section className="relative flex min-h-dvh flex-col items-center justify-end overflow-hidden px-6 pb-16 pt-28 text-center">
           <div className="absolute inset-0 z-0 overflow-hidden">
-            <img
-              src={content.hero.coverImageUrl}
-              alt={content.hero.mainTitle}
-              style={{
-                objectPosition: `${content.hero.focalPoint.x}% ${content.hero.focalPoint.y}%`,
-              }}
-              className="inv-mask-image h-full w-full object-cover"
-            />
+            <HeroMedia hero={content.hero} alt={content.hero.mainTitle} className="inv-mask-image h-full w-full object-cover" />
             <div
               className="absolute inset-0"
               style={{
@@ -397,6 +391,7 @@ function StandardInvitationRenderer({
             className="mx-auto mb-6 h-12 w-px"
             style={{ backgroundColor: colors.accentPrimary }}
           />
+          {content.sectionHeadings?.quote_story?.eyebrow && <p className="mb-5 text-xs font-semibold uppercase tracking-[0.25em]" style={{ color: colors.accentPrimary }}>{content.sectionHeadings.quote_story.eyebrow}</p>}
           <blockquote
             className="text-2xl leading-relaxed italic sm:text-3xl"
             style={{ fontFamily: fonts.headingFont }}
@@ -464,6 +459,8 @@ function StandardInvitationRenderer({
             style={{ backgroundColor: colors.bgSecondary }}
           >
             <div className="mx-auto max-w-4xl text-center">
+              {content.sectionHeadings?.vip_parents?.eyebrow && <p className="mb-3 text-xs font-semibold uppercase tracking-[0.25em]" style={{ color: colors.accentPrimary }}>{content.sectionHeadings.vip_parents.eyebrow}</p>}
+              {content.sectionHeadings?.vip_parents?.title && <h2 className="mb-5 text-3xl font-semibold" style={{ fontFamily: fonts.headingFont }}>{content.sectionHeadings.vip_parents.title}</h2>}
               <p
                 className="mx-auto mb-10 max-w-xl text-sm tracking-[0.15em] uppercase"
                 style={{ color: colors.textMuted }}
@@ -512,7 +509,7 @@ function StandardInvitationRenderer({
             className="mb-2 text-xs font-semibold tracking-[0.25em] uppercase"
             style={{ color: colors.accentPrimary }}
           >
-            {occasionCopy?.countdownEyebrow ?? (celebrationTemplateId === 'golden-jubilee'
+            {content.sectionHeadings?.countdown?.eyebrow ?? occasionCopy?.countdownEyebrow ?? (celebrationTemplateId === 'golden-jubilee'
               ? 'La noche se acerca'
               : celebrationTemplateId === 'fiesta-kids-adventure'
                 ? 'Prepara tu mochila'
@@ -524,7 +521,7 @@ function StandardInvitationRenderer({
             className="mb-10 text-3xl font-semibold sm:text-4xl"
             style={{ fontFamily: fonts.headingFont }}
           >
-            {occasionCopy?.countdownTitle ?? (celebrationTemplateId === 'golden-jubilee'
+            {content.sectionHeadings?.countdown?.title ?? occasionCopy?.countdownTitle ?? (celebrationTemplateId === 'golden-jubilee'
               ? 'Cuenta regresiva para el brindis'
               : celebrationTemplateId === 'fiesta-kids-adventure'
                 ? 'La aventura empieza en'
@@ -614,7 +611,7 @@ function StandardInvitationRenderer({
                 className="mb-2 text-xs font-semibold tracking-[0.25em] uppercase"
                 style={{ color: colors.accentPrimary }}
               >
-                {occasionCopy?.locationEyebrow ?? (celebrationTemplateId === 'golden-jubilee'
+                {content.sectionHeadings?.locations?.eyebrow ?? occasionCopy?.locationEyebrow ?? (celebrationTemplateId === 'golden-jubilee'
                   ? 'La cita de gala'
                   : celebrationTemplateId === 'fiesta-kids-adventure'
                     ? 'Punto de encuentro'
@@ -626,7 +623,7 @@ function StandardInvitationRenderer({
                 className="text-3xl font-semibold sm:text-4xl"
                 style={{ fontFamily: fonts.headingFont }}
               >
-                {occasionCopy?.locationTitle ?? (celebrationTemplateId === 'golden-jubilee'
+                {content.sectionHeadings?.locations?.title ?? occasionCopy?.locationTitle ?? (celebrationTemplateId === 'golden-jubilee'
                   ? 'Donde brindaremos'
                   : celebrationTemplateId === 'fiesta-kids-adventure'
                     ? 'El lugar de la aventura'
@@ -722,7 +719,7 @@ function StandardInvitationRenderer({
               className="mb-2 text-xs font-semibold tracking-[0.25em] uppercase"
               style={{ color: colors.accentPrimary }}
             >
-              {occasionCopy?.timelineEyebrow ?? (celebrationTemplateId === 'golden-jubilee'
+              {content.sectionHeadings?.timeline?.eyebrow ?? occasionCopy?.timelineEyebrow ?? (celebrationTemplateId === 'golden-jubilee'
                 ? 'La velada'
                 : celebrationTemplateId === 'fiesta-kids-adventure'
                   ? 'El mapa de la fiesta'
@@ -734,7 +731,7 @@ function StandardInvitationRenderer({
               className="text-3xl font-semibold sm:text-4xl"
               style={{ fontFamily: fonts.headingFont }}
             >
-              {occasionCopy?.timelineTitle ?? (celebrationTemplateId === 'golden-jubilee'
+              {content.sectionHeadings?.timeline?.title ?? occasionCopy?.timelineTitle ?? (celebrationTemplateId === 'golden-jubilee'
                 ? 'Una noche para recordar'
                 : celebrationTemplateId === 'fiesta-kids-adventure'
                   ? 'Nuestra ruta de aventura'
@@ -798,7 +795,7 @@ function StandardInvitationRenderer({
                 className="mb-2 text-xs font-semibold tracking-[0.25em] uppercase"
                 style={{ color: colors.accentPrimary }}
               >
-                {occasionCopy?.galleryEyebrow ?? (celebrationTemplateId === 'golden-jubilee'
+                {content.sectionHeadings?.gallery?.eyebrow ?? occasionCopy?.galleryEyebrow ?? (celebrationTemplateId === 'golden-jubilee'
                   ? 'Detalles dorados'
                   : celebrationTemplateId === 'fiesta-kids-adventure'
                     ? 'Asómate a la aventura'
@@ -810,7 +807,7 @@ function StandardInvitationRenderer({
                 className="text-3xl font-semibold sm:text-4xl"
                 style={{ fontFamily: fonts.headingFont }}
               >
-                {occasionCopy?.galleryTitle ?? (celebrationTemplateId === 'golden-jubilee'
+                {content.sectionHeadings?.gallery?.title ?? occasionCopy?.galleryTitle ?? (celebrationTemplateId === 'golden-jubilee'
                   ? 'Momentos de la noche'
                   : celebrationTemplateId === 'fiesta-kids-adventure'
                     ? 'Nuestro mundo de aventura'
@@ -850,7 +847,7 @@ function StandardInvitationRenderer({
             className="mb-2 text-xs font-semibold tracking-[0.25em] uppercase"
             style={{ color: colors.accentPrimary }}
           >
-            {occasionCopy?.dressEyebrow ?? (celebrationTemplateId === 'fiesta-kids-adventure'
+            {content.sectionHeadings?.dress_code?.eyebrow ?? occasionCopy?.dressEyebrow ?? (celebrationTemplateId === 'fiesta-kids-adventure'
               ? 'Listos para jugar'
               : celebrationTemplateId === 'celestial-baptism'
                 ? 'Para acompañarnos'
@@ -860,7 +857,7 @@ function StandardInvitationRenderer({
             className="mb-8 text-3xl font-semibold sm:text-4xl"
             style={{ fontFamily: fonts.headingFont }}
           >
-            {content.dressCode.title}
+            {content.sectionHeadings?.dress_code?.title || content.dressCode.title}
           </h2>
 
           <div className="grid gap-6 sm:grid-cols-2">
@@ -944,7 +941,7 @@ function StandardInvitationRenderer({
               className="mb-3 text-3xl font-semibold sm:text-4xl"
               style={{ fontFamily: fonts.headingFont }}
             >
-              {occasionCopy?.giftsTitle ?? 'Mesa de Regalos y Lluvia de Sobres'}
+              {content.sectionHeadings?.gifts?.title ?? occasionCopy?.giftsTitle ?? 'Mesa de Regalos y Lluvia de Sobres'}
             </h2>
             <p
               className="mx-auto mb-10 max-w-2xl text-sm leading-relaxed"
@@ -1088,7 +1085,7 @@ function StandardInvitationRenderer({
                 className="text-3xl font-semibold sm:text-4xl"
                 style={{ fontFamily: fonts.headingFont }}
               >
-                Sugerencias de Hospedaje
+                {content.sectionHeadings?.accommodation?.title || 'Sugerencias de Hospedaje'}
               </h2>
             </div>
 
@@ -1129,7 +1126,7 @@ function StandardInvitationRenderer({
         )}
 
       {/* SECCIÓN 11: FEATURES DIFERENCIADORAS — DJ PLAYLIST & AUDIO GUESTBOOK */}
-      {isSectionEnabled('social_features') && <section className="mx-auto max-w-4xl px-6 py-12"><h2 className="mb-4 text-2xl">Álbum compartido</h2><SharedAlbum slug={slug} token={guestGroup?.guestToken} preview={isBuilderPreview} /></section>}
+      {isSectionEnabled('social_features') && <section className="mx-auto max-w-4xl px-6 py-12">{content.sectionHeadings?.social_features?.eyebrow && <p className="mb-3 text-xs font-semibold uppercase tracking-[0.25em]" style={{ color: colors.accentPrimary }}>{content.sectionHeadings.social_features.eyebrow}</p>}<h2 className="mb-4 text-2xl">{content.sectionHeadings?.social_features?.title || 'Álbum compartido'}</h2><SharedAlbum slug={slug} token={guestGroup?.guestToken} preview={isBuilderPreview} /></section>}
 
       {isSectionEnabled('social_features') && <section className="mx-auto max-w-4xl px-6 py-12"><SocialFeatures slug={slug} token={guestGroup?.guestToken} preview={isBuilderPreview} songsEnabled={content.socialFeatures.enableSongRequests} audioEnabled={content.socialFeatures.enableAudioGuestbook} /></section>}
 
@@ -1152,7 +1149,7 @@ function StandardInvitationRenderer({
                 className="text-3xl font-semibold sm:text-4xl"
                 style={{ fontFamily: fonts.headingFont }}
               >
-                Confirmación de asistencia
+                {content.sectionHeadings?.rsvp?.title || 'Confirmación de asistencia'}
               </h2>
               <p
                 className="mt-2 text-sm"

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { createClient } from '@/lib/supabase/client';
-import { createDefaultInvitationConfig, TEMPLATES_CATALOG } from '@/lib/templates/templates-catalog';
+import { TEMPLATES_CATALOG } from '@/lib/templates/templates-catalog';
 import type { EventCategory, GuestGroup, InvitationConfig, TemplateId } from '@/types/invitation.types';
 
 export interface ClientInvitationRecord {
@@ -20,7 +20,7 @@ function record(row: any): ClientInvitationRecord {
 }
 interface State {
   invitations: ClientInvitationRecord[]; loading: boolean; error: string | null;
-  load: () => Promise<void>; addInvitation: (input: NewInvitation) => Promise<ClientInvitationRecord>;
+  load: () => Promise<void>; addInvitation: (input: NewInvitation) => Promise<{ invitation: ClientInvitationRecord; pin: string }>;
   updateInvitation: (id: string, patch: Patch) => Promise<void>; deleteInvitation: (id: string) => Promise<void>;
 }
 export const useEventsStore = create<State>((set, get) => ({
@@ -34,11 +34,12 @@ export const useEventsStore = create<State>((set, get) => ({
     } catch (error) { set({ loading: false, error: error instanceof Error ? error.message : 'Error de conexión' }); }
   },
   addInvitation: async (input) => {
-    const template = TEMPLATES_CATALOG.find(t => t.id === input.templateId);
-    if (!template) throw new Error('Plantilla inválida');
-    const { data, error } = await createClient().from('events').insert({ client_name: input.clientName, client_email: input.clientEmail || null, client_phone: input.clientPhone || null, title: input.title, slug: input.slug, template_id: input.templateId, category: template.category, event_date: input.eventDate, status: 'draft', config: createDefaultInvitationConfig(input.templateId, input.title) }).select('id,slug,client_name,client_email,client_phone,title,category,template_id,status,event_date,created_at,updated_at,views_count,config,guest_groups(*)').single();
-    if (error) throw new Error(error.code === '23505' ? 'Esta URL ya está en uso' : error.message);
-    const created = record(data); set(state => ({ invitations: [created, ...state.invitations] })); return created;
+    const response = await fetch('/api/admin/invitations', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(input) });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'No se pudo crear la invitación');
+    const created = record(result.invitation);
+    set(state => ({ invitations: [created, ...state.invitations] }));
+    return { invitation: created, pin: result.pin };
   },
   updateInvitation: async (id, patch) => {
     const db = createClient();
