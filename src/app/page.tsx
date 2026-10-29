@@ -25,7 +25,6 @@ import {
 import { HeyDayBrand } from '@/components/brand/HeyDayBrand';
 import { TEMPLATES_CATALOG } from '@/lib/templates/templates-catalog';
 import type { EventCategory } from '@/types/invitation.types';
-// @ts-expect-error Next.js handles global CSS imports at build time.
 import './landing.css';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
