@@ -225,3 +225,42 @@ El snippet es un patrón, no un componente para pegar sin ajustes. Consultar nod
 - [ ] CTA, mapas, formularios y navegación son utilizables en todos los tamaños.
 - [ ] No hay desbordamiento horizontal ni secciones vacías al desactivar módulos.
 - [ ] La experiencia estática con movimiento reducido sigue siendo completa.
+
+## 10. Contrato con el editor para nuevos templates
+
+Una plantilla terminada también debe funcionar dentro de **Editar aspecto** y **Gestionar invitados**. Su dirección de arte se conserva al cambiar textos, colores, tipografías y fotografías. La configuración guardada en Supabase es la fuente de verdad; los valores del catálogo son solo el punto de partida. El administrador y el cliente con acceso a la invitación deben poder hacer los mismos ajustes sin tocar código.
+
+### Contenido y recursos editables
+
+- Llevar a `InvitationConfig` todos los textos visibles del evento: portada, sobre, títulos y etiquetas de secciones, historia, familia, lugares, programa, galería, vestimenta, regalos, hospedaje, funciones sociales y confirmación. No dejar frases del template incrustadas que oculten o sustituyan lo que escribe el cliente.
+- Usar `theme.colors` para los colores y `theme.fonts` para las tipografías. Las opciones del editor se definen en `src/lib/fonts/invitation-fonts.ts`; las familias de título, decorativa y cuerpo deben reflejarse en el render, no solo en el selector. La lista inicial contiene 20 fuentes con una muestra visual.
+- Ofrecer carga de fotos, video y audio a Supabase Storage desde el editor. Los campos de imágenes y medios no deben pedir que el cliente pegue una URL. Los enlaces de mapas, tiendas y reservas sí siguen siendo enlaces externos.
+- Mantener los valores personalizados al cambiar o migrar la plantilla. Agregar y quitar elementos de listas sin romper su orden ni sus identificadores; respetar `sectionsOrder` y la opción de ocultar secciones.
+
+### Sobre y vista previa fiel
+
+- El sobre es una sección editable con vista previa propia. Al seleccionarlo, mostrar el sobre cerrado y actualizar en vivo diseño, monograma, color del sello y texto de apertura. Implementar el estado `previewEnvelope` en la experiencia del template y preservar la apertura real para visitantes.
+- Reflejar cambios de configuración inmediatamente en la vista previa, incluso antes de guardar. El editor y `src/components/editor/EditorPreview.tsx` se comunican mediante mensajes del mismo origen; un template nuevo debe reaccionar a la nueva configuración sin recargar el `iframe` con cada tecla.
+- Componer y probar el contenido a los anchos reales de la vista previa: **390 × 844 px** móvil, **768 × 1000 px** tablet y **1200 × 900 px** escritorio. Escalar el marco del editor, no el viewport interno de la invitación. Comprobar `scrollWidth <= innerWidth` dentro del `iframe`, sobre todo en móvil, tanto con texto corto como largo y con fotos nuevas.
+- Dejar la columna del inspector y el área de vista previa a la altura disponible; el formulario y la invitación deben poder desplazarse sin que la barra lateral parezca cortada. El encabezado mantiene visible el estado de guardado y un botón que **abre y copia `/invitacion/{slug}`**, la URL de la invitación.
+
+### Navegación visual entre editor y escena
+
+- Cada grupo del editor debe tener un destino visible en la invitación. Registrar sus selectores en `src/lib/editor/section-targets.ts` o usar `data-editor-section` cuando sea más estable que una clase visual. Cubrir todas las secciones presentes, incluida la portada y el sobre.
+- Al seleccionar un grupo de edición, desplazar suavemente la vista previa hasta su sección. El sobre regresa al inicio. Los grupos globales, como colores, música y visibilidad, pueden enfocar la portada. Evitar que un destino oculto o desactivado provoque errores.
+- Mantener el modo **Seleccionar** de la vista previa: resaltar la sección bajo el puntero y, al hacer clic, abrir sus controles en el inspector. Ese clic no debe activar enlaces ni enviar formularios. Permitir salir con Escape y limpiar el resaltado al desactivar el modo.
+
+### Invitados y acciones
+
+- Conservar los dos tabs del editor. En **Gestionar invitados**, la tarjeta o sobre de muestra debe completar en vivo nombre, cupos, grupo, mesa y contacto conforme se escribe, con movimiento discreto que no dificulte el formulario.
+- Los pases personales y sus confirmaciones deben usar la invitación publicada y sus datos reales en Supabase. El enlace para cada invitado es `/invitacion/{slug}?g={token}`; el enlace general del encabezado no incluye el token ni apunta al editor.
+- Confirmar acciones destructivas con un modal accesible y explícito; no usar `window.alert` ni `window.confirm`. Los estados de guardado, copia y error se comunican dentro de la UI.
+
+### Aceptación del editor
+
+- [ ] Todos los textos, colores, fuentes y medios relevantes se modifican desde el editor y se conservan tras recargar.
+- [ ] Las fotos y demás medios se cargan a Supabase Storage, sin campos para pegar URL de imagen.
+- [ ] El sobre y cada sección editable tienen una vista previa correspondiente que responde al instante.
+- [ ] La vista previa móvil usa dimensiones reales y no genera desplazamiento horizontal.
+- [ ] Seleccionar una sección desplaza la vista previa; seleccionar una zona de la invitación abre sus controles.
+- [ ] Los dos tabs, la muestra animada de invitados, los modales de confirmación y el enlace público funcionan con la plantilla nueva.
