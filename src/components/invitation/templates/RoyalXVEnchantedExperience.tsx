@@ -11,6 +11,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { toast } from 'sonner';
 import { Apple, ArrowDown, ArrowRight, CalendarDays, Camera, CarFront, Check, Clock3, Gift, Heart, ImagePlus, MapPin, MapPinned, Music2, Route, Sparkles, Volume2 } from 'lucide-react';
 import { sectionHeading } from '@/lib/templates/section-heading';
+import { invitationFontStack } from '@/lib/fonts/invitation-fonts';
 import type { GuestGroup, InvitationConfig } from '@/types/invitation.types';
 import { buildGoogleCalendarUrl, buildIcsFileContent } from '@/lib/calendar/ics-generator';
 import { FloatingAudioPlayer } from '../core/FloatingAudioPlayer';
@@ -27,6 +28,7 @@ interface RoyalXVProps {
   guestGroup?: GuestGroup | null;
   forceEnvelopeOpen?: boolean;
   isBuilderPreview?: boolean;
+  previewEnvelope?: boolean;
 }
 
 const formatDate = (date: string) => {
@@ -90,7 +92,7 @@ function Opening({ config, guestGroup, name, isOpen, onOpen }: { config: Invitat
     return () => window.clearTimeout(timer);
   }, [opening, onOpen]);
 
-  return <AnimatePresence>{!isOpen && <motion.div className="rx-opening" initial={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: .7 }}>
+  return <AnimatePresence>{!isOpen && <motion.div className="rx-opening" data-editor-section="envelope" initial={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: .7 }}>
     <div className="rx-opening__halo" aria-hidden="true" />
     <Twinkle className="rx-opening__star rx-opening__star--one" /><Twinkle className="rx-opening__star rx-opening__star--two" />
     <Butterfly className="rx-opening__butterfly rx-opening__butterfly--one" /><Butterfly className="rx-opening__butterfly rx-opening__butterfly--two" />
@@ -99,23 +101,23 @@ function Opening({ config, guestGroup, name, isOpen, onOpen }: { config: Invitat
       <p className="rx-opening__script">Te invito a celebrar</p>
       <h1>Mis XV <em>{name}</em></h1>
       <p className="rx-opening__intro">Hay una historia esperando por nosotros. La mía empieza aquí, contigo.</p>
-      <motion.div className={`rx-opening__envelope${opening ? ' rx-opening__envelope--open' : ''}`} animate={opening ? { y: 28, opacity: 0, scale: 1.04 } : { y: 0, opacity: 1, scale: 1 }} transition={{ duration: .6, delay: opening ? .24 : 0 }}>
+      <motion.div className={`rx-opening__envelope rx-opening__envelope--${config.theme.envelope.variant}${opening ? ' rx-opening__envelope--open' : ''}`} animate={opening ? { y: 28, opacity: 0, scale: 1.04 } : { y: 0, opacity: 1, scale: 1 }} transition={{ duration: .6, delay: opening ? .24 : 0 }}>
         <span className="rx-opening__envelope-side rx-opening__envelope-side--left" aria-hidden="true" />
         <span className="rx-opening__envelope-side rx-opening__envelope-side--right" aria-hidden="true" />
         <span className="rx-opening__envelope-bottom" aria-hidden="true" />
         <span className="rx-opening__envelope-flap" aria-hidden="true" />
-        <span className="rx-opening__seal" aria-hidden="true">XV</span>
+        <span className="rx-opening__seal" aria-hidden="true">{config.theme.envelope.sealMonogram}</span>
         <span className="rx-opening__recipient"><span>ESTA INVITACIÓN ES PARA</span><strong>{guestGroup?.groupName || 'Ti, que eres parte de mi historia'}</strong><small>{guestGroup ? `${guestGroup.allocatedAdults + guestGroup.allocatedChildren} pases reservados` : 'Una noche para recordar'}</small></span>
       </motion.div>
-      <motion.button className="rx-button rx-button--light" type="button" disabled={opening} onClick={() => setOpening(true)} whileHover={{ y: -3 }} whileTap={{ scale: .98 }}>Abrir mi invitación <ArrowRight size={17} /></motion.button>
+      <motion.button className="rx-button rx-button--light" type="button" disabled={opening} onClick={() => setOpening(true)} whileHover={{ y: -3 }} whileTap={{ scale: .98 }}>{config.theme.envelope.openButtonText} <ArrowRight size={17} /></motion.button>
       {config.audio.enabled && <p className="rx-opening__audio"><Volume2 size={14} /> Una experiencia con música</p>}
     </div>
   </motion.div>}</AnimatePresence>;
 }
 
-export function RoyalXVEnchantedExperience({ slug, eventDate, config, guestGroup, forceEnvelopeOpen = false, isBuilderPreview = false }: RoyalXVProps) {
+export function RoyalXVEnchantedExperience({ slug, eventDate, config, guestGroup, forceEnvelopeOpen = false, isBuilderPreview = false, previewEnvelope = false }: RoyalXVProps) {
   const rootRef = useRef<HTMLDivElement>(null);
-  const [isOpen, setIsOpen] = useState(forceEnvelopeOpen || isBuilderPreview);
+  const [isOpen, setIsOpen] = useState(forceEnvelopeOpen || (isBuilderPreview && !previewEnvelope));
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [rsvpName, setRsvpName] = useState(guestGroup?.groupName || '');
   const [rsvpPhone, setRsvpPhone] = useState(guestGroup?.whatsappPhone || '');
@@ -132,7 +134,7 @@ export function RoyalXVEnchantedExperience({ slug, eventDate, config, guestGroup
   const maxChildren = guestGroup?.allocatedChildren ?? 2;
   const enabled = (id: string) => config.sectionsOrder.find((section) => section.id === id)?.enabled ?? true;
 
-  useEffect(() => setIsOpen(forceEnvelopeOpen || isBuilderPreview), [forceEnvelopeOpen, isBuilderPreview]);
+  useEffect(() => setIsOpen(forceEnvelopeOpen || (isBuilderPreview && !previewEnvelope)), [forceEnvelopeOpen, isBuilderPreview, previewEnvelope]);
   useEffect(() => {
     const update = () => {
       const diff = Math.max(0, new Date(eventDate).getTime() - Date.now());
@@ -201,8 +203,8 @@ export function RoyalXVEnchantedExperience({ slug, eventDate, config, guestGroup
   const mapsQuery = encodeURIComponent(mapAddress);
   const calendarUrl = buildGoogleCalendarUrl({ title: content.hero.mainTitle, description: `Mis XV años: ${name}`, location: mainLocation?.address || '', startDateIso: eventDate });
 
-  return <div ref={rootRef} className="rx-root" style={{ '--rx-accent': config.theme.colors.accentPrimary, '--rx-accent-soft': config.theme.colors.accentSecondary } as React.CSSProperties}>
-    {!isBuilderPreview && <Opening config={config} guestGroup={guestGroup} name={name} isOpen={isOpen} onOpen={open} />}
+  return <div ref={rootRef} className="rx-root" style={{ '--rx-accent': config.theme.colors.accentPrimary, '--rx-accent-soft': config.theme.colors.accentSecondary, '--rx-seal': config.theme.envelope.sealColor || config.theme.colors.accentPrimary, '--rx-heading-font': invitationFontStack(config.theme.fonts.headingFont), '--rx-script-font': invitationFontStack(config.theme.fonts.scriptFont), '--rx-body-font': invitationFontStack(config.theme.fonts.bodyFont) } as React.CSSProperties}>
+    {(!isBuilderPreview || previewEnvelope) && <Opening config={config} guestGroup={guestGroup} name={name} isOpen={isOpen} onOpen={open} />}
     <FloatingAudioPlayer enabled={config.audio.enabled} trackUrl={config.audio.trackUrl} trackTitle={config.audio.trackTitle} isEnvelopeOpen={isOpen} accentColor={config.theme.colors.accentPrimary} />
     <nav className="rx-nav" aria-label="Navegación de la invitación"><a className="rx-nav__brand" href="#inicio"><span>XV</span>{name}</a><div><a href="#detalles">Detalles</a><a href="#momentos">Momentos</a><a href="#confirmar" className="rx-nav__rsvp">Confirmar <ArrowRight size={14} /></a></div></nav>
     <main>

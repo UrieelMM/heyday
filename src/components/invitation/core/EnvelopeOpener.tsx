@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { Sparkles, Ticket, Volume2 } from 'lucide-react';
 import type { GuestGroup, InvitationConfig } from '@/types/invitation.types';
+import { invitationFontStack } from '@/lib/fonts/invitation-fonts';
 
 interface EnvelopeOpenerProps {
   config: InvitationConfig;
@@ -48,6 +49,7 @@ export function EnvelopeOpener({
       {!isOpen && (
         <motion.div
           key="envelope-overlay"
+          data-editor-section="envelope"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0, scale: 1.06, filter: 'blur(8px)' }}
           transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
@@ -98,7 +100,7 @@ export function EnvelopeOpener({
 
             <h1
               className="mb-3 text-4xl font-semibold tracking-tight sm:text-5xl"
-              style={{ fontFamily: fonts.headingFont }}
+              style={{ fontFamily: invitationFontStack(fonts.headingFont) }}
             >
               {config.content.hero.mainTitle}
             </h1>
@@ -118,10 +120,12 @@ export function EnvelopeOpener({
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') handleTriggerOpen();
               }}
-              className="group relative flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-2xl border p-8 shadow-2xl transition-transform duration-500 hover:scale-[1.02] active:scale-[0.99]"
+              className="group relative flex h-64 w-full cursor-pointer flex-col items-center justify-center border p-8 shadow-2xl transition-transform duration-500 hover:scale-[1.02] active:scale-[0.99]"
               style={{
                 backgroundColor: colors.bgSecondary,
                 borderColor: `${colors.accentPrimary}44`,
+                borderRadius: envelope.variant === 'pass-ticket-tear' ? 6 : envelope.variant === 'editorial-curtain' ? 2 : 18,
+                borderStyle: envelope.variant === 'pass-ticket-tear' ? 'dashed' : 'solid',
               }}
             >
               {/* Líneas diagonales de sobre clásico */}
@@ -131,7 +135,7 @@ export function EnvelopeOpener({
                 preserveAspectRatio="none"
               >
                 <path
-                  d="M0,0 L200,140 L400,0"
+                  d={envelope.variant === 'editorial-curtain' ? 'M0,0 L0,145 L400,145 L400,0' : 'M0,0 L200,140 L400,0'}
                   fill="none"
                   stroke={colors.accentPrimary}
                   strokeWidth="1.5"
@@ -169,7 +173,7 @@ export function EnvelopeOpener({
                 ) : (
                   <span
                     className="text-xl font-bold tracking-wider"
-                    style={{ fontFamily: fonts.headingFont }}
+                    style={{ fontFamily: invitationFontStack(fonts.headingFont) }}
                   >
                     {envelope.sealMonogram}
                   </span>

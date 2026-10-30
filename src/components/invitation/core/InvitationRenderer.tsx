@@ -33,6 +33,7 @@ import {
   buildIcsFileContent,
 } from '@/lib/calendar/ics-generator';
 import { isCelebrationTemplateId } from '@/lib/templates/celebration-config';
+import { invitationFontStack } from '@/lib/fonts/invitation-fonts';
 import {
   isOccasionTemplateId,
   occasionSectionCopy,
@@ -65,6 +66,7 @@ interface InvitationRendererProps {
   guestGroup?: GuestGroup | null;
   forceEnvelopeOpen?: boolean;
   isBuilderPreview?: boolean;
+  previewEnvelope?: boolean;
 }
 
 export function InvitationRenderer(props: InvitationRendererProps) {
@@ -87,9 +89,10 @@ function StandardInvitationRenderer({
   guestGroup,
   forceEnvelopeOpen = false,
   isBuilderPreview = false,
+  previewEnvelope = false,
 }: InvitationRendererProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const [isEnvelopeOpen, setIsEnvelopeOpen] = useState(forceEnvelopeOpen);
+  const [isEnvelopeOpen, setIsEnvelopeOpen] = useState(forceEnvelopeOpen || (isBuilderPreview && !previewEnvelope));
   const [copiedClabe, setCopiedClabe] = useState(false);
   const signatureTemplateId = templateId === 'boho-terracotta' || templateId === 'modern-minimal-noir' || templateId === 'neon-xv-euphoria'
     ? templateId : null;
@@ -129,8 +132,8 @@ function StandardInvitationRenderer({
   } | null>(null);
 
   useEffect(() => {
-    setIsEnvelopeOpen(forceEnvelopeOpen);
-  }, [forceEnvelopeOpen]);
+    setIsEnvelopeOpen(forceEnvelopeOpen || (isBuilderPreview && !previewEnvelope));
+  }, [forceEnvelopeOpen, isBuilderPreview, previewEnvelope]);
 
   // Reloj de cuenta regresiva
   useEffect(() => {
@@ -269,12 +272,15 @@ function StandardInvitationRenderer({
       style={{
         backgroundColor: colors.bgPrimary,
         color: colors.textPrimary,
-        fontFamily: fonts.bodyFont,
-      }}
+        fontFamily: invitationFontStack(fonts.bodyFont),
+        '--inv-heading-font': invitationFontStack(fonts.headingFont),
+        '--inv-body-font': invitationFontStack(fonts.bodyFont),
+        '--inv-script-font': invitationFontStack(fonts.scriptFont),
+      } as React.CSSProperties}
       className={`relative min-h-dvh w-full overflow-x-hidden selection:bg-amber-500/20${signatureTemplateId ? ` st-root st-root--${signatureTemplateId}` : ''}${celebrationTemplateId ? ` cs-root cs-root--${celebrationTemplateId}` : ''}${occasionTemplateId ? ` oc-root oc-root--${occasionTemplateId}` : ''}`}
     >
       {/* 1. Sobre de Apertura Interactivo */}
-      {!isBuilderPreview && (
+      {(!isBuilderPreview || previewEnvelope) && (
         <EnvelopeOpener
           config={config}
           guestGroup={guestGroup}
@@ -327,7 +333,7 @@ function StandardInvitationRenderer({
         />
       )}
       {isSectionEnabled('hero') && !hasSceneTemplate && (
-        <section className="relative flex min-h-dvh flex-col items-center justify-end overflow-hidden px-6 pb-16 pt-28 text-center">
+        <section data-editor-section="hero" className="relative flex min-h-dvh flex-col items-center justify-end overflow-hidden px-6 pb-16 pt-28 text-center">
           <div className="absolute inset-0 z-0 overflow-hidden">
             <HeroMedia hero={content.hero} alt={content.hero.mainTitle} className="inv-mask-image h-full w-full object-cover" />
             <div
@@ -366,7 +372,7 @@ function StandardInvitationRenderer({
 
             <h1
               className="mb-4 text-5xl leading-[1.08] font-semibold tracking-tight sm:text-7xl"
-              style={{ fontFamily: fonts.headingFont }}
+              style={{ fontFamily: invitationFontStack(fonts.headingFont) }}
             >
               {content.hero.mainTitle}
             </h1>
@@ -394,7 +400,7 @@ function StandardInvitationRenderer({
           {content.sectionHeadings?.quote_story?.eyebrow && <p className="mb-5 text-xs font-semibold uppercase tracking-[0.25em]" style={{ color: colors.accentPrimary }}>{content.sectionHeadings.quote_story.eyebrow}</p>}
           <blockquote
             className="text-2xl leading-relaxed italic sm:text-3xl"
-            style={{ fontFamily: fonts.headingFont }}
+            style={{ fontFamily: invitationFontStack(fonts.headingFont) }}
             aria-label={hasSceneTemplate ? content.quoteStory.quoteText : undefined}
           >
             {hasSceneTemplate ? (
@@ -434,7 +440,7 @@ function StandardInvitationRenderer({
                     </span>
                     <h3
                       className="mt-1 text-xl font-semibold"
-                      style={{ fontFamily: fonts.headingFont }}
+                      style={{ fontFamily: invitationFontStack(fonts.headingFont) }}
                     >
                       {block.title}
                     </h3>
@@ -460,7 +466,7 @@ function StandardInvitationRenderer({
           >
             <div className="mx-auto max-w-4xl text-center">
               {content.sectionHeadings?.vip_parents?.eyebrow && <p className="mb-3 text-xs font-semibold uppercase tracking-[0.25em]" style={{ color: colors.accentPrimary }}>{content.sectionHeadings.vip_parents.eyebrow}</p>}
-              {content.sectionHeadings?.vip_parents?.title && <h2 className="mb-5 text-3xl font-semibold" style={{ fontFamily: fonts.headingFont }}>{content.sectionHeadings.vip_parents.title}</h2>}
+              {content.sectionHeadings?.vip_parents?.title && <h2 className="mb-5 text-3xl font-semibold" style={{ fontFamily: invitationFontStack(fonts.headingFont) }}>{content.sectionHeadings.vip_parents.title}</h2>}
               <p
                 className="mx-auto mb-10 max-w-xl text-sm tracking-[0.15em] uppercase"
                 style={{ color: colors.textMuted }}
@@ -489,7 +495,7 @@ function StandardInvitationRenderer({
                         <p
                           key={pIdx}
                           className="text-lg font-medium"
-                          style={{ fontFamily: fonts.headingFont }}
+                          style={{ fontFamily: invitationFontStack(fonts.headingFont) }}
                         >
                           {person}
                         </p>
@@ -519,7 +525,7 @@ function StandardInvitationRenderer({
           </p>
           <h2
             className="mb-10 text-3xl font-semibold sm:text-4xl"
-            style={{ fontFamily: fonts.headingFont }}
+            style={{ fontFamily: invitationFontStack(fonts.headingFont) }}
           >
             {content.sectionHeadings?.countdown?.title ?? occasionCopy?.countdownTitle ?? (celebrationTemplateId === 'golden-jubilee'
               ? 'Cuenta regresiva para el brindis'
@@ -547,7 +553,7 @@ function StandardInvitationRenderer({
               >
                 <span
                   className="text-3xl font-bold tabular-nums sm:text-4xl"
-                  style={{ fontFamily: fonts.headingFont }}
+                  style={{ fontFamily: invitationFontStack(fonts.headingFont) }}
                 >
                   {String(item.value).padStart(2, '0')}
                 </span>
@@ -621,7 +627,7 @@ function StandardInvitationRenderer({
               </p>
               <h2
                 className="text-3xl font-semibold sm:text-4xl"
-                style={{ fontFamily: fonts.headingFont }}
+                style={{ fontFamily: invitationFontStack(fonts.headingFont) }}
               >
                 {content.sectionHeadings?.locations?.title ?? occasionCopy?.locationTitle ?? (celebrationTemplateId === 'golden-jubilee'
                   ? 'Donde brindaremos'
@@ -662,7 +668,7 @@ function StandardInvitationRenderer({
                       </div>
                       <h3
                         className="text-2xl font-semibold"
-                        style={{ fontFamily: fonts.headingFont }}
+                        style={{ fontFamily: invitationFontStack(fonts.headingFont) }}
                       >
                         {loc.venueName}
                       </h3>
@@ -729,7 +735,7 @@ function StandardInvitationRenderer({
             </p>
             <h2
               className="text-3xl font-semibold sm:text-4xl"
-              style={{ fontFamily: fonts.headingFont }}
+              style={{ fontFamily: invitationFontStack(fonts.headingFont) }}
             >
               {content.sectionHeadings?.timeline?.title ?? occasionCopy?.timelineTitle ?? (celebrationTemplateId === 'golden-jubilee'
                 ? 'Una noche para recordar'
@@ -764,7 +770,7 @@ function StandardInvitationRenderer({
                   </span>
                   <h3
                     className="mt-0.5 text-xl font-semibold"
-                    style={{ fontFamily: fonts.headingFont }}
+                    style={{ fontFamily: invitationFontStack(fonts.headingFont) }}
                   >
                     {item.title}
                   </h3>
@@ -805,7 +811,7 @@ function StandardInvitationRenderer({
               </p>
               <h2
                 className="text-3xl font-semibold sm:text-4xl"
-                style={{ fontFamily: fonts.headingFont }}
+                style={{ fontFamily: invitationFontStack(fonts.headingFont) }}
               >
                 {content.sectionHeadings?.gallery?.title ?? occasionCopy?.galleryTitle ?? (celebrationTemplateId === 'golden-jubilee'
                   ? 'Momentos de la noche'
@@ -855,7 +861,7 @@ function StandardInvitationRenderer({
           </p>
           <h2
             className="mb-8 text-3xl font-semibold sm:text-4xl"
-            style={{ fontFamily: fonts.headingFont }}
+            style={{ fontFamily: invitationFontStack(fonts.headingFont) }}
           >
             {content.sectionHeadings?.dress_code?.title || content.dressCode.title}
           </h2>
@@ -939,7 +945,7 @@ function StandardInvitationRenderer({
             />
             <h2
               className="mb-3 text-3xl font-semibold sm:text-4xl"
-              style={{ fontFamily: fonts.headingFont }}
+              style={{ fontFamily: invitationFontStack(fonts.headingFont) }}
             >
               {content.sectionHeadings?.gifts?.title ?? occasionCopy?.giftsTitle ?? 'Mesa de Regalos y Lluvia de Sobres'}
             </h2>
@@ -969,7 +975,7 @@ function StandardInvitationRenderer({
                     </span>
                     <h3
                       className="mt-1 text-2xl font-semibold"
-                      style={{ fontFamily: fonts.headingFont }}
+                      style={{ fontFamily: invitationFontStack(fonts.headingFont) }}
                     >
                       {reg.storeName}
                     </h3>
@@ -1016,7 +1022,7 @@ function StandardInvitationRenderer({
                       </div>
                       <h3
                         className="mt-1 text-xl font-semibold"
-                        style={{ fontFamily: fonts.headingFont }}
+                        style={{ fontFamily: invitationFontStack(fonts.headingFont) }}
                       >
                         {content.gifts.bankTransfer.bankName} —{' '}
                         {content.gifts.bankTransfer.accountHolder}
@@ -1083,7 +1089,7 @@ function StandardInvitationRenderer({
               />
               <h2
                 className="text-3xl font-semibold sm:text-4xl"
-                style={{ fontFamily: fonts.headingFont }}
+                style={{ fontFamily: invitationFontStack(fonts.headingFont) }}
               >
                 {content.sectionHeadings?.accommodation?.title || 'Sugerencias de Hospedaje'}
               </h2>
@@ -1101,7 +1107,7 @@ function StandardInvitationRenderer({
                 >
                   <h3
                     className="text-xl font-semibold"
-                    style={{ fontFamily: fonts.headingFont }}
+                    style={{ fontFamily: invitationFontStack(fonts.headingFont) }}
                   >
                     {hotel.hotelName}
                   </h3>
@@ -1126,9 +1132,9 @@ function StandardInvitationRenderer({
         )}
 
       {/* SECCIÓN 11: FEATURES DIFERENCIADORAS — DJ PLAYLIST & AUDIO GUESTBOOK */}
-      {isSectionEnabled('social_features') && <section className="mx-auto max-w-4xl px-6 py-12">{content.sectionHeadings?.social_features?.eyebrow && <p className="mb-3 text-xs font-semibold uppercase tracking-[0.25em]" style={{ color: colors.accentPrimary }}>{content.sectionHeadings.social_features.eyebrow}</p>}<h2 className="mb-4 text-2xl">{content.sectionHeadings?.social_features?.title || 'Álbum compartido'}</h2><SharedAlbum slug={slug} token={guestGroup?.guestToken} preview={isBuilderPreview} /></section>}
+      {isSectionEnabled('social_features') && <section data-editor-section="socialFeatures" className="mx-auto max-w-4xl px-6 py-12">{content.sectionHeadings?.social_features?.eyebrow && <p className="mb-3 text-xs font-semibold uppercase tracking-[0.25em]" style={{ color: colors.accentPrimary }}>{content.sectionHeadings.social_features.eyebrow}</p>}<h2 className="mb-4 text-2xl">{content.sectionHeadings?.social_features?.title || 'Álbum compartido'}</h2><SharedAlbum slug={slug} token={guestGroup?.guestToken} preview={isBuilderPreview} /></section>}
 
-      {isSectionEnabled('social_features') && <section className="mx-auto max-w-4xl px-6 py-12"><SocialFeatures slug={slug} token={guestGroup?.guestToken} preview={isBuilderPreview} songsEnabled={content.socialFeatures.enableSongRequests} audioEnabled={content.socialFeatures.enableAudioGuestbook} /></section>}
+      {isSectionEnabled('social_features') && <section data-editor-section="socialFeatures" className="mx-auto max-w-4xl px-6 py-12"><SocialFeatures slug={slug} token={guestGroup?.guestToken} preview={isBuilderPreview} songsEnabled={content.socialFeatures.enableSongRequests} audioEnabled={content.socialFeatures.enableAudioGuestbook} /></section>}
 
       {/* SECCIÓN 12: MÓDULO RSVP INTELIGENTE + PASE VIP QR */}
       {isSectionEnabled('rsvp') && (
@@ -1147,7 +1153,7 @@ function StandardInvitationRenderer({
               />
               <h2
                 className="text-3xl font-semibold sm:text-4xl"
-                style={{ fontFamily: fonts.headingFont }}
+                style={{ fontFamily: invitationFontStack(fonts.headingFont) }}
               >
                 {content.sectionHeadings?.rsvp?.title || 'Confirmación de asistencia'}
               </h2>
@@ -1357,7 +1363,7 @@ function StandardInvitationRenderer({
 
                 <h3
                   className="text-2xl font-semibold"
-                  style={{ fontFamily: fonts.headingFont }}
+                  style={{ fontFamily: invitationFontStack(fonts.headingFont) }}
                 >
                   {generatedPass.groupName}
                 </h3>

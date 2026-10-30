@@ -47,6 +47,7 @@ import type { SectionId, TemplateId } from '@/types/invitation.types';
 import { EventReception } from '@/components/dashboard/EventReception';
 import { EventMemories } from '@/components/dashboard/EventMemories';
 import { HeyDayBrand } from '@/components/brand/HeyDayBrand';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import './dashboard.css';
 
 const SECTION_LABELS: Record<SectionId, string> = {
@@ -104,6 +105,8 @@ function DashboardContent() {
 
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [shareAccess, setShareAccess] = useState<{ slug: string; pin: string } | null>(null);
+  const [invitationToDelete, setInvitationToDelete] = useState<ClientInvitationRecord | null>(null);
+  const [deletingInvitation, setDeletingInvitation] = useState(false);
   const [adminEmail, setAdminEmail] = useState<string>(
     'Administrador'
   );
@@ -910,10 +913,7 @@ function DashboardContent() {
                               <button type="button" onClick={() => void handleGenerateAccess(inv)} className="rounded-xl border border-[#d7cfc4] bg-white px-2.5 py-1.5 text-xs font-semibold text-[#141413] hover:bg-[#ebe6df]" title="Genera un PIN nuevo y desactiva el anterior">Generar acceso</button>
                               <button
                                 type="button"
-                                onClick={async () => {
-                                  if (!window.confirm(`¿Eliminar la invitación de ${inv.clientName}?`)) return;
-                                  try { await deleteInvitation(inv.id); toast.success('Invitación eliminada'); } catch (err) { toast.error(err instanceof Error ? err.message : 'No se pudo eliminar'); }
-                                }}
+                                onClick={() => setInvitationToDelete(inv)}
                                 title="Eliminar invitación"
                                 className="cursor-pointer rounded-xl border border-[#e6dfd8] p-1.5 text-[#6c6a64] transition hover:border-[#c64545]/40 hover:text-[#c64545]"
                               >
@@ -1697,6 +1697,15 @@ function DashboardContent() {
       {/* =====================================================================
           MODAL: CREAR NUEVA INVITACIÓN DE CLIENTE (GUARDADO POR TEMPLATE)
       ===================================================================== */}
+      {invitationToDelete && <ConfirmDialog title="Eliminar invitación" description={`Se eliminará la invitación de ${invitationToDelete.clientName} y sus pases de invitados. Esta acción no se puede deshacer.`} confirmLabel="Sí, eliminar" busy={deletingInvitation} onCancel={() => setInvitationToDelete(null)} onConfirm={async () => {
+        setDeletingInvitation(true);
+        try {
+          await deleteInvitation(invitationToDelete.id);
+          toast.success('Invitación eliminada');
+          setInvitationToDelete(null);
+        } catch (err) { toast.error(err instanceof Error ? err.message : 'No se pudo eliminar'); }
+        finally { setDeletingInvitation(false); }
+      }} />}
       {shareAccess && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[#141413]/75 p-4" role="dialog" aria-modal="true" aria-label="Acceso del cliente">
           <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl sm:p-8">

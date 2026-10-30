@@ -41,7 +41,7 @@
 .oc-root section[id] { scroll-margin-top: 22px; }
 
 /* Sweet Oh Baby: a tactile nursery mobile with a slow, weightless rhythm. */
-.oc-root--sweet-oh-baby { font-family: var(--font-jakarta), sans-serif !important; background: #fcf9f5; color: #3d352e; }
+.oc-root--sweet-oh-baby { font-family: var(--inv-body-font) !important; background: #fcf9f5; color: #3d352e; }
 .oc-root--sweet-oh-baby .oc-hero__stage { background: #f7efe5; color: #3d352e; }
 .oc-root--sweet-oh-baby .oc-hero__texture { inset: 0; background: radial-gradient(circle at 13% 18%, rgba(255,255,255,.94) 0 8%, transparent 8.2%), radial-gradient(circle at 89% 8%, rgba(183,216,232,.42) 0 12%, transparent 12.2%), radial-gradient(ellipse at 7% 100%, rgba(244,162,140,.36), transparent 42%), repeating-linear-gradient(94deg, transparent 0 79px, rgba(90,70,52,.025) 80px 81px); }
 .oc-root--sweet-oh-baby .oc-hero__mobile { z-index: 1; top: -7%; left: 28%; width: 37%; height: 72%; pointer-events: none; }
@@ -70,7 +70,7 @@
 .oc-root--sweet-oh-baby .oc-hero__final p { font: italic 600 clamp(58px, 7.2vw, 116px)/.96 var(--font-playfair), Georgia, serif; text-wrap: balance; }
 .oc-root--sweet-oh-baby .oc-hero__cta { border: 1px solid #6e8878; border-radius: 100px; background: #6e8878; color: #fff; }
 .oc-root--sweet-oh-baby .oc-hero__scroll { color: #775f4f; }
-.oc-root--sweet-oh-baby :is(h2,h3) { font-family: var(--font-playfair), Georgia, serif !important; letter-spacing: -.025em; }
+.oc-root--sweet-oh-baby :is(h2,h3) { font-family: var(--inv-heading-font) !important; letter-spacing: -.025em; }
 .oc-root--sweet-oh-baby .st-story { width: 100%; max-width: none; padding: 145px max(24px, calc((100% - 880px)/2)); background: #fffdf9; }
 .oc-root--sweet-oh-baby .st-story > div:first-child { height: 75px !important; background: linear-gradient(#8fb9a8 0 45%, #f4a28c 45% 100%) !important; }
 .oc-root--sweet-oh-baby .st-story blockquote { font: italic 500 clamp(37px, 5.2vw, 69px)/1.16 var(--font-playfair), Georgia, serif !important; }
@@ -102,7 +102,7 @@
 .oc-root--sweet-oh-baby .st-rsvp > div { border-color: rgba(143,185,168,.55) !important; border-radius: 35px 8px 35px 8px !important; background: #fffdf9 !important; }
 
 /* Grad & Gala: a ceremonial program, architectural crest and disciplined procession. */
-.oc-root--grad-gala-night { font-family: var(--font-inter), sans-serif !important; background: #0b132b; color: #f8f6ee; }
+.oc-root--grad-gala-night { font-family: var(--inv-body-font) !important; background: #0b132b; color: #f8f6ee; }
 .oc-root--grad-gala-night .oc-hero__stage { background: #091126; color: #f8f6ee; }
 .oc-root--grad-gala-night .oc-hero__texture { inset: 0; background: radial-gradient(circle at 68% 48%, rgba(212,175,55,.14), transparent 34%), linear-gradient(112deg, transparent 0 52%, rgba(91,192,190,.05) 52.1% 52.3%, transparent 52.4%), repeating-linear-gradient(90deg, transparent 0 89px, rgba(212,175,55,.045) 90px 91px); }
 .oc-root--grad-gala-night .oc-hero__crest { z-index: 1; top: 5%; left: 27%; width: min(31vw, 410px); stroke: rgba(212,175,55,.34); stroke-width: 1.2; pointer-events: none; transform-origin: center; }
@@ -123,7 +123,7 @@
 .oc-root--grad-gala-night .oc-hero__final p { font: 500 clamp(48px, 6vw, 96px)/1.03 var(--font-cinzel), Georgia, serif; text-transform: uppercase; text-wrap: balance; }
 .oc-root--grad-gala-night .oc-hero__cta { border: 1px solid #d4af37; background: #d4af37; color: #0b132b; }
 .oc-root--grad-gala-night .oc-hero__scroll { color: #a7b3ca; }
-.oc-root--grad-gala-night :is(h2,h3) { font-family: var(--font-cinzel), Georgia, serif !important; font-weight: 500 !important; text-transform: uppercase; letter-spacing: -.02em; }
+.oc-root--grad-gala-night :is(h2,h3) { font-family: var(--inv-heading-font) !important; font-weight: 500 !important; text-transform: uppercase; letter-spacing: -.02em; }
 .oc-root--grad-gala-night .st-story { width: 100%; max-width: none; padding: 150px max(24px, calc((100% - 920px)/2)); background: #111b37; }
 .oc-root--grad-gala-night .st-story > div:first-child { height: 84px !important; background: linear-gradient(#d4af37 0 58%, #5bc0be 58% 64%, transparent 64%) !important; }
 .oc-root--grad-gala-night .st-story blockquote { font: 500 clamp(33px, 4.5vw, 60px)/1.25 var(--font-cinzel), Georgia, serif !important; }

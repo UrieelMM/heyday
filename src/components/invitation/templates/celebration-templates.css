@@ -24,7 +24,7 @@
 .cs-root section[id] { scroll-margin-top: 24px; }
 
 /* Golden Jubilee: mirrored Art Deco geometry and a measured gala rhythm. */
-.cs-root--golden-jubilee { font-family: var(--font-inter), sans-serif !important; background: #0d0d0d; color: #f5f0e6; }
+.cs-root--golden-jubilee { font-family: var(--inv-body-font) !important; background: #0d0d0d; color: #f5f0e6; }
 .cs-root--golden-jubilee .cs-hero__stage { background: #0d0b09; color: #f5f0e6; }
 .cs-root--golden-jubilee .cs-hero__texture { inset: 0; background: radial-gradient(circle at 58% 48%, rgba(175,117,37,.2), transparent 38%), repeating-linear-gradient(90deg, transparent 0 79px, rgba(229,193,88,.045) 80px 81px); }
 .cs-root--golden-jubilee .cs-hero__deco { inset: 4% 3%; z-index: 0; border: 1px solid rgba(229,193,88,.34); pointer-events: none; }
@@ -50,7 +50,7 @@
 .cs-root--golden-jubilee .cs-hero__final p { font: 500 clamp(55px, 6.4vw, 108px)/1.03 var(--font-cinzel), Georgia, serif; text-transform: uppercase; }
 .cs-root--golden-jubilee .cs-hero__cta { border: 1px solid #e5c158; background: #e5c158; color: #15110c; }
 .cs-root--golden-jubilee .cs-hero__scroll { color: #d8bd80; }
-.cs-root--golden-jubilee :is(h2,h3) { font-family: var(--font-cinzel), Georgia, serif !important; font-weight: 500 !important; text-transform: uppercase; letter-spacing: -.025em; }
+.cs-root--golden-jubilee :is(h2,h3) { font-family: var(--inv-heading-font) !important; font-weight: 500 !important; text-transform: uppercase; letter-spacing: -.025em; }
 .cs-root--golden-jubilee .st-story { width: 100%; max-width: none; padding: 150px max(24px, calc((100% - 900px)/2)); background: #17130f; text-align: center; }
 .cs-root--golden-jubilee .st-story blockquote { font: 500 clamp(30px, 4.5vw, 59px)/1.24 var(--font-cinzel), Georgia, serif !important; }
 .cs-root--golden-jubilee .st-story > .grid > div { border: 1px solid rgba(229,193,88,.47) !important; border-radius: 0 !important; background: #252019 !important; color: #f5f0e6; }
@@ -75,7 +75,7 @@
 .cs-root--golden-jubilee .st-rsvp button[type=submit], .cs-root--golden-jubilee .st-countdown a:first-child { background: #795921 !important; color: #fff !important; }
 
 /* Fiesta Kids: bold paper shapes and playful bento blocks. */
-.cs-root--fiesta-kids-adventure { font-family: var(--font-jakarta), sans-serif !important; background: #fffaf0; color: #26384a; }
+.cs-root--fiesta-kids-adventure { font-family: var(--inv-body-font) !important; background: #fffaf0; color: #26384a; }
 .cs-root--fiesta-kids-adventure .cs-hero__stage { background: #ffe9b2; color: #26384a; }
 .cs-root--fiesta-kids-adventure .cs-hero__texture { inset: 0; background: radial-gradient(circle at 14% 20%, #fff6d5 0 8%, transparent 8.2%), radial-gradient(circle at 89% 7%, rgba(78,205,196,.48) 0 12%, transparent 12.3%), repeating-linear-gradient(100deg, transparent 0 40px, rgba(255,107,107,.035) 40px 43px); }
 .cs-root--fiesta-kids-adventure .cs-hero__play { inset: 0; z-index: 0; pointer-events: none; }
@@ -97,7 +97,7 @@
 .cs-root--fiesta-kids-adventure .cs-hero__final p { font: 700 clamp(62px, 8vw, 130px)/.9 var(--font-fredoka), sans-serif; }
 .cs-root--fiesta-kids-adventure .cs-hero__cta { border: 3px solid #26384a; border-radius: 100px; background: #ffcd55; color: #26384a; box-shadow: 6px 7px 0 #26384a; }
 .cs-root--fiesta-kids-adventure .cs-hero__scroll { color: #7b4044; }
-.cs-root--fiesta-kids-adventure :is(h2,h3) { font-family: var(--font-fredoka), sans-serif !important; font-weight: 600 !important; letter-spacing: -.025em; }
+.cs-root--fiesta-kids-adventure :is(h2,h3) { font-family: var(--inv-heading-font) !important; font-weight: 600 !important; letter-spacing: -.025em; }
 .cs-root--fiesta-kids-adventure .st-story { width: 100%; max-width: none; padding: 130px max(24px, calc((100% - 900px)/2)); background: #fff1c8; }
 .cs-root--fiesta-kids-adventure .st-story blockquote { font: 600 clamp(35px, 5vw, 68px)/1.15 var(--font-fredoka), sans-serif !important; }
 .cs-root--fiesta-kids-adventure .st-story > .grid > div, .cs-root--fiesta-kids-adventure .st-family__card, .cs-root--fiesta-kids-adventure .st-locations__card, .cs-root--fiesta-kids-adventure .st-dress > .grid > div { border: 3px solid #26384a !important; border-radius: 28px !important; background: #fffdf7 !important; box-shadow: 7px 8px 0 #4ecdc4; color: #26384a; }
@@ -119,7 +119,7 @@
 .cs-root--fiesta-kids-adventure .st-rsvp > div { border: 3px solid #26384a !important; border-radius: 28px !important; background: #fffdf7 !important; box-shadow: 9px 10px 0 #4ecdc4; }
 
 /* Celestial Grace: water, candlelight and quiet olive branches. */
-.cs-root--celestial-baptism { font-family: var(--font-jakarta), sans-serif !important; background: #f8fafc; color: #1e2d3d; }
+.cs-root--celestial-baptism { font-family: var(--inv-body-font) !important; background: #f8fafc; color: #1e2d3d; }
 .cs-root--celestial-baptism .cs-hero__stage { background: #f2f7fa; color: #1e2d3d; }
 .cs-root--celestial-baptism .cs-hero__texture { inset: 0; background: radial-gradient(ellipse at 70% 12%, rgba(255,255,255,.9) 0 18%, transparent 47%), radial-gradient(ellipse at 5% 100%, rgba(173,205,224,.54), transparent 50%), repeating-linear-gradient(90deg, transparent 0 116px, rgba(127,166,196,.045) 117px 118px); }
 .cs-root--celestial-baptism .cs-hero__olive { z-index: 2; left: 39%; bottom: -4%; width: auto; height: 52%; stroke: #78927c; stroke-width: 1.3; opacity: .58; pointer-events: none; transform-origin: bottom; }
@@ -135,7 +135,7 @@
 .cs-root--celestial-baptism .cs-hero__final p { font: italic 400 clamp(64px, 8vw, 125px)/.92 var(--font-cormorant), Georgia, serif; }
 .cs-root--celestial-baptism .cs-hero__cta { border: 1px solid #80633b; border-radius: 100px; background: #80633b; color: #fff; }
 .cs-root--celestial-baptism .cs-hero__scroll { color: #5b7083; }
-.cs-root--celestial-baptism :is(h2,h3) { font-family: var(--font-cormorant), Georgia, serif !important; font-weight: 600 !important; letter-spacing: -.03em; }
+.cs-root--celestial-baptism :is(h2,h3) { font-family: var(--inv-heading-font) !important; font-weight: 600 !important; letter-spacing: -.03em; }
 .cs-root--celestial-baptism .st-story { width: 100%; max-width: none; padding: 145px max(24px, calc((100% - 850px)/2)); background: #fff; }
 .cs-root--celestial-baptism .st-story blockquote { font: italic 400 clamp(38px, 5vw, 68px)/1.19 var(--font-cormorant), Georgia, serif !important; }
 .cs-root--celestial-baptism .st-story > .grid > div { border: 1px solid #c7d6de !important; border-radius: 4px 38px 4px 38px !important; background: #f4f8fa !important; }

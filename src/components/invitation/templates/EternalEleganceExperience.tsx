@@ -27,6 +27,7 @@ import {
   Volume2,
 } from 'lucide-react';
 import { sectionHeading } from '@/lib/templates/section-heading';
+import { invitationFontStack } from '@/lib/fonts/invitation-fonts';
 import type { GuestGroup, InvitationConfig } from '@/types/invitation.types';
 import { buildGoogleCalendarUrl, buildIcsFileContent } from '@/lib/calendar/ics-generator';
 import { FloatingAudioPlayer } from '../core/FloatingAudioPlayer';
@@ -42,6 +43,7 @@ interface EternalEleganceExperienceProps {
   guestGroup?: GuestGroup | null;
   forceEnvelopeOpen?: boolean;
   isBuilderPreview?: boolean;
+  previewEnvelope?: boolean;
 }
 
 const formatDate = (date: string) => {
@@ -54,20 +56,6 @@ const formatDate = (date: string) => {
     timeZone: 'America/Mexico_City',
   }).format(parsed);
 };
-
-const fontVariable: Record<string, string> = {
-  'Cormorant Garamond': '--font-cormorant',
-  'Playfair Display': '--font-playfair',
-  Cinzel: '--font-cinzel',
-  'Pinyon Script': '--font-pinyon',
-  'Great Vibes': '--font-great-vibes',
-  Montserrat: '--font-montserrat',
-  Inter: '--font-inter',
-  'Plus Jakarta Sans': '--font-jakarta',
-};
-
-const fontStack = (font: string, fallback: string) =>
-  fontVariable[font] ? `var(${fontVariable[font]}), ${fallback}` : `'${font}', ${fallback}`;
 
 function Botanical({ className = '' }: { className?: string }) {
   return (
@@ -135,6 +123,7 @@ function Opening({ config, eventDate, guestGroup, isOpen, onOpen }: {
       {!isOpen && (
         <motion.div
           className="ee-opening"
+          data-editor-section="envelope"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0, y: -35 }}
           transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
@@ -148,7 +137,7 @@ function Opening({ config, eventDate, guestGroup, isOpen, onOpen }: {
             <h1 className="ee-opening__title">{config.content.hero.mainTitle}</h1>
             <p className="ee-opening__date">{formatDate(eventDate)} · {config.content.hero.tagline.split('•').slice(1).join('•').trim() || config.content.hero.tagline}</p>
             <motion.div
-              className={`ee-envelope${opening ? ' ee-envelope--opening' : ''}`}
+              className={`ee-envelope ee-envelope--${config.theme.envelope.variant}${opening ? ' ee-envelope--opening' : ''}`}
               animate={opening ? { y: 25, scale: 1.04, opacity: 0 } : { y: 0, scale: 1, opacity: 1 }}
               transition={{ duration: 0.62, delay: opening ? 0.25 : 0, ease: [0.22, 1, 0.36, 1] }}
             >
@@ -164,7 +153,7 @@ function Opening({ config, eventDate, guestGroup, isOpen, onOpen }: {
               </span>
             </motion.div>
             <motion.button type="button" className="ee-opening__button" onClick={() => setOpening(true)} disabled={opening} whileHover={{ y: -3 }} whileTap={{ scale: 0.98 }}>
-              Abrir nuestra invitación <ArrowRight size={16} />
+              {config.theme.envelope.openButtonText} <ArrowRight size={16} />
             </motion.button>
             {config.audio.enabled && <p className="ee-opening__audio"><Volume2 size={13} /> Una experiencia con música</p>}
           </div>
@@ -231,10 +220,11 @@ export function EternalEleganceExperience({
   guestGroup,
   forceEnvelopeOpen = false,
   isBuilderPreview = false,
+  previewEnvelope = false,
 }: EternalEleganceExperienceProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
-  const [isOpen, setIsOpen] = useState(forceEnvelopeOpen || isBuilderPreview);
+  const [isOpen, setIsOpen] = useState(forceEnvelopeOpen || (isBuilderPreview && !previewEnvelope));
   const [activeSection, setActiveSection] = useState('hero');
   const [copiedClabe, setCopiedClabe] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
@@ -252,7 +242,7 @@ export function EternalEleganceExperience({
   const isSectionEnabled = (id: string) => config.sectionsOrder.find((section) => section.id === id)?.enabled ?? true;
   const sectionSignature = config.sectionsOrder.map((section) => `${section.id}:${section.enabled}`).join('|');
 
-  useEffect(() => setIsOpen(forceEnvelopeOpen || isBuilderPreview), [forceEnvelopeOpen, isBuilderPreview]);
+  useEffect(() => setIsOpen(forceEnvelopeOpen || (isBuilderPreview && !previewEnvelope)), [forceEnvelopeOpen, isBuilderPreview, previewEnvelope]);
 
   useEffect(() => {
     const update = () => {
@@ -462,14 +452,15 @@ export function EternalEleganceExperience({
     '--ee-muted': theme.colors.textMuted,
     '--ee-gold': theme.colors.accentPrimary,
     '--ee-bronze': theme.colors.accentSecondary,
-    '--ee-serif': fontStack(theme.fonts.headingFont, 'Georgia, serif'),
-    '--ee-script': fontStack(theme.fonts.scriptFont, 'cursive'),
-    '--ee-sans': fontStack(theme.fonts.bodyFont, 'Arial, sans-serif'),
+    '--ee-seal': theme.envelope.sealColor || theme.colors.accentSecondary,
+    '--ee-serif': invitationFontStack(theme.fonts.headingFont),
+    '--ee-script': invitationFontStack(theme.fonts.scriptFont),
+    '--ee-sans': invitationFontStack(theme.fonts.bodyFont),
   } as React.CSSProperties;
 
   return (
     <div ref={rootRef} className="ee-root" style={style}>
-      {!isBuilderPreview && <Opening config={config} eventDate={eventDate} guestGroup={guestGroup} isOpen={isOpen} onOpen={openInvitation} />}
+      {(!isBuilderPreview || previewEnvelope) && <Opening config={config} eventDate={eventDate} guestGroup={guestGroup} isOpen={isOpen} onOpen={openInvitation} />}
       <FloatingAudioPlayer enabled={config.audio.enabled} trackUrl={config.audio.trackUrl} trackTitle={config.audio.trackTitle} isEnvelopeOpen={isOpen} accentColor={theme.colors.accentPrimary} />
 
       <div className="ee-progress" aria-hidden="true"><div ref={progressRef} /></div>

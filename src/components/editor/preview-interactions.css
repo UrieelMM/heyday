@@ -1,0 +1,3 @@
+html.editor-preview-pick-mode, html.editor-preview-pick-mode * { cursor: crosshair !important; }
+html.editor-preview-pick-mode iframe { pointer-events: none !important; }
+html.editor-preview-pick-mode .editor-preview-hover { outline: 3px solid #c97150 !important; outline-offset: -3px; box-shadow: inset 0 0 0 5px #fff8 !important; }
