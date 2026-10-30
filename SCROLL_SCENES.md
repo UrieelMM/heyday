@@ -169,7 +169,7 @@ useGSAP(() => {
 }, { scope: rootRef, dependencies: [isOpen] });
 ```
 
-El snippet es un patrón, no un componente para pegar sin ajustes. Consultar nodos reales antes de crear cada timeline y comprobar `sectionsOrder`: el builder puede desactivar secciones. En Eternal también se detecta un contenedor `data-invitation-scroller` cuando existe y se pasa como `scroller` a cada trigger. En el sitio público, Lenis controla el scroll nativo y llama `ScrollTrigger.update`.
+El snippet es un patrón, no un componente para pegar sin ajustes. Consultar nodos reales antes de crear cada timeline y comprobar `sectionsOrder`: el editor puede desactivar secciones. En Eternal también se detecta un contenedor `data-invitation-scroller` cuando existe y se pasa como `scroller` a cada trigger. En el sitio público, Lenis controla el scroll nativo y llama `ScrollTrigger.update`.
 
 ### Puntos de integración
 
@@ -198,7 +198,7 @@ El snippet es un patrón, no un componente para pegar sin ajustes. Consultar nod
 - Optimizar assets finales. La nueva portada Royal se convirtió a JPEG de ~852 KB desde el PNG generado de ~3.3 MB.
 - Cargar la portada con prioridad; dejar fotos posteriores con `loading="lazy"`.
 - Usar `will-change` solo en los elementos que realmente se transforman y quitarlo si una sección deja de animarse.
-- Registrar triggers solo si la sección existe; revisar que un cambio en el builder no deje referencias a nodos eliminados.
+- Registrar triggers solo si la sección existe; revisar que un cambio en el editor no deje referencias a nodos eliminados.
 - Aprovechar `useGSAP` para limpiar timelines y ScrollTriggers al desmontar o reconstruir la experiencia.
 
 ## 9. Receta para un nuevo template
@@ -228,7 +228,7 @@ El snippet es un patrón, no un componente para pegar sin ajustes. Consultar nod
 
 ## 10. Contrato con el editor para nuevos templates
 
-Una plantilla terminada también debe funcionar dentro de **Editar aspecto** y **Gestionar invitados**. Su dirección de arte se conserva al cambiar textos, colores, tipografías y fotografías. La configuración guardada en Supabase es la fuente de verdad; los valores del catálogo son solo el punto de partida. El administrador y el cliente con acceso a la invitación deben poder hacer los mismos ajustes sin tocar código.
+Una plantilla terminada también debe funcionar dentro de **Editar aspecto**, **Gestionar invitados** y **Recepción QR**. Su dirección de arte se conserva al cambiar textos, colores, tipografías y fotografías. La configuración guardada en Supabase es la fuente de verdad; los valores del catálogo son solo el punto de partida. El administrador y el cliente con acceso a la invitación deben poder hacer los mismos ajustes sin tocar código.
 
 ### Contenido y recursos editables
 
@@ -252,7 +252,8 @@ Una plantilla terminada también debe funcionar dentro de **Editar aspecto** y *
 
 ### Invitados y acciones
 
-- Conservar los dos tabs del editor. En **Gestionar invitados**, la tarjeta o sobre de muestra debe completar en vivo nombre, cupos, grupo, mesa y contacto conforme se escribe, con movimiento discreto que no dificulte el formulario.
+- Conservar los tres tabs del editor. En **Gestionar invitados**, la tarjeta o sobre de muestra debe completar en vivo nombre, cupos, grupo, mesa y contacto conforme se escribe, con movimiento discreto que no dificulte el formulario.
+- **Recepción QR** valida el pase firmado para la invitación activa y registra la entrada una sola vez mediante la función transaccional de Supabase. Mostrar conteos y bitácora, permitir lectura por cámara y entrada manual. El administrador consulta el historial por invitación y puede abrir el escáner del cliente para asistirle.
 - Los pases personales y sus confirmaciones deben usar la invitación publicada y sus datos reales en Supabase. El enlace para cada invitado es `/invitacion/{slug}?g={token}`; el enlace general del encabezado no incluye el token ni apunta al editor.
 - Confirmar acciones destructivas con un modal accesible y explícito; no usar `window.alert` ni `window.confirm`. Los estados de guardado, copia y error se comunican dentro de la UI.
 
@@ -263,4 +264,4 @@ Una plantilla terminada también debe funcionar dentro de **Editar aspecto** y *
 - [ ] El sobre y cada sección editable tienen una vista previa correspondiente que responde al instante.
 - [ ] La vista previa móvil usa dimensiones reales y no genera desplazamiento horizontal.
 - [ ] Seleccionar una sección desplaza la vista previa; seleccionar una zona de la invitación abre sus controles.
-- [ ] Los dos tabs, la muestra animada de invitados, los modales de confirmación y el enlace público funcionan con la plantilla nueva.
+- [ ] Los tres tabs, la muestra animada de invitados, el escáner QR, los modales de confirmación y el enlace público funcionan con la plantilla nueva.

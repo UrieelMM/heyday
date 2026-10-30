@@ -1,6 +1,6 @@
 # Migraciones de HeyDay
 
-Las migraciones de `supabase/migrations/` están ordenadas por timestamp para usarse con Supabase CLI. Las primeras once se aplicaron al proyecto `odpiybzxaviifydyqfbk` (`heyday.party`) el 28 de octubre de 2026. La migración 13 se aplicó y registró en el historial el 29 de octubre de 2026. La migración 12, que activa la retención de álbumes y la eliminación futura, sigue pendiente de revisión expresa.
+Las migraciones de `supabase/migrations/` están ordenadas por timestamp para usarse con Supabase CLI. Las primeras once se aplicaron al proyecto `odpiybzxaviifydyqfbk` (`heyday.party`) el 28 de octubre de 2026. Las migraciones 13 y 14 se aplicaron y registraron en el historial de Supabase. La migración 12, que activa la retención de álbumes y la eliminación futura, sigue pendiente de revisión expresa.
 
 | Orden | Migración | Contenido |
 | --- | --- | --- |
@@ -17,6 +17,7 @@ Las migraciones de `supabase/migrations/` están ordenadas por timestamp para us
 | 11 | `20261028001100_social_checkin.sql` | Votos, audio y check-in |
 | 12 | `20261028001200_album_retention.sql` | Miniaturas, enlaces y caducidad del álbum |
 | 13 | `20261029000100_client_editor_pin.sql` | PIN individual de 4 dígitos, límite de intentos y audio/video en el bucket de assets |
+| 14 | `20261029000200_client_qr_checkin.sql` | Autoriza el check-in desde el editor con PIN y asegura una sola entrada QR por pase; aplicada |
 
 ## Para continuar el desarrollo
 
@@ -37,6 +38,8 @@ RETURNING id, email, role;
 No combines `supabase db push` con cambios de esquema desde SQL Editor: el editor no registra las migraciones en el historial de la CLI. El `UPDATE` anterior cambia datos, no el esquema. Para futuras modificaciones, crea un archivo de migración con un timestamp posterior.
 
 La migración 13 es independiente de la 12 y se aplicó exclusivamente mediante SQL Editor, con su versión `20261029000100` registrada en `supabase_migrations.schema_migrations` en la misma transacción. La comprobación posterior confirmó cuatro columnas de PIN, `event-assets` con límite de 30 MB y la función de intentos accesible solo para `service_role`. No ejecutes `supabase db push` mientras la 12 esté pendiente, pues también la aplicaría. El PIN se muestra una sola vez al crear la invitación o al pulsar **Generar acceso** para una invitación antigua. Cambiarlo invalida la sesión anterior. Configura `EDITOR_SESSION_SECRET` en producción para firmar las sesiones de clientes; si no está definido, el servidor utiliza `SUPABASE_SECRET_KEY`.
+
+La migración 14 depende de la función `check_in_group` de la 11, concede `EXECUTE` a `service_role` y agrega un índice único para que cada pase tenga como máximo una entrada QR. El endpoint del cliente comprueba el acceso por PIN y la firma del QR antes de llamar a esa función; esta bloquea el grupo, rechaza un segundo escaneo y escribe la bitácora en la misma transacción. Se aplicó individualmente, con la versión `20261029000200` registrada en la misma transacción y sin aplicar la 12. La comprobación posterior confirmó el índice, el permiso y la ausencia de registros QR duplicados antes de aplicar el índice.
 
 ## Comprobaciones después de migrar
 
@@ -62,6 +65,6 @@ El dashboard utiliza Supabase con la sesión del administrador para cargar y ges
 
 La migración `20261028001000_guest_photo_quota.sql` limita el álbum a 50 fotos por evento y 5 por grupo de invitados, incluso en cargas concurrentes. El enlace personal identifica al grupo y es necesario para acceder al álbum y confirmar asistencia. Las imágenes de portada y galería se guardan en `event-assets`; los recuerdos se guardan en `guest-memories`. Ambos aceptan JPG, PNG y WebP de hasta 8 MB por foto. La eliminación de una invitación elimina también los archivos almacenados bajo su carpeta.
 
-La migración `20261028001100_social_checkin.sql` agrega votos únicos por pase, un límite de tres mensajes de voz por grupo y registro de entradas con bloqueo transaccional. Los invitados acceden a canciones y voz con su enlace personal; el organizador puede escuchar mensajes y ver fotos y canciones en Recepción. El escáner requiere cámara y un origen seguro (HTTPS o localhost). Las visitas se contabilizan una vez por pestaña y sesión del navegador; no son visitantes únicos verificados. Activa las funciones sociales deseadas en el constructor y guarda los cambios.
+La migración `20261028001100_social_checkin.sql` agrega votos únicos por pase, un límite de tres mensajes de voz por grupo y registro de entradas con bloqueo transaccional. Los invitados acceden a canciones y voz con su enlace personal. El cliente encuentra el escáner y la bitácora en el tab **Recepción QR** del editor; el administrador consulta la recepción histórica por invitación y puede abrir el mismo tab para asistirle. La cámara requiere HTTPS o localhost. Las visitas se contabilizan una vez por pestaña y sesión del navegador; no son visitantes únicos verificados.
 
 La migración `20261028001200_album_retention.sql` inicia, al crear cada invitación, una vigencia de seis meses para sus fotos. La carga convierte las imágenes a WebP de alta calidad y genera miniaturas. El cron de Vercel llama diariamente a `/api/cron/photo-retention`: envía mediante Resend un recordatorio a 1 mes, 15 días y 7 días (por ahora a `PHOTO_RETENTION_TEST_EMAIL`), y elimina originales y miniaturas al vencer. Cada correo incluye el enlace privado `/api/albums/download/[token]`, que genera el ZIP por streaming. Configura `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `CRON_SECRET` y `NEXT_PUBLIC_APP_URL` en producción. La aplicación admite temporalmente `NEXT_PUBLIC_RESEND_API_KEY`, pero debe migrarse a `RESEND_API_KEY` para que la credencial no se exponga al navegador.

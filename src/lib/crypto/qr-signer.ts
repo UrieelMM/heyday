@@ -28,6 +28,10 @@ export function verifyQrPass(
   }
 
   const [, eventId, groupId, adultsStr, childrenStr, providedHmac] = parts;
+  const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!uuid.test(eventId) || !uuid.test(groupId) || !/^(0|[1-9]\d?)$/.test(adultsStr) || !/^(0|[1-9]\d?)$/.test(childrenStr) || !/^[0-9a-f]{16}$/.test(providedHmac)) {
+    return { valid: false };
+  }
   const confirmedAdults = Number.parseInt(adultsStr, 10);
   const confirmedChildren = Number.parseInt(childrenStr, 10);
 

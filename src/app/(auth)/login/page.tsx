@@ -117,7 +117,7 @@ function LoginFormContent() {
             <div className="mt-5 space-y-4">
               {[
                 'Historial por cliente y template',
-                'Constructor visual en tiempo real',
+                'Editor visual en tiempo real',
                 'Links nominales y RSVP controlado',
                 'Pases QR para recepción',
               ].map((item) => (
