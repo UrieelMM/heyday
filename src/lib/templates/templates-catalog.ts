@@ -7,6 +7,7 @@ import type {
 } from '@/types/invitation.types';
 import { applyCelebrationDefaults, isCelebrationTemplateId } from './celebration-config';
 import { applyOccasionDefaults, isOccasionTemplateId } from './occasion-config';
+import { applyNewSceneDefaults, isNewSceneTemplateId } from './new-scenes-config';
 
 export interface TemplateMetadata {
   id: TemplateId;
@@ -24,6 +25,46 @@ export interface TemplateMetadata {
 }
 
 export const TEMPLATES_CATALOG: TemplateMetadata[] = [
+  {
+    id: 'marea-azul', name: 'Marea Azul', category: 'wedding',
+    categoryLabel: 'Boda Costa / Mediterránea', badge: 'Nueva colección',
+    description: 'Una boda junto al mar narrada con horizonte, azulejos de cobalto y luz de mediodía.',
+    signatureAnimation: 'Horizonte deslizante + escenas de marea',
+    previewImage: '/images/marea-azul/cover.svg',
+    colors: { bgPrimary: '#F7F4E9', bgSecondary: '#E2ECEB', textPrimary: '#102F45', textMuted: '#486A78', accentPrimary: '#155B8A', accentSecondary: '#D3865A' },
+    fonts: { headingFont: 'Georgia', scriptFont: 'Cormorant Garamond', bodyFont: 'Plus Jakarta Sans' },
+    envelopeVariant: 'editorial-curtain', ambientEffect: 'none',
+  },
+  {
+    id: 'ritmo-de-dos', name: 'Ritmo de Dos', category: 'wedding',
+    categoryLabel: 'Boda Retro / Música', badge: 'Nueva colección',
+    description: 'Una boda como el póster de un concierto íntimo: tipografía cinética, vinilo y color cálido.',
+    signatureAnimation: 'Vinilo en movimiento + póster desplegable',
+    previewImage: '/images/ritmo-de-dos/cover.svg',
+    colors: { bgPrimary: '#F9EBCF', bgSecondary: '#F2C67A', textPrimary: '#512720', textMuted: '#765244', accentPrimary: '#B83A29', accentSecondary: '#3D665F' },
+    fonts: { headingFont: 'Syne', scriptFont: 'Georgia', bodyFont: 'Space Grotesk' },
+    envelopeVariant: 'pass-ticket-tear', ambientEffect: 'none',
+  },
+  {
+    id: 'mini-cosmos', name: 'Mini Cosmos', category: 'kids_birthday',
+    categoryLabel: 'Cumpleaños Infantil / Espacio', badge: 'Nueva colección',
+    description: 'Una misión espacial para jugar y celebrar, con planetas, ruta orbital y controles claros para familias.',
+    signatureAnimation: 'Despegue orbital + constelación de capítulos',
+    previewImage: '/images/mini-cosmos/cover.svg',
+    colors: { bgPrimary: '#101B3D', bgSecondary: '#1C3059', textPrimary: '#F9F5E9', textMuted: '#B9CAE1', accentPrimary: '#B44D2E', accentSecondary: '#8AD6C5' },
+    fonts: { headingFont: 'Fredoka', scriptFont: 'Fredoka', bodyFont: 'Plus Jakarta Sans' },
+    envelopeVariant: 'pass-ticket-tear', ambientEffect: 'soft-stars',
+  },
+  {
+    id: 'atelier-xv', name: 'Atelier XV', category: 'xv_years',
+    categoryLabel: 'XV Años / Moda Editorial', badge: 'Nueva colección',
+    description: 'Quince años como manifiesto de estilo personal: recortes de atelier, cinta plateada y pasarela azul.',
+    signatureAnimation: 'Paneles de pasarela + capítulos de estilo',
+    previewImage: '/images/atelier-xv/cover.svg',
+    colors: { bgPrimary: '#EDEFF3', bgSecondary: '#DCE2ED', textPrimary: '#14294C', textMuted: '#5C6A83', accentPrimary: '#315BA1', accentSecondary: '#A9B5C7' },
+    fonts: { headingFont: 'Times New Roman', scriptFont: 'Georgia', bodyFont: 'Montserrat' },
+    envelopeVariant: 'editorial-curtain', ambientEffect: 'none',
+  },
   {
     id: 'eternal-elegance',
     name: 'Eternal Elegance',
@@ -542,6 +583,9 @@ export function createDefaultInvitationConfig(
 
   if (isOccasionTemplateId(templateId)) {
     applyOccasionDefaults(config, templateId, customTitle);
+  }
+  if (isNewSceneTemplateId(templateId)) {
+    applyNewSceneDefaults(config, templateId, customTitle);
   }
 
   if (templateId === 'boho-terracotta') {

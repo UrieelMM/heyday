@@ -33,6 +33,7 @@ import {
   buildIcsFileContent,
 } from '@/lib/calendar/ics-generator';
 import { isCelebrationTemplateId } from '@/lib/templates/celebration-config';
+import { isNewSceneTemplateId } from '@/lib/templates/new-scenes-config';
 import { invitationFontStack } from '@/lib/fonts/invitation-fonts';
 import {
   isOccasionTemplateId,
@@ -52,9 +53,12 @@ import { CelebrationHero } from '../templates/CelebrationHero';
 import { setupCelebrationScenes } from '../templates/celebration-scenes';
 import { OccasionHero } from '../templates/OccasionHero';
 import { setupOccasionScenes } from '../templates/occasion-scenes';
+import { NewSceneHero } from '../templates/NewSceneHero';
+import { setupNewScenes } from '../templates/new-scenes';
 import '../templates/signature-templates.css';
 import '../templates/celebration-templates.css';
 import '../templates/occasion-templates.css';
+import '../templates/new-scenes.css';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -98,7 +102,8 @@ function StandardInvitationRenderer({
     ? templateId : null;
   const celebrationTemplateId = isCelebrationTemplateId(templateId) ? templateId : null;
   const occasionTemplateId = isOccasionTemplateId(templateId) ? templateId : null;
-  const hasSceneTemplate = Boolean(signatureTemplateId || celebrationTemplateId || occasionTemplateId);
+  const newSceneTemplateId = isNewSceneTemplateId(templateId) ? templateId : null;
+  const hasSceneTemplate = Boolean(signatureTemplateId || celebrationTemplateId || occasionTemplateId || newSceneTemplateId);
   const occasionCopy = occasionTemplateId ? occasionSectionCopy[occasionTemplateId] : null;
 
   // Estado Cuenta Regresiva
@@ -173,6 +178,10 @@ function StandardInvitationRenderer({
         setupOccasionScenes(root, occasionTemplateId);
         return;
       }
+      if (newSceneTemplateId) {
+        setupNewScenes(root, newSceneTemplateId);
+        return;
+      }
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
       const sections = gsap.utils.toArray<HTMLElement>('.inv-reveal-section');
@@ -212,7 +221,7 @@ function StandardInvitationRenderer({
         );
       });
     },
-    { scope: containerRef, dependencies: [isEnvelopeOpen, templateId, signatureTemplateId, celebrationTemplateId, occasionTemplateId] }
+    { scope: containerRef, dependencies: [isEnvelopeOpen, templateId, signatureTemplateId, celebrationTemplateId, occasionTemplateId, newSceneTemplateId] }
   );
 
   const { colors, fonts } = config.theme;
@@ -276,8 +285,14 @@ function StandardInvitationRenderer({
         '--inv-heading-font': invitationFontStack(fonts.headingFont),
         '--inv-body-font': invitationFontStack(fonts.bodyFont),
         '--inv-script-font': invitationFontStack(fonts.scriptFont),
+        '--ns-bg': colors.bgPrimary,
+        '--ns-bg-2': colors.bgSecondary,
+        '--ns-text': colors.textPrimary,
+        '--ns-muted': colors.textMuted,
+        '--ns-accent': colors.accentPrimary,
+        '--ns-accent-2': colors.accentSecondary,
       } as React.CSSProperties}
-      className={`relative min-h-dvh w-full overflow-x-hidden selection:bg-amber-500/20${signatureTemplateId ? ` st-root st-root--${signatureTemplateId}` : ''}${celebrationTemplateId ? ` cs-root cs-root--${celebrationTemplateId}` : ''}${occasionTemplateId ? ` oc-root oc-root--${occasionTemplateId}` : ''}`}
+      className={`relative min-h-dvh w-full overflow-x-hidden selection:bg-amber-500/20${signatureTemplateId ? ` st-root st-root--${signatureTemplateId}` : ''}${celebrationTemplateId ? ` cs-root cs-root--${celebrationTemplateId}` : ''}${occasionTemplateId ? ` oc-root oc-root--${occasionTemplateId}` : ''}${newSceneTemplateId ? ` ns-root ns-root--${newSceneTemplateId}` : ''}`}
     >
       {/* 1. Sobre de Apertura Interactivo */}
       {(!isBuilderPreview || previewEnvelope) && (
@@ -286,6 +301,8 @@ function StandardInvitationRenderer({
           guestGroup={guestGroup}
           isOpen={isEnvelopeOpen}
           onOpen={() => setIsEnvelopeOpen(true)}
+          sceneClassName={newSceneTemplateId ? `ns-envelope ns-envelope--${newSceneTemplateId}` : undefined}
+          celebrateOnOpen={!newSceneTemplateId || newSceneTemplateId === 'mini-cosmos' || newSceneTemplateId === 'ritmo-de-dos'}
         />
       )}
 
@@ -330,6 +347,15 @@ function StandardInvitationRenderer({
           eventDate={eventDate}
           guestGroup={guestGroup}
           actionHref={isSectionEnabled('quote_story') ? '#st-story' : isSectionEnabled('rsvp') ? '#st-rsvp' : isSectionEnabled('locations') ? '#st-locations' : '#oc-hero'}
+        />
+      )}
+      {isSectionEnabled('hero') && newSceneTemplateId && (
+        <NewSceneHero
+          templateId={newSceneTemplateId}
+          config={config}
+          eventDate={eventDate}
+          guestGroup={guestGroup}
+          actionHref={isSectionEnabled('quote_story') ? '#st-story' : isSectionEnabled('rsvp') ? '#st-rsvp' : isSectionEnabled('locations') ? '#st-locations' : '#ns-hero'}
         />
       )}
       {isSectionEnabled('hero') && !hasSceneTemplate && (
@@ -653,7 +679,7 @@ function StandardInvitationRenderer({
                     <div className="h-52 w-full overflow-hidden">
                       <img
                         src={loc.imageUrl}
-                        alt={celebrationTemplateId ? `Concepto visual de ${loc.title}` : loc.venueName}
+                        alt={celebrationTemplateId || newSceneTemplateId ? `Ilustración de ${loc.title}` : loc.venueName}
                         className="inv-mask-image h-full w-full object-cover"
                       />
                     </div>

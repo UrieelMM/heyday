@@ -17,7 +17,11 @@ export type TemplateId =
   | 'fiesta-kids-adventure'
   | 'celestial-baptism'
   | 'sweet-oh-baby'
-  | 'grad-gala-night';
+  | 'grad-gala-night'
+  | 'marea-azul'
+  | 'ritmo-de-dos'
+  | 'mini-cosmos'
+  | 'atelier-xv';
 
 export type EnvelopeVariant =
   | 'wax-seal-classic'

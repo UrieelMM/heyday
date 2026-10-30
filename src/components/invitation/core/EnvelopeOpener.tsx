@@ -12,6 +12,8 @@ interface EnvelopeOpenerProps {
   guestGroup?: GuestGroup | null;
   isOpen: boolean;
   onOpen: () => void;
+  sceneClassName?: string;
+  celebrateOnOpen?: boolean;
 }
 
 export function EnvelopeOpener({
@@ -19,6 +21,8 @@ export function EnvelopeOpener({
   guestGroup,
   isOpen,
   onOpen,
+  sceneClassName = '',
+  celebrateOnOpen = true,
 }: EnvelopeOpenerProps) {
   const [isOpening, setIsOpening] = useState(false);
   const { colors, envelope, fonts } = config.theme;
@@ -27,15 +31,17 @@ export function EnvelopeOpener({
     if (isOpening) return;
     setIsOpening(true);
 
-    try {
-      confetti({
-        particleCount: 55,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: [colors.accentPrimary, colors.accentSecondary, '#FFFFFF'],
-      });
-    } catch {
-      // Ignore if canvas-confetti fails in headless environments
+    if (celebrateOnOpen) {
+      try {
+        confetti({
+          particleCount: 55,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: [colors.accentPrimary, colors.accentSecondary, '#FFFFFF'],
+        });
+      } catch {
+        // Ignore if canvas-confetti fails in headless environments
+      }
     }
 
     setTimeout(() => {
@@ -57,7 +63,7 @@ export function EnvelopeOpener({
             backgroundColor: colors.bgPrimary,
             color: colors.textPrimary,
           }}
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center overflow-hidden px-6 py-10 select-none"
+          className={`fixed inset-0 z-50 flex flex-col items-center justify-center overflow-hidden px-6 py-10 select-none ${sceneClassName}`}
         >
           {/* Marco decorativo sutil */}
           <div
