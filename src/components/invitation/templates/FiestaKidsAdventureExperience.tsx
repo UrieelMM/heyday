@@ -5,6 +5,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import type { GuestGroup, InvitationConfig } from '@/types/invitation.types';
 import { celebrationAge, celebrationName } from '@/lib/templates/celebration-config';
+import { kidsHeroDesktopSrc } from '@/lib/templates/kids-hero-media';
 import { HeroMedia } from '../core/HeroMedia';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -90,7 +91,7 @@ export function FiestaKidsAdventureHero({ config, eventDate, guestGroup, actionH
           {guestGroup && <p className="fk-hero__guest">Un pase especial para {guestGroup.groupName}</p>}
         </div>
         <div className="fk-hero__visual">
-          <HeroMedia hero={hero} alt={`Aventura de cumpleaños de ${name}`} />
+          <HeroMedia hero={hero} alt={`Aventura de cumpleaños de ${name}`} desktopSrc={kidsHeroDesktopSrc(hero.coverImageUrl)} />
           <span className="fk-hero__visual-label">01 / DESTINO AVENTURA</span>
         </div>
         <div className="fk-hero__compass"><AdventureSeal name={name}/><AdventureCompass className="fk-compass"/></div>

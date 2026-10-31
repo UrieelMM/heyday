@@ -55,6 +55,8 @@ import { NeonXVEuphoriaExperience } from '../templates/NeonXVEuphoriaExperience'
 import { AdventureMap, FiestaKidsAdventureHero, FiestaKidsMarquee, FiestaKidsStations, setupFiestaKidsAdventureScenes } from '../templates/FiestaKidsAdventureExperience';
 import { PirateStoryMap, PirateTreasureExperience } from '../templates/PirateTreasureExperience';
 import { DinoJungleExperience, DinoStoryFossils } from '../templates/DinoJungleExperience';
+import { SafariSunriseExperience, SafariTrailBackdrop } from '../templates/SafariSunriseExperience';
+import { CowboyRanchExperience, CowboyTrailBackdrop } from '../templates/CowboyRanchExperience';
 import { KidsWorldMarquee, KidsWorldStations, setupKidsWorldScenes } from '../templates/kids-world-shared';
 import { isKidsWorldTemplateId } from '@/lib/templates/kids-world-config';
 import { SignatureHero } from '../templates/SignatureHero';
@@ -73,6 +75,8 @@ import '../templates/fiesta-kids-adventure.css';
 import '../templates/kids-world.css';
 import '../templates/pirate-treasure-voyage.css';
 import '../templates/dino-jungle-expedition.css';
+import '../templates/safari-sunrise-adventure.css';
+import '../templates/cowboy-ranch-roundup.css';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -137,7 +141,9 @@ function StandardInvitationRenderer({
   const celebrationTemplateId = isCelebrationTemplateId(templateId) ? templateId : null;
   const isKidsAdventure = templateId === 'fiesta-kids-adventure';
   const kidsWorldId = isKidsWorldTemplateId(templateId) ? templateId : null;
-  const kidsWorldVariant = kidsWorldId === 'pirate-treasure-voyage' ? 'pirate' : 'dino';
+  const kidsWorldVariant = kidsWorldId === 'pirate-treasure-voyage' ? 'pirate'
+    : kidsWorldId === 'safari-sunrise-adventure' ? 'safari'
+      : kidsWorldId === 'cowboy-ranch-roundup' ? 'cowboy' : 'dino';
   const occasionTemplateId = isOccasionTemplateId(templateId) ? templateId : null;
   const newSceneTemplateId = isNewSceneTemplateId(templateId) ? templateId : null;
   const hasSceneTemplate = Boolean(signatureTemplateId || celebrationTemplateId || occasionTemplateId || newSceneTemplateId || kidsWorldId);
@@ -384,6 +390,12 @@ function StandardInvitationRenderer({
       {isSectionEnabled('hero') && kidsWorldId === 'dino-jungle-expedition' && (
         <DinoJungleExperience config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />
       )}
+      {isSectionEnabled('hero') && kidsWorldId === 'safari-sunrise-adventure' && (
+        <SafariSunriseExperience config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />
+      )}
+      {isSectionEnabled('hero') && kidsWorldId === 'cowboy-ranch-roundup' && (
+        <CowboyRanchExperience config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />
+      )}
       {isSectionEnabled('hero') && celebrationTemplateId && !isKidsAdventure && (
         <CelebrationHero
           templateId={celebrationTemplateId}
@@ -479,6 +491,8 @@ function StandardInvitationRenderer({
           {isKidsAdventure && <AdventureMap />}
           {kidsWorldId === 'pirate-treasure-voyage' && <PirateStoryMap />}
           {kidsWorldId === 'dino-jungle-expedition' && <DinoStoryFossils />}
+          {kidsWorldId === 'safari-sunrise-adventure' && <SafariTrailBackdrop />}
+          {kidsWorldId === 'cowboy-ranch-roundup' && <CowboyTrailBackdrop />}
           <div
             className="mx-auto mb-6 h-12 w-px"
             style={{ backgroundColor: colors.accentPrimary }}
@@ -847,7 +861,7 @@ function StandardInvitationRenderer({
 
             <div className="relative mx-auto max-w-xl pl-8">
               {isKidsAdventure && <span className="fk-timeline__runner" aria-hidden="true">✦</span>}
-              {kidsWorldId && <span className="kw-timeline__runner" aria-hidden="true">{kidsWorldVariant === 'pirate' ? '☸' : '✦'}</span>}
+              {kidsWorldId && <span className="kw-timeline__runner" aria-hidden="true">{{ pirate: '☸', dino: '✦', safari: '◉', cowboy: '★' }[kidsWorldVariant]}</span>}
             <div
               className="st-timeline__line absolute top-2 bottom-2 left-3 w-0.5"
               style={{ backgroundColor: `${colors.accentPrimary}45` }}

@@ -87,7 +87,7 @@ export function applyCelebrationDefaults(config: InvitationConfig, id: Celebrati
       ...config.content.hero,
       badgeText: '¡MISIÓN CUMPLEAÑOS!',
       tagline: 'Juegos, pastel y un mundo por descubrir',
-      coverImageUrl: '/images/fiesta-kids-adventure/adventure-island.webp',
+      coverImageUrl: '/images/fiesta-kids-adventure/hero-mobile.webp',
       focalPoint: { x: 50, y: 50 },
     };
     config.content.quoteStory = {

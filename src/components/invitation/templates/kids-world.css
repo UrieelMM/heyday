@@ -1,4 +1,4 @@
-/* Shared interaction layout for the two original children's worlds. */
+/* Shared interaction layout for the themed children's worlds. */
 .kw-root { --kw-ink: var(--ns-text); --kw-accent: var(--ns-accent); --kw-second: var(--ns-accent-2); --kw-paper: var(--ns-bg); --kw-surface: var(--ns-bg-2); position: relative; overflow-x: clip; background: var(--kw-paper) !important; color: var(--kw-ink); }
 .kw-root *, .kw-root *::before, .kw-root *::after { box-sizing: border-box; }
 .kw-root section[id] { scroll-margin-top: 76px; }

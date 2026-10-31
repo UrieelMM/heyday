@@ -1,0 +1,39 @@
+/* Western fair poster: denim dusk, rust ink and stitched paper. */
+.kw-root--cowboy .kw-opening { background: radial-gradient(circle at 52% 28%, #ffe0a8, #c88867) !important; color: #49342f !important; }
+.kw-root--cowboy .kw-hero__stage { background: #264b61; color: #fff0d2; }
+.kw-root--cowboy .kw-hero__atmosphere { background: radial-gradient(circle at 78% 30%, #ffc96e 0 10%, transparent 10.2%), radial-gradient(ellipse at 23% 102%, #a54739 0 14%, transparent 40%), repeating-linear-gradient(90deg, transparent 0 67px, #f7e1bf16 68px 69px), linear-gradient(150deg, #1d4054, #396279 58%, #a65c4b); }
+.kw-root--cowboy .kw-hero__atmosphere::after { content: ''; position: absolute; inset: 0; opacity: .28; background-image: radial-gradient(#f4d6aa 1px, transparent 1px); background-size: 34px 34px; }
+.kw-root--cowboy .kw-hero__ornament--one { left: -8%; top: 13%; width: 260px; height: 260px; border: 3px dashed #efc58d99; border-radius: 50%; box-shadow: 0 0 0 25px #dfaa731b; }
+.kw-root--cowboy .kw-hero__ornament--two { right: -7%; bottom: -17%; width: 380px; height: 230px; border: 3px solid #f4d6a44d; border-radius: 50%; }
+.kw-root--cowboy .kw-eyebrow { background: #aa4e3c; }
+.kw-root--cowboy .kw-hero__overline, .kw-root--cowboy .kw-hero__age { color: #f4c583; }
+.kw-root--cowboy .kw-hero__copy h1 { color: #fff1d2; text-shadow: 0 6px 0 #17364a; }
+.kw-root--cowboy .kw-hero__visual { border: 10px solid #f3d4a1; border-radius: 26px 26px 90px 90px; box-shadow: 0 0 0 7px #a85a42, 14px 17px 0 #dfb378, 0 27px 70px #102b38a8; }
+.kw-root--cowboy .kw-hero__motif { right: 2%; bottom: 5%; }
+.kw-root--cowboy .kw-seal { color: #f3c37e; }
+.kw-root--cowboy .kw-hero__cta { background: #efbb74; color: #314455; }
+.kw-root--cowboy .kw-hero__scroll { color: #e9c9aa; }
+.kw-root--cowboy .st-story { background: #f7e9d0 !important; }
+.kw-root--cowboy .st-story blockquote { color: #49352f; }
+.kw-root--cowboy .kw-stations { background: #e8c5a4; }
+.kw-root--cowboy .kw-stations__head h2 { color: #49352f; }
+.kw-root--cowboy .kw-station { border-radius: 20px 20px 38px 38px; box-shadow: 8px 10px 0 #7d9cad; }
+.kw-root--cowboy .st-family { background: #e9d1b3 !important; }
+.kw-root--cowboy .st-countdown { background: #fff3df; }
+.kw-root--cowboy .st-countdown__unit { background: #efd19e !important; }
+.kw-root--cowboy .st-countdown__unit:nth-child(2n) { background: #c7d9df !important; }
+.kw-root--cowboy .st-locations { background: #e5c4aa !important; }
+.kw-root--cowboy .st-timeline { background: #fff3df; }
+.kw-root--cowboy .st-gallery { background: #d2dce0 !important; }
+.kw-root--cowboy .st-dress { background: #f5e7d3; }
+.kw-root--cowboy .st-gifts { background: #e9d4bf !important; }
+.kw-root--cowboy .st-social { background: #f6e9d4; }
+.kw-root--cowboy .st-social + .st-social { background: #dce4e3; }
+.kw-root--cowboy .st-rsvp { background: #f6e9d4; }
+.kw-root--cowboy .st-locations__card a:first-child, .kw-root--cowboy .st-countdown a:first-child, .kw-root--cowboy .st-rsvp button[type="submit"] { background: #a5493b !important; color: #fff !important; }
+@media (max-width: 700px) {
+  .kw-root--cowboy .kw-hero__tagline { padding: 4px 9px; border-radius: 12px; background: #203d4dd9; }
+  .kw-root--cowboy .kw-hero__visual { left: 19%; width: 62%; top: 53%; height: 34%; border-width: 6px; box-shadow: 0 0 0 4px #a85a42, 7px 9px 0 #dfb378; }
+  .kw-root--cowboy .kw-hero__ornament--one { top: 36%; left: -30%; width: 160px; height: 160px; }
+  .kw-root--cowboy .kw-hero__ornament--two { width: 220px; height: 140px; }
+}

@@ -17,6 +17,8 @@ export type TemplateId =
   | 'fiesta-kids-adventure'
   | 'pirate-treasure-voyage'
   | 'dino-jungle-expedition'
+  | 'safari-sunrise-adventure'
+  | 'cowboy-ranch-roundup'
   | 'celestial-baptism'
   | 'sweet-oh-baby'
   | 'grad-gala-night'

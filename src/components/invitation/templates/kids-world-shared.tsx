@@ -5,11 +5,19 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import type { GuestGroup, InvitationConfig } from '@/types/invitation.types';
 import { kidsWorldAge, kidsWorldName, type KidsWorldTemplateId } from '@/lib/templates/kids-world-config';
+import { kidsHeroDesktopSrc } from '@/lib/templates/kids-hero-media';
 import { HeroMedia } from '../core/HeroMedia';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export type KidsWorldVariant = 'pirate' | 'dino';
+export type KidsWorldVariant = 'pirate' | 'dino' | 'safari' | 'cowboy';
+
+const worldPresentation: Record<KidsWorldVariant, { heroId: string; stationId: string; heroLabel: string; stationLabel: string; mark: string; mediaAlt: string }> = {
+  pirate: { heroId: 'pw-hero', stationId: 'pw-stations', heroLabel: 'Portada pirata', stationLabel: 'Puertos de la travesía', mark: '☸', mediaAlt: 'Viaje pirata' },
+  dino: { heroId: 'dj-hero', stationId: 'dj-stations', heroLabel: 'Portada jurásica', stationLabel: 'Estaciones jurásicas', mark: '✦', mediaAlt: 'Expedición jurásica' },
+  safari: { heroId: 'sf-hero', stationId: 'sf-stations', heroLabel: 'Portada del safari', stationLabel: 'Paradas del safari', mark: '◉', mediaAlt: 'Safari de cumpleaños' },
+  cowboy: { heroId: 'cb-hero', stationId: 'cb-stations', heroLabel: 'Portada del rancho', stationLabel: 'Paradas del rancho', mark: '★', mediaAlt: 'Aventura vaquera' },
+};
 
 export function KidsWorldFrame({ variant, config, eventDate, guestGroup, actionHref, motif, seal, overline, bridge, visualTag, cta }: {
   variant: KidsWorldVariant;
@@ -28,14 +36,13 @@ export function KidsWorldFrame({ variant, config, eventDate, guestGroup, actionH
   const name = kidsWorldName(hero.mainTitle);
   const age = kidsWorldAge(hero.mainTitle);
   const date = new Intl.DateTimeFormat('es-MX', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'America/Mexico_City' }).format(new Date(eventDate));
-  const heroId = variant === 'pirate' ? 'pw-hero' : 'dj-hero';
-  const stationId = variant === 'pirate' ? 'pw-stations' : 'dj-stations';
+  const { heroId, stationId, heroLabel, mark, mediaAlt } = worldPresentation[variant];
   return (
-    <section id={heroId} className={`kw-hero kw-hero--${variant}`} data-editor-section="hero" aria-label={variant === 'pirate' ? 'Portada pirata' : 'Portada jurásica'}>
+    <section id={heroId} className={`kw-hero kw-hero--${variant}`} data-editor-section="hero" aria-label={heroLabel}>
       <div className="kw-hero__stage">
         <div className="kw-hero__atmosphere" aria-hidden="true" />
         <nav className="kw-nav" aria-label="Navegación de la invitación">
-          <a href={`#${heroId}`} className="kw-nav__brand">{variant === 'pirate' ? '☸' : '✦'} {name}</a>
+          <a href={`#${heroId}`} className="kw-nav__brand">{mark} {name}</a>
           <div><a href={`#${stationId}`}>Explorar</a><a href="#st-locations">Lugar</a><a href="#st-rsvp">Confirmar</a></div>
         </nav>
         <div className="kw-hero__ornament kw-hero__ornament--one" aria-hidden="true" />
@@ -50,7 +57,7 @@ export function KidsWorldFrame({ variant, config, eventDate, guestGroup, actionH
           {guestGroup && <p className="kw-hero__guest">Un pase para {guestGroup.groupName}</p>}
         </div>
         <div className="kw-hero__visual">
-          <HeroMedia hero={hero} alt={`${variant === 'pirate' ? 'Viaje pirata' : 'Expedición jurásica'} de ${name}`} />
+          <HeroMedia hero={hero} alt={`${mediaAlt} de ${name}`} desktopSrc={kidsHeroDesktopSrc(hero.coverImageUrl)} />
           <span className="kw-hero__visual-label">{visualTag}</span>
         </div>
         <div className="kw-hero__motif" aria-hidden="true">{seal}<div className="kw-hero__motif-core">{motif}</div></div>
@@ -63,25 +70,36 @@ export function KidsWorldFrame({ variant, config, eventDate, guestGroup, actionH
 }
 
 export function KidsWorldMarquee({ variant, second = false }: { variant: KidsWorldVariant; second?: boolean }) {
-  const phrase = variant === 'pirate'
-    ? second ? 'RUMBO AL TESORO ✦ RECUERDOS A BORDO ✦ ' : 'IZAR VELAS ✦ SEGUIR EL MAPA ✦ CELEBRAR ✦ '
-    : second ? 'HUELLAS GIGANTES ✦ RECUERDOS ETERNOS ✦ ' : 'EXPLORA ✦ EXCAVA ✦ CELEBRA ✦ ';
+  const phrases: Record<KidsWorldVariant, [string, string]> = {
+    pirate: ['IZAR VELAS ✦ SEGUIR EL MAPA ✦ CELEBRAR ✦ ', 'RUMBO AL TESORO ✦ RECUERDOS A BORDO ✦ '],
+    dino: ['EXPLORA ✦ EXCAVA ✦ CELEBRA ✦ ', 'HUELLAS GIGANTES ✦ RECUERDOS ETERNOS ✦ '],
+    safari: ['OBSERVA ✦ DESCUBRE ✦ CELEBRA ✦ ', 'UN MUNDO SALVAJE ✦ UN DÍA INOLVIDABLE ✦ '],
+    cowboy: ['ENSILLA ✦ JUEGA ✦ CELEBRA ✦ ', 'RUMBO AL RANCHO ✦ AMIGOS POR SIEMPRE ✦ '],
+  };
+  const phrase = phrases[variant][second ? 1 : 0];
   return <div className={`kw-marquee${second ? ' kw-marquee--second' : ''}`} aria-hidden="true"><div>{Array.from({ length: 6 }, (_, i) => <span key={i}>{phrase}</span>)}</div></div>;
 }
 
 const stationLabels: Record<KidsWorldVariant, string[]> = {
   pirate: ['PUERTO DE SALIDA', 'CARTA SECRETA', 'COFRE ESCONDIDO', 'FIESTA EN CUBIERTA'],
   dino: ['ENTRADA A LA SELVA', 'ZONA DE FÓSILES', 'SENDERO GIGANTE', 'GRAN FESTEJO'],
+  safari: ['CAMPAMENTO BASE', 'SENDERO DORADO', 'AMIGOS DE LA SABANA', 'PICNIC DE CUMPLEAÑOS'],
+  cowboy: ['PUERTAS DEL RANCHO', 'RUTA DEL OESTE', 'JUEGOS VAQUEROS', 'PASTEL AL ATARDECER'],
 };
 
 export function KidsWorldStations({ variant, config }: { variant: KidsWorldVariant; config: InvitationConfig }) {
-  const stationId = variant === 'pirate' ? 'pw-stations' : 'dj-stations';
-  const heading = variant === 'pirate' ? 'Cuatro puertos. Un gran tesoro.' : 'Cuatro hallazgos. Una gran aventura.';
-  const description = variant === 'pirate' ? 'Sigue la carta y descubre cada parada de nuestra travesía.' : 'Sigue las huellas y descubre todo lo que nos espera.';
+  const { stationId, stationLabel } = worldPresentation[variant];
+  const copy: Record<KidsWorldVariant, { heading: string; description: string; chapter: string }> = {
+    pirate: { heading: 'Cuatro puertos. Un gran tesoro.', description: 'Sigue la carta y descubre cada parada de nuestra travesía.', chapter: 'LA TRAVESÍA' },
+    dino: { heading: 'Cuatro hallazgos. Una gran aventura.', description: 'Sigue las huellas y descubre todo lo que nos espera.', chapter: 'LA EXPEDICIÓN' },
+    safari: { heading: 'Cuatro paradas. Un mundo salvaje.', description: 'Sigue el sendero y descubre a nuestros amigos de la sabana.', chapter: 'EL SAFARI' },
+    cowboy: { heading: 'Cuatro momentos. Un gran rodeo.', description: 'Sigue la ruta del rancho hasta el pastel al atardecer.', chapter: 'EL RANCHO' },
+  };
+  const { heading, description, chapter } = copy[variant];
   const images = config.content.gallery.images;
   return (
-    <section id={stationId} className="kw-stations kw-sheet" aria-label={variant === 'pirate' ? 'Puertos de la travesía' : 'Estaciones jurásicas'}>
-      <div className="kw-stations__head"><p className="kw-eyebrow"><span className="kw-pulse"/>CAPÍTULO 02 · {variant === 'pirate' ? 'LA TRAVESÍA' : 'LA EXPEDICIÓN'}</p><h2>{heading}</h2><p>{description}</p></div>
+    <section id={stationId} className="kw-stations kw-sheet" aria-label={stationLabel}>
+      <div className="kw-stations__head"><p className="kw-eyebrow"><span className="kw-pulse"/>CAPÍTULO 02 · {chapter}</p><h2>{heading}</h2><p>{description}</p></div>
       <div className="kw-stations__grid">{stationLabels[variant].map((label, index) => {
         const image = images[index];
         return <article className="kw-station" key={label} style={{ '--kw-stack-index': index } as CSSProperties}>
@@ -102,7 +120,7 @@ export function setupKidsWorldScenes(root: HTMLElement, id: KidsWorldTemplateId)
   if (hero && visual) {
     const tl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: hero, scroller, start: 'top top', end: 'bottom bottom', scrub: .9, invalidateOnRefresh: true } });
     tl.to(root.querySelector('.kw-hero__copy'), { yPercent: -20, opacity: 0, duration: .35 }, .08)
-      .to(root.querySelector('.kw-hero__motif'), { xPercent: id === 'pirate-treasure-voyage' ? 68 : -62, yPercent: -58, rotate: id === 'pirate-treasure-voyage' ? 120 : -20, scale: .65, opacity: .25, duration: .67 }, .12)
+      .to(root.querySelector('.kw-hero__motif'), { xPercent: id === 'pirate-treasure-voyage' || id === 'cowboy-ranch-roundup' ? 68 : -62, yPercent: -58, rotate: id === 'pirate-treasure-voyage' || id === 'cowboy-ranch-roundup' ? 120 : -20, scale: .65, opacity: .25, duration: .67 }, .12)
       .to(visual, { left: '0%', top: '0%', width: '100%', height: '100%', borderRadius: '0px', borderWidth: 0, duration: .7 }, .17)
       .fromTo(root.querySelector('.kw-hero__bridge'), { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: .22 }, .76);
     root.querySelectorAll<HTMLElement>('.kw-hero__ornament').forEach((item, index) => {

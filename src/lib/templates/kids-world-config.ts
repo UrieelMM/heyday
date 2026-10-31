@@ -1,9 +1,9 @@
 import type { InvitationConfig, TemplateId } from '@/types/invitation.types';
 
-export type KidsWorldTemplateId = Extract<TemplateId, 'pirate-treasure-voyage' | 'dino-jungle-expedition'>;
+export type KidsWorldTemplateId = Extract<TemplateId, 'pirate-treasure-voyage' | 'dino-jungle-expedition' | 'safari-sunrise-adventure' | 'cowboy-ranch-roundup'>;
 
 export function isKidsWorldTemplateId(id: TemplateId): id is KidsWorldTemplateId {
-  return id === 'pirate-treasure-voyage' || id === 'dino-jungle-expedition';
+  return id === 'pirate-treasure-voyage' || id === 'dino-jungle-expedition' || id === 'safari-sunrise-adventure' || id === 'cowboy-ranch-roundup';
 }
 
 export function kidsWorldName(title: string) {
@@ -20,6 +20,10 @@ const image = (id: KidsWorldTemplateId, name: string) => `/images/${id}/${name}.
 
 export function applyKidsWorldDefaults(config: InvitationConfig, id: KidsWorldTemplateId, title: string) {
   const name = kidsWorldName(title);
+  if (id === 'safari-sunrise-adventure' || id === 'cowboy-ranch-roundup') {
+    applySafariOrCowboyDefaults(config, id, name);
+    return;
+  }
   const pirate = id === 'pirate-treasure-voyage';
   config.audio.enabled = false;
   config.content.accommodation = [];
@@ -33,7 +37,7 @@ export function applyKidsWorldDefaults(config: InvitationConfig, id: KidsWorldTe
     ...config.content.hero,
     badgeText: pirate ? 'TRAVESÍA DE CUMPLEAÑOS' : 'EXPEDICIÓN JURÁSICA',
     tagline: pirate ? 'Un mapa, una tripulación y un tesoro por descubrir' : 'Huellas, fósiles y una fiesta de otro tiempo',
-    coverImageUrl: image(id, pirate ? 'ship' : 'triceratops'),
+    coverImageUrl: image(id, 'hero-mobile'),
     focalPoint: { x: 50, y: 50 },
   };
   config.content.quoteStory = pirate ? {
@@ -123,5 +127,106 @@ export function applyKidsWorldDefaults(config: InvitationConfig, id: KidsWorldTe
     dress_code: { eyebrow: pirate ? 'EQUIPO DE CUBIERTA' : 'EQUIPO DE CAMPO', title: config.content.dressCode.title },
     gifts: { eyebrow: pirate ? 'COFRE DE DETALLES' : 'NIDO DE DETALLES', title: pirate ? 'El cofre de regalos' : 'El nido de regalos' },
     social_features: { eyebrow: pirate ? 'BITÁCORA COMPARTIDA' : 'ÁLBUM DE LA EXPEDICIÓN', title: pirate ? 'Guarda la aventura' : 'Comparte tus hallazgos' },
+  };
+}
+
+type NewKidsWorldId = Extract<KidsWorldTemplateId, 'safari-sunrise-adventure' | 'cowboy-ranch-roundup'>;
+
+function applySafariOrCowboyDefaults(config: InvitationConfig, id: NewKidsWorldId, name: string) {
+  const safari = id === 'safari-sunrise-adventure';
+  const content = config.content;
+  config.audio.enabled = false;
+  content.accommodation = [];
+  config.sectionsOrder = config.sectionsOrder.map(section => ({ ...section, enabled: section.id === 'accommodation' ? false : section.enabled }));
+  config.theme.envelope.sealMonogram = safari ? '◉' : '★';
+  config.theme.envelope.openButtonText = safari ? 'Abre tu pase de explorador' : 'Abre tu pase al rancho';
+  content.hero = {
+    ...content.hero,
+    badgeText: safari ? 'SAFARI DE CUMPLEAÑOS' : 'FIESTA EN EL RANCHO',
+    tagline: safari ? 'Una aventura entre jirafas, cebras y sonrisas' : 'Botas, ponis y una tarde para celebrar',
+    coverImageUrl: image(id, 'hero-mobile'),
+    focalPoint: { x: 50, y: 50 },
+  };
+  content.quoteStory = safari ? {
+    quoteText: `¡El safari de ${name} está por comenzar! Prepara tu espíritu explorador para seguir huellas, conocer nuevos amigos y celebrar bajo el sol de la sabana.`,
+    quoteAuthor: `La familia de ${name}`,
+    storyBlocks: [
+      { title: 'El primer avistamiento', description: 'Cada invitado llega con una sonrisa y una historia por descubrir.', imageUrl: image(id, 'hero-mobile') },
+      { title: 'Juntos en la sabana', description: 'Jugaremos entre pistas, animales y caminos dorados.', imageUrl: image(id, 'trail') },
+      { title: 'Nuestro mejor recuerdo', description: 'Terminamos el recorrido con pastel y amigos.', imageUrl: image(id, 'party') },
+    ],
+  } : {
+    quoteText: `¡Abre las puertas del rancho de ${name}! Nos esperan ponis, juegos de feria, pastel y una tarde de aventuras bajo el cielo del oeste.`,
+    quoteAuthor: `La familia de ${name}`,
+    storyBlocks: [
+      { title: 'Bienvenidos al rancho', description: 'La aventura empieza donde se encuentran los amigos.', imageUrl: image(id, 'hero-mobile') },
+      { title: 'Un día del oeste', description: 'Juegos, risas y pistas por el sendero.', imageUrl: image(id, 'rodeo') },
+      { title: 'El gran festejo', description: 'Cerramos con pastel y recuerdos al atardecer.', imageUrl: image(id, 'party') },
+    ],
+  };
+  content.vipParents = {
+    blessingMessage: safari ? `La familia de ${name} te invita a vivir juntos esta aventura` : `Con mucho cariño, la familia de ${name} te espera en el rancho`,
+    groups: safari ? [
+      { groupTitle: 'Guías del safari', names: [`La familia de ${name}`] },
+      { groupTitle: 'Equipo explorador', names: ['Amigos y familia'] },
+      { groupTitle: 'Invitado especial', names: ['¡Tú!'] },
+    ] : [
+      { groupTitle: 'Anfitriones del rancho', names: [`La familia de ${name}`] },
+      { groupTitle: 'La pandilla vaquera', names: ['Amigos y familia'] },
+      { groupTitle: 'Invitado especial', names: ['¡Tú!'] },
+    ],
+  };
+  content.locations = [{
+    ...content.locations[1],
+    id: safari ? 'safari-camp' : 'cowboy-ranch',
+    type: 'reception',
+    title: safari ? 'Campamento del safari' : 'El gran rancho',
+    time: '13:30 HRS',
+    imageUrl: image(id, 'trail'),
+  }];
+  content.timeline = safari ? [
+    { id: 'safari-1', time: '13:30 HRS', title: 'Bienvenidos al campamento', description: 'Recibimos a los exploradores y preparamos el mapa.', icon: 'party' },
+    { id: 'safari-2', time: '14:15 HRS', title: 'Sigamos las huellas', description: 'Juegos y pistas a través de la sabana.', icon: 'party' },
+    { id: 'safari-3', time: '15:15 HRS', title: 'Amigos de la sabana', description: 'Un encuentro lleno de sorpresas y risas.', icon: 'party' },
+    { id: 'safari-4', time: '16:00 HRS', title: 'Picnic y pastel', description: 'Soplamos las velitas bajo el sol dorado.', icon: 'cake' },
+  ] : [
+    { id: 'cowboy-1', time: '13:30 HRS', title: 'Puertas del rancho', description: 'Recibimos a la pandilla vaquera.', icon: 'party' },
+    { id: 'cowboy-2', time: '14:15 HRS', title: 'Juegos del oeste', description: 'Herraduras, pistas y muchas risas.', icon: 'party' },
+    { id: 'cowboy-3', time: '15:15 HRS', title: 'Paseo por el sendero', description: 'Una aventura para pequeños vaqueros.', icon: 'party' },
+    { id: 'cowboy-4', time: '16:00 HRS', title: 'Pastel al atardecer', description: 'Velitas y celebración en el rancho.', icon: 'cake' },
+  ];
+  content.gallery = {
+    layout: 'bento-grid',
+    images: safari ? [
+      { url: image(id, 'hero-mobile'), caption: 'Comienza el safari' },
+      { url: image(id, 'trail'), caption: 'El sendero dorado' },
+      { url: image(id, 'animals'), caption: 'Amigos de la sabana' },
+      { url: image(id, 'party'), caption: 'Picnic de cumpleaños' },
+    ] : [
+      { url: image(id, 'hero-mobile'), caption: 'Nuestro amigo del rancho' },
+      { url: image(id, 'trail'), caption: 'La ruta del oeste' },
+      { url: image(id, 'rodeo'), caption: 'Juegos vaqueros' },
+      { url: image(id, 'party'), caption: 'Pastel en el rancho' },
+    ],
+  };
+  content.dressCode = {
+    title: safari ? 'Listos para la aventura' : 'Listos para el rancho',
+    womenNotes: safari ? 'Ropa fresca, sombrero y tenis para seguir las huellas.' : 'Botas o tenis cómodos y un sombrero vaquero si te gusta.',
+    menNotes: safari ? 'Ropa cómoda, protector solar y muchas ganas de explorar.' : 'Ropa fresca y calzado cómodo para jugar en el rancho.',
+    reservedColors: [], reservedNote: '',
+  };
+  content.gifts = { introMessage: safari ? 'Tu compañía hace especial este safari. Si deseas dejar un detalle, habrá un rincón para sobres en el campamento.' : 'Tu compañía es el mejor regalo del rancho. Si deseas dejar un detalle, habrá un buzón para sobres en la fiesta.', registries: [], cashEnvelopeAtVenue: true };
+  content.socialFeatures = { enableSongRequests: true, enableAudioGuestbook: false, enableLiveDisposableCamera: false, hashtag: `#Cumple${name.replace(/\s+/g, '')}` };
+  content.rsvp.customConfirmationMessage = 'Este pase es una vista previa local. La asistencia aún no se ha enviado.';
+  content.sectionHeadings = {
+    quote_story: { eyebrow: safari ? 'CAPÍTULO 01 · LA LLAMADA DE LA SABANA' : 'CAPÍTULO 01 · CARTA DEL RANCHO' },
+    vip_parents: { eyebrow: safari ? 'EL EQUIPO DE SAFARI' : 'LA PANDILLA VAQUERA', title: safari ? 'Nuestros exploradores' : 'Nuestra pandilla' },
+    countdown: { eyebrow: safari ? 'CUENTA DE EXPLORADORES' : 'ANTES DEL RODEO', title: safari ? 'El safari comienza en' : 'El rancho abre en' },
+    locations: { eyebrow: safari ? 'BASE DE EXPLORACIÓN' : 'COORDENADAS DEL RANCHO', title: safari ? 'Aquí inicia la ruta' : 'Aquí nos vemos' },
+    timeline: { eyebrow: safari ? 'RUTA DE LA SABANA' : 'PLAN DEL RANCHO', title: safari ? 'Nuestro recorrido' : 'Nuestra tarde vaquera' },
+    gallery: { eyebrow: safari ? 'ÁLBUM DE EXPLORADORES' : 'POSTALES DEL OESTE', title: safari ? 'Postales del safari' : 'Recuerdos del rancho' },
+    dress_code: { eyebrow: safari ? 'EQUIPO DE CAMPO' : 'EQUIPO VAQUERO', title: content.dressCode.title },
+    gifts: { eyebrow: safari ? 'RINCÓN DE DETALLES' : 'BUZÓN DEL RANCHO', title: safari ? 'Un pequeño detalle' : 'Detalles del rancho' },
+    social_features: { eyebrow: safari ? 'BITÁCORA DEL SAFARI' : 'ÁLBUM DEL RANCHO', title: safari ? 'Comparte la aventura' : 'Comparte el festejo' },
   };
 }
