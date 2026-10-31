@@ -1,0 +1,13 @@
+.ww-root--vineyard .ww-hero__stage { background: radial-gradient(circle at 20% 12%, #fff8eb 0, #f5e9d8 48%, #e8d5bf 100%); }
+.ww-root--vineyard .ww-hero__texture { background: repeating-linear-gradient(0deg, transparent 0 49px, #8746570b 50px 51px); }
+.ww-root--vineyard .ww-hero__visual { border-radius: 160px 160px 4px 4px / 100px 100px 4px 4px; border-color: #f8f0e4; }
+.ww-root--vineyard .ww-hero__emblem { color: #8a3d4e; }
+.ww-root--vineyard .ww-hero__copy h1 { font-style: italic; }
+.ww-root--vineyard .ww-hero__cta { border-radius: 2px; background: #8a3d4e; color: #fff9ee; }
+.ww-root--vineyard .ww-hero__cta:hover { background: #432f31; }
+.ww-root--vineyard .ww-stations { background: #efe0cf; }
+.ww-root--vineyard .ww-station { box-shadow: 6px 8px 0 #bc865633; }
+.ww-root--vineyard .ww-station__body { border-top: 4px double #bc8656; }
+.ww-root--vineyard .ww-marquee { background: #8a3d4e; }
+.ww-root--vineyard .ww-marquee--second { background: #bc8656; }
+.ww-root--vineyard .st-story > .grid > div, .ww-root--vineyard .st-family__card, .ww-root--vineyard .st-dress > .grid > div { box-shadow: 5px 7px 0 #bc865633; }

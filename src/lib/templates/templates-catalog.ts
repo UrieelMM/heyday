@@ -9,6 +9,7 @@ import { applyCelebrationDefaults, isCelebrationTemplateId } from './celebration
 import { applyOccasionDefaults, isOccasionTemplateId } from './occasion-config';
 import { applyNewSceneDefaults, isNewSceneTemplateId } from './new-scenes-config';
 import { applyKidsWorldDefaults, isKidsWorldTemplateId } from './kids-world-config';
+import { applyWeddingWorldDefaults, isWeddingWorldTemplateId } from './wedding-world-config';
 import { applyNewWorldDefaults, isNewWorldTemplateId } from './new-world-config';
 import { applyStoryWorldDefaults, isStoryWorldTemplateId } from './story-world-config';
 
@@ -87,6 +88,36 @@ export const TEMPLATES_CATALOG: TemplateMetadata[] = [
     colors: { bgPrimary: '#112C65', bgSecondary: '#1D448D', textPrimary: '#F4F6F3', textMuted: '#C8D6E9', accentPrimary: '#FFD064', accentSecondary: '#4F78C7' },
     fonts: { headingFont: 'Plus Jakarta Sans', scriptFont: 'Cormorant Garamond', bodyFont: 'Plus Jakarta Sans' },
     envelopeVariant: 'pass-ticket-tear', ambientEffect: 'none',
+  },
+  {
+    id: 'glass-garden-vows', name: 'Jardín de Cristal', category: 'wedding',
+    categoryLabel: 'Boda / Jardín Botánico', badge: 'Nueva colección',
+    description: 'Una ceremonia entre luz, cristal y flores blancas: invernadero expandible, herbario animado y cuatro momentos para florecer juntos.',
+    signatureAnimation: 'Invernadero expansible + herbario dibujado con scroll',
+    previewImage: '/images/glass-garden-vows/hero-desktop.webp',
+    colors: { bgPrimary: '#F7F7EF', bgSecondary: '#E7EDE2', textPrimary: '#253B32', textMuted: '#62756A', accentPrimary: '#65836C', accentSecondary: '#B8A77F' },
+    fonts: { headingFont: 'Cormorant Garamond', scriptFont: 'Pinyon Script', bodyFont: 'Plus Jakarta Sans' },
+    envelopeVariant: 'wax-seal-classic', ambientEffect: 'white-petals',
+  },
+  {
+    id: 'midnight-constellation', name: 'Bajo las Estrellas', category: 'wedding',
+    categoryLabel: 'Boda / Noche Celestial', badge: 'Nueva colección',
+    description: 'Una boda nocturna escrita en el cielo: arco lunar, constelaciones que se trazan y una velada iluminada por mil pequeñas luces.',
+    signatureAnimation: 'Arco lunar expansible + constelación progresiva',
+    previewImage: '/images/midnight-constellation/hero-desktop.webp',
+    colors: { bgPrimary: '#101B31', bgSecondary: '#1C2B46', textPrimary: '#F8F2E9', textMuted: '#B9C8D8', accentPrimary: '#D6B87C', accentSecondary: '#829FBD' },
+    fonts: { headingFont: 'Cormorant Garamond', scriptFont: 'Pinyon Script', bodyFont: 'Plus Jakarta Sans' },
+    envelopeVariant: 'editorial-curtain', ambientEffect: 'soft-stars',
+  },
+  {
+    id: 'golden-harvest-vineyard', name: 'Vendimia de Amor', category: 'wedding',
+    categoryLabel: 'Boda / Viñedo al Atardecer', badge: 'Nueva colección',
+    description: 'Una celebración de cosecha entre vides, vino y luz ámbar: etiqueta editorial, sarmientos en movimiento y cuatro brindis compartidos.',
+    signatureAnimation: 'Etiqueta expansible + enredaderas en scroll',
+    previewImage: '/images/golden-harvest-vineyard/hero-desktop.webp',
+    colors: { bgPrimary: '#F8F0E4', bgSecondary: '#EFE0CF', textPrimary: '#432F31', textMuted: '#806966', accentPrimary: '#8A3D4E', accentSecondary: '#BC8656' },
+    fonts: { headingFont: 'Cormorant Garamond', scriptFont: 'Pinyon Script', bodyFont: 'Plus Jakarta Sans' },
+    envelopeVariant: 'wax-seal-classic', ambientEffect: 'gold-sparkles',
   },
   {
     id: 'marea-azul', name: 'Marea Azul', category: 'wedding',
@@ -697,6 +728,9 @@ export function createDefaultInvitationConfig(
   }
   if (isKidsWorldTemplateId(templateId)) {
     applyKidsWorldDefaults(config, templateId, customTitle);
+  }
+  if (isWeddingWorldTemplateId(templateId)) {
+    applyWeddingWorldDefaults(config, templateId, customTitle);
   }
   if (isNewWorldTemplateId(templateId)) {
     applyNewWorldDefaults(config, templateId, customTitle);

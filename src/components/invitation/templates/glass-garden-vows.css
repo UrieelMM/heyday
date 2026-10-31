@@ -1,0 +1,11 @@
+.ww-root--garden .ww-hero__stage { background: radial-gradient(circle at 18% 18%, #fffef8 0, #edf2e8 48%, #dfe9dc 100%); }
+.ww-root--garden .ww-hero__texture { background: repeating-linear-gradient(90deg, transparent 0 73px, #6b907a14 74px 75px), linear-gradient(180deg, #fff9 0, transparent 35%); }
+.ww-root--garden .ww-hero__visual { border-radius: 49% 49% 2px 2px / 20% 20% 2px 2px; }
+.ww-root--garden .ww-hero__emblem { color: #678372; }
+.ww-root--garden .ww-hero__cta { border-radius: 99px; }
+.ww-root--garden .ww-stations { background: #e9eee4; }
+.ww-root--garden .ww-station { border-radius: 190px 190px 4px 4px / 90px 90px 4px 4px; }
+.ww-root--garden .ww-station__image { border-radius: 185px 185px 0 0 / 85px 85px 0 0; }
+.ww-root--garden .st-story > .grid > div, .ww-root--garden .st-family__card, .ww-root--garden .st-dress > .grid > div { border-radius: 150px 150px 12px 12px / 60px 60px 12px 12px !important; }
+.ww-root--garden .ww-marquee { background: #6a8671; }
+.ww-root--garden .ww-marquee--second { background: #b5a479; color: #263b32; }

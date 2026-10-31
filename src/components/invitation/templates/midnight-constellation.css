@@ -1,0 +1,18 @@
+.ww-root--stars .ww-hero__stage { background: radial-gradient(ellipse at 70% 35%, #314567 0, #192a46 47%, #101b31 100%); }
+.ww-root--stars .ww-hero__texture { background-image: radial-gradient(#e8dcb099 1px,transparent 1.6px), radial-gradient(#d6e2fd8a 1px,transparent 1.6px); background-size: 73px 89px, 109px 97px; background-position: 10px 13px, 44px 58px; opacity: .55; }
+.ww-root--stars .ww-nav { color: #f8f2e9; }
+.ww-root--stars .ww-hero__visual { border-radius: 47% 47% 47% 47% / 46% 46% 46% 46%; border-color: #d1b77d; }
+.ww-root--stars .ww-hero__emblem { color: #d6b87c; }
+.ww-root--stars .ww-hero__copy h1 { color: #f8f2e9; }
+.ww-root--stars .ww-hero__date, .ww-root--stars .ww-hero__tagline, .ww-root--stars .ww-hero__guest, .ww-root--stars .ww-hero__scroll { color: #f8f2e9; }
+.ww-root--stars .ww-hero__cta { background: #101b31; color: #f8f2e9; }
+.ww-root--stars .ww-hero__cta:hover { background: #d6b87c; color: #101b31; }
+.ww-root--stars .ww-stations { background: #1c2b46; }
+.ww-root--stars .ww-station { background: #14223b; }
+.ww-root--stars .ww-station__image { clip-path: polygon(0 0,100% 0,100% 100%,0 100%); }
+.ww-root--stars .ww-station__body { color: #f8f2e9; }
+.ww-root--stars .ww-marquee { color: #101b31; }
+.ww-root--stars .ww-marquee--second { background: #829fbd; }
+.ww-root--stars .st-story > .grid > div, .ww-root--stars .st-locations__card, .ww-root--stars .st-dress > .grid > div, .ww-root--stars .st-rsvp > div { background: #182941 !important; color: #f8f2e9; }
+.ww-root--stars .st-family__card, .ww-root--stars .st-timeline__item, .ww-root--stars .st-gifts .grid > div { background: #1c2b46 !important; color: #f8f2e9; }
+.ww-root--stars :is(.st-rsvp,.st-dress,.st-gifts) input, .ww-root--stars :is(.st-rsvp,.st-dress,.st-gifts) textarea, .ww-root--stars :is(.st-rsvp,.st-dress,.st-gifts) select { color: #17253a; }

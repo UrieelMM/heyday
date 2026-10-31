@@ -59,6 +59,11 @@ import { SafariSunriseExperience, SafariTrailBackdrop } from '../templates/Safar
 import { CowboyRanchExperience, CowboyTrailBackdrop } from '../templates/CowboyRanchExperience';
 import { KidsWorldMarquee, KidsWorldStations, setupKidsWorldScenes } from '../templates/kids-world-shared';
 import { isKidsWorldTemplateId } from '@/lib/templates/kids-world-config';
+import { isWeddingWorldTemplateId } from '@/lib/templates/wedding-world-config';
+import { GlassGardenVowsExperience, GardenStoryTrellis } from '../templates/GlassGardenVowsExperience';
+import { MidnightConstellationExperience, ConstellationStorySky } from '../templates/MidnightConstellationExperience';
+import { GoldenHarvestVineyardExperience, VineyardStoryVines } from '../templates/GoldenHarvestVineyardExperience';
+import { WeddingWorldMarquee, WeddingWorldStations, setupWeddingWorldScenes } from '../templates/wedding-world-shared';
 import { isNewWorldTemplateId } from '@/lib/templates/new-world-config';
 import { OperaCarmesiExperience, PequenoAtlasExperience, ArchivoFuturoExperience, NewWorldMarquee, NewWorldMoments, NewWorldStoryArt, setupNewWorldScenes } from '../templates/NewWorldExperiences';
 import { isStoryWorldTemplateId } from '@/lib/templates/story-world-config';
@@ -84,6 +89,10 @@ import '../templates/pirate-treasure-voyage.css';
 import '../templates/dino-jungle-expedition.css';
 import '../templates/safari-sunrise-adventure.css';
 import '../templates/cowboy-ranch-roundup.css';
+import '../templates/wedding-world.css';
+import '../templates/glass-garden-vows.css';
+import '../templates/midnight-constellation.css';
+import '../templates/golden-harvest-vineyard.css';
 import '../templates/new-world.css';
 import '../templates/story-world.css';
 
@@ -153,13 +162,16 @@ function StandardInvitationRenderer({
   const kidsWorldVariant = kidsWorldId === 'pirate-treasure-voyage' ? 'pirate'
     : kidsWorldId === 'safari-sunrise-adventure' ? 'safari'
       : kidsWorldId === 'cowboy-ranch-roundup' ? 'cowboy' : 'dino';
+  const weddingWorldId = isWeddingWorldTemplateId(templateId) ? templateId : null;
+  const weddingWorldVariant = weddingWorldId === 'glass-garden-vows' ? 'garden'
+    : weddingWorldId === 'midnight-constellation' ? 'stars' : 'vineyard';
   const newWorldId = isNewWorldTemplateId(templateId) ? templateId : null;
   const newWorldVariant = newWorldId === 'opera-carmesi' ? 'opera' : newWorldId === 'pequeno-atlas' ? 'atlas' : 'future';
   const storyWorldId = isStoryWorldTemplateId(templateId) ? templateId : null;
   const storyVariant = storyWorldId === 'ohana-lilo-stitch' ? 'ohana' : storyWorldId === 'solar-pop-xv' ? 'solar' : 'cafe';
   const occasionTemplateId = isOccasionTemplateId(templateId) ? templateId : null;
   const newSceneTemplateId = isNewSceneTemplateId(templateId) ? templateId : null;
-  const hasSceneTemplate = Boolean(signatureTemplateId || celebrationTemplateId || occasionTemplateId || newSceneTemplateId || kidsWorldId || newWorldId || storyWorldId);
+  const hasSceneTemplate = Boolean(signatureTemplateId || celebrationTemplateId || occasionTemplateId || newSceneTemplateId || kidsWorldId || weddingWorldId || newWorldId || storyWorldId);
   const occasionCopy = occasionTemplateId ? occasionSectionCopy[occasionTemplateId] : null;
 
   // Estado Cuenta Regresiva
@@ -230,6 +242,10 @@ function StandardInvitationRenderer({
         setupKidsWorldScenes(root, kidsWorldId);
         return;
       }
+      if (weddingWorldId) {
+        setupWeddingWorldScenes(root, weddingWorldId);
+        return;
+      }
       if (newWorldId) {
         setupNewWorldScenes(root, newWorldId);
         return;
@@ -290,7 +306,7 @@ function StandardInvitationRenderer({
         );
       });
     },
-    { scope: containerRef, dependencies: [isEnvelopeOpen, templateId, signatureTemplateId, celebrationTemplateId, occasionTemplateId, newSceneTemplateId, newWorldId, storyWorldId] }
+    { scope: containerRef, dependencies: [isEnvelopeOpen, templateId, signatureTemplateId, celebrationTemplateId, occasionTemplateId, newSceneTemplateId, weddingWorldId, newWorldId, storyWorldId] }
   );
 
   const { colors, fonts } = config.theme;
@@ -361,10 +377,11 @@ function StandardInvitationRenderer({
         '--ns-accent': colors.accentPrimary,
         '--ns-accent-2': colors.accentSecondary,
       } as React.CSSProperties}
-      className={`relative min-h-dvh w-full overflow-x-hidden selection:bg-amber-500/20${signatureTemplateId ? ` st-root st-root--${signatureTemplateId}` : ''}${celebrationTemplateId ? ` cs-root cs-root--${celebrationTemplateId}` : ''}${isKidsAdventure ? ' fk-root' : ''}${kidsWorldId ? ` kw-root kw-root--${kidsWorldVariant}` : ''}${newWorldId ? ` nw-root nw-root--${newWorldVariant}` : ''}${storyWorldId ? ` sw-root sw-root--${storyVariant}` : ''}${occasionTemplateId ? ` oc-root oc-root--${occasionTemplateId}` : ''}${newSceneTemplateId ? ` ns-root ns-root--${newSceneTemplateId}` : ''}`}
+      className={`relative min-h-dvh w-full overflow-x-hidden selection:bg-amber-500/20${signatureTemplateId ? ` st-root st-root--${signatureTemplateId}` : ''}${celebrationTemplateId ? ` cs-root cs-root--${celebrationTemplateId}` : ''}${isKidsAdventure ? ' fk-root' : ''}${kidsWorldId ? ` kw-root kw-root--${kidsWorldVariant}` : ''}${weddingWorldId ? ` ww-root ww-root--${weddingWorldVariant}` : ''}${newWorldId ? ` nw-root nw-root--${newWorldVariant}` : ''}${storyWorldId ? ` sw-root sw-root--${storyVariant}` : ''}${occasionTemplateId ? ` oc-root oc-root--${occasionTemplateId}` : ''}${newSceneTemplateId ? ` ns-root ns-root--${newSceneTemplateId}` : ''}`}
     >
       {isKidsAdventure && <div className="fk-progress" aria-hidden="true"><span className="fk-progress__bar" /></div>}
       {kidsWorldId && <div className="kw-progress" aria-hidden="true"><span className="kw-progress__bar" /></div>}
+      {weddingWorldId && <div className="ww-progress" aria-hidden="true"><span className="ww-progress__bar" /></div>}
       {newWorldId && <div className="nw-progress" aria-hidden="true"><span className="nw-progress__bar" /></div>}
       {storyWorldId && <div className="sw-progress" aria-hidden="true"><span className="sw-progress__bar" /></div>}
       {/* 1. Sobre de Apertura Interactivo */}
@@ -374,8 +391,8 @@ function StandardInvitationRenderer({
           guestGroup={guestGroup}
           isOpen={isEnvelopeOpen}
           onOpen={() => setIsEnvelopeOpen(true)}
-          sceneClassName={isKidsAdventure ? 'fk-opening' : kidsWorldId ? `kw-opening kw-opening--${kidsWorldVariant}` : newWorldId ? `nw-opening nw-opening--${newWorldVariant}` : storyWorldId ? `sw-opening sw-opening--${storyVariant}` : newSceneTemplateId ? `ns-envelope ns-envelope--${newSceneTemplateId}` : undefined}
-          celebrateOnOpen={!newSceneTemplateId || newSceneTemplateId === 'mini-cosmos' || newSceneTemplateId === 'ritmo-de-dos'}
+          sceneClassName={isKidsAdventure ? 'fk-opening' : kidsWorldId ? `kw-opening kw-opening--${kidsWorldVariant}` : weddingWorldId ? `ww-opening ww-opening--${weddingWorldVariant}` : newWorldId ? `nw-opening nw-opening--${newWorldVariant}` : storyWorldId ? `sw-opening sw-opening--${storyVariant}` : newSceneTemplateId ? `ns-envelope ns-envelope--${newSceneTemplateId}` : undefined}
+          celebrateOnOpen={!weddingWorldId && (!newSceneTemplateId || newSceneTemplateId === 'mini-cosmos' || newSceneTemplateId === 'ritmo-de-dos')}
         />
       )}
 
@@ -419,6 +436,9 @@ function StandardInvitationRenderer({
       {isSectionEnabled('hero') && kidsWorldId === 'cowboy-ranch-roundup' && (
         <CowboyRanchExperience config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />
       )}
+      {isSectionEnabled('hero') && weddingWorldId === 'glass-garden-vows' && <GlassGardenVowsExperience config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />}
+      {isSectionEnabled('hero') && weddingWorldId === 'midnight-constellation' && <MidnightConstellationExperience config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />}
+      {isSectionEnabled('hero') && weddingWorldId === 'golden-harvest-vineyard' && <GoldenHarvestVineyardExperience config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />}
       {isSectionEnabled('hero') && newWorldId === 'opera-carmesi' && <OperaCarmesiExperience config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />}
       {isSectionEnabled('hero') && newWorldId === 'pequeno-atlas' && <PequenoAtlasExperience config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />}
       {isSectionEnabled('hero') && newWorldId === 'archivo-futuro' && <ArchivoFuturoExperience config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />}
@@ -437,6 +457,7 @@ function StandardInvitationRenderer({
 
       {isKidsAdventure && isSectionEnabled('hero') && <FiestaKidsMarquee />}
       {kidsWorldId && isSectionEnabled('hero') && <KidsWorldMarquee variant={kidsWorldVariant} />}
+      {weddingWorldId && isSectionEnabled('hero') && <WeddingWorldMarquee variant={weddingWorldVariant} />}
       {newWorldId && isSectionEnabled('hero') && <NewWorldMarquee variant={newWorldVariant} />}
       {storyWorldId && isSectionEnabled('hero') && <StoryWorldMarquee variant={storyVariant} />}
       {isSectionEnabled('hero') && occasionTemplateId && (
@@ -524,6 +545,9 @@ function StandardInvitationRenderer({
           {kidsWorldId === 'dino-jungle-expedition' && <DinoStoryFossils />}
           {kidsWorldId === 'safari-sunrise-adventure' && <SafariTrailBackdrop />}
           {kidsWorldId === 'cowboy-ranch-roundup' && <CowboyTrailBackdrop />}
+          {weddingWorldId === 'glass-garden-vows' && <GardenStoryTrellis />}
+          {weddingWorldId === 'midnight-constellation' && <ConstellationStorySky />}
+          {weddingWorldId === 'golden-harvest-vineyard' && <VineyardStoryVines />}
           {newWorldId && <NewWorldStoryArt variant={newWorldVariant} />}
           {storyWorldId === 'ohana-lilo-stitch' && <OhanaWaveStory />}
           {storyWorldId === 'solar-pop-xv' && <SolarPopStory />}
@@ -567,7 +591,7 @@ function StandardInvitationRenderer({
                       borderColor: `${colors.accentPrimary}30`,
                     }}
                   >
-                    {(isKidsAdventure || kidsWorldId || newWorldId || storyWorldId) && block.imageUrl && <img className={isKidsAdventure ? 'fk-story-card__image' : kidsWorldId ? 'kw-story-card__image' : newWorldId ? 'nw-story-card__image' : 'sw-story-card__image'} src={block.imageUrl} alt="" loading="lazy" />}
+                    {(isKidsAdventure || kidsWorldId || weddingWorldId || newWorldId || storyWorldId) && block.imageUrl && <img className={isKidsAdventure ? 'fk-story-card__image' : kidsWorldId ? 'kw-story-card__image' : weddingWorldId ? 'ww-story-card__image' : newWorldId ? 'nw-story-card__image' : 'sw-story-card__image'} src={block.imageUrl} alt="" loading="lazy" />}
                     <span
                       className="text-xs font-bold tracking-widest uppercase"
                       style={{ color: colors.accentPrimary }}
@@ -595,6 +619,7 @@ function StandardInvitationRenderer({
 
       {isKidsAdventure && <FiestaKidsStations config={config} />}
       {kidsWorldId && isSectionEnabled('quote_story') && <KidsWorldStations variant={kidsWorldVariant} config={config} />}
+      {weddingWorldId && isSectionEnabled('quote_story') && <WeddingWorldStations variant={weddingWorldVariant} config={config} />}
       {newWorldId && isSectionEnabled('quote_story') && <NewWorldMoments variant={newWorldVariant} config={config} />}
       {storyWorldId && isSectionEnabled('quote_story') && <StoryWorldMoments variant={storyVariant} config={config} />}
 
@@ -796,7 +821,7 @@ function StandardInvitationRenderer({
                     <div className="h-52 w-full overflow-hidden">
                       <img
                         src={loc.imageUrl}
-                        alt={celebrationTemplateId || newSceneTemplateId || kidsWorldId ? `Ilustración de ${loc.title}` : loc.venueName}
+                        alt={celebrationTemplateId || newSceneTemplateId || kidsWorldId || weddingWorldId ? `Ambiente de ${loc.title}` : loc.venueName}
                         className="inv-mask-image h-full w-full object-cover"
                       />
                     </div>
@@ -851,14 +876,15 @@ function StandardInvitationRenderer({
                         <Navigation className="h-4 w-4" />
                         Abrir en Waze
                       </a>
-                      {(isKidsAdventure || kidsWorldId || newWorldId || storyWorldId) && <>
-                        <a className={isKidsAdventure ? 'fk-route-link' : kidsWorldId ? 'kw-route-link' : newWorldId ? 'nw-route-link' : 'sw-route-link'} href={`https://maps.apple.com/?ll=${loc.coordinates.lat},${loc.coordinates.lng}&q=${encodeURIComponent(loc.venueName)}`} target="_blank" rel="noopener noreferrer">Apple Maps</a>
-                        <a className={isKidsAdventure ? 'fk-route-link' : kidsWorldId ? 'kw-route-link' : newWorldId ? 'nw-route-link' : 'sw-route-link'} href={`https://m.uber.com/ul/?action=setPickup&dropoff[latitude]=${loc.coordinates.lat}&dropoff[longitude]=${loc.coordinates.lng}&dropoff[nickname]=${encodeURIComponent(loc.venueName)}`} target="_blank" rel="noopener noreferrer">Uber</a>
+                      {(isKidsAdventure || kidsWorldId || weddingWorldId || newWorldId || storyWorldId) && <>
+                        <a className={isKidsAdventure ? 'fk-route-link' : kidsWorldId ? 'kw-route-link' : weddingWorldId ? 'ww-route-link' : newWorldId ? 'nw-route-link' : 'sw-route-link'} href={`https://maps.apple.com/?ll=${loc.coordinates.lat},${loc.coordinates.lng}&q=${encodeURIComponent(loc.venueName)}`} target="_blank" rel="noopener noreferrer">Apple Maps</a>
+                        <a className={isKidsAdventure ? 'fk-route-link' : kidsWorldId ? 'kw-route-link' : weddingWorldId ? 'ww-route-link' : newWorldId ? 'nw-route-link' : 'sw-route-link'} href={`https://m.uber.com/ul/?action=setPickup&dropoff[latitude]=${loc.coordinates.lat}&dropoff[longitude]=${loc.coordinates.lng}&dropoff[nickname]=${encodeURIComponent(loc.venueName)}`} target="_blank" rel="noopener noreferrer">Uber</a>
                       </>}
                     </div>
                   </div>
                   {isKidsAdventure && <iframe className="fk-location-map" title={`Mapa de ${loc.venueName}`} src={`https://www.google.com/maps?q=${loc.coordinates.lat},${loc.coordinates.lng}&output=embed`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />}
                   {kidsWorldId && <iframe className="kw-location-map" title={`Mapa de ${loc.venueName}`} src={`https://www.google.com/maps?q=${loc.coordinates.lat},${loc.coordinates.lng}&output=embed`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />}
+                  {weddingWorldId && <iframe className="ww-location-map" title={`Mapa de ${loc.venueName}`} src={`https://www.google.com/maps?q=${loc.coordinates.lat},${loc.coordinates.lng}&output=embed`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />}
                   {newWorldId && <iframe className="nw-location-map" title={`Mapa de ${loc.venueName}`} src={`https://www.google.com/maps?q=${loc.coordinates.lat},${loc.coordinates.lng}&output=embed`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />}
                   {storyWorldId && <iframe className="sw-location-map" title={`Mapa de ${loc.venueName}`} src={`https://www.google.com/maps?q=${loc.coordinates.lat},${loc.coordinates.lng}&output=embed`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />}
                 </div>
@@ -901,6 +927,7 @@ function StandardInvitationRenderer({
             <div className="relative mx-auto max-w-xl pl-8">
               {isKidsAdventure && <span className="fk-timeline__runner" aria-hidden="true">✦</span>}
               {kidsWorldId && <span className="kw-timeline__runner" aria-hidden="true">{{ pirate: '☸', dino: '✦', safari: '◉', cowboy: '★' }[kidsWorldVariant]}</span>}
+              {weddingWorldId && <span className="ww-timeline__runner" aria-hidden="true">{{ garden: '✿', stars: '✧', vineyard: '❧' }[weddingWorldVariant]}</span>}
               {newWorldId && <span className="nw-timeline__runner" aria-hidden="true">{{ opera: '✦', atlas: '✺', future: '↗' }[newWorldVariant]}</span>}
               {storyWorldId && <span className="sw-timeline__runner" aria-hidden="true">{{ ohana: '✿', solar: '✺', cafe: '♥' }[storyVariant]}</span>}
             <div
@@ -946,6 +973,7 @@ function StandardInvitationRenderer({
 
       {isKidsAdventure && isSectionEnabled('timeline') && <FiestaKidsMarquee second />}
       {kidsWorldId && isSectionEnabled('timeline') && <KidsWorldMarquee variant={kidsWorldVariant} second />}
+      {weddingWorldId && isSectionEnabled('timeline') && <WeddingWorldMarquee variant={weddingWorldVariant} second />}
       {newWorldId && isSectionEnabled('timeline') && <NewWorldMarquee variant={newWorldVariant} second />}
       {storyWorldId && isSectionEnabled('timeline') && <StoryWorldMarquee variant={storyVariant} second />}
 
