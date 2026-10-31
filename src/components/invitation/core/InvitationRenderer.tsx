@@ -53,6 +53,10 @@ import { RitmoDeDosExperience } from '../templates/RitmoDeDosExperience';
 import { MareaAzulExperience } from '../templates/MareaAzulExperience';
 import { NeonXVEuphoriaExperience } from '../templates/NeonXVEuphoriaExperience';
 import { AdventureMap, FiestaKidsAdventureHero, FiestaKidsMarquee, FiestaKidsStations, setupFiestaKidsAdventureScenes } from '../templates/FiestaKidsAdventureExperience';
+import { PirateStoryMap, PirateTreasureExperience } from '../templates/PirateTreasureExperience';
+import { DinoJungleExperience, DinoStoryFossils } from '../templates/DinoJungleExperience';
+import { KidsWorldMarquee, KidsWorldStations, setupKidsWorldScenes } from '../templates/kids-world-shared';
+import { isKidsWorldTemplateId } from '@/lib/templates/kids-world-config';
 import { SignatureHero } from '../templates/SignatureHero';
 import { setupSignatureScenes } from '../templates/signature-scenes';
 import { CelebrationHero } from '../templates/CelebrationHero';
@@ -66,6 +70,9 @@ import '../templates/celebration-templates.css';
 import '../templates/occasion-templates.css';
 import '../templates/new-scenes.css';
 import '../templates/fiesta-kids-adventure.css';
+import '../templates/kids-world.css';
+import '../templates/pirate-treasure-voyage.css';
+import '../templates/dino-jungle-expedition.css';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -129,9 +136,11 @@ function StandardInvitationRenderer({
     ? templateId : null;
   const celebrationTemplateId = isCelebrationTemplateId(templateId) ? templateId : null;
   const isKidsAdventure = templateId === 'fiesta-kids-adventure';
+  const kidsWorldId = isKidsWorldTemplateId(templateId) ? templateId : null;
+  const kidsWorldVariant = kidsWorldId === 'pirate-treasure-voyage' ? 'pirate' : 'dino';
   const occasionTemplateId = isOccasionTemplateId(templateId) ? templateId : null;
   const newSceneTemplateId = isNewSceneTemplateId(templateId) ? templateId : null;
-  const hasSceneTemplate = Boolean(signatureTemplateId || celebrationTemplateId || occasionTemplateId || newSceneTemplateId);
+  const hasSceneTemplate = Boolean(signatureTemplateId || celebrationTemplateId || occasionTemplateId || newSceneTemplateId || kidsWorldId);
   const occasionCopy = occasionTemplateId ? occasionSectionCopy[occasionTemplateId] : null;
 
   // Estado Cuenta Regresiva
@@ -196,6 +205,10 @@ function StandardInvitationRenderer({
       if (!root) return;
       if (signatureTemplateId) {
         setupSignatureScenes(root, signatureTemplateId);
+        return;
+      }
+      if (kidsWorldId) {
+        setupKidsWorldScenes(root, kidsWorldId);
         return;
       }
       if (celebrationTemplateId) {
@@ -321,9 +334,10 @@ function StandardInvitationRenderer({
         '--ns-accent': colors.accentPrimary,
         '--ns-accent-2': colors.accentSecondary,
       } as React.CSSProperties}
-      className={`relative min-h-dvh w-full overflow-x-hidden selection:bg-amber-500/20${signatureTemplateId ? ` st-root st-root--${signatureTemplateId}` : ''}${celebrationTemplateId ? ` cs-root cs-root--${celebrationTemplateId}` : ''}${isKidsAdventure ? ' fk-root' : ''}${occasionTemplateId ? ` oc-root oc-root--${occasionTemplateId}` : ''}${newSceneTemplateId ? ` ns-root ns-root--${newSceneTemplateId}` : ''}`}
+      className={`relative min-h-dvh w-full overflow-x-hidden selection:bg-amber-500/20${signatureTemplateId ? ` st-root st-root--${signatureTemplateId}` : ''}${celebrationTemplateId ? ` cs-root cs-root--${celebrationTemplateId}` : ''}${isKidsAdventure ? ' fk-root' : ''}${kidsWorldId ? ` kw-root kw-root--${kidsWorldVariant}` : ''}${occasionTemplateId ? ` oc-root oc-root--${occasionTemplateId}` : ''}${newSceneTemplateId ? ` ns-root ns-root--${newSceneTemplateId}` : ''}`}
     >
       {isKidsAdventure && <div className="fk-progress" aria-hidden="true"><span className="fk-progress__bar" /></div>}
+      {kidsWorldId && <div className="kw-progress" aria-hidden="true"><span className="kw-progress__bar" /></div>}
       {/* 1. Sobre de Apertura Interactivo */}
       {(!isBuilderPreview || previewEnvelope) && (
         <EnvelopeOpener
@@ -331,7 +345,7 @@ function StandardInvitationRenderer({
           guestGroup={guestGroup}
           isOpen={isEnvelopeOpen}
           onOpen={() => setIsEnvelopeOpen(true)}
-          sceneClassName={isKidsAdventure ? 'fk-opening' : newSceneTemplateId ? `ns-envelope ns-envelope--${newSceneTemplateId}` : undefined}
+          sceneClassName={isKidsAdventure ? 'fk-opening' : kidsWorldId ? `kw-opening kw-opening--${kidsWorldVariant}` : newSceneTemplateId ? `ns-envelope ns-envelope--${newSceneTemplateId}` : undefined}
           celebrateOnOpen={!newSceneTemplateId || newSceneTemplateId === 'mini-cosmos' || newSceneTemplateId === 'ritmo-de-dos'}
         />
       )}
@@ -364,6 +378,12 @@ function StandardInvitationRenderer({
       {isSectionEnabled('hero') && isKidsAdventure && (
         <FiestaKidsAdventureHero config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />
       )}
+      {isSectionEnabled('hero') && kidsWorldId === 'pirate-treasure-voyage' && (
+        <PirateTreasureExperience config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />
+      )}
+      {isSectionEnabled('hero') && kidsWorldId === 'dino-jungle-expedition' && (
+        <DinoJungleExperience config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />
+      )}
       {isSectionEnabled('hero') && celebrationTemplateId && !isKidsAdventure && (
         <CelebrationHero
           templateId={celebrationTemplateId}
@@ -375,6 +395,7 @@ function StandardInvitationRenderer({
       )}
 
       {isKidsAdventure && isSectionEnabled('hero') && <FiestaKidsMarquee />}
+      {kidsWorldId && isSectionEnabled('hero') && <KidsWorldMarquee variant={kidsWorldVariant} />}
       {isSectionEnabled('hero') && occasionTemplateId && (
         <OccasionHero
           templateId={occasionTemplateId}
@@ -456,6 +477,8 @@ function StandardInvitationRenderer({
           className="inv-reveal-section st-story mx-auto max-w-3xl px-6 py-20 text-center"
         >
           {isKidsAdventure && <AdventureMap />}
+          {kidsWorldId === 'pirate-treasure-voyage' && <PirateStoryMap />}
+          {kidsWorldId === 'dino-jungle-expedition' && <DinoStoryFossils />}
           <div
             className="mx-auto mb-6 h-12 w-px"
             style={{ backgroundColor: colors.accentPrimary }}
@@ -495,7 +518,7 @@ function StandardInvitationRenderer({
                       borderColor: `${colors.accentPrimary}30`,
                     }}
                   >
-                    {isKidsAdventure && block.imageUrl && <img className="fk-story-card__image" src={block.imageUrl} alt="" loading="lazy" />}
+                    {(isKidsAdventure || kidsWorldId) && block.imageUrl && <img className={isKidsAdventure ? 'fk-story-card__image' : 'kw-story-card__image'} src={block.imageUrl} alt="" loading="lazy" />}
                     <span
                       className="text-xs font-bold tracking-widest uppercase"
                       style={{ color: colors.accentPrimary }}
@@ -522,6 +545,7 @@ function StandardInvitationRenderer({
       )}
 
       {isKidsAdventure && <FiestaKidsStations config={config} />}
+      {kidsWorldId && isSectionEnabled('quote_story') && <KidsWorldStations variant={kidsWorldVariant} config={config} />}
 
       {/* SECCIÓN 3: PADRES Y PADRINOS DE HONOR */}
       {isSectionEnabled('vip_parents') &&
@@ -721,7 +745,7 @@ function StandardInvitationRenderer({
                     <div className="h-52 w-full overflow-hidden">
                       <img
                         src={loc.imageUrl}
-                        alt={celebrationTemplateId || newSceneTemplateId ? `Ilustración de ${loc.title}` : loc.venueName}
+                        alt={celebrationTemplateId || newSceneTemplateId || kidsWorldId ? `Ilustración de ${loc.title}` : loc.venueName}
                         className="inv-mask-image h-full w-full object-cover"
                       />
                     </div>
@@ -776,13 +800,14 @@ function StandardInvitationRenderer({
                         <Navigation className="h-4 w-4" />
                         Abrir en Waze
                       </a>
-                      {isKidsAdventure && <>
-                        <a className="fk-route-link" href={`https://maps.apple.com/?ll=${loc.coordinates.lat},${loc.coordinates.lng}&q=${encodeURIComponent(loc.venueName)}`} target="_blank" rel="noopener noreferrer">Apple Maps</a>
-                        <a className="fk-route-link" href={`https://m.uber.com/ul/?action=setPickup&dropoff[latitude]=${loc.coordinates.lat}&dropoff[longitude]=${loc.coordinates.lng}&dropoff[nickname]=${encodeURIComponent(loc.venueName)}`} target="_blank" rel="noopener noreferrer">Uber</a>
+                      {(isKidsAdventure || kidsWorldId) && <>
+                        <a className={isKidsAdventure ? 'fk-route-link' : 'kw-route-link'} href={`https://maps.apple.com/?ll=${loc.coordinates.lat},${loc.coordinates.lng}&q=${encodeURIComponent(loc.venueName)}`} target="_blank" rel="noopener noreferrer">Apple Maps</a>
+                        <a className={isKidsAdventure ? 'fk-route-link' : 'kw-route-link'} href={`https://m.uber.com/ul/?action=setPickup&dropoff[latitude]=${loc.coordinates.lat}&dropoff[longitude]=${loc.coordinates.lng}&dropoff[nickname]=${encodeURIComponent(loc.venueName)}`} target="_blank" rel="noopener noreferrer">Uber</a>
                       </>}
                     </div>
                   </div>
                   {isKidsAdventure && <iframe className="fk-location-map" title={`Mapa de ${loc.venueName}`} src={`https://www.google.com/maps?q=${loc.coordinates.lat},${loc.coordinates.lng}&output=embed`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />}
+                  {kidsWorldId && <iframe className="kw-location-map" title={`Mapa de ${loc.venueName}`} src={`https://www.google.com/maps?q=${loc.coordinates.lat},${loc.coordinates.lng}&output=embed`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />}
                 </div>
               ))}
             </div>
@@ -822,6 +847,7 @@ function StandardInvitationRenderer({
 
             <div className="relative mx-auto max-w-xl pl-8">
               {isKidsAdventure && <span className="fk-timeline__runner" aria-hidden="true">✦</span>}
+              {kidsWorldId && <span className="kw-timeline__runner" aria-hidden="true">{kidsWorldVariant === 'pirate' ? '☸' : '✦'}</span>}
             <div
               className="st-timeline__line absolute top-2 bottom-2 left-3 w-0.5"
               style={{ backgroundColor: `${colors.accentPrimary}45` }}
@@ -864,6 +890,7 @@ function StandardInvitationRenderer({
       )}
 
       {isKidsAdventure && isSectionEnabled('timeline') && <FiestaKidsMarquee second />}
+      {kidsWorldId && isSectionEnabled('timeline') && <KidsWorldMarquee variant={kidsWorldVariant} second />}
 
       {/* SECCIÓN 7: GALERÍA MULTIMEDIA */}
       {isSectionEnabled('gallery') && content.gallery.images.length > 0 && (
@@ -952,7 +979,7 @@ function StandardInvitationRenderer({
               }}
             >
               <h3 className="text-sm font-bold tracking-widest uppercase">
-                {occasionCopy?.dressLeft ?? (celebrationTemplateId === 'fiesta-kids-adventure' ? 'Peques' : 'Mujeres')}
+                {occasionCopy?.dressLeft ?? (celebrationTemplateId === 'fiesta-kids-adventure' || kidsWorldId ? 'Peques' : 'Mujeres')}
               </h3>
               <p
                 className="mt-2 text-sm leading-relaxed"
@@ -969,7 +996,7 @@ function StandardInvitationRenderer({
               }}
             >
               <h3 className="text-sm font-bold tracking-widest uppercase">
-                {occasionCopy?.dressRight ?? (celebrationTemplateId === 'fiesta-kids-adventure' ? 'Adultos' : 'Hombres')}
+                {occasionCopy?.dressRight ?? (celebrationTemplateId === 'fiesta-kids-adventure' || kidsWorldId ? 'Adultos' : 'Hombres')}
               </h3>
               <p
                 className="mt-2 text-sm leading-relaxed"
@@ -1449,7 +1476,7 @@ function StandardInvitationRenderer({
                   className="mt-1 text-xs tracking-wider uppercase"
                   style={{ color: colors.textMuted }}
                 >
-                  {hasSceneTemplate ? 'Muestra para' : 'Válido por'} {generatedPass.adults} Adultos
+                  {isBuilderPreview ? 'Muestra para' : 'Válido por'} {generatedPass.adults} Adultos
                   {generatedPass.children > 0
                     ? ` y ${generatedPass.children} Niños`
                     : ''}{' '}

@@ -1,0 +1,40 @@
+/* Dino world: matte clay, layered jungle foliage and fossil circles. */
+.kw-root--dino .kw-opening { background: radial-gradient(circle at 50% 25%, #fdf7cc, #b9d5ab) !important; color: #263e2b !important; }
+.kw-root--dino .kw-hero__stage { background: #dce8b8; color: #263e2b; }
+.kw-root--dino .kw-hero__atmosphere { background: radial-gradient(circle at 80% 20%, #ffdb85 0 9%, transparent 9.2%), radial-gradient(circle at 16% 72%, #89b16c99, transparent 38%), radial-gradient(circle at 90% 89%, #76975f88, transparent 38%), linear-gradient(145deg, #f4f2cb 5%, #d6e8b2 50%, #a7c99c); }
+.kw-root--dino .kw-hero__atmosphere::after { content: ''; position: absolute; inset: 0; opacity: .28; background-image: radial-gradient(#4d7444 1px, transparent 1px); background-size: 37px 37px; }
+.kw-root--dino .kw-hero__ornament--one { left: -4%; bottom: -18%; width: 340px; height: 470px; border-radius: 70% 10% 70% 10%; background: #4e85486b; transform: rotate(-28deg); box-shadow: 70px -20px 0 #6c9d5475; }
+.kw-root--dino .kw-hero__ornament--two { right: -7%; top: 7%; width: 280px; height: 410px; border-radius: 10% 70% 10% 70%; background: #709b577a; transform: rotate(25deg); }
+.kw-root--dino .kw-hero__overline, .kw-root--dino .kw-hero__age { color: #a9512e; }
+.kw-root--dino .kw-hero__copy h1 { color: #264b30; text-shadow: 0 5px 0 #d3e5a6; }
+.kw-root--dino .kw-hero__visual { border: 9px solid #f8e7b1; border-radius: 50% 50% 46% 46% / 58% 58% 40% 40%; box-shadow: 0 0 0 7px #6f9658, 13px 17px 0 #c56d3d, 0 25px 70px #284a2a59; }
+.kw-root--dino .kw-hero__motif { left: 3%; right: auto; bottom: 7%; }
+.kw-root--dino .kw-seal { color: #a4512d; }
+.kw-root--dino .kw-hero__cta { background: #f0bd6d; color: #263e2b; }
+.kw-root--dino .kw-hero__scroll { color: #496549; }
+.kw-root--dino .st-story { background: #f3efca !important; }
+.kw-root--dino .st-story blockquote { color: #263e2b; }
+.kw-root--dino .kw-stations { background: #c7dda9; }
+.kw-root--dino .kw-stations__head h2 { color: #263e2b; }
+.kw-root--dino .kw-stations__head > p:last-child { color: #496449; }
+.kw-root--dino .kw-station { border-radius: 34px 34px 24px 24px; box-shadow: 8px 10px 0 #bd8e5f; }
+.kw-root--dino .st-family { background: #d7e5b8 !important; }
+.kw-root--dino .st-countdown { background: #f5f4dd; }
+.kw-root--dino .st-countdown__unit { background: #e2c88f !important; }
+.kw-root--dino .st-countdown__unit:nth-child(2n) { background: #cde0ad !important; }
+.kw-root--dino .st-locations { background: #e8e9c8 !important; }
+.kw-root--dino .st-timeline { background: #f5f4dd; }
+.kw-root--dino .st-timeline__item { border-radius: 24px 24px 12px 12px; }
+.kw-root--dino .st-gallery { background: #d3e4b8 !important; }
+.kw-root--dino .st-dress { background: #f2efcc; }
+.kw-root--dino .st-gifts { background: #d5e6bb !important; }
+.kw-root--dino .st-social { background: #f2efcc; }
+.kw-root--dino .st-social + .st-social { background: #dce9c4; }
+.kw-root--dino .st-rsvp { background: #f3efca; }
+.kw-root--dino .st-locations__card a:first-child, .kw-root--dino .st-countdown a:first-child, .kw-root--dino .st-rsvp button[type="submit"] { background: #a6542c !important; color: #fff !important; }
+@media (max-width: 700px) {
+  .kw-root--dino .kw-hero__visual { left: 19%; width: 62%; top: 53%; height: 34%; border-width: 6px; box-shadow: 0 0 0 4px #6f9658, 7px 9px 0 #c56d3d; }
+  .kw-root--dino .kw-hero__motif { left: -3%; right: auto; bottom: 14%; }
+  .kw-root--dino .kw-hero__ornament--one { width: 190px; height: 270px; bottom: 8%; left: -28%; }
+  .kw-root--dino .kw-hero__ornament--two { width: 160px; height: 250px; right: -28%; top: 40%; }
+}

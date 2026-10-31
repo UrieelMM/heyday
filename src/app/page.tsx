@@ -234,7 +234,7 @@ export default function HomePage() {
               <p>Tu celebración se presenta como una experiencia: una portada que sorprende, tu historia, cada detalle importante y una forma sencilla de confirmar.</p>
               <div className="landing-product__metrics">
                 <div><strong>∞</strong><span>invitados, sin límite</span></div>
-                <div><strong>10</strong><span>estilos para descubrir</span></div>
+                <div><strong>{TEMPLATES_CATALOG.length}</strong><span>estilos para descubrir</span></div>
                 <div><strong>01</strong><span>historia: la tuya</span></div>
               </div>
             </div>

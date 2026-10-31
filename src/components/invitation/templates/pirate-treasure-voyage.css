@@ -1,0 +1,38 @@
+/* Pirate world: ink, brass, parchment and tidal motion. */
+.kw-root--pirate .kw-opening { background: radial-gradient(circle at 45% 30%, #f6e2b9, #bddbd3) !important; color: #12394c !important; }
+.kw-root--pirate .kw-hero__stage { background: #082b3d; color: #fff1d5; }
+.kw-root--pirate .kw-hero__atmosphere { background: radial-gradient(circle at 79% 27%, #e0a95d66 0 9%, transparent 9.2%), radial-gradient(circle at 20% 74%, #28787e6b, transparent 36%), repeating-radial-gradient(ellipse at 64% 100%, transparent 0 30px, #5fb0b226 31px 33px), linear-gradient(145deg, #092a3d, #14536a 72%, #236f75); }
+.kw-root--pirate .kw-hero__atmosphere::after { content: ''; position: absolute; inset: 0; opacity: .22; background-image: repeating-linear-gradient(90deg, transparent 0 79px, #f5dfaa 80px 81px); }
+.kw-root--pirate .kw-hero__ornament--one { left: -9%; top: 15%; width: 230px; height: 230px; border: 2px dashed #d5a96780; border-radius: 50%; box-shadow: 0 0 0 30px #f4d69f0c; }
+.kw-root--pirate .kw-hero__ornament--two { right: -9%; bottom: -15%; width: 390px; height: 230px; border: 3px solid #d5a96745; border-radius: 50%; }
+.kw-root--pirate .kw-hero__overline, .kw-root--pirate .kw-hero__age { color: #f9c678; }
+.kw-root--pirate .kw-hero__copy h1 { text-shadow: 0 6px 0 #052535; }
+.kw-root--pirate .kw-hero__visual { border: 10px solid #e6bd75; border-radius: 50% 50% 43% 43%; box-shadow: 0 0 0 8px #15495b, 13px 18px 0 #b36b43, 0 28px 80px #021620b8; }
+.kw-root--pirate .kw-hero__motif { right: 2%; bottom: 6%; }
+.kw-root--pirate .kw-seal { color: #f4ca7d; }
+.kw-root--pirate .kw-hero__cta { background: #f2ca75; color: #12394c; }
+.kw-root--pirate .kw-hero__scroll { color: #d9c797; }
+.kw-root--pirate .st-story { background: #f6ead0 !important; }
+.kw-root--pirate .st-story blockquote { color: #12394c; }
+.kw-root--pirate .kw-stations { background: #d7e7db; }
+.kw-root--pirate .kw-stations__head h2 { color: #12394c; }
+.kw-root--pirate .kw-stations__head > p:last-child { color: #4b6667; }
+.kw-root--pirate .kw-station { box-shadow: 8px 10px 0 #b9975d; }
+.kw-root--pirate .st-family { background: #c9e3df !important; }
+.kw-root--pirate .st-countdown { background: #f8f1de; }
+.kw-root--pirate .st-countdown__unit { background: #f5d48e !important; }
+.kw-root--pirate .st-countdown__unit:nth-child(2n) { background: #c6e3df !important; }
+.kw-root--pirate .st-locations { background: #e6e4cd !important; }
+.kw-root--pirate .st-timeline { background: #f8f1de; }
+.kw-root--pirate .st-gallery { background: #cde1de !important; }
+.kw-root--pirate .st-dress { background: #f5e9cf; }
+.kw-root--pirate .st-gifts { background: #d2e2db !important; }
+.kw-root--pirate .st-social { background: #f6ead0; }
+.kw-root--pirate .st-social + .st-social { background: #e2ebe2; }
+.kw-root--pirate .st-rsvp { background: #f6ead0; }
+.kw-root--pirate .st-locations__card a:first-child, .kw-root--pirate .st-countdown a:first-child, .kw-root--pirate .st-rsvp button[type="submit"] { background: #a95635 !important; color: #fff !important; }
+@media (max-width: 700px) {
+  .kw-root--pirate .kw-hero__visual { left: 19%; width: 62%; top: 53%; height: 34%; border-width: 6px; box-shadow: 0 0 0 5px #15495b, 7px 9px 0 #b36b43; }
+  .kw-root--pirate .kw-hero__ornament--one { top: 37%; left: -30%; width: 160px; height: 160px; }
+  .kw-root--pirate .kw-hero__ornament--two { width: 220px; height: 140px; }
+}

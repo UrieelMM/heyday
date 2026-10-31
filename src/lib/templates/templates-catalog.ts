@@ -8,6 +8,7 @@ import type {
 import { applyCelebrationDefaults, isCelebrationTemplateId } from './celebration-config';
 import { applyOccasionDefaults, isOccasionTemplateId } from './occasion-config';
 import { applyNewSceneDefaults, isNewSceneTemplateId } from './new-scenes-config';
+import { applyKidsWorldDefaults, isKidsWorldTemplateId } from './kids-world-config';
 
 export interface TemplateMetadata {
   id: TemplateId;
@@ -54,6 +55,26 @@ export const TEMPLATES_CATALOG: TemplateMetadata[] = [
     colors: { bgPrimary: '#101B3D', bgSecondary: '#1C3059', textPrimary: '#F9F5E9', textMuted: '#B9CAE1', accentPrimary: '#B44D2E', accentSecondary: '#8AD6C5' },
     fonts: { headingFont: 'Fredoka', scriptFont: 'Fredoka', bodyFont: 'Plus Jakarta Sans' },
     envelopeVariant: 'pass-ticket-tear', ambientEffect: 'soft-stars',
+  },
+  {
+    id: 'pirate-treasure-voyage', name: 'Piratas: Isla del Tesoro', category: 'kids_birthday',
+    categoryLabel: 'Cumpleaños Infantil / Piratas', badge: 'Nueva colección',
+    description: 'Una travesía pirata entre cartas náuticas, timón dorado, cuatro puertos de aventura y un tesoro para compartir.',
+    signatureAnimation: 'Portillo expansible + timón viajero + ruta del tesoro',
+    previewImage: '/images/pirate-treasure-voyage/ship.webp',
+    colors: { bgPrimary: '#F8F1DE', bgSecondary: '#E6E4CD', textPrimary: '#12394C', textMuted: '#536C71', accentPrimary: '#BB6840', accentSecondary: '#2D8F8B' },
+    fonts: { headingFont: 'Fredoka', scriptFont: 'Georgia', bodyFont: 'Plus Jakarta Sans' },
+    envelopeVariant: 'pass-ticket-tear', ambientEffect: 'confetti',
+  },
+  {
+    id: 'dino-jungle-expedition', name: 'Dino Safari', category: 'kids_birthday',
+    categoryLabel: 'Cumpleaños Infantil / Dinosaurios', badge: 'Nueva colección',
+    description: 'Una expedición jurásica entre fósiles, selva de arcilla, cuatro estaciones de descubrimiento y una fiesta prehistórica.',
+    signatureAnimation: 'Huevo jurásico expansible + huellas en scroll + excavación',
+    previewImage: '/images/dino-jungle-expedition/triceratops.webp',
+    colors: { bgPrimary: '#F5F4DD', bgSecondary: '#DCE7BF', textPrimary: '#263E2B', textMuted: '#5D6E51', accentPrimary: '#C86B35', accentSecondary: '#7A9D45' },
+    fonts: { headingFont: 'Fredoka', scriptFont: 'Fredoka', bodyFont: 'Plus Jakarta Sans' },
+    envelopeVariant: 'pass-ticket-tear', ambientEffect: 'confetti',
   },
   {
     id: 'atelier-xv', name: 'Atelier XV', category: 'xv_years',
@@ -591,6 +612,9 @@ export function createDefaultInvitationConfig(
   }
   if (isNewSceneTemplateId(templateId)) {
     applyNewSceneDefaults(config, templateId, customTitle);
+  }
+  if (isKidsWorldTemplateId(templateId)) {
+    applyKidsWorldDefaults(config, templateId, customTitle);
   }
 
   if (templateId === 'boho-terracotta') {

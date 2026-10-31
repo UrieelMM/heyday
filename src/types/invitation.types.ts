@@ -15,6 +15,8 @@ export type TemplateId =
   | 'neon-xv-euphoria'
   | 'golden-jubilee'
   | 'fiesta-kids-adventure'
+  | 'pirate-treasure-voyage'
+  | 'dino-jungle-expedition'
   | 'celestial-baptism'
   | 'sweet-oh-baby'
   | 'grad-gala-night'
