@@ -4,32 +4,32 @@ INSERT INTO public.templates_catalog (
 ) VALUES
   (
     'marea-azul', 'Marea Azul', 'wedding', 'Boda Costa / Mediterránea', 'Nueva colección',
-    'Una boda junto al mar narrada con horizonte, azulejos de cobalto y luz de mediodía.',
-    'Horizonte deslizante + escenas de marea', '/images/marea-azul/cover.svg',
+    'Una boda junto al mar narrada con arco mediterráneo, rosa de los vientos, velero en travesía, las 4 calas del día y azulejos de cobalto.',
+    'Arco costero expansible + travesía con scroll', '/images/marea-azul/cover.jpg',
     '{"bgPrimary":"#F7F4E9","bgSecondary":"#E2ECEB","textPrimary":"#102F45","textMuted":"#486A78","accentPrimary":"#155B8A","accentSecondary":"#D3865A"}'::jsonb,
     '{"headingFont":"Georgia","scriptFont":"Cormorant Garamond","bodyFont":"Plus Jakarta Sans"}'::jsonb,
     'editorial-curtain', 'none', 11
   ),
   (
     'ritmo-de-dos', 'Ritmo de Dos', 'wedding', 'Boda Retro / Música', 'Nueva colección',
-    'Una boda como el póster de un concierto íntimo: tipografía cinética, vinilo y color cálido.',
-    'Vinilo en movimiento + póster desplegable', '/images/ritmo-de-dos/cover.svg',
+    'Una boda como sesión en vinilo y concierto íntimo: disco 33⅓ RPM que se expande al hacer scroll, brazo de tornamesa, 4 tracks del álbum y boleto QR.',
+    'Vinilo 33 RPM expansible + setlist con scroll', '/images/ritmo-de-dos/cover.jpg',
     '{"bgPrimary":"#F9EBCF","bgSecondary":"#F2C67A","textPrimary":"#512720","textMuted":"#765244","accentPrimary":"#B83A29","accentSecondary":"#3D665F"}'::jsonb,
     '{"headingFont":"Syne","scriptFont":"Georgia","bodyFont":"Space Grotesk"}'::jsonb,
     'pass-ticket-tear', 'none', 12
   ),
   (
     'mini-cosmos', 'Mini Cosmos', 'kids_birthday', 'Cumpleaños Infantil / Espacio', 'Nueva colección',
-    'Una misión espacial para jugar y celebrar, con planetas, ruta orbital y controles claros para familias.',
-    'Despegue orbital + constelación de capítulos', '/images/mini-cosmos/cover.svg',
+    'Una misión espacial interactiva con escotilla orbital, cohete en trayectoria, centro de misión y capítulos envolventes en móvil.',
+    'Escotilla orbital + despegue con scroll y telemetría', '/images/mini-cosmos/astronaut.jpg',
     '{"bgPrimary":"#101B3D","bgSecondary":"#1C3059","textPrimary":"#F9F5E9","textMuted":"#B9CAE1","accentPrimary":"#B44D2E","accentSecondary":"#8AD6C5"}'::jsonb,
     '{"headingFont":"Fredoka","scriptFont":"Fredoka","bodyFont":"Plus Jakarta Sans"}'::jsonb,
     'pass-ticket-tear', 'soft-stars', 13
   ),
   (
     'atelier-xv', 'Atelier XV', 'xv_years', 'XV Años / Moda Editorial', 'Nueva colección',
-    'Quince años como manifiesto de estilo personal: recortes de atelier, cinta plateada y pasarela azul.',
-    'Paneles de pasarela + capítulos de estilo', '/images/atelier-xv/cover.svg',
+    'Quince años como edición de alta costura: retrato en arco, lazo de satén, lookbook de pasarela y capítulos luminosos.',
+    'Arco de atelier + lookbook de pasarela con scroll', '/images/atelier-xv/cover.jpg',
     '{"bgPrimary":"#EDEFF3","bgSecondary":"#DCE2ED","textPrimary":"#14294C","textMuted":"#5C6A83","accentPrimary":"#315BA1","accentSecondary":"#A9B5C7"}'::jsonb,
     '{"headingFont":"Times New Roman","scriptFont":"Georgia","bodyFont":"Montserrat"}'::jsonb,
     'editorial-curtain', 'none', 14

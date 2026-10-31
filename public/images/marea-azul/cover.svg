@@ -1,6 +1,74 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200">
-<defs><linearGradient id="sky" x2="0" y2="1"><stop stop-color="#d9e9e8"/><stop offset=".7" stop-color="#f4e6c9"/><stop offset="1" stop-color="#eacaa8"/></linearGradient><linearGradient id="sea" x2="0" y2="1"><stop stop-color="#3887a3"/><stop offset="1" stop-color="#073e67"/></linearGradient><pattern id="tile" width="80" height="80" patternUnits="userSpaceOnUse"><path d="M0 40Q40 0 80 40M0 40Q40 80 80 40" fill="none" stroke="#eef4ed" stroke-opacity=".33" stroke-width="2"/></pattern></defs>
-<rect width="1600" height="1200" fill="url(#sky)"/><circle cx="1120" cy="405" r="170" fill="#f8d1a0" opacity=".92"/><path d="M0 615Q340 580 750 615T1600 615V1200H0Z" fill="url(#sea)"/><path d="M0 635Q370 595 780 640T1600 645M0 705Q400 660 810 710T1600 705M0 800Q420 745 830 800T1600 795M0 930Q420 875 830 930T1600 925" fill="none" stroke="#ecf1dd" stroke-opacity=".34" stroke-width="8"/><rect y="615" width="1600" height="585" fill="url(#tile)" opacity=".35"/>
-<path d="M790 750V330L595 705Z" fill="#f9f5e9"/><path d="M808 745V397L982 713Z" fill="#e6ddd0"/><path d="M780 326V806" stroke="#174d68" stroke-width="9"/><path d="M635 798Q790 842 940 792L886 860Q772 887 675 850Z" fill="#103c5e"/><path d="M630 800Q785 845 940 792" fill="none" stroke="#f9f5e9" stroke-width="5"/>
-<path d="M45 55h290v290H45zM1255 855h290v290h-290z" fill="none" stroke="#f7f0df" stroke-opacity=".38" stroke-width="4"/><path d="M45 200h290M190 55v290M1255 1000h290M1400 855v290" stroke="#f7f0df" stroke-opacity=".25" stroke-width="3"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1500" fill="none">
+  <defs>
+    <linearGradient id="maSky" x1="600" y1="0" x2="600" y2="920" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F7F4E9" />
+      <stop offset="58%" stop-color="#EFE6D2" />
+      <stop offset="100%" stop-color="#E7C9A9" />
+    </linearGradient>
+    <radialGradient id="maSun" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#F6B885" stop-opacity="0.95" />
+      <stop offset="65%" stop-color="#D3865A" stop-opacity="0.88" />
+      <stop offset="100%" stop-color="#D3865A" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="maSea" x1="600" y1="860" x2="600" y2="1500" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2B78A2" />
+      <stop offset="48%" stop-color="#155B8A" />
+      <stop offset="100%" stop-color="#102F45" />
+    </linearGradient>
+    <linearGradient id="maSailLeft" x1="420" y1="360" x2="590" y2="830" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFDF8" />
+      <stop offset="100%" stop-color="#EFE5D0" />
+    </linearGradient>
+    <linearGradient id="maSailRight" x1="610" y1="410" x2="780" y2="830" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F8EFE0" />
+      <stop offset="100%" stop-color="#DFCAAA" />
+    </linearGradient>
+  </defs>
+
+  <!-- Fondo de cal mediterránea -->
+  <rect width="1200" height="1500" fill="#F7F4E9" />
+
+  <!-- Marco exterior de azulejo de cobalto simétrico -->
+  <rect x="44" y="44" width="1112" height="1412" rx="36" stroke="#155B8A" stroke-opacity="0.28" stroke-width="3" />
+  <rect x="64" y="64" width="1072" height="1372" rx="28" stroke="#D3865A" stroke-opacity="0.35" stroke-width="1.5" stroke-dasharray="8 8" />
+
+  <!-- Ventana en arco mediterráneo centrada en x = 600 -->
+  <clipPath id="maArchClip">
+    <path d="M160 560 C160 310 356 130 600 130 C844 130 1040 310 1040 560 V1340 C1040 1368 1018 1390 990 1390 H210 C182 1390 160 1368 160 1340 Z" />
+  </clipPath>
+
+  <g clip-path="url(#maArchClip)">
+    <rect x="160" y="130" width="880" height="1260" fill="url(#maSky)" />
+
+    <!-- Sol terracota centrado en x = 600 -->
+    <circle cx="600" cy="540" r="250" fill="url(#maSun)" />
+    <circle cx="600" cy="540" r="145" fill="#D3865A" fill-opacity="0.86" />
+
+    <!-- Anillos de brújula solares -->
+    <circle cx="600" cy="540" r="310" stroke="#155B8A" stroke-opacity="0.18" stroke-width="2" stroke-dasharray="6 10" />
+    <circle cx="600" cy="540" r="370" stroke="#155B8A" stroke-opacity="0.12" stroke-width="1.5" />
+
+    <!-- Mar Egeo / Pacífico -->
+    <path d="M140 870 C310 842 455 898 600 870 C745 842 890 898 1060 870 V1420 H140 Z" fill="url(#maSea)" />
+    <path d="M140 945 C310 918 455 972 600 945 C745 918 890 972 1060 945" stroke="#F7F4E9" stroke-opacity="0.48" stroke-width="5" stroke-linecap="round" />
+    <path d="M140 1030 C310 1002 455 1058 600 1030 C745 1002 890 1058 1060 1030" stroke="#E2ECEB" stroke-opacity="0.38" stroke-width="4" stroke-linecap="round" />
+    <path d="M140 1125 C310 1098 455 1152 600 1125 C745 1098 890 1152 1060 1125" stroke="#F7F4E9" stroke-opacity="0.28" stroke-width="3.5" stroke-linecap="round" />
+    <path d="M140 1230 C310 1205 455 1255 600 1230 C745 1205 890 1255 1060 1230" stroke="#E2ECEB" stroke-opacity="0.2" stroke-width="3" stroke-linecap="round" />
+
+    <!-- Reflejos solares simétricos en el agua -->
+    <rect x="520" y="905" width="160" height="8" rx="4" fill="#F6C89F" fill-opacity="0.65" />
+    <rect x="545" y="968" width="110" height="7" rx="3.5" fill="#F6C89F" fill-opacity="0.52" />
+    <rect x="565" y="1052" width="70" height="6" rx="3" fill="#F6C89F" fill-opacity="0.4" />
+
+    <!-- Velero simétrico centrado en x = 600 -->
+    <line x1="600" y1="310" x2="600" y2="852" stroke="#102F45" stroke-width="8" stroke-linecap="round" />
+    <path d="M600 312 L658 332 L600 352 Z" fill="#D3865A" />
+    <path d="M590 348 L412 812 L590 812 Z" fill="url(#maSailLeft)" />
+    <path d="M610 388 L788 812 L610 812 Z" fill="url(#maSailRight)" />
+    <path d="M430 832 H770 L724 892 C642 908 558 908 476 892 Z" fill="#102F45" />
+    <path d="M446 848 H754" stroke="#F7F4E9" stroke-width="4" stroke-linecap="round" />
+  </g>
+
+  <!-- Borde arquitectónico del arco -->
+  <path d="M160 560 C160 310 356 130 600 130 C844 130 1040 310 1040 560 V1340 C1040 1368 1018 1390 990 1390 H210 C182 1390 160 1368 160 1340 Z" stroke="#155B8A" stroke-width="6" />
 </svg>

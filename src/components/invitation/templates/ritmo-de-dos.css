@@ -1,0 +1,3031 @@
+/* ==========================================================================
+   RITMO DE DOS (BODA RETRO / VINILO & SESIÓN EN VIVO) — SCROLL EXPERIENCE V2
+   Inspirado en SCROLL_SCENES_V2.md, urieel.dev y ywstudio.com.mx
+   Incluye Tocadiscos Hi-Fi Funcional (Web Audio + 33/45 RPM + Brazo Motorizado + VU Meters)
+   ========================================================================== */
+
+.rd-root {
+  --rd-bg: #F9EBCF;
+  --rd-bg-2: #F2C67A;
+  --rd-text: #512720;
+  --rd-muted: #765244;
+  --rd-accent: #B83A29;
+  --rd-sage: #3D665F;
+  --rd-seal: #B83A29;
+  --rd-espresso: #2A1410;
+  --rd-card-bg: rgba(255, 250, 239, 0.88);
+  --rd-border: rgba(81, 39, 32, 0.16);
+  --rd-shadow: 0 24px 60px -24px rgba(81, 39, 32, 0.24);
+  --rd-spin-duration: 8.4s;
+
+  position: relative;
+  min-height: 100svh;
+  background-color: var(--rd-bg);
+  background-image:
+    radial-gradient(circle at 18% 8%, rgba(242, 198, 122, 0.55), transparent 36%),
+    radial-gradient(circle at 84% 18%, rgba(184, 58, 41, 0.12), transparent 34%),
+    linear-gradient(180deg, #FBF2DE 0%, var(--rd-bg) 48%, #F4DFB4 100%);
+  color: var(--rd-text);
+  font-family: var(--rd-body-font, 'Space Grotesk', system-ui, sans-serif);
+  overflow-x: clip;
+}
+
+.rd-root *,
+.rd-root *::before,
+.rd-root *::after {
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   CONTENEDOR UNIVERSAL Y SECCIONES
+   ========================================================================== */
+.rd-container {
+  width: min(1120px, calc(100% - 32px));
+  margin-inline: auto;
+  position: relative;
+  z-index: 2;
+}
+
+.rd-section {
+  position: relative;
+  padding: clamp(68px, 10vw, 118px) 0;
+}
+
+.rd-sheet {
+  position: relative;
+  z-index: 3;
+  border-radius: clamp(28px, 5vw, 52px);
+  margin-top: -26px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 252, 245, 0.94), rgba(249, 235, 207, 0.97));
+  border-top: 1px solid rgba(81, 39, 32, 0.15);
+  box-shadow: 0 -22px 54px -28px rgba(81, 39, 32, 0.18);
+}
+
+.rd-sheet--sage {
+  background:
+    radial-gradient(circle at 20% 12%, rgba(242, 198, 122, 0.22), transparent 38%),
+    radial-gradient(circle at 82% 84%, rgba(184, 58, 41, 0.22), transparent 42%),
+    linear-gradient(180deg, #2A4B45 0%, #1F3934 54%, #1A2F2B 100%);
+  color: #F9EBCF;
+  border-top: 1px solid rgba(242, 198, 122, 0.26);
+  box-shadow: 0 28px 72px -28px rgba(26, 47, 43, 0.5);
+}
+
+/* ==========================================================================
+   ENCABEZADOS DE SECCIÓN (SIEMPRE CENTRADOS)
+   ========================================================================== */
+.rd-section-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto clamp(38px, 6vw, 60px);
+}
+
+.rd-section-header__pill {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px 8px;
+  max-width: 100%;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(184, 58, 41, 0.1);
+  border: 1px solid rgba(184, 58, 41, 0.26);
+  color: var(--rd-accent);
+  font-size: clamp(0.64rem, 2vw, 0.72rem);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.rd-section-header__code {
+  padding-right: 8px;
+  border-right: 1px solid currentColor;
+  opacity: 0.85;
+}
+
+.rd-section-header__star {
+  width: 11px;
+  height: 11px;
+  color: var(--rd-accent);
+  flex-shrink: 0;
+}
+
+.rd-section-header__title {
+  margin: 0;
+  font-family: var(--rd-heading-font, 'Syne', sans-serif);
+  font-size: clamp(2rem, 5.6vw, 3.6rem);
+  font-weight: 800;
+  line-height: 1.04;
+  letter-spacing: -0.025em;
+  color: var(--rd-text);
+  text-wrap: balance;
+}
+
+.rd-section-header__subtitle {
+  margin: 14px auto 0;
+  max-width: 56ch;
+  font-size: clamp(0.95rem, 2.2vw, 1.08rem);
+  line-height: 1.62;
+  color: var(--rd-muted);
+  text-wrap: pretty;
+}
+
+.rd-section-header__rule {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.rd-section-header__rule span {
+  width: 44px;
+  height: 1.5px;
+  background: linear-gradient(90deg, transparent, var(--rd-accent), transparent);
+}
+
+.rd-section-header__rule i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--rd-accent);
+  box-shadow: 0 0 0 3px rgba(242, 198, 122, 0.55);
+}
+
+.rd-section-header--light .rd-section-header__pill {
+  background: rgba(242, 198, 122, 0.14);
+  border-color: rgba(242, 198, 122, 0.34);
+  color: #F2C67A;
+}
+
+.rd-section-header--light .rd-section-header__star {
+  color: #F2C67A;
+}
+
+.rd-section-header--light .rd-section-header__title {
+  color: #F9EBCF;
+}
+
+.rd-section-header--light .rd-section-header__subtitle {
+  color: rgba(249, 235, 207, 0.8);
+}
+
+.rd-section-header--light .rd-section-header__rule span {
+  background: linear-gradient(90deg, transparent, #F2C67A, transparent);
+}
+
+.rd-section-header--light .rd-section-header__rule i {
+  background: #F2C67A;
+}
+
+/* ==========================================================================
+   BOTONES RETRO CONCERT HALL
+   ========================================================================== */
+.rd-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 13px 22px;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, background-color 0.22s ease;
+}
+
+.rd-button:hover {
+  transform: translateY(-2px);
+}
+
+.rd-button--primary {
+  background: linear-gradient(135deg, var(--rd-accent), #8E2719);
+  color: #FFF9EE;
+  border-color: rgba(242, 198, 122, 0.45);
+  box-shadow: 0 14px 30px -12px rgba(184, 58, 41, 0.55);
+}
+
+.rd-button--ghost {
+  background: rgba(255, 250, 239, 0.86);
+  color: var(--rd-text);
+  border-color: rgba(81, 39, 32, 0.24);
+  backdrop-filter: blur(10px);
+}
+
+.rd-button--full {
+  width: 100%;
+}
+
+/* ==========================================================================
+   MINI TORNAMESA FLOTANTE SINCRONIZADO (ESQUINA INFERIOR DERECHA)
+   ========================================================================== */
+.rd-floating-deck {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  border-radius: 50%;
+  background: rgba(31, 16, 13, 0.9);
+  border: 1.5px solid rgba(242, 198, 122, 0.48);
+  box-shadow: 0 18px 38px -12px rgba(0, 0, 0, 0.58);
+  backdrop-filter: blur(12px);
+}
+
+.rd-floating-deck__disc {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.rd-floating-deck--playing .rd-floating-deck__disc {
+  animation: rd-spin var(--rd-spin-duration, 8.4s) linear infinite;
+}
+
+.rd-floating-deck__info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  max-width: 155px;
+}
+
+.rd-floating-deck__kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: var(--rd-bg-2);
+}
+
+.rd-floating-deck__kicker i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #8B736B;
+}
+
+.rd-floating-deck--playing .rd-floating-deck__kicker i {
+  background: #5EEAD4;
+  box-shadow: 0 0 8px #5EEAD4;
+}
+
+.rd-floating-deck__title {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #FFF9EE;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rd-floating-deck__controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.rd-floating-deck__btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid rgba(242, 198, 122, 0.35);
+  background: rgba(249, 235, 207, 0.1);
+  color: #FFF9EE;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.18s ease, background-color 0.18s ease;
+}
+
+.rd-floating-deck__btn:hover {
+  transform: scale(1.06);
+  background: rgba(242, 198, 122, 0.24);
+}
+
+.rd-floating-deck__btn--primary {
+  background: var(--rd-accent);
+  border-color: rgba(242, 198, 122, 0.55);
+}
+
+/* ==========================================================================
+   BARRA DE PROGRESO Y CONSOLA DE NAVEGACIÓN
+   ========================================================================== */
+.rd-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 65;
+  background: rgba(81, 39, 32, 0.1);
+}
+
+.rd-progress__fill {
+  width: 100%;
+  height: 100%;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background: linear-gradient(90deg, var(--rd-sage), var(--rd-accent), var(--rd-bg-2));
+}
+
+.rd-nav {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 55;
+  width: min(940px, calc(100% - 20px));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(251, 242, 222, 0.88);
+  border: 1px solid rgba(81, 39, 32, 0.16);
+  box-shadow: 0 14px 36px -18px rgba(81, 39, 32, 0.28);
+  backdrop-filter: blur(14px);
+}
+
+.rd-nav__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  text-decoration: none;
+  color: var(--rd-text);
+  min-width: 0;
+}
+
+.rd-nav__monogram {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--rd-accent);
+  color: #FFF9EE;
+  font-family: var(--rd-heading-font);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 0 2px rgba(242, 198, 122, 0.55);
+}
+
+.rd-nav__title {
+  font-family: var(--rd-heading-font);
+  font-weight: 800;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rd-nav__links {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.rd-nav__links a {
+  text-decoration: none;
+  color: var(--rd-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 7px 11px;
+  border-radius: 999px;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.rd-nav__links a:hover {
+  color: var(--rd-text);
+  background: rgba(184, 58, 41, 0.09);
+}
+
+.rd-nav__links .rd-nav__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--rd-text);
+  color: #FFF9EE;
+  padding: 7px 13px;
+}
+
+.rd-nav__links .rd-nav__cta:hover {
+  background: var(--rd-accent);
+  color: #FFF9EE;
+}
+
+@media (max-width: 680px) {
+  .rd-nav__links a:not(.rd-nav__cta) {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   APERTURA: FUNDA DE VINILO Y BOLETO PERFORADO
+   ========================================================================== */
+.rd-opening {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 16px;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(242, 198, 122, 0.35), transparent 46%),
+    linear-gradient(180deg, #2B1612 0%, #1F100D 56%, #160B09 100%);
+  color: #F9EBCF;
+  overflow-y: auto;
+}
+
+.rd-opening__grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(249, 235, 207, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(249, 235, 207, 0.05) 1px, transparent 1px);
+  background-size: 38px 38px;
+  pointer-events: none;
+}
+
+.rd-opening__glow {
+  position: absolute;
+  width: min(460px, 86vw);
+  height: min(460px, 86vw);
+  border-radius: 50%;
+  border: 1px dashed rgba(242, 198, 122, 0.25);
+  pointer-events: none;
+}
+
+.rd-opening__vinyl {
+  position: relative;
+  z-index: 2;
+  width: clamp(138px, 34vw, 178px);
+  height: clamp(138px, 34vw, 178px);
+  margin-bottom: -56px;
+  filter: drop-shadow(0 18px 34px rgba(0, 0, 0, 0.45));
+}
+
+.rd-vinyl-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.rd-opening__sleeve {
+  position: relative;
+  z-index: 3;
+  width: min(450px, 100%);
+  padding: clamp(26px, 5vw, 36px) clamp(20px, 5vw, 32px) clamp(22px, 4vw, 28px);
+  border-radius: 26px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 251, 242, 0.98), rgba(249, 235, 207, 0.96));
+  color: var(--rd-text);
+  border: 2px solid rgba(242, 198, 122, 0.65);
+  box-shadow: 0 32px 72px -24px rgba(0, 0, 0, 0.65);
+  text-align: center;
+}
+
+.rd-opening__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.rd-opening__issue {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: var(--rd-muted);
+}
+
+.rd-opening__issue i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--rd-accent);
+}
+
+.rd-opening__monogram {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(184, 58, 41, 0.12);
+  color: var(--rd-accent);
+  font-family: var(--rd-heading-font);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.rd-opening__kicker {
+  margin: 0;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--rd-accent);
+}
+
+.rd-opening__title {
+  margin: 8px 0 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.rd-opening__title span {
+  font-family: var(--rd-heading-font);
+  font-size: clamp(2rem, 7vw, 2.85rem);
+  font-weight: 800;
+  line-height: 0.98;
+  color: var(--rd-text);
+}
+
+.rd-opening__title em {
+  font-family: var(--rd-script-font, Georgia, serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.5rem, 5.2vw, 2.1rem);
+  color: var(--rd-accent);
+}
+
+.rd-opening__subtitle {
+  margin: 0 auto;
+  max-width: 34ch;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--rd-muted);
+}
+
+.rd-opening__perforation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 16px 0;
+  color: var(--rd-accent);
+}
+
+.rd-opening__perforation span {
+  flex: 1;
+  border-top: 1.5px dashed rgba(81, 39, 32, 0.25);
+}
+
+.rd-opening__perforation svg {
+  width: 14px;
+  height: 14px;
+}
+
+.rd-opening__ticket {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  border-radius: 16px;
+  background: rgba(242, 198, 122, 0.26);
+  border: 1px solid rgba(81, 39, 32, 0.16);
+}
+
+.rd-opening__ticket span {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: var(--rd-sage);
+}
+
+.rd-opening__ticket strong {
+  font-family: var(--rd-heading-font);
+  font-size: 1.02rem;
+  color: var(--rd-text);
+}
+
+.rd-opening__ticket small {
+  font-size: 0.78rem;
+  color: var(--rd-muted);
+}
+
+.rd-opening__audio {
+  margin: 12px 0 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--rd-muted);
+}
+
+/* ==========================================================================
+   HERO STICKY EN DOS TIEMPOS (CENTRADO MATEMÁTICO MÓVIL + TORNAMESA ACTIVO)
+   ========================================================================== */
+.rd-hero {
+  position: relative;
+  height: 192svh;
+}
+
+.rd-hero__stage {
+  --rd-disc-size: min(58vw, 31svh);
+  --rd-platter-size: calc(var(--rd-disc-size) + 40px);
+  --rd-center-x: 50%;
+  --rd-center-y: 24svh;
+
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.rd-hero__field {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 24%, rgba(242, 198, 122, 0.65), transparent 52%),
+    linear-gradient(180deg, rgba(251, 242, 222, 0.6) 0%, rgba(249, 235, 207, 0.96) 100%);
+  pointer-events: none;
+}
+
+.rd-hero__watermark {
+  position: absolute;
+  top: 9%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--rd-heading-font);
+  font-size: clamp(7rem, 26vw, 17rem);
+  font-weight: 900;
+  line-height: 0.85;
+  letter-spacing: -0.06em;
+  color: rgba(81, 39, 32, 0.055);
+  user-select: none;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Surcos orbitales 100% circulares (width === height) y concéntricos con el disco */
+.rd-hero__platter {
+  position: absolute;
+  width: var(--rd-platter-size);
+  height: var(--rd-platter-size);
+  left: calc(var(--rd-center-x) - var(--rd-platter-size) / 2);
+  top: calc(var(--rd-center-y) - var(--rd-platter-size) / 2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.rd-hero__groove-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(81, 39, 32, 0.24);
+}
+
+.rd-hero__groove-ring--inner {
+  inset: 8%;
+  border-style: solid;
+  border-color: rgba(184, 58, 41, 0.22);
+}
+
+/* Ondas acústicas reactivas cuando el tocadiscos está sonando */
+.rd-hero__soundwave {
+  position: absolute;
+  inset: 4%;
+  border-radius: 50%;
+  border: 1.5px solid rgba(184, 58, 41, 0);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.rd-hero--playing .rd-hero__soundwave--1 {
+  border-color: rgba(184, 58, 41, 0.35);
+  animation: rd-wave-pulse 2.6s ease-out infinite;
+}
+
+.rd-hero--playing .rd-hero__soundwave--2 {
+  border-color: rgba(61, 102, 95, 0.32);
+  animation: rd-wave-pulse 2.6s ease-out 1.3s infinite;
+}
+
+@keyframes rd-wave-pulse {
+  0% {
+    transform: scale(0.92);
+    opacity: 0.75;
+  }
+  100% {
+    transform: scale(1.18);
+    opacity: 0;
+  }
+}
+
+.rd-seal {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rd-seal__spinner {
+  width: 100%;
+  height: 100%;
+  animation: rd-spin 48s linear infinite;
+}
+
+.rd-seal__text {
+  fill: var(--rd-text);
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  opacity: 0.72;
+}
+
+@keyframes rd-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Ventana circular 1:1 exacta (width === height en px) */
+.rd-hero__visual {
+  position: absolute;
+  width: var(--rd-disc-size);
+  height: var(--rd-disc-size);
+  left: calc(var(--rd-center-x) - var(--rd-disc-size) / 2);
+  top: calc(var(--rd-center-y) - var(--rd-disc-size) / 2);
+  border-radius: 50%;
+  overflow: hidden;
+  z-index: 3;
+  border: 7px solid #180D0B;
+  box-shadow:
+    0 0 0 3px var(--rd-bg-2),
+    0 24px 55px -18px rgba(42, 20, 16, 0.56);
+  background: #180D0B;
+  cursor: pointer;
+  transition: border-width 0.25s ease, box-shadow 0.25s ease;
+}
+
+.rd-hero__disc-rotor {
+  width: 100%;
+  height: 100%;
+}
+
+/* Gira un 50% más lento únicamente cuando está arriba; al hacer scroll y crecer la foto se mantiene fija sin movimiento */
+.rd-hero__visual--spinning:not([data-scrolling='true']) .rd-hero__disc-rotor {
+  animation: rd-spin var(--rd-spin-duration, 8.4s) linear infinite;
+}
+
+.rd-hero__visual[data-scrolling='true'] {
+  border-width: 0;
+  box-shadow: none;
+}
+
+.rd-hero__visual[data-scrolling='true'] .rd-hero__disc-rotor {
+  animation: none !important;
+  transform: none !important;
+}
+
+.rd-hero__visual--scratch {
+  transform: scale(0.97) rotate(-8deg);
+  transition: transform 0.2s ease;
+}
+
+.rd-hero__visual img,
+.rd-hero__visual video,
+.rd-hero__media-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 22%;
+  display: block;
+}
+
+/* Anillo de surcos de vinilo superpuesto al borde del círculo */
+.rd-hero__vinyl-rim {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 14px rgba(18, 10, 8, 0.82),
+    inset 0 0 0 16px rgba(242, 198, 122, 0.25),
+    inset 0 0 0 26px rgba(18, 10, 8, 0.58),
+    inset 0 0 0 28px rgba(249, 235, 207, 0.16);
+  pointer-events: none;
+}
+
+.rd-hero__media-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(24, 12, 10, 0.14) 0%,
+    rgba(24, 12, 10, 0.08) 45%,
+    rgba(24, 12, 10, 0.56) 100%
+  );
+  pointer-events: none;
+}
+
+.rd-hero__spindle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: var(--rd-bg);
+  border: 3.5px solid var(--rd-accent);
+  box-shadow: 0 0 0 6px rgba(24, 12, 10, 0.5);
+  pointer-events: none;
+}
+
+/* Brazo de tornamesa interactivo */
+.rd-hero__tonearm-scroll {
+  position: absolute;
+  right: 7%;
+  top: 62px;
+  width: clamp(86px, 22vw, 138px);
+  z-index: 4;
+}
+
+.rd-hero__tonearm {
+  width: 100%;
+  transform-origin: 73% 19%;
+  transform: rotate(var(--rd-arm-angle, -28deg));
+  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+  filter: drop-shadow(0 12px 18px rgba(42, 20, 16, 0.32));
+}
+
+.rd-tonearm-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  cursor: pointer;
+}
+
+/* Copy principal centrado en móvil */
+.rd-hero__copy {
+  position: relative;
+  z-index: 5;
+  width: min(680px, calc(100% - 28px));
+  margin: 0 auto;
+  padding: 16px 16px clamp(26px, 4vh, 38px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border-radius: 26px;
+  background: rgba(251, 242, 222, 0.9);
+  border: 1px solid rgba(81, 39, 32, 0.16);
+  box-shadow: 0 22px 48px -26px rgba(81, 39, 32, 0.35);
+  backdrop-filter: blur(12px);
+  margin-bottom: clamp(20px, 3.6vh, 34px);
+}
+
+/* Mini consola interactiva dentro del Hero */
+.rd-hero__deck-hud {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  padding: 5px;
+  border-radius: 999px;
+  background: rgba(42, 20, 16, 0.9);
+  border: 1px solid rgba(242, 198, 122, 0.4);
+}
+
+.rd-hero__needle-btn,
+.rd-hero__rpm-btn,
+.rd-hero__track-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 0;
+  font-family: inherit;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.18s ease, background-color 0.18s ease;
+}
+
+.rd-hero__needle-btn {
+  background: var(--rd-accent);
+  color: #FFF9EE;
+}
+
+.rd-hero__needle-btn--active {
+  background: #2E6F5E;
+  color: #FFF9EE;
+}
+
+.rd-hero__rpm-btn {
+  background: rgba(242, 198, 122, 0.18);
+  color: #F2C67A;
+}
+
+.rd-hero__track-pill {
+  background: rgba(255, 250, 239, 0.1);
+  color: #F9EBCF;
+  max-width: 210px;
+}
+
+.rd-hero__track-pill span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rd-hero__pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 5px 13px;
+  border-radius: 999px;
+  background: rgba(184, 58, 41, 0.12);
+  border: 1px solid rgba(184, 58, 41, 0.28);
+  color: var(--rd-accent);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.rd-hero__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--rd-accent);
+  box-shadow: 0 0 0 3px rgba(184, 58, 41, 0.2);
+}
+
+.rd-hero__title {
+  margin: 8px 0 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rd-hero__title-kicker {
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  color: var(--rd-sage);
+  margin-bottom: 3px;
+}
+
+.rd-hero__title strong {
+  font-family: var(--rd-heading-font);
+  font-size: clamp(2.05rem, 7.8vw, 4rem);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: var(--rd-text);
+}
+
+.rd-hero__title em {
+  font-family: var(--rd-script-font, Georgia, serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.55rem, 5.6vw, 2.75rem);
+  line-height: 1.05;
+  color: var(--rd-accent);
+}
+
+.rd-hero__tagline {
+  margin: 2px auto 10px;
+  max-width: 44ch;
+  font-size: clamp(0.86rem, 2.1vw, 1rem);
+  line-height: 1.5;
+  color: var(--rd-muted);
+}
+
+.rd-hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-bottom: 10px;
+}
+
+.rd-hero__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: rgba(242, 198, 122, 0.34);
+  border: 1px solid rgba(81, 39, 32, 0.14);
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--rd-text);
+}
+
+.rd-hero__guest {
+  margin: 0 0 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(61, 102, 95, 0.14);
+  color: var(--rd-sage);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.rd-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* Tarjeta puente que emerge al expandir el vinilo */
+.rd-hero__reveal {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(24px, 5vh, 48px);
+  transform: translateX(-50%);
+  width: min(520px, calc(100% - 28px));
+  z-index: 6;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.rd-hero__reveal-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border-radius: 22px;
+  background: rgba(31, 16, 13, 0.88);
+  border: 1px solid rgba(242, 198, 122, 0.38);
+  color: #F9EBCF;
+  box-shadow: 0 24px 52px -18px rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(14px);
+  pointer-events: auto;
+}
+
+.rd-hero__reveal-thumb {
+  width: 68px;
+  height: 68px;
+  border-radius: 14px;
+  object-fit: cover;
+  border: 1.5px solid rgba(242, 198, 122, 0.5);
+  flex-shrink: 0;
+}
+
+.rd-hero__reveal-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  min-width: 0;
+}
+
+.rd-hero__reveal-kicker {
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: var(--rd-bg-2);
+}
+
+.rd-hero__reveal-title {
+  margin: 3px 0 6px;
+  font-family: var(--rd-heading-font);
+  font-size: 1rem;
+  font-weight: 800;
+  color: #FFF9EE;
+}
+
+.rd-hero__reveal-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--rd-bg-2);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.rd-hero__scroll-hint {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: var(--rd-muted);
+}
+
+/* Ajuste desktop para el Hero */
+@media (min-width: 960px) {
+  .rd-hero__stage {
+    --rd-disc-size: min(32vw, 54svh);
+    --rd-platter-size: calc(var(--rd-disc-size) + 56px);
+    --rd-center-x: 72%;
+    --rd-center-y: 46%;
+    justify-content: center;
+  }
+
+  .rd-hero__tonearm-scroll {
+    right: 6%;
+    top: 14%;
+    width: 148px;
+  }
+
+  .rd-hero__copy {
+    margin: 0 0 0 clamp(32px, 6vw, 88px);
+    width: min(510px, 47%);
+    align-items: flex-start;
+    text-align: left;
+    padding: 26px 28px;
+  }
+
+  .rd-hero__deck-hud {
+    justify-content: flex-start;
+  }
+
+  .rd-hero__title {
+    align-items: flex-start;
+  }
+
+  .rd-hero__tagline {
+    margin-inline: 0;
+  }
+
+  .rd-hero__meta,
+  .rd-hero__actions {
+    justify-content: flex-start;
+  }
+}
+
+/* ==========================================================================
+   MARQUESINA CINÉTICA DE CONCIERTO
+   ========================================================================== */
+.rd-marquee {
+  position: relative;
+  z-index: 4;
+  overflow: hidden;
+  padding: 13px 0;
+  background: var(--rd-text);
+  color: #F9EBCF;
+  border-block: 1.5px solid rgba(242, 198, 122, 0.35);
+}
+
+.rd-marquee__track {
+  display: flex;
+  width: max-content;
+  animation: rd-marquee-scroll 30s linear infinite;
+}
+
+.rd-marquee--reverse .rd-marquee__track {
+  animation-direction: reverse;
+}
+
+.rd-marquee__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  padding-right: 18px;
+  font-family: var(--rd-heading-font);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.rd-marquee__sep {
+  width: 12px;
+  height: 12px;
+  color: var(--rd-bg-2);
+}
+
+@keyframes rd-marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-33.333%);
+  }
+}
+
+/* ==========================================================================
+   SECCIÓN 2: LADO A — HISTORIA + ONDAS ACÚSTICAS
+   ========================================================================== */
+.rd-story {
+  overflow: hidden;
+}
+
+.rd-wave-backdrop {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(740px, 118vw);
+  height: min(740px, 118vw);
+  transform: translate(-50%, -50%);
+  color: #F2C67A;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.rd-story__quote {
+  margin: 0 auto;
+  max-width: 780px;
+  text-align: center;
+  font-family: var(--rd-script-font, Georgia, serif);
+  font-style: italic;
+  font-size: clamp(1.35rem, 3.6vw, 2.2rem);
+  line-height: 1.48;
+  color: #FFF9EE;
+}
+
+.rd-story__word {
+  display: inline-block;
+}
+
+.rd-story__author {
+  margin: 18px auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--rd-bg-2);
+}
+
+.rd-story__author-star {
+  width: 12px;
+  height: 12px;
+}
+
+.rd-story__grid {
+  margin-top: clamp(34px, 5vw, 52px);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 18px;
+}
+
+.rd-story__card {
+  flex: 1 1 280px;
+  max-width: 348px;
+  padding: 24px 22px;
+  border-radius: 22px;
+  background: rgba(255, 250, 239, 0.08);
+  border: 1px solid rgba(242, 198, 122, 0.26);
+  backdrop-filter: blur(10px);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rd-story__card-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(242, 198, 122, 0.16);
+  color: var(--rd-bg-2);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  margin-bottom: 12px;
+}
+
+.rd-story__card h3 {
+  margin: 0 0 8px;
+  font-family: var(--rd-heading-font);
+  font-size: 1.22rem;
+  color: #FFF9EE;
+}
+
+.rd-story__card p {
+  margin: 0;
+  font-size: 0.93rem;
+  line-height: 1.6;
+  color: rgba(249, 235, 207, 0.84);
+}
+
+/* ==========================================================================
+   SECCIÓN 3: CONSOLA DE TORNAMESA HI-FI INTERACTIVA + 4 TRACKS
+   ========================================================================== */
+.rd-tracks {
+  overflow-x: clip;
+}
+
+.rd-deck {
+  width: 100%;
+  max-width: 1020px;
+  margin: 0 auto 38px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+  padding: clamp(14px, 3.8vw, 30px);
+  border-radius: clamp(24px, 5vw, 32px);
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(242, 198, 122, 0.18), transparent 48%),
+    linear-gradient(155deg, #3A1D16 0%, #24120E 55%, #190C09 100%);
+  border: 2px solid rgba(242, 198, 122, 0.42);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 250, 239, 0.2),
+    0 32px 72px -26px rgba(42, 20, 16, 0.65);
+  color: #F9EBCF;
+}
+
+@media (min-width: 920px) {
+  .rd-deck {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    align-items: stretch;
+  }
+}
+
+/* Plinto de nogal del tocadiscos */
+.rd-deck__plinth {
+  min-width: 0;
+  width: 100%;
+  padding: clamp(14px, 3vw, 24px);
+  border-radius: 22px;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(68, 34, 24, 0.85) 0%, rgba(36, 18, 14, 0.95) 100%);
+  border: 1.5px solid rgba(242, 198, 122, 0.3);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.rd-deck__plinth-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 8px;
+}
+
+@media (min-width: 640px) {
+  .rd-deck__plinth-top {
+    justify-content: space-between;
+    text-align: left;
+  }
+}
+
+.rd-deck__badge {
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  color: var(--rd-bg-2);
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.rd-deck__strobe {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.36);
+  border: 1px solid rgba(242, 198, 122, 0.28);
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: #FFE3A8;
+}
+
+.rd-deck__strobe i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #FF6B35;
+  box-shadow: 0 0 10px #FF6B35;
+}
+
+.rd-deck--playing .rd-deck__strobe i {
+  background: #4ADE80;
+  box-shadow: 0 0 10px #4ADE80;
+}
+
+/* Escenario mecánico del plato + brazo (100% cuadrado 1:1 y contenido dentro del plinto en móvil) */
+.rd-deck__stage {
+  position: relative;
+  width: min(280px, 100%);
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.rd-deck__platter {
+  position: relative;
+  width: 84%;
+  height: 84%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  padding: 8px;
+  background: radial-gradient(circle, #38221D 0%, #120908 100%);
+  border: 3px solid rgba(242, 198, 122, 0.55);
+  box-shadow:
+    0 20px 44px -14px rgba(0, 0, 0, 0.75),
+    inset 0 0 0 3px rgba(249, 235, 207, 0.12);
+  cursor: pointer;
+}
+
+.rd-deck__vinyl-rotor {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+.rd-deck__vinyl-rotor--spinning {
+  animation: rd-spin var(--rd-spin-duration, 8.4s) linear infinite;
+}
+
+.rd-deck__label-art {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 34%;
+  height: 34%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2.5px solid #F9EBCF;
+  box-shadow: 0 0 0 4px #B83A29;
+}
+
+.rd-deck__label-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.rd-deck__spindle-pin {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: #F9EBCF;
+  border: 2.5px solid #24120E;
+}
+
+.rd-deck__platter-sheen {
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 35deg,
+    transparent 0deg,
+    rgba(255, 250, 239, 0.14) 28deg,
+    transparent 60deg,
+    transparent 180deg,
+    rgba(242, 198, 122, 0.14) 212deg,
+    transparent 245deg
+  );
+  pointer-events: none;
+}
+
+.rd-deck__tonearm-mount {
+  position: absolute;
+  top: 3%;
+  right: 0%;
+  width: 40%;
+  z-index: 4;
+  transform-origin: 73% 19%;
+  transform: rotate(var(--rd-deck-arm-angle, -28deg));
+  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+  filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.55));
+}
+
+.rd-deck__lamp {
+  position: absolute;
+  bottom: 6%;
+  left: 4%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.rd-deck__lamp-glow {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #6E3B2C;
+  border: 2px solid rgba(242, 198, 122, 0.45);
+}
+
+.rd-deck--playing .rd-deck__lamp-glow {
+  background: #FF7832;
+  box-shadow: 0 0 16px #FF7832, 0 0 28px rgba(255, 120, 50, 0.65);
+}
+
+.rd-deck__lamp small {
+  font-size: 0.55rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: rgba(249, 235, 207, 0.65);
+}
+
+/* Botonera física inferior del plinto */
+.rd-deck__hardware {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(242, 198, 122, 0.18);
+}
+
+.rd-deck__start-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #D5A458 0%, #9E6E2B 100%);
+  color: #1F100D;
+  border: 1.5px solid #F9EBCF;
+  font-family: inherit;
+  font-size: 0.74rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.6);
+}
+
+.rd-deck__start-btn--on {
+  background: linear-gradient(180deg, #B83A29 0%, #832215 100%);
+  color: #FFF9EE;
+}
+
+.rd-deck__led {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4A251D;
+}
+
+.rd-deck__start-btn--on .rd-deck__led {
+  background: #5EEAD4;
+  box-shadow: 0 0 8px #5EEAD4;
+}
+
+.rd-deck__rpm-group {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(242, 198, 122, 0.28);
+}
+
+.rd-deck__rpm-switch {
+  padding: 6px 10px;
+  border-radius: 7px;
+  border: 0;
+  background: transparent;
+  color: rgba(249, 235, 207, 0.72);
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.rd-deck__rpm-switch--active {
+  background: var(--rd-bg-2);
+  color: #1F100D;
+}
+
+.rd-deck__crackle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(242, 198, 122, 0.28);
+  background: rgba(255, 250, 239, 0.08);
+  color: rgba(249, 235, 207, 0.76);
+  font-family: inherit;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+.rd-deck__crackle-btn--active {
+  background: rgba(61, 102, 95, 0.38);
+  border-color: #6EE7B7;
+  color: #FFF9EE;
+}
+
+.rd-deck__pitch {
+  flex: 1 1 180px;
+  max-width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rd-deck__pitch-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--rd-bg-2);
+}
+
+.rd-deck__pitch input[type='range'] {
+  width: 100%;
+  accent-color: var(--rd-bg-2);
+  cursor: pointer;
+}
+
+/* Panel derecho del Deck: Vúmetros + Transporte + Surcos */
+.rd-deck__monitor {
+  min-width: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.rd-deck__vu-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.rd-vu-meter {
+  min-width: 0;
+  padding: 10px 10px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #FBF0D4 0%, #E7C88B 100%);
+  border: 2px solid #512720;
+  color: #2A1410;
+  box-shadow: inset 0 2px 10px rgba(81, 39, 32, 0.22);
+}
+
+.rd-vu-meter__top {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+  font-size: 0.6rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.rd-vu-meter__dial {
+  position: relative;
+  height: 46px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+
+.rd-vu-meter__arc {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  bottom: -28px;
+  height: 62px;
+  border-radius: 50%;
+  border: 2px dashed rgba(81, 39, 32, 0.45);
+}
+
+.rd-vu-meter__needle {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 2px;
+  height: 40px;
+  background: #B83A29;
+  transform-origin: bottom center;
+  transition: transform 0.12s ease-out;
+}
+
+.rd-vu-meter__pivot {
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  width: 12px;
+  height: 12px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: #2A1410;
+}
+
+.rd-deck__now-playing {
+  min-width: 0;
+  padding: 14px 14px;
+  border-radius: 20px;
+  background: rgba(255, 250, 239, 0.07);
+  border: 1px solid rgba(242, 198, 122, 0.26);
+  text-align: center;
+}
+
+.rd-deck__now-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: var(--rd-bg-2);
+  margin-bottom: 6px;
+}
+
+.rd-deck__now-playing h3 {
+  margin: 0 0 4px;
+  font-family: var(--rd-heading-font);
+  font-size: clamp(1.08rem, 4vw, 1.25rem);
+  color: #FFF9EE;
+  overflow-wrap: anywhere;
+}
+
+.rd-deck__now-playing p {
+  margin: 0 0 12px;
+  font-size: 0.84rem;
+  color: rgba(249, 235, 207, 0.78);
+  overflow-wrap: anywhere;
+}
+
+/* Ecualizador de 16 barras */
+.rd-deck__eq {
+  height: 26px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 14px;
+}
+
+.rd-deck__eq span {
+  width: 5px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(242, 198, 122, 0.35);
+  transition: height 0.2s ease;
+}
+
+.rd-deck__eq--active span {
+  background: linear-gradient(180deg, #B83A29, #F2C67A);
+  animation: rd-eq-bounce 0.75s ease-in-out infinite alternate;
+  animation-delay: var(--rd-eq-delay, 0s);
+}
+
+@keyframes rd-eq-bounce {
+  0% {
+    height: 5px;
+  }
+  100% {
+    height: 24px;
+  }
+}
+
+.rd-deck__transport {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.rd-deck__transport-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 13px;
+  border-radius: 999px;
+  border: 1px solid rgba(242, 198, 122, 0.3);
+  background: rgba(255, 250, 239, 0.08);
+  color: #FFF9EE;
+  font-family: inherit;
+  font-size: 0.74rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.rd-deck__transport-btn--main {
+  background: var(--rd-accent);
+  border-color: rgba(242, 198, 122, 0.55);
+}
+
+/* Lista de los 4 surcos en la consola */
+.rd-deck__groove-list {
+  min-width: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.rd-deck__groove-item {
+  min-width: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 11px;
+  border-radius: 14px;
+  border: 1px solid rgba(242, 198, 122, 0.2);
+  background: rgba(255, 250, 239, 0.05);
+  color: #F9EBCF;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.18s ease, border-color 0.18s ease;
+}
+
+.rd-deck__groove-item:hover {
+  background: rgba(242, 198, 122, 0.14);
+}
+
+.rd-deck__groove-item--active {
+  background: rgba(184, 58, 41, 0.28);
+  border-color: var(--rd-bg-2);
+}
+
+.rd-deck__groove-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(242, 198, 122, 0.18);
+  color: var(--rd-bg-2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.rd-deck__groove-name {
+  flex: 1 1 0%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.rd-deck__groove-name strong {
+  font-size: 0.85rem;
+  color: #FFF9EE;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rd-deck__groove-name small {
+  font-size: 0.71rem;
+  color: rgba(249, 235, 207, 0.7);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rd-deck__groove-time {
+  flex-shrink: 0;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--rd-bg-2);
+}
+
+/* Grilla de tarjetas de los 4 Tracks */
+.rd-tracks__grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+  max-width: 980px;
+  margin-inline: auto;
+}
+
+.rd-track-card {
+  position: relative;
+  min-width: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  border-radius: 26px;
+  overflow: hidden;
+  background: var(--rd-card-bg);
+  border: 1.5px solid var(--rd-border);
+  box-shadow: var(--rd-shadow);
+}
+
+.rd-track-card--active {
+  border-color: var(--rd-accent);
+  box-shadow: 0 0 0 2px rgba(184, 58, 41, 0.25), var(--rd-shadow);
+}
+
+.rd-track-card__media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: #2A1410;
+}
+
+.rd-track-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.rd-track-card__tag {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: rgba(42, 20, 16, 0.84);
+  border: 1px solid rgba(242, 198, 122, 0.45);
+  color: #F2C67A;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.rd-track-card__body {
+  min-width: 0;
+  padding: 20px 18px 22px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rd-track-card__code {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: var(--rd-accent);
+  margin-bottom: 6px;
+}
+
+.rd-track-card__body h3 {
+  margin: 0 0 8px;
+  font-family: var(--rd-heading-font);
+  font-size: 1.32rem;
+  color: var(--rd-text);
+}
+
+.rd-track-card__body p {
+  margin: 0 0 14px;
+  max-width: 44ch;
+  font-size: 0.94rem;
+  line-height: 1.58;
+  color: var(--rd-muted);
+}
+
+.rd-track-card__play-btn {
+  max-width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 9px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(184, 58, 41, 0.32);
+  background: rgba(184, 58, 41, 0.1);
+  color: var(--rd-accent);
+  font-family: inherit;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.rd-track-card--active .rd-track-card__play-btn,
+.rd-track-card__play-btn:hover {
+  background: var(--rd-accent);
+  color: #FFF9EE;
+}
+
+@media (min-width: 760px) {
+  .rd-tracks__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ==========================================================================
+   SECCIÓN 4: LA BANDA / NUESTRA GENTE (SIEMPRE CENTRADO)
+   ========================================================================== */
+.rd-family__grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.rd-family__card {
+  flex: 1 1 280px;
+  max-width: 350px;
+  padding: 26px 22px;
+  border-radius: 24px;
+  background: var(--rd-card-bg);
+  border: 1.5px solid var(--rd-border);
+  box-shadow: var(--rd-shadow);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rd-family__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(61, 102, 95, 0.12);
+  color: var(--rd-sage);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  margin-bottom: 12px;
+}
+
+.rd-family__card h3 {
+  margin: 0 0 12px;
+  font-family: var(--rd-heading-font);
+  font-size: 1.2rem;
+  color: var(--rd-accent);
+}
+
+.rd-family__names {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rd-family__names strong {
+  font-size: 1.02rem;
+  color: var(--rd-text);
+}
+
+/* ==========================================================================
+   SECCIÓN 5: CONSOLA DE SOUNDCHECK (CUENTA REGRESIVA)
+   ========================================================================== */
+.rd-countdown__console {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: clamp(24px, 5vw, 40px);
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(242, 198, 122, 0.2), transparent 55%),
+    linear-gradient(180deg, #2D1713 0%, #1F100D 100%);
+  border: 2px solid rgba(242, 198, 122, 0.42);
+  color: #F9EBCF;
+  box-shadow: 0 28px 64px -24px rgba(42, 20, 16, 0.52);
+  text-align: center;
+}
+
+.rd-countdown__status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(242, 198, 122, 0.14);
+  color: var(--rd-bg-2);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 22px;
+}
+
+.rd-countdown__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #E45843;
+  box-shadow: 0 0 10px #E45843;
+}
+
+.rd-countdown__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+@media (min-width: 640px) {
+  .rd-countdown__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.rd-countdown__pod {
+  padding: 18px 12px;
+  border-radius: 20px;
+  background: rgba(249, 235, 207, 0.07);
+  border: 1px solid rgba(242, 198, 122, 0.28);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.rd-countdown__pod small {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: var(--rd-bg-2);
+}
+
+.rd-countdown__pod strong {
+  font-family: var(--rd-heading-font);
+  font-size: clamp(2rem, 6vw, 3rem);
+  font-weight: 800;
+  line-height: 1;
+  color: #FFF9EE;
+}
+
+.rd-countdown__pod span {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(249, 235, 207, 0.76);
+}
+
+.rd-countdown__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* ==========================================================================
+   SECCIÓN 6: EL FORO (UBICACIONES Y MAPA)
+   ========================================================================== */
+.rd-locations__list {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.rd-location-card {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 22px;
+  padding: clamp(18px, 4vw, 28px);
+  border-radius: 28px;
+  background: var(--rd-card-bg);
+  border: 1.5px solid var(--rd-border);
+  box-shadow: var(--rd-shadow);
+}
+
+.rd-location-card__visual-col {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+}
+
+.rd-location-card__media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #2A1410;
+}
+
+.rd-location-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.rd-location-card__coord {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(31, 16, 13, 0.84);
+  color: #F2C67A;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.rd-location-card__map {
+  height: 210px;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--rd-border);
+}
+
+.rd-location-card__map iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.rd-location-card__info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.rd-location-card__kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(184, 58, 41, 0.1);
+  color: var(--rd-accent);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.rd-location-card__info h3 {
+  margin: 0 0 10px;
+  font-family: var(--rd-heading-font);
+  font-size: clamp(1.5rem, 4vw, 2.1rem);
+  color: var(--rd-text);
+}
+
+.rd-location-card__address {
+  margin: 0 0 20px;
+  display: inline-flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 7px;
+  max-width: 42ch;
+  font-size: 0.96rem;
+  line-height: 1.55;
+  color: var(--rd-muted);
+}
+
+.rd-location-card__routes {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.rd-route-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 11px 14px;
+  border-radius: 14px;
+  background: rgba(242, 198, 122, 0.25);
+  border: 1px solid rgba(81, 39, 32, 0.18);
+  color: var(--rd-text);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.rd-route-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(242, 198, 122, 0.45);
+}
+
+.rd-route-btn--primary {
+  background: var(--rd-accent);
+  border-color: var(--rd-accent);
+  color: #FFF9EE;
+}
+
+.rd-route-btn--primary:hover {
+  background: #9B2E1F;
+}
+
+@media (min-width: 860px) {
+  .rd-location-card {
+    grid-template-columns: 1.15fr 0.85fr;
+    align-items: center;
+  }
+}
+
+/* ==========================================================================
+   SECCIÓN 7: SETLIST DE LA NOCHE (TIMELINE CON VINILO VIAJERO)
+   ========================================================================== */
+.rd-timeline__track {
+  position: relative;
+  max-width: 780px;
+  margin: 0 auto;
+  padding-left: 44px;
+}
+
+.rd-timeline__rail {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 16px;
+  width: 3px;
+  background: rgba(81, 39, 32, 0.16);
+  border-radius: 999px;
+}
+
+.rd-timeline__progress {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, var(--rd-accent), var(--rd-sage));
+  border-radius: 999px;
+}
+
+.rd-timeline__runner {
+  position: absolute;
+  left: 50%;
+  top: 0%;
+  width: 34px;
+  height: 34px;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+}
+
+.rd-timeline__items {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.rd-timeline__item {
+  position: relative;
+}
+
+.rd-timeline__node {
+  position: absolute;
+  left: -44px;
+  top: 20px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--rd-bg);
+  border: 2px solid var(--rd-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: var(--rd-accent);
+}
+
+.rd-timeline__card {
+  padding: 20px 22px;
+  border-radius: 22px;
+  background: var(--rd-card-bg);
+  border: 1.5px solid var(--rd-border);
+  box-shadow: var(--rd-shadow);
+  text-align: center;
+}
+
+.rd-timeline__meta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.rd-timeline__time {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--rd-accent);
+  color: #FFF9EE;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.rd-timeline__step {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: var(--rd-sage);
+}
+
+.rd-timeline__card h3 {
+  margin: 4px 0 6px;
+  font-family: var(--rd-heading-font);
+  font-size: 1.2rem;
+  color: var(--rd-text);
+}
+
+.rd-timeline__card p {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--rd-muted);
+}
+
+/* ==========================================================================
+   SECCIÓN 8: GALERÍA DE SESIÓN EN VINILO (AUTO-CENTRADA)
+   ========================================================================== */
+.rd-gallery__grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.rd-gallery__card {
+  margin: 0;
+  flex: 1 1 250px;
+  max-width: 340px;
+  padding: 12px 12px 16px;
+  border-radius: 24px;
+  background: #FFFDF7;
+  border: 1.5px solid var(--rd-border);
+  box-shadow: var(--rd-shadow);
+  text-align: center;
+}
+
+.rd-gallery__img-wrap {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #2A1410;
+}
+
+.rd-gallery__img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.rd-gallery__badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(31, 16, 13, 0.82);
+  color: #F2C67A;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.rd-gallery__caption {
+  margin-top: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--rd-text);
+}
+
+.rd-gallery__star {
+  width: 11px;
+  height: 11px;
+  color: var(--rd-accent);
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   SECCIÓN 9: DRESS CODE (ESTILO DE LA NOCHE)
+   ========================================================================== */
+.rd-dress__grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  max-width: 820px;
+  margin: 0 auto 22px;
+}
+
+.rd-dress__card {
+  flex: 1 1 290px;
+  max-width: 390px;
+  padding: 26px 22px;
+  border-radius: 24px;
+  background: var(--rd-card-bg);
+  border: 1.5px solid var(--rd-border);
+  box-shadow: var(--rd-shadow);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rd-dress__icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(184, 58, 41, 0.12);
+  color: var(--rd-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.rd-dress__role {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: var(--rd-sage);
+}
+
+.rd-dress__card h3 {
+  margin: 6px 0 8px;
+  font-family: var(--rd-heading-font);
+  font-size: 1.3rem;
+  color: var(--rd-text);
+}
+
+.rd-dress__card p {
+  margin: 0;
+  font-size: 0.93rem;
+  line-height: 1.58;
+  color: var(--rd-muted);
+}
+
+.rd-dress__checklist {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.rd-dress__checklist span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: rgba(61, 102, 95, 0.12);
+  color: var(--rd-sage);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.rd-dress__palette {
+  max-width: 540px;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 22px;
+  background: var(--rd-card-bg);
+  border: 1px dashed rgba(81, 39, 32, 0.25);
+  text-align: center;
+}
+
+.rd-dress__palette-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  color: var(--rd-accent);
+  margin-bottom: 12px;
+}
+
+.rd-dress__swatches {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+}
+
+.rd-dress__swatch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #FFF9EE;
+  border: 1px solid var(--rd-border);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.rd-dress__swatch i {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid rgba(81, 39, 32, 0.25);
+}
+
+.rd-dress__palette p {
+  margin: 10px 0 0;
+  font-size: 0.85rem;
+  color: var(--rd-muted);
+}
+
+/* ==========================================================================
+   SECCIÓN 10 & 11: REGALOS Y HOSPEDAJE (AUTO-CENTRADOS)
+   ========================================================================== */
+.rd-gifts__grid,
+.rd-stay__grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.rd-gifts__card,
+.rd-stay__card {
+  flex: 1 1 280px;
+  max-width: 420px;
+  padding: 26px 22px;
+  border-radius: 24px;
+  background: var(--rd-card-bg);
+  border: 1.5px solid var(--rd-border);
+  box-shadow: var(--rd-shadow);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.rd-gifts__card--wide {
+  max-width: 480px;
+}
+
+.rd-gifts__icon,
+.rd-stay__icon {
+  color: var(--rd-accent);
+}
+
+.rd-gifts__card span {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  color: var(--rd-sage);
+}
+
+.rd-gifts__card h3,
+.rd-stay__card h3 {
+  margin: 2px 0;
+  font-family: var(--rd-heading-font);
+  font-size: 1.24rem;
+  color: var(--rd-text);
+}
+
+.rd-gifts__card p,
+.rd-stay__card p {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--rd-muted);
+}
+
+.rd-gifts__clabe {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-weight: 700;
+  color: var(--rd-text) !important;
+  background: rgba(242, 198, 122, 0.3);
+  padding: 6px 12px;
+  border-radius: 10px;
+}
+
+.rd-stay__code {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(61, 102, 95, 0.14);
+  color: var(--rd-sage);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+/* ==========================================================================
+   SECCIÓN 12: LADO B SOCIAL (ÁLBUM Y JUKEBOX)
+   ========================================================================== */
+.rd-social__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  gap: 22px;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.rd-social__panel {
+  padding: clamp(20px, 4vw, 28px);
+  border-radius: 26px;
+  background: var(--rd-card-bg);
+  border: 1.5px solid var(--rd-border);
+  box-shadow: var(--rd-shadow);
+  text-align: center;
+}
+
+.rd-social__panel-head {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(184, 58, 41, 0.1);
+  color: var(--rd-accent);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  margin-bottom: 8px;
+}
+
+.rd-social__panel h3 {
+  margin: 0 0 16px;
+  font-family: var(--rd-heading-font);
+  font-size: 1.32rem;
+  color: var(--rd-text);
+}
+
+.rd-social__hashtag {
+  margin: 24px auto 0;
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border-radius: 999px;
+  background: var(--rd-text);
+  color: #FFF9EE;
+  font-family: var(--rd-heading-font);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+/* ==========================================================================
+   SECCIÓN 13: TAQUILLA VIP (RSVP + BOLETO QR)
+   ========================================================================== */
+.rd-rsvp__pass {
+  max-width: 680px;
+  margin: 0 auto;
+  border-radius: 28px;
+  overflow: hidden;
+  background: #FFFDF7;
+  color: var(--rd-text);
+  border: 2px solid rgba(242, 198, 122, 0.65);
+  box-shadow: 0 30px 70px -24px rgba(0, 0, 0, 0.55);
+}
+
+.rd-rsvp__pass-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 14px 22px;
+  background: var(--rd-accent);
+  color: #FFF9EE;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.rd-rsvp__pass-bar span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.rd-rsvp__form {
+  padding: clamp(22px, 5vw, 34px);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.rd-rsvp__row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+@media (min-width: 620px) {
+  .rd-rsvp__row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.rd-rsvp__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+}
+
+.rd-rsvp__field label {
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--rd-text);
+}
+
+.rd-rsvp__field input,
+.rd-rsvp__field select,
+.rd-rsvp__field textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1.5px solid rgba(81, 39, 32, 0.22);
+  background: #FBF4E4;
+  color: var(--rd-text);
+  font-family: inherit;
+  font-size: 0.94rem;
+}
+
+.rd-rsvp__field input:focus,
+.rd-rsvp__field select:focus,
+.rd-rsvp__field textarea:focus {
+  outline: 2px solid var(--rd-accent);
+  border-color: transparent;
+}
+
+.rd-rsvp__confirmed {
+  padding: clamp(26px, 5vw, 38px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+}
+
+.rd-rsvp__confirmed-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(61, 102, 95, 0.15);
+  color: var(--rd-sage);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.rd-rsvp__confirmed h3 {
+  margin: 0;
+  font-family: var(--rd-heading-font);
+  font-size: 1.5rem;
+  color: var(--rd-text);
+}
+
+.rd-rsvp__confirmed-meta {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--rd-muted);
+}
+
+.rd-rsvp__qr-box {
+  padding: 16px;
+  border-radius: 20px;
+  background: #FFFFFF;
+  border: 2px dashed rgba(81, 39, 32, 0.25);
+}
+
+.rd-rsvp__confirmed-note {
+  margin: 0;
+  max-width: 42ch;
+  font-size: 0.92rem;
+  color: var(--rd-muted);
+}
+
+/* ==========================================================================
+   FOOTER ESTILO SELLO DISCOGRÁFICO
+   ========================================================================== */
+.rd-footer {
+  padding: 56px 20px 88px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+}
+
+.rd-footer__vinyl {
+  width: 74px;
+  height: 74px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  animation: rd-spin var(--rd-spin-duration, 8.4s) linear infinite;
+}
+
+.rd-footer__kicker {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: var(--rd-accent);
+}
+
+.rd-footer strong {
+  font-family: var(--rd-heading-font);
+  font-size: clamp(1.6rem, 4.5vw, 2.3rem);
+  color: var(--rd-text);
+}
+
+.rd-footer p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--rd-muted);
+}
+
+.rd-footer__top {
+  margin-top: 10px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--rd-sage);
+  text-decoration: none;
+}

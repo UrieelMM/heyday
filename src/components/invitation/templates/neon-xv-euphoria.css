@@ -1,0 +1,1741 @@
+/* ==========================================================================
+   NEON XV EUPHORIA — Scroll Scenes V2 Stylesheet (.nx-*)
+   ========================================================================== */
+
+.nx-root {
+  --nx-bg-primary: #090614;
+  --nx-bg-secondary: #140e29;
+  --nx-surface: rgba(20, 14, 41, 0.78);
+  --nx-surface-strong: rgba(14, 9, 31, 0.92);
+  --nx-text: #f8f7ff;
+  --nx-muted: #a39bbf;
+  --nx-magenta: #ff2e93;
+  --nx-cyan: #00f0ff;
+  --nx-violet: #a855f7;
+  --nx-amber: #fbbf24;
+  --nx-border: rgba(0, 240, 255, 0.24);
+  --nx-border-magenta: rgba(255, 46, 147, 0.36);
+
+  position: relative;
+  min-height: 100dvh;
+  background-color: var(--nx-bg-primary);
+  color: var(--nx-text);
+  font-family: var(--nx-font-body, 'Space Grotesk', sans-serif);
+  overflow-x: clip;
+  isolation: isolate;
+}
+
+.nx-root--locked {
+  max-height: 100dvh;
+  overflow: hidden;
+}
+
+/* Club mood shifts */
+.nx-root.nx-mood-1 {
+  --nx-magenta: #00f0ff;
+  --nx-cyan: #ff2e93;
+}
+
+.nx-root.nx-mood-2 {
+  --nx-magenta: #c084fc;
+  --nx-cyan: #38bdf8;
+}
+
+/* ==========================================================================
+   AMBIENT LASER & GRID BACKDROP
+   ========================================================================== */
+
+.nx-ambient {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.nx-ambient__orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(95px);
+  opacity: 0.34;
+}
+
+.nx-ambient__orb--magenta {
+  width: 420px;
+  height: 420px;
+  top: -90px;
+  left: -100px;
+  background: radial-gradient(circle, var(--nx-magenta), transparent 70%);
+}
+
+.nx-ambient__orb--cyan {
+  width: 440px;
+  height: 440px;
+  bottom: -110px;
+  right: -100px;
+  background: radial-gradient(circle, var(--nx-cyan), transparent 70%);
+}
+
+.nx-ambient__orb--violet {
+  width: 360px;
+  height: 360px;
+  top: 42%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, var(--nx-violet), transparent 72%);
+  opacity: 0.22;
+}
+
+.nx-ambient__grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(0, 240, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 46, 147, 0.05) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(circle at 50% 35%, black 30%, transparent 88%);
+}
+
+/* ==========================================================================
+   SHARED LAYOUT & TYPOGRAPHY
+   ========================================================================== */
+
+.nx-container {
+  position: relative;
+  z-index: 2;
+  width: min(1140px, 92vw);
+  margin-inline: auto;
+}
+
+.nx-section {
+  position: relative;
+  z-index: 2;
+  padding: clamp(4.2rem, 8vw, 7.2rem) 0;
+}
+
+.nx-section-header {
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto clamp(2.4rem, 5vw, 3.8rem);
+}
+
+.nx-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--nx-cyan);
+  background: rgba(0, 240, 255, 0.09);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  margin-bottom: 0.95rem;
+}
+
+.nx-section-title {
+  font-family: var(--nx-font-heading, 'Syne', sans-serif);
+  font-size: clamp(1.9rem, 4.4vw, 3.35rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: var(--nx-text);
+  text-shadow: 0 0 28px rgba(255, 46, 147, 0.28);
+}
+
+.nx-section-subtitle {
+  margin-top: 0.85rem;
+  font-size: clamp(0.95rem, 1.8vw, 1.08rem);
+  line-height: 1.65;
+  color: var(--nx-muted);
+}
+
+.nx-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.36rem 0.82rem;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.nx-pill--magenta {
+  background: rgba(255, 46, 147, 0.18);
+  color: #ffd1e8;
+  border: 1px solid rgba(255, 46, 147, 0.5);
+  box-shadow: 0 0 18px rgba(255, 46, 147, 0.25);
+}
+
+.nx-pill--cyan {
+  background: rgba(0, 240, 255, 0.14);
+  color: #ccfbff;
+  border: 1px solid rgba(0, 240, 255, 0.45);
+  box-shadow: 0 0 18px rgba(0, 240, 255, 0.2);
+}
+
+.nx-pill--glass {
+  background: rgba(248, 247, 255, 0.08);
+  color: var(--nx-text);
+  border: 1px solid rgba(248, 247, 255, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.nx-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 0.88rem 1.45rem;
+  border-radius: 9999px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.nx-btn:hover {
+  transform: translateY(-2px);
+}
+
+.nx-btn--neon {
+  background: linear-gradient(135deg, var(--nx-magenta), #8b5cf6 58%, var(--nx-cyan));
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow:
+    0 10px 28px rgba(255, 46, 147, 0.36),
+    0 0 18px rgba(0, 240, 255, 0.25);
+}
+
+.nx-btn--outline {
+  background: rgba(20, 14, 41, 0.72);
+  color: var(--nx-text);
+  border: 1px solid rgba(0, 240, 255, 0.42);
+}
+
+.nx-btn--sm {
+  padding: 0.58rem 1rem;
+  font-size: 0.75rem;
+}
+
+/* ==========================================================================
+   SCENE 0: VIP PASS OPENING OVERLAY (.nx-opening)
+   ========================================================================== */
+
+.nx-opening {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255, 46, 147, 0.28), transparent 45%),
+    radial-gradient(circle at 80% 80%, rgba(0, 240, 255, 0.25), transparent 45%),
+    rgba(6, 4, 14, 0.94);
+  backdrop-filter: blur(18px);
+}
+
+.nx-opening__card {
+  position: relative;
+  width: min(430px, 92vw);
+  padding: 1.9rem 1.6rem 1.8rem;
+  border-radius: 28px;
+  background: linear-gradient(165deg, rgba(25, 16, 52, 0.95), rgba(9, 6, 20, 0.96));
+  border: 1px solid rgba(0, 240, 255, 0.38);
+  box-shadow:
+    0 26px 70px rgba(0, 0, 0, 0.75),
+    0 0 40px rgba(255, 46, 147, 0.26);
+  text-align: center;
+}
+
+.nx-opening__lanyard-slot {
+  width: 68px;
+  height: 10px;
+  border-radius: 999px;
+  margin: 0 auto 1.2rem;
+  background: #06040e;
+  border: 1px solid rgba(248, 247, 255, 0.24);
+}
+
+.nx-opening__topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.nx-opening__serial {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--nx-muted);
+}
+
+.nx-opening__prism-wrap {
+  width: 126px;
+  height: 126px;
+  margin: 0.25rem auto 0.85rem;
+}
+
+.nx-opening__eyebrow {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--nx-cyan);
+}
+
+.nx-opening__title {
+  margin-top: 0.45rem;
+  font-family: var(--nx-font-heading, 'Syne', sans-serif);
+  font-size: clamp(1.9rem, 6vw, 2.55rem);
+  font-weight: 800;
+  line-height: 1.05;
+  color: var(--nx-text);
+}
+
+.nx-opening__guest {
+  margin-top: 0.65rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: #e2d9ff;
+}
+
+.nx-opening__barcode {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  height: 30px;
+  margin: 1.2rem auto;
+  opacity: 0.72;
+}
+
+.nx-opening__barcode span {
+  display: block;
+  height: 100%;
+  width: 3px;
+  background: linear-gradient(to bottom, var(--nx-cyan), var(--nx-magenta));
+  border-radius: 2px;
+}
+
+.nx-opening__barcode span:nth-child(even) {
+  width: 6px;
+}
+
+.nx-opening__barcode span:nth-child(3n) {
+  height: 70%;
+}
+
+.nx-opening__cta {
+  width: 100%;
+}
+
+/* ==========================================================================
+   SCENE 1: TWO-BEAT STICKY HERO (#nx-hero)
+   ========================================================================== */
+
+.nx-hero-scroll {
+  position: relative;
+  height: 235vh;
+  z-index: 2;
+}
+
+.nx-hero__sticky {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.nx-hero__ghost {
+  position: absolute;
+  top: 7%;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-family: var(--nx-font-heading, 'Syne', sans-serif);
+  font-size: clamp(3.4rem, 11vw, 9rem);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(0, 240, 255, 0.16);
+  pointer-events: none;
+  user-select: none;
+  z-index: 1;
+}
+
+/* Mathematically Centered Neon Portal Window (19% + 62% + 19% = 100%) */
+.nx-hero__visual {
+  position: absolute;
+  left: 19%;
+  width: 62%;
+  top: 14%;
+  height: 70%;
+  border-radius: 34px;
+  overflow: hidden;
+  z-index: 2;
+  box-shadow:
+    0 28px 80px rgba(0, 0, 0, 0.72),
+    0 0 38px rgba(255, 46, 147, 0.34),
+    0 0 38px rgba(0, 240, 255, 0.22);
+  will-change: left, top, width, height, border-radius;
+}
+
+.nx-hero__media,
+.nx-hero__visual img,
+.nx-hero__visual video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 24%;
+}
+
+.nx-hero__visual-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(9, 6, 20, 0.34) 0%,
+    rgba(9, 6, 20, 0.18) 42%,
+    rgba(9, 6, 20, 0.86) 100%
+  );
+  pointer-events: none;
+}
+
+.nx-hero__laser-frame {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 2px solid rgba(0, 240, 255, 0.48);
+  box-shadow: inset 0 0 28px rgba(255, 46, 147, 0.38);
+  pointer-events: none;
+}
+
+/* Layer 3: Floating Badges */
+.nx-hero__badges {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.nx-hero__badge-left {
+  position: absolute;
+  top: 15%;
+  left: max(4%, calc(19% - 58px));
+  width: 118px;
+  height: 118px;
+}
+
+.nx-hero__badge-right {
+  position: absolute;
+  bottom: 18%;
+  right: max(4%, calc(19% - 58px));
+  width: 122px;
+  height: 122px;
+  pointer-events: auto;
+}
+
+.nx-hero__prism-floater {
+  position: absolute;
+  top: 16%;
+  right: max(5%, calc(19% - 42px));
+  width: 86px;
+  height: 86px;
+  animation: nxFloatPrism 5s ease-in-out infinite;
+}
+
+@keyframes nxFloatPrism {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(6deg);
+  }
+}
+
+.nx-rotating-seal,
+.nx-rotating-seal__svg {
+  width: 100%;
+  height: 100%;
+}
+
+.nx-rotating-seal__svg {
+  animation: nxSpinSeal 22s linear infinite;
+}
+
+@keyframes nxSpinSeal {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.nx-eq-orb {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: transform 0.25s ease;
+}
+
+.nx-eq-orb:hover {
+  transform: scale(1.06);
+}
+
+.nx-eq-orb__bar {
+  transform-origin: 100px 100px;
+  animation: nxPulseBar 1.3s ease-in-out infinite alternate;
+}
+
+@keyframes nxPulseBar {
+  0% {
+    opacity: 0.45;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Layer 4: Foreground Copy */
+.nx-hero__copy {
+  position: relative;
+  z-index: 4;
+  margin-top: auto;
+  padding: 0 1.25rem 3.2rem;
+  text-align: center;
+  max-width: 780px;
+  margin-inline: auto;
+}
+
+.nx-hero__pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  margin-bottom: 0.9rem;
+}
+
+.nx-hero__title {
+  font-family: var(--nx-font-heading, 'Syne', sans-serif);
+  font-size: clamp(2.45rem, 6.6vw, 5.1rem);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  color: var(--nx-text);
+  text-shadow:
+    0 4px 28px rgba(0, 0, 0, 0.85),
+    0 0 32px rgba(255, 46, 147, 0.45);
+}
+
+.nx-hero__subtitle {
+  margin-top: 0.7rem;
+  font-size: clamp(0.98rem, 2vw, 1.2rem);
+  color: #e6e1f9;
+  max-width: 580px;
+  margin-inline: auto;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.85);
+}
+
+.nx-hero__scroll-cue {
+  margin-top: 1.2rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--nx-cyan);
+}
+
+/* Beat 2 Bridge Card */
+.nx-hero__bridge {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 6%;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+  padding: 0 1rem;
+  pointer-events: none;
+}
+
+.nx-hero__bridge-inner {
+  width: min(640px, 92vw);
+  padding: 1.25rem 1.5rem;
+  border-radius: 22px;
+  background: rgba(9, 6, 20, 0.86);
+  border: 1px solid rgba(0, 240, 255, 0.46);
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.75),
+    0 0 28px rgba(255, 46, 147, 0.32);
+  backdrop-filter: blur(16px);
+  text-align: center;
+}
+
+.nx-hero__bridge-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--nx-cyan);
+}
+
+.nx-hero__bridge-title {
+  margin-top: 0.35rem;
+  font-family: var(--nx-font-heading, 'Syne', sans-serif);
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+  font-weight: 800;
+  color: var(--nx-text);
+}
+
+.nx-hero__bridge-meta {
+  margin-top: 0.4rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  color: var(--nx-muted);
+}
+
+/* ==========================================================================
+   SCENE 2: MANIFIESTO / MI ENERGÍA (#nx-story)
+   ========================================================================== */
+
+.nx-story {
+  overflow: hidden;
+}
+
+.nx-story__backdrop {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.65;
+}
+
+.nx-laser-grid-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.nx-quote-box {
+  position: relative;
+  max-width: 820px;
+  margin: 0 auto 3.6rem;
+  padding: clamp(1.8rem, 4vw, 3rem);
+  border-radius: 28px;
+  background: var(--nx-surface);
+  border: 1px solid var(--nx-border-magenta);
+  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(14px);
+  text-align: center;
+}
+
+.nx-quote-box__prism {
+  width: 68px;
+  height: 68px;
+  margin: 0 auto 1rem;
+}
+
+.nx-quote-text {
+  font-family: var(--nx-font-heading, 'Syne', sans-serif);
+  font-size: clamp(1.35rem, 3.1vw, 2.2rem);
+  font-weight: 700;
+  line-height: 1.38;
+}
+
+.nx-word {
+  display: inline;
+  transition: color 0.15s ease;
+}
+
+.nx-quote-author {
+  margin-top: 1.1rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--nx-cyan);
+}
+
+.nx-story-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+.nx-story-card {
+  min-width: 0;
+  border-radius: 24px;
+  overflow: hidden;
+  background: var(--nx-surface-strong);
+  border: 1px solid var(--nx-border);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.42);
+  display: flex;
+  flex-direction: column;
+}
+
+.nx-story-card__media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+.nx-story-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.55s ease;
+}
+
+.nx-story-card:hover .nx-story-card__media img {
+  transform: scale(1.06);
+}
+
+.nx-story-card__badge {
+  position: absolute;
+  top: 0.85rem;
+  left: 0.85rem;
+  padding: 0.32rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  background: rgba(9, 6, 20, 0.85);
+  color: var(--nx-cyan);
+  border: 1px solid rgba(0, 240, 255, 0.45);
+}
+
+.nx-story-card__body {
+  padding: 1.4rem;
+}
+
+.nx-story-card__title {
+  font-family: var(--nx-font-heading, 'Syne', sans-serif);
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--nx-text);
+}
+
+.nx-story-card__desc {
+  margin-top: 0.55rem;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--nx-muted);
+}
+
+/* ==========================================================================
+   SCENE 3: LOS 4 BEATS DE LA NOCHE (#nx-beats)
+   ========================================================================== */
+
+.nx-beats-deck {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  gap: 2rem;
+  align-items: start;
+}
+
+.nx-beats-monitor {
+  position: sticky;
+  top: 5.5rem;
+  min-width: 0;
+}
+
+.nx-beats-monitor__card {
+  padding: 1.35rem;
+  border-radius: 26px;
+  background: var(--nx-surface-strong);
+  border: 1px solid rgba(255, 46, 147, 0.42);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.55),
+    0 0 30px rgba(255, 46, 147, 0.18);
+}
+
+.nx-beats-monitor__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.nx-beats-monitor__bpm {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--nx-magenta);
+}
+
+.nx-beats-monitor__visual {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+}
+
+.nx-beats-monitor__visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.nx-beats-monitor__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(9, 6, 20, 0.92), transparent 60%);
+}
+
+.nx-beats-monitor__caption {
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.nx-beats-monitor__caption span {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--nx-cyan);
+}
+
+.nx-beats-monitor__caption strong {
+  font-family: var(--nx-font-heading, 'Syne', sans-serif);
+  font-size: 1.2rem;
+  color: var(--nx-text);
+}
+
+.nx-beats-monitor__controls {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.nx-beats-tab {
+  padding: 0.55rem;
+  border-radius: 12px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  background: rgba(248, 247, 255, 0.06);
+  color: var(--nx-muted);
+  border: 1px solid rgba(248, 247, 255, 0.12);
+  cursor: pointer;
+}
+
+.nx-beats-tab--active {
+  background: linear-gradient(135deg, var(--nx-magenta), var(--nx-cyan));
+  color: #ffffff;
+  border-color: transparent;
+}
+
+.nx-beats-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.25rem;
+  min-width: 0;
+}
+
+.nx-beat-card {
+  min-width: 0;
+  padding: 1.35rem;
+  border-radius: 24px;
+  background: var(--nx-surface);
+  border: 1px solid var(--nx-border);
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  cursor: pointer;
+}
+
+.nx-beat-card--active {
+  border-color: var(--nx-magenta);
+  box-shadow: 0 0 28px rgba(255, 46, 147, 0.24);
+}
+
+.nx-beat-card__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.9rem;
+}
+
+.nx-beat-card__code {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  color: var(--nx-cyan);
+}
+
+.nx-beat-card__time {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--nx-muted);
+}
+
+.nx-beat-card__media {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  margin-bottom: 1rem;
+}
+
+.nx-beat-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.nx-beat-card__zone {
+  position: absolute;
+  bottom: 0.65rem;
+  right: 0.65rem;
+  padding: 0.28rem 0.68rem;
+  border-radius: 999px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  background: rgba(9, 6, 20, 0.86);
+  color: #ffffff;
+  border: 1px solid rgba(255, 46, 147, 0.45);
+}
+
+.nx-beat-card__title {
+  font-family: var(--nx-font-heading, 'Syne', sans-serif);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--nx-text);
+}
+
+.nx-beat-card__subtitle {
+  margin-top: 0.28rem;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: #f9a8d4;
+}
+
+.nx-beat-card__desc {
+  margin-top: 0.55rem;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--nx-muted);
+}
+
+/* ==========================================================================
+   SCENE 4: BACKSTAGE CREW / FAMILIA (#nx-family)
+   ========================================================================== */
+
+.nx-lanyard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 1.5rem;
+}
+
+.nx-lanyard-card {
+  min-width: 0;
+  padding: 1.5rem;
+  border-radius: 26px;
+  background: linear-gradient(165deg, rgba(24, 16, 48, 0.92), rgba(10, 7, 22, 0.94));
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+}
+
+.nx-lanyard-card__slot {
+  width: 56px;
+  height: 8px;
+  border-radius: 999px;
+  margin: 0 auto 1.1rem;
+  background: #05030b;
+  border: 1px solid rgba(248, 247, 255, 0.2);
+}
+
+.nx-lanyard-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.nx-lanyard-card__role {
+  font-family: var(--nx-font-heading, 'Syne', sans-serif);
+  font-size: 1.28rem;
+  font-weight: 800;
+  color: var(--nx-text);
+  margin-bottom: 0.75rem;
+}
+
+.nx-lanyard-card__names {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  font-size: 1rem;
+  color: #e4def7;
+}
+
+.nx-lanyard-card__footer {
+  margin-top: auto;
+  padding-top: 0.85rem;
+  border-top: 1px dashed rgba(0, 240, 255, 0.28);
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--nx-cyan);
+}
+
+/* ==========================================================================
+   SCENE 5: COUNTDOWN DROP (#nx-countdown)
+   ========================================================================== */
+
+.nx-countdown-panel {
+  padding: clamp(2rem, 5vw, 3.6rem);
+  border-radius: 32px;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(255, 46, 147, 0.22), transparent 50%),
+    radial-gradient(circle at 85% 80%, rgba(0, 240, 255, 0.2), transparent 50%),
+    var(--nx-surface-strong);
+  border: 1px solid rgba(255, 46, 147, 0.4);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+}
+
+.nx-countdown-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  max-width: 720px;
+  margin: 0 auto 2.2rem;
+}
+
+.nx-time-pod {
+  min-width: 0;
+  padding: 1.25rem 0.65rem;
+  border-radius: 22px;
+  background: rgba(9, 6, 20, 0.86);
+  border: 1px solid rgba(0, 240, 255, 0.38);
+  box-shadow: inset 0 0 22px rgba(0, 240, 255, 0.12);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.nx-time-pod__value {
+  font-family: var(--nx-font-heading, 'Syne', sans-serif);
+  font-size: clamp(1.85rem, 4.6vw, 3.1rem);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--nx-text);
+  text-shadow: 0 0 20px rgba(0, 240, 255, 0.45);
+}
+
+.nx-time-pod__label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--nx-magenta);
+}
+
+.nx-countdown-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.9rem;
+}
+
+/* ==========================================================================
+   SCENE 6: EL CLUB + MAPA INTERACTIVO (#nx-locations)
+   ========================================================================== */
+
+.nx-venue-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: 1.6rem;
+  align-items: stretch;
+}
+
+.nx-venue-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  min-width: 0;
+}
+
+.nx-venue-card {
+  min-width: 0;
+  padding: 1.45rem;
+  border-radius: 24px;
+  background: var(--nx-surface);
+  border: 1px solid var(--nx-border);
+  cursor: pointer;
+  transition: border-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+.nx-venue-card--active {
+  border-color: var(--nx-cyan);
+  box-shadow: 0 0 26px rgba(0, 240, 255, 0.22);
+}
+
+.nx-venue-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.nx-venue-card__time {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--nx-magenta);
+}
+
+.nx-venue-card__title {
+  font-family: var(--nx-font-heading, 'Syne', sans-serif);
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.nx-venue-card__name {
+  margin-top: 0.25rem;
+  font-weight: 700;
+  color: #e0f2fe;
+}
+
+.nx-venue-card__address {
+  margin-top: 0.35rem;
+  font-size: 0.9rem;
+  color: var(--nx-muted);
+}
+
+.nx-venue-card__actions {
+  margin-top: 1.1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.nx-venue-map {
+  min-width: 0;
+  border-radius: 24px;
+  overflow: hidden;
+  background: var(--nx-surface-strong);
+  border: 1px solid rgba(0, 240, 255, 0.36);
+  display: flex;
+  flex-direction: column;
+}
+
+.nx-venue-map__header {
+  padding: 0.85rem 1.2rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--nx-cyan);
+  border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+}
+
+.nx-venue-map__frame {
+  flex: 1;
+  min-height: 320px;
+}
+
+.nx-venue-map__frame iframe {
+  width: 100%;
+  height: 100%;
+  min-height: 320px;
+  border: 0;
+  filter: invert(92%) hue-rotate(195deg) saturate(135%) contrast(95%);
+}
+
+/* ==========================================================================
+   SCENE 7: LINEUP DE LA NOCHE CON PRISMA VIAJERO (#nx-timeline)
+   ========================================================================== */
+
+.nx-timeline-track {
+  position: relative;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 1rem 0;
+}
+
+.nx-timeline-rail {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 3px;
+  transform: translateX(-50%);
+  background: linear-gradient(to bottom, var(--nx-magenta), var(--nx-cyan));
+  border-radius: 999px;
+}
+
+.nx-timeline-traveler {
+  position: absolute;
+  left: 50%;
+  top: 0%;
+  width: 52px;
+  height: 52px;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  filter: drop-shadow(0 0 14px rgba(255, 46, 147, 0.75));
+}
+
+.nx-timeline-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+}
+
+.nx-timeline-card {
+  width: calc(50% - 2.2rem);
+  padding: 1.35rem;
+  border-radius: 22px;
+  background: var(--nx-surface-strong);
+  border: 1px solid var(--nx-border);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.42);
+}
+
+.nx-timeline-card--left {
+  margin-right: auto;
+  text-align: right;
+}
+
+.nx-timeline-card--right {
+  margin-left: auto;
+  text-align: left;
+}
+
+.nx-timeline-card__time {
+  display: inline-block;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  background: rgba(255, 46, 147, 0.18);
+  color: #ffd1e8;
+  border: 1px solid rgba(255, 46, 147, 0.45);
+}
+
+.nx-timeline-card__title {
+  margin-top: 0.6rem;
+  font-family: var(--nx-font-heading, 'Syne', sans-serif);
+  font-size: 1.18rem;
+  font-weight: 800;
+}
+
+.nx-timeline-card__desc {
+  margin-top: 0.35rem;
+  font-size: 0.9rem;
+  color: var(--nx-muted);
+}
+
+/* ==========================================================================
+   SCENE 8: FLASHBACK / GALERÍA EDITORIAL (#nx-gallery)
+   ========================================================================== */
+
+.nx-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.4rem;
+}
+
+.nx-gallery-card {
+  min-width: 0;
+  margin: 0;
+  border-radius: 24px;
+  overflow: hidden;
+  background: var(--nx-surface-strong);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+}
+
+.nx-gallery-card__viewport {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+}
+
+.nx-gallery-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  will-change: transform;
+}
+
+.nx-gallery-card__caption {
+  padding: 0.95rem 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.nx-gallery-card__caption span {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  color: var(--nx-cyan);
+}
+
+.nx-gallery-card__caption p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--nx-text);
+}
+
+/* ==========================================================================
+   SCENE 9: DRESS CODE GLOW PARTY (#nx-dress)
+   ========================================================================== */
+
+.nx-dress-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+  gap: 2rem;
+  align-items: center;
+  padding: clamp(1.8rem, 4vw, 3rem);
+  border-radius: 30px;
+  background: var(--nx-surface-strong);
+  border: 1px solid var(--nx-border-magenta);
+}
+
+.nx-dress-panel__code {
+  margin-top: 0.65rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--nx-cyan);
+}
+
+.nx-dress-panel__desc {
+  margin-top: 0.75rem;
+  font-size: 0.96rem;
+  line-height: 1.65;
+  color: var(--nx-muted);
+}
+
+.nx-swatches {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.nx-swatch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  background: rgba(248, 247, 255, 0.06);
+  border: 1px solid rgba(248, 247, 255, 0.16);
+}
+
+.nx-swatch__dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.nx-swatch__name {
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.nx-dress-panel__visual {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+}
+
+.nx-dress-panel__visual .nx-crown-svg {
+  width: 170px;
+  height: 170px;
+}
+
+.nx-dress-panel__tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #f9a8d4;
+}
+
+/* ==========================================================================
+   SCENE 10, 11, 12: GIFTS, STAY & SOCIAL
+   ========================================================================== */
+
+.nx-gifts-grid,
+.nx-stay-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 1.4rem;
+}
+
+.nx-gift-card,
+.nx-stay-card {
+  min-width: 0;
+  padding: 1.6rem;
+  border-radius: 24px;
+  background: var(--nx-surface-strong);
+  border: 1px solid var(--nx-border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.nx-gift-card__bank,
+.nx-stay-card__name {
+  font-family: var(--nx-font-heading, 'Syne', sans-serif);
+  font-size: 1.28rem;
+  font-weight: 800;
+}
+
+.nx-gift-card__clabe {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  padding: 0.75rem 1rem;
+  border-radius: 14px;
+  background: rgba(9, 6, 20, 0.9);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+}
+
+.nx-gift-card__clabe code {
+  font-size: 0.88rem;
+  color: var(--nx-cyan);
+  overflow-wrap: anywhere;
+}
+
+.nx-social-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.nx-social-panel {
+  padding: clamp(1.2rem, 3vw, 2rem);
+  border-radius: 26px;
+  background: var(--nx-surface-strong);
+  border: 1px solid var(--nx-border);
+}
+
+/* ==========================================================================
+   SCENE 13: VIP PASS RSVP + QR (#nx-rsvp)
+   ========================================================================== */
+
+.nx-rsvp-ticket {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: clamp(1.8rem, 4.5vw, 3.2rem);
+  border-radius: 30px;
+  background: linear-gradient(165deg, rgba(24, 15, 50, 0.95), rgba(9, 6, 20, 0.98));
+  border: 1px solid rgba(255, 46, 147, 0.45);
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.65),
+    0 0 36px rgba(0, 240, 255, 0.16);
+}
+
+.nx-rsvp-ticket__header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.nx-rsvp-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.nx-rsvp-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.nx-rsvp-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.nx-rsvp-field label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #d8cff0;
+}
+
+.nx-rsvp-field input,
+.nx-rsvp-field select,
+.nx-rsvp-field textarea {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  background: rgba(9, 6, 20, 0.86);
+  border: 1px solid rgba(0, 240, 255, 0.32);
+  color: var(--nx-text);
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+.nx-rsvp-field input:focus,
+.nx-rsvp-field select:focus,
+.nx-rsvp-field textarea:focus {
+  outline: none;
+  border-color: var(--nx-magenta);
+  box-shadow: 0 0 16px rgba(255, 46, 147, 0.3);
+}
+
+.nx-rsvp-toggle {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.nx-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  background: rgba(9, 6, 20, 0.75);
+  color: var(--nx-muted);
+  border: 1px solid rgba(248, 247, 255, 0.16);
+  cursor: pointer;
+}
+
+.nx-toggle-btn--active {
+  background: rgba(255, 46, 147, 0.22);
+  color: #ffffff;
+  border-color: var(--nx-magenta);
+  box-shadow: 0 0 20px rgba(255, 46, 147, 0.28);
+}
+
+.nx-toggle-btn--active-no {
+  background: rgba(248, 247, 255, 0.14);
+  color: #ffffff;
+  border-color: rgba(248, 247, 255, 0.4);
+}
+
+.nx-rsvp-submit {
+  width: 100%;
+  margin-top: 0.4rem;
+}
+
+.nx-qr-pass {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.4rem;
+  border-radius: 22px;
+  background: rgba(9, 6, 20, 0.86);
+  border: 1px solid rgba(0, 240, 255, 0.42);
+}
+
+.nx-qr-pass__info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.55rem;
+}
+
+.nx-qr-pass__info h3 {
+  font-family: var(--nx-font-heading, 'Syne', sans-serif);
+  font-size: 1.45rem;
+  font-weight: 800;
+}
+
+.nx-qr-pass__code {
+  margin-inline: auto;
+  padding: 0.85rem;
+  border-radius: 18px;
+  background: #090614;
+  border: 1px solid var(--nx-cyan);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.nx-qr-pass__code span {
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--nx-cyan);
+}
+
+/* ==========================================================================
+   FOOTER
+   ========================================================================== */
+
+.nx-footer {
+  position: relative;
+  z-index: 2;
+  padding: 3.2rem 1rem 5.5rem;
+  text-align: center;
+  border-top: 1px solid rgba(0, 240, 255, 0.16);
+}
+
+.nx-footer__prism {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 0.75rem;
+}
+
+.nx-footer__title {
+  font-family: var(--nx-font-heading, 'Syne', sans-serif);
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.nx-footer__meta {
+  margin-top: 0.3rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  color: var(--nx-muted);
+}
+
+/* ==========================================================================
+   MOBILE-FIRST RESPONSIVE RULES (max-width: 767px)
+   ========================================================================== */
+
+@media (max-width: 767px) {
+  /* Mathematically Centered Mobile Hero Window: 7% + 86% + 7% = 100% */
+  .nx-hero__visual {
+    left: 7%;
+    width: 86%;
+    top: 15%;
+    height: 64%;
+    border-radius: 26px;
+  }
+
+  .nx-hero__badge-left {
+    top: 10%;
+    left: 4%;
+    width: 86px;
+    height: 86px;
+  }
+
+  .nx-hero__badge-right {
+    bottom: 24%;
+    right: 4%;
+    width: 92px;
+    height: 92px;
+  }
+
+  .nx-hero__prism-floater {
+    top: 11%;
+    right: 6%;
+    width: 64px;
+    height: 64px;
+  }
+
+  .nx-story-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .nx-beats-deck {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .nx-beats-monitor {
+    position: relative;
+    top: 0;
+  }
+
+  .nx-countdown-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .nx-venue-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .nx-timeline-rail {
+    left: 1.25rem;
+  }
+
+  .nx-timeline-traveler {
+    left: 1.25rem;
+    width: 40px;
+    height: 40px;
+  }
+
+  .nx-timeline-card,
+  .nx-timeline-card--left,
+  .nx-timeline-card--right {
+    width: calc(100% - 3.1rem);
+    margin-left: auto;
+    margin-right: 0;
+    text-align: left;
+  }
+
+  .nx-gallery-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .nx-dress-panel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .nx-rsvp-row,
+  .nx-rsvp-toggle {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

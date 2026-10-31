@@ -47,6 +47,11 @@ import { SharedAlbum } from './SharedAlbum';
 import { SocialFeatures } from './SocialFeatures';
 import { EternalEleganceExperience } from '../templates/EternalEleganceExperience';
 import { RoyalXVEnchantedExperience } from '../templates/RoyalXVEnchantedExperience';
+import { MiniCosmosExperience } from '../templates/MiniCosmosExperience';
+import { AtelierXVExperience } from '../templates/AtelierXVExperience';
+import { RitmoDeDosExperience } from '../templates/RitmoDeDosExperience';
+import { MareaAzulExperience } from '../templates/MareaAzulExperience';
+import { NeonXVEuphoriaExperience } from '../templates/NeonXVEuphoriaExperience';
 import { SignatureHero } from '../templates/SignatureHero';
 import { setupSignatureScenes } from '../templates/signature-scenes';
 import { CelebrationHero } from '../templates/CelebrationHero';
@@ -80,6 +85,26 @@ export function InvitationRenderer(props: InvitationRendererProps) {
 
   if (props.templateId === 'royal-xv-enchanted') {
     return <RoyalXVEnchantedExperience {...props} />;
+  }
+
+  if (props.templateId === 'mini-cosmos') {
+    return <MiniCosmosExperience {...props} />;
+  }
+
+  if (props.templateId === 'atelier-xv') {
+    return <AtelierXVExperience {...props} />;
+  }
+
+  if (props.templateId === 'ritmo-de-dos') {
+    return <RitmoDeDosExperience {...props} />;
+  }
+
+  if (props.templateId === 'marea-azul') {
+    return <MareaAzulExperience {...props} />;
+  }
+
+  if (props.templateId === 'neon-xv-euphoria') {
+    return <NeonXVEuphoriaExperience {...props} />;
   }
 
   return <StandardInvitationRenderer {...props} />;

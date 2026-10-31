@@ -1,0 +1,2248 @@
+/* ==========================================================================
+   MAREA AZUL (BODA COSTA / MEDITERRÁNEA) — SCROLL EXPERIENCE V2
+   Inspirado en SCROLL_SCENES_V2.md, urieel.dev y ywstudio.com.mx
+   ========================================================================== */
+
+.ma-root {
+  --ma-bg: #F7F4E9;
+  --ma-bg-2: #E2ECEB;
+  --ma-text: #102F45;
+  --ma-muted: #486A78;
+  --ma-cobalt: #155B8A;
+  --ma-terracotta: #D3865A;
+  --ma-card-bg: rgba(255, 253, 248, 0.9);
+  --ma-border: rgba(21, 91, 138, 0.16);
+  --ma-shadow: 0 24px 60px -26px rgba(16, 47, 69, 0.22);
+
+  position: relative;
+  min-height: 100svh;
+  background-color: var(--ma-bg);
+  background-image:
+    radial-gradient(circle at 18% 8%, rgba(226, 236, 235, 0.72), transparent 36%),
+    radial-gradient(circle at 82% 16%, rgba(211, 134, 90, 0.16), transparent 34%),
+    linear-gradient(180deg, #FBF9F2 0%, var(--ma-bg) 52%, #EFE8D5 100%);
+  color: var(--ma-text);
+  font-family: var(--ma-body-font, 'Plus Jakarta Sans', system-ui, sans-serif);
+  overflow-x: clip;
+}
+
+.ma-root *,
+.ma-root *::before,
+.ma-root *::after {
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   CONTENEDOR UNIVERSAL Y SECCIONES
+   ========================================================================== */
+.ma-container {
+  width: min(1120px, calc(100% - 32px));
+  margin-inline: auto;
+  position: relative;
+  z-index: 2;
+}
+
+.ma-section {
+  position: relative;
+  padding: clamp(68px, 10vw, 118px) 0;
+  overflow-x: clip;
+}
+
+.ma-sheet {
+  position: relative;
+  z-index: 3;
+  border-radius: clamp(28px, 5vw, 52px);
+  margin-top: -26px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 254, 250, 0.96), rgba(247, 244, 233, 0.98));
+  border-top: 1px solid rgba(21, 91, 138, 0.14);
+  box-shadow: 0 -22px 54px -28px rgba(16, 47, 69, 0.16);
+}
+
+.ma-sheet--ocean {
+  background:
+    radial-gradient(circle at 18% 12%, rgba(211, 134, 90, 0.2), transparent 38%),
+    radial-gradient(circle at 84% 82%, rgba(43, 120, 162, 0.25), transparent 42%),
+    linear-gradient(180deg, #133B57 0%, #0E2B40 56%, #0B2133 100%);
+  color: #F7F4E9;
+  border-top: 1px solid rgba(226, 236, 235, 0.24);
+  box-shadow: 0 28px 72px -28px rgba(11, 33, 51, 0.55);
+}
+
+/* ==========================================================================
+   ENCABEZADOS DE SECCIÓN (SIEMPRE CENTRADOS)
+   ========================================================================== */
+.ma-section-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto clamp(36px, 6vw, 58px);
+}
+
+.ma-section-header__pill {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px 8px;
+  max-width: 100%;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(21, 91, 138, 0.09);
+  border: 1px solid rgba(21, 91, 138, 0.24);
+  color: var(--ma-cobalt);
+  font-size: clamp(0.64rem, 2vw, 0.72rem);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.ma-section-header__code {
+  padding-right: 8px;
+  border-right: 1px solid currentColor;
+  opacity: 0.85;
+}
+
+.ma-section-header__star {
+  width: 11px;
+  height: 11px;
+  color: var(--ma-terracotta);
+  flex-shrink: 0;
+}
+
+.ma-section-header__title {
+  margin: 0;
+  font-family: var(--ma-heading-font, Georgia, serif);
+  font-size: clamp(2rem, 5.6vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1.06;
+  letter-spacing: -0.02em;
+  color: var(--ma-text);
+  text-wrap: balance;
+}
+
+.ma-section-header__subtitle {
+  margin: 14px auto 0;
+  max-width: 56ch;
+  font-size: clamp(0.95rem, 2.2vw, 1.06rem);
+  line-height: 1.62;
+  color: var(--ma-muted);
+  text-wrap: pretty;
+}
+
+.ma-section-header__rule {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.ma-section-header__rule span {
+  width: 44px;
+  height: 1.5px;
+  background: linear-gradient(90deg, transparent, var(--ma-cobalt), transparent);
+}
+
+.ma-section-header__rule i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ma-terracotta);
+  box-shadow: 0 0 0 3px rgba(21, 91, 138, 0.16);
+}
+
+.ma-section-header--light .ma-section-header__pill {
+  background: rgba(226, 236, 235, 0.12);
+  border-color: rgba(226, 236, 235, 0.28);
+  color: #E2ECEB;
+}
+
+.ma-section-header--light .ma-section-header__star {
+  color: var(--ma-terracotta);
+}
+
+.ma-section-header--light .ma-section-header__title {
+  color: #F7F4E9;
+}
+
+.ma-section-header--light .ma-section-header__subtitle {
+  color: rgba(247, 244, 233, 0.8);
+}
+
+.ma-section-header--light .ma-section-header__rule span {
+  background: linear-gradient(90deg, transparent, #E2ECEB, transparent);
+}
+
+/* ==========================================================================
+   BOTONES COSTEROS MEDITERRÁNEOS
+   ========================================================================== */
+.ma-button {
+  max-width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 13px 22px;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.83rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, background-color 0.22s ease;
+}
+
+.ma-button:hover {
+  transform: translateY(-2px);
+}
+
+.ma-button--primary {
+  background: linear-gradient(135deg, var(--ma-cobalt), #0F3E61);
+  color: #FFFDF8;
+  border-color: rgba(226, 236, 235, 0.35);
+  box-shadow: 0 14px 30px -12px rgba(21, 91, 138, 0.48);
+}
+
+.ma-button--ghost {
+  background: rgba(255, 253, 248, 0.88);
+  color: var(--ma-text);
+  border-color: rgba(21, 91, 138, 0.24);
+  backdrop-filter: blur(10px);
+}
+
+.ma-button--ghost-light {
+  background: rgba(247, 244, 233, 0.1);
+  color: #F7F4E9;
+  border-color: rgba(226, 236, 235, 0.34);
+}
+
+.ma-button--full {
+  width: 100%;
+}
+
+/* ==========================================================================
+   BARRA DE PROGRESO Y NAVEGACIÓN FLOTANTE
+   ========================================================================== */
+.ma-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 65;
+  background: rgba(16, 47, 69, 0.08);
+}
+
+.ma-progress__fill {
+  width: 100%;
+  height: 100%;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background: linear-gradient(90deg, var(--ma-cobalt), var(--ma-terracotta), #2B78A2);
+}
+
+.ma-nav {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 55;
+  width: min(940px, calc(100% - 20px));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(251, 248, 239, 0.88);
+  border: 1px solid rgba(21, 91, 138, 0.16);
+  box-shadow: 0 14px 36px -18px rgba(16, 47, 69, 0.24);
+  backdrop-filter: blur(14px);
+}
+
+.ma-nav__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  text-decoration: none;
+  color: var(--ma-text);
+  min-width: 0;
+}
+
+.ma-nav__monogram {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ma-cobalt);
+  color: #FFFDF8;
+  font-family: var(--ma-heading-font);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 0 2px rgba(211, 134, 90, 0.55);
+}
+
+.ma-nav__title {
+  font-family: var(--ma-heading-font);
+  font-weight: 700;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ma-nav__links {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ma-nav__links a {
+  text-decoration: none;
+  color: var(--ma-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 7px 11px;
+  border-radius: 999px;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.ma-nav__links a:hover {
+  color: var(--ma-text);
+  background: rgba(21, 91, 138, 0.08);
+}
+
+.ma-nav__links .ma-nav__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--ma-cobalt);
+  color: #FFFDF8;
+  padding: 7px 13px;
+}
+
+.ma-nav__links .ma-nav__cta:hover {
+  background: var(--ma-text);
+  color: #FFFDF8;
+}
+
+@media (max-width: 680px) {
+  .ma-nav__links a:not(.ma-nav__cta) {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   APERTURA: CARTA DE NAVEGACIÓN Y AZULEJO DE COBALTO
+   ========================================================================== */
+.ma-opening {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 16px;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(211, 134, 90, 0.28), transparent 46%),
+    linear-gradient(180deg, #143D59 0%, #0E2B40 58%, #0A1E2E 100%);
+  color: #F7F4E9;
+  overflow-y: auto;
+}
+
+.ma-opening__grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(247, 244, 233, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(247, 244, 233, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+.ma-opening__horizon-ring {
+  position: absolute;
+  width: min(460px, 86vw);
+  height: min(460px, 86vw);
+  border-radius: 50%;
+  border: 1px dashed rgba(226, 236, 235, 0.26);
+  pointer-events: none;
+}
+
+.ma-opening__emblem {
+  position: relative;
+  z-index: 2;
+  width: clamp(118px, 30vw, 152px);
+  height: clamp(118px, 30vw, 152px);
+  margin-bottom: -44px;
+  color: #E2ECEB;
+  filter: drop-shadow(0 16px 28px rgba(0, 0, 0, 0.38));
+}
+
+.ma-compass-svg,
+.ma-sailboat-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.ma-opening__card {
+  position: relative;
+  z-index: 3;
+  width: min(450px, 100%);
+  padding: clamp(32px, 6vw, 42px) clamp(20px, 5vw, 32px) clamp(22px, 4vw, 28px);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 254, 250, 0.99), rgba(247, 244, 233, 0.97));
+  color: var(--ma-text);
+  border: 2px solid rgba(21, 91, 138, 0.36);
+  box-shadow: 0 32px 72px -24px rgba(0, 0, 0, 0.58);
+  text-align: center;
+}
+
+.ma-opening__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.ma-opening__coords {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  color: var(--ma-muted);
+}
+
+.ma-opening__coords i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ma-terracotta);
+}
+
+.ma-opening__monogram {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(21, 91, 138, 0.1);
+  color: var(--ma-cobalt);
+  font-family: var(--ma-heading-font);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.ma-opening__kicker {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ma-cobalt);
+}
+
+.ma-opening__title {
+  margin: 8px 0 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.ma-opening__title span {
+  font-family: var(--ma-heading-font);
+  font-size: clamp(2rem, 7vw, 2.8rem);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--ma-text);
+}
+
+.ma-opening__title em {
+  font-family: var(--ma-script-font, Georgia, serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.55rem, 5.2vw, 2.15rem);
+  color: var(--ma-cobalt);
+}
+
+.ma-opening__subtitle {
+  margin: 0 auto;
+  max-width: 34ch;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--ma-muted);
+}
+
+.ma-opening__divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 16px 0;
+  color: var(--ma-terracotta);
+}
+
+.ma-opening__divider span {
+  flex: 1;
+  border-top: 1.5px dashed rgba(21, 91, 138, 0.25);
+}
+
+.ma-opening__divider svg {
+  width: 14px;
+  height: 14px;
+}
+
+.ma-opening__pass {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  border-radius: 16px;
+  background: rgba(226, 236, 235, 0.55);
+  border: 1px solid rgba(21, 91, 138, 0.18);
+}
+
+.ma-opening__pass span {
+  font-size: 0.63rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  color: var(--ma-cobalt);
+}
+
+.ma-opening__pass strong {
+  font-family: var(--ma-heading-font);
+  font-size: 1.02rem;
+  color: var(--ma-text);
+}
+
+.ma-opening__pass small {
+  font-size: 0.78rem;
+  color: var(--ma-muted);
+}
+
+/* ==========================================================================
+   HERO STICKY EN DOS TIEMPOS (CENTRADO MATEMÁTICO 19% + 62% + 19% = 100%)
+   ========================================================================== */
+.ma-hero {
+  position: relative;
+  min-height: 195svh;
+}
+
+.ma-hero__stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 68px 16px 26px;
+}
+
+.ma-hero__field {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 24%, rgba(211, 134, 90, 0.24), transparent 44%),
+    radial-gradient(circle at 20% 80%, rgba(21, 91, 138, 0.1), transparent 45%);
+  pointer-events: none;
+}
+
+.ma-hero__watermark {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--ma-heading-font);
+  font-size: clamp(6.5rem, 28vw, 15rem);
+  font-weight: 700;
+  line-height: 0.85;
+  letter-spacing: 0.06em;
+  color: rgba(21, 91, 138, 0.055);
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Halo orbital alrededor del arco (15% + 70% + 15% = 100%) */
+.ma-hero__arch-halo {
+  position: absolute;
+  left: 15%;
+  width: 70%;
+  top: 5%;
+  height: 41svh;
+  max-height: 360px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.ma-hero__orbit-ring {
+  position: absolute;
+  inset: -4%;
+  border-radius: 999px;
+  border: 1.5px dashed rgba(21, 91, 138, 0.24);
+}
+
+.ma-hero__orbit-ring--inner {
+  inset: 6%;
+  border-style: solid;
+  border-color: rgba(211, 134, 90, 0.26);
+}
+
+.ma-seal {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ma-cobalt);
+}
+
+.ma-seal__spinner {
+  width: min(100%, 310px);
+  height: min(100%, 310px);
+  animation: ma-spin 44s linear infinite;
+}
+
+.ma-seal__text {
+  fill: currentColor;
+  font-size: 8.8px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.72;
+}
+
+@keyframes ma-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Medallón de Rosa de los Vientos y Velero flotantes */
+.ma-hero__compass-float {
+  position: absolute;
+  left: 6%;
+  top: 72px;
+  width: clamp(58px, 15vw, 86px);
+  height: clamp(58px, 15vw, 86px);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ma-cobalt);
+  z-index: 4;
+  cursor: pointer;
+  filter: drop-shadow(0 12px 22px rgba(16, 47, 69, 0.18));
+  transition: transform 0.35s ease;
+}
+
+.ma-hero__compass-float:hover,
+.ma-hero--breeze .ma-hero__compass-float {
+  transform: rotate(45deg) scale(1.06);
+}
+
+.ma-hero__sailboat-float {
+  position: absolute;
+  right: 5%;
+  top: 66px;
+  width: clamp(68px, 17vw, 104px);
+  z-index: 4;
+  pointer-events: none;
+  filter: drop-shadow(0 14px 24px rgba(16, 47, 69, 0.2));
+  animation: ma-boat-bob 5.2s ease-in-out infinite;
+}
+
+@keyframes ma-boat-bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1.5deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(1.5deg);
+  }
+}
+
+/* Ventana en Arco Mediterráneo: Centrado Matemático 19% + 62% + 19% = 100% */
+.ma-hero__visual {
+  position: absolute;
+  left: 19%;
+  width: 62%;
+  top: 8%;
+  height: 36svh;
+  border-radius: 999px 999px 28px 28px;
+  overflow: hidden;
+  z-index: 3;
+  border: 5px solid #FFFDF8;
+  box-shadow:
+    0 0 0 2px var(--ma-cobalt),
+    0 24px 55px -18px rgba(16, 47, 69, 0.42);
+  background: #102F45;
+  transition: border-width 0.25s ease, box-shadow 0.25s ease;
+}
+
+.ma-hero__visual[data-scrolling='true'] {
+  border-width: 0;
+  box-shadow: none;
+}
+
+.ma-hero__visual img,
+.ma-hero__visual video,
+.ma-hero__media-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 22%;
+  display: block;
+}
+
+.ma-hero__tile-rim {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 8px rgba(247, 244, 233, 0.35),
+    inset 0 0 0 10px rgba(21, 91, 138, 0.35);
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.ma-hero__visual[data-scrolling='true'] .ma-hero__tile-rim {
+  opacity: 0;
+}
+
+.ma-hero__media-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(16, 47, 69, 0.12) 0%,
+    rgba(16, 47, 69, 0.08) 45%,
+    rgba(16, 47, 69, 0.56) 100%
+  );
+  pointer-events: none;
+}
+
+/* Copy principal centrado en móvil */
+.ma-hero__copy {
+  position: relative;
+  z-index: 5;
+  width: min(680px, calc(100% - 28px));
+  margin: 0 auto;
+  padding: 18px 18px clamp(24px, 3.8vh, 34px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border-radius: 26px;
+  background: rgba(251, 248, 239, 0.91);
+  border: 1px solid rgba(21, 91, 138, 0.18);
+  box-shadow: 0 22px 48px -26px rgba(16, 47, 69, 0.32);
+  backdrop-filter: blur(12px);
+  margin-bottom: clamp(18px, 3.4vh, 32px);
+}
+
+.ma-hero__pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 5px 13px;
+  border-radius: 999px;
+  background: rgba(21, 91, 138, 0.1);
+  border: 1px solid rgba(21, 91, 138, 0.24);
+  color: var(--ma-cobalt);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.ma-hero__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ma-terracotta);
+  box-shadow: 0 0 0 4px rgba(211, 134, 90, 0.22);
+}
+
+.ma-hero__title {
+  margin: 10px 0 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ma-hero__title-kicker {
+  font-family: var(--ma-body-font);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  color: var(--ma-muted);
+  margin-bottom: 4px;
+}
+
+.ma-hero__title strong {
+  font-family: var(--ma-heading-font);
+  font-size: clamp(2rem, 7vw, 3.6rem);
+  font-weight: 700;
+  line-height: 0.96;
+  letter-spacing: -0.02em;
+  color: var(--ma-text);
+}
+
+.ma-hero__title em {
+  font-family: var(--ma-script-font, Georgia, serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.55rem, 5.4vw, 2.55rem);
+  line-height: 1.05;
+  color: var(--ma-cobalt);
+}
+
+.ma-hero__tagline {
+  margin: 4px auto 12px;
+  max-width: 44ch;
+  font-size: clamp(0.88rem, 2.3vw, 1rem);
+  line-height: 1.5;
+  color: var(--ma-muted);
+}
+
+.ma-hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-bottom: 12px;
+}
+
+.ma-hero__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 11px;
+  border-radius: 999px;
+  background: rgba(255, 253, 248, 0.92);
+  border: 1px solid rgba(21, 91, 138, 0.16);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--ma-text);
+}
+
+.ma-hero__chip svg {
+  color: var(--ma-cobalt);
+}
+
+.ma-hero__guest {
+  margin: 0 0 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(211, 134, 90, 0.16);
+  color: var(--ma-text);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.ma-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* Tarjeta puente al expandir la fotografía */
+.ma-hero__reveal {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 6;
+  width: min(460px, calc(100% - 32px));
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ma-hero__reveal-card {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  border-radius: 22px;
+  background: rgba(14, 43, 64, 0.9);
+  border: 1.5px solid rgba(226, 236, 235, 0.36);
+  color: #F7F4E9;
+  box-shadow: 0 24px 50px -18px rgba(0, 0, 0, 0.58);
+  backdrop-filter: blur(14px);
+}
+
+.ma-hero__reveal-thumb {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  object-fit: cover;
+  border: 2px solid var(--ma-terracotta);
+  flex-shrink: 0;
+}
+
+.ma-hero__reveal-body {
+  min-width: 0;
+  text-align: left;
+}
+
+.ma-hero__reveal-kicker {
+  display: block;
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: var(--ma-terracotta);
+  text-transform: uppercase;
+}
+
+.ma-hero__reveal-title {
+  margin: 2px 0 4px;
+  font-family: var(--ma-heading-font);
+  font-size: 1rem;
+  font-weight: 700;
+  color: #FFFDF8;
+}
+
+.ma-hero__reveal-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #E2ECEB;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.ma-hero__scroll-hint {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: var(--ma-muted);
+}
+
+@media (min-width: 960px) {
+  .ma-hero__stage {
+    justify-content: center;
+  }
+
+  .ma-hero__arch-halo {
+    left: 53%;
+    width: 39%;
+    top: 12%;
+    height: 72svh;
+    max-height: none;
+  }
+
+  .ma-hero__visual {
+    left: 56%;
+    width: 33%;
+    top: 14%;
+    height: 66svh;
+  }
+
+  .ma-hero__compass-float {
+    left: 51%;
+    top: 16%;
+    width: 88px;
+    height: 88px;
+  }
+
+  .ma-hero__sailboat-float {
+    right: 6%;
+    top: 14%;
+    width: 112px;
+  }
+
+  .ma-hero__copy {
+    margin: 0 0 0 clamp(32px, 6vw, 88px);
+    width: min(500px, 46%);
+    align-items: flex-start;
+    text-align: left;
+    padding: 26px 28px;
+  }
+
+  .ma-hero__title {
+    align-items: flex-start;
+  }
+
+  .ma-hero__tagline {
+    margin-inline: 0;
+  }
+
+  .ma-hero__meta,
+  .ma-hero__actions {
+    justify-content: flex-start;
+  }
+}
+
+/* ==========================================================================
+   MARQUESINA CINÉTICA COSTERA
+   ========================================================================== */
+.ma-marquee {
+  position: relative;
+  z-index: 4;
+  overflow: hidden;
+  padding: 13px 0;
+  background: var(--ma-text);
+  color: #F7F4E9;
+  border-block: 1.5px solid rgba(211, 134, 90, 0.36);
+}
+
+.ma-marquee__track {
+  display: flex;
+  width: max-content;
+  animation: ma-marquee-scroll 30s linear infinite;
+}
+
+.ma-marquee--reverse .ma-marquee__track {
+  animation-direction: reverse;
+}
+
+.ma-marquee__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  padding-right: 18px;
+  font-family: var(--ma-heading-font);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.ma-marquee__sep {
+  width: 12px;
+  height: 12px;
+  color: var(--ma-terracotta);
+}
+
+@keyframes ma-marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-33.333%);
+  }
+}
+
+/* ==========================================================================
+   SECCIÓN 2: NUESTRA TRAVESÍA (MANIFIESTO + CARTA NÁUTICA SVG)
+   ========================================================================== */
+.ma-story {
+  overflow: hidden;
+}
+
+.ma-chart-backdrop {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(740px, 118vw);
+  height: min(740px, 118vw);
+  transform: translate(-50%, -50%);
+  color: #E2ECEB;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.ma-story__quote {
+  margin: 0 auto;
+  max-width: 780px;
+  text-align: center;
+  font-family: var(--ma-script-font, Georgia, serif);
+  font-style: italic;
+  font-size: clamp(1.38rem, 3.6vw, 2.25rem);
+  line-height: 1.48;
+  color: #FFFDF8;
+}
+
+.ma-story__word {
+  display: inline-block;
+}
+
+.ma-story__author {
+  margin: 18px auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ma-terracotta);
+}
+
+.ma-story__author-star {
+  width: 13px;
+  height: 13px;
+}
+
+.ma-story__grid {
+  margin-top: clamp(36px, 6vw, 54px);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.ma-story__card {
+  flex: 1 1 280px;
+  max-width: 350px;
+  padding: 24px 22px;
+  border-radius: 24px;
+  background: rgba(247, 244, 233, 0.08);
+  border: 1px solid rgba(226, 236, 235, 0.24);
+  backdrop-filter: blur(12px);
+  text-align: center;
+}
+
+.ma-story__card-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(211, 134, 90, 0.2);
+  color: #F6C89F;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  margin-bottom: 12px;
+}
+
+.ma-story__card h3 {
+  margin: 0 0 8px;
+  font-family: var(--ma-heading-font);
+  font-size: 1.24rem;
+  color: #FFFDF8;
+}
+
+.ma-story__card p {
+  margin: 0;
+  font-size: 0.93rem;
+  line-height: 1.6;
+  color: rgba(247, 244, 233, 0.84);
+}
+
+/* ==========================================================================
+   SECCIÓN 3: LAS 4 CALAS DE NUESTRA CELEBRACIÓN
+   ========================================================================== */
+.ma-coves__grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 22px;
+  max-width: 980px;
+  margin-inline: auto;
+}
+
+@media (min-width: 760px) {
+  .ma-coves__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.ma-cove-card {
+  min-width: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  border-radius: 26px;
+  overflow: hidden;
+  background: var(--ma-card-bg);
+  border: 1.5px solid var(--ma-border);
+  box-shadow: var(--ma-shadow);
+  cursor: pointer;
+  transition: border-color 0.22s ease, transform 0.22s ease;
+}
+
+.ma-cove-card:hover {
+  transform: translateY(-3px);
+}
+
+.ma-cove-card--active {
+  border-color: var(--ma-cobalt);
+  box-shadow: 0 0 0 2px rgba(21, 91, 138, 0.22), var(--ma-shadow);
+}
+
+.ma-cove-card__media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: #102F45;
+}
+
+.ma-cove-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ma-cove-card__tag {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  max-width: calc(100% - 24px);
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: rgba(16, 47, 69, 0.86);
+  border: 1px solid rgba(226, 236, 235, 0.38);
+  color: #F7F4E9;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ma-cove-card__coords {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(247, 244, 233, 0.9);
+  color: var(--ma-text);
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.ma-cove-card__body {
+  min-width: 0;
+  padding: 20px 18px 22px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ma-cove-card__code {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: var(--ma-cobalt);
+  margin-bottom: 5px;
+}
+
+.ma-cove-card__body h3 {
+  margin: 0 0 4px;
+  font-family: var(--ma-heading-font);
+  font-size: 1.32rem;
+  color: var(--ma-text);
+}
+
+.ma-cove-card__sub {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--ma-terracotta);
+}
+
+.ma-cove-card__body p {
+  margin: 0;
+  max-width: 44ch;
+  font-size: 0.93rem;
+  line-height: 1.58;
+  color: var(--ma-muted);
+}
+
+/* ==========================================================================
+   SECCIÓN 4: NUESTRA GENTE / FAMILIA (SIEMPRE CENTRADO)
+   ========================================================================== */
+.ma-family__grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.ma-family__card {
+  flex: 1 1 280px;
+  max-width: 350px;
+  padding: 26px 22px;
+  border-radius: 24px;
+  background: var(--ma-card-bg);
+  border: 1.5px solid var(--ma-border);
+  box-shadow: var(--ma-shadow);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ma-family__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(21, 91, 138, 0.1);
+  color: var(--ma-cobalt);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  margin-bottom: 12px;
+}
+
+.ma-family__card h3 {
+  margin: 0 0 12px;
+  font-family: var(--ma-heading-font);
+  font-size: 1.2rem;
+  color: var(--ma-cobalt);
+}
+
+.ma-family__names {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ma-family__names strong {
+  font-size: 1.02rem;
+  color: var(--ma-text);
+}
+
+/* ==========================================================================
+   SECCIÓN 5: RELOJ DE MAREA (CUENTA REGRESIVA)
+   ========================================================================== */
+.ma-countdown__console {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: clamp(22px, 5vw, 40px);
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(211, 134, 90, 0.22), transparent 55%),
+    linear-gradient(180deg, #153D5A 0%, #0E2B40 100%);
+  border: 2px solid rgba(226, 236, 235, 0.34);
+  color: #F7F4E9;
+  box-shadow: 0 28px 64px -24px rgba(16, 47, 69, 0.48);
+  text-align: center;
+}
+
+.ma-countdown__status {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  max-width: 100%;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(226, 236, 235, 0.12);
+  color: #E2ECEB;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 22px;
+}
+
+.ma-countdown__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ma-terracotta);
+  box-shadow: 0 0 10px var(--ma-terracotta);
+}
+
+.ma-countdown__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+@media (min-width: 640px) {
+  .ma-countdown__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.ma-countdown__pod {
+  min-width: 0;
+  padding: 18px 12px;
+  border-radius: 20px;
+  background: rgba(247, 244, 233, 0.08);
+  border: 1px solid rgba(226, 236, 235, 0.26);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.ma-countdown__pod small {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: var(--ma-terracotta);
+}
+
+.ma-countdown__pod strong {
+  font-family: var(--ma-heading-font);
+  font-size: clamp(2rem, 6vw, 3rem);
+  font-weight: 700;
+  line-height: 1;
+  color: #FFFDF8;
+}
+
+.ma-countdown__pod span {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(247, 244, 233, 0.78);
+}
+
+.ma-countdown__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* ==========================================================================
+   SECCIÓN 6: COORDENADAS DEL ENCUENTRO (UBICACIONES Y MAPA)
+   ========================================================================== */
+.ma-locations__list {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.ma-location-card {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 22px;
+  padding: clamp(18px, 4vw, 28px);
+  border-radius: 28px;
+  background: var(--ma-card-bg);
+  border: 1.5px solid var(--ma-border);
+  box-shadow: var(--ma-shadow);
+}
+
+.ma-location-card__visual-col {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+}
+
+.ma-location-card__media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #102F45;
+}
+
+.ma-location-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ma-location-card__coord {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(16, 47, 69, 0.86);
+  color: #F7F4E9;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.ma-location-card__map {
+  height: 210px;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--ma-border);
+}
+
+.ma-location-card__map iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.ma-location-card__info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.ma-location-card__kicker {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  max-width: 100%;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(21, 91, 138, 0.1);
+  color: var(--ma-cobalt);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.ma-location-card__info h3 {
+  margin: 0 0 10px;
+  font-family: var(--ma-heading-font);
+  font-size: clamp(1.5rem, 4vw, 2.1rem);
+  color: var(--ma-text);
+}
+
+.ma-location-card__address {
+  margin: 0 0 20px;
+  display: inline-flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 7px;
+  max-width: 42ch;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--ma-muted);
+}
+
+.ma-location-card__routes {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.ma-route-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 11px 14px;
+  border-radius: 14px;
+  background: rgba(226, 236, 235, 0.65);
+  border: 1px solid rgba(21, 91, 138, 0.2);
+  color: var(--ma-text);
+  font-size: 0.79rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.ma-route-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(226, 236, 235, 0.95);
+}
+
+.ma-route-btn--primary {
+  background: var(--ma-cobalt);
+  border-color: var(--ma-cobalt);
+  color: #FFFDF8;
+}
+
+.ma-route-btn--primary:hover {
+  background: #0F3E61;
+}
+
+@media (min-width: 860px) {
+  .ma-location-card {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    align-items: center;
+  }
+}
+
+/* ==========================================================================
+   SECCIÓN 7: EL RUMBO DEL DÍA (TIMELINE CON VELERO VIAJERO)
+   ========================================================================== */
+.ma-timeline__track {
+  position: relative;
+  max-width: 780px;
+  margin: 0 auto;
+  padding-left: 44px;
+}
+
+.ma-timeline__rail {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 16px;
+  width: 3px;
+  background: rgba(21, 91, 138, 0.16);
+  border-radius: 999px;
+}
+
+.ma-timeline__progress {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, var(--ma-cobalt), var(--ma-terracotta));
+  border-radius: 999px;
+}
+
+.ma-timeline__runner {
+  position: absolute;
+  left: 50%;
+  top: 0%;
+  width: 36px;
+  height: 36px;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+}
+
+.ma-timeline__items {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.ma-timeline__item {
+  position: relative;
+}
+
+.ma-timeline__node {
+  position: absolute;
+  left: -44px;
+  top: 20px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--ma-bg);
+  border: 2px solid var(--ma-cobalt);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: var(--ma-cobalt);
+}
+
+.ma-timeline__card {
+  padding: 20px 22px;
+  border-radius: 22px;
+  background: var(--ma-card-bg);
+  border: 1.5px solid var(--ma-border);
+  box-shadow: var(--ma-shadow);
+  text-align: center;
+}
+
+.ma-timeline__meta {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.ma-timeline__time {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--ma-cobalt);
+  color: #FFFDF8;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.ma-timeline__step {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: var(--ma-terracotta);
+}
+
+.ma-timeline__card h3 {
+  margin: 4px 0 6px;
+  font-family: var(--ma-heading-font);
+  font-size: 1.2rem;
+  color: var(--ma-text);
+}
+
+.ma-timeline__card p {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--ma-muted);
+}
+
+/* ==========================================================================
+   SECCIÓN 8: POSTALES JUNTO AL MAR (GALERÍA AUTO-CENTRADA)
+   ========================================================================== */
+.ma-gallery__grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.ma-gallery__card {
+  margin: 0;
+  flex: 1 1 250px;
+  max-width: 340px;
+  padding: 12px 12px 16px;
+  border-radius: 24px;
+  background: #FFFDF8;
+  border: 1.5px solid var(--ma-border);
+  box-shadow: var(--ma-shadow);
+  text-align: center;
+}
+
+.ma-gallery__img-wrap {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #102F45;
+}
+
+.ma-gallery__img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ma-gallery__badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(16, 47, 69, 0.84);
+  color: #F7F4E9;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.ma-gallery__caption {
+  margin-top: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--ma-text);
+}
+
+.ma-gallery__star {
+  width: 11px;
+  height: 11px;
+  color: var(--ma-terracotta);
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   SECCIÓN 9: DRESS CODE COSTERO
+   ========================================================================== */
+.ma-dress__grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  max-width: 820px;
+  margin: 0 auto 22px;
+}
+
+.ma-dress__card {
+  flex: 1 1 290px;
+  max-width: 390px;
+  padding: 26px 22px;
+  border-radius: 24px;
+  background: var(--ma-card-bg);
+  border: 1.5px solid var(--ma-border);
+  box-shadow: var(--ma-shadow);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ma-dress__icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(21, 91, 138, 0.1);
+  color: var(--ma-cobalt);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.ma-dress__role {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: var(--ma-terracotta);
+}
+
+.ma-dress__card h3 {
+  margin: 6px 0 8px;
+  font-family: var(--ma-heading-font);
+  font-size: 1.3rem;
+  color: var(--ma-text);
+}
+
+.ma-dress__card p {
+  margin: 0;
+  font-size: 0.93rem;
+  line-height: 1.58;
+  color: var(--ma-muted);
+}
+
+.ma-dress__checklist {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.ma-dress__checklist span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: rgba(21, 91, 138, 0.09);
+  color: var(--ma-cobalt);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.ma-dress__palette {
+  max-width: 540px;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 22px;
+  background: var(--ma-card-bg);
+  border: 1px dashed rgba(21, 91, 138, 0.28);
+  text-align: center;
+}
+
+.ma-dress__palette-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  color: var(--ma-cobalt);
+  margin-bottom: 12px;
+}
+
+.ma-dress__swatches {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+}
+
+.ma-dress__swatch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #FFFDF8;
+  border: 1px solid var(--ma-border);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.ma-dress__swatch i {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid rgba(16, 47, 69, 0.25);
+}
+
+.ma-dress__palette p {
+  margin: 10px 0 0;
+  font-size: 0.85rem;
+  color: var(--ma-muted);
+}
+
+/* ==========================================================================
+   SECCIÓN 10 & 11: DETALLES / REGALOS Y HOSPEDAJE (AUTO-CENTRADOS)
+   ========================================================================== */
+.ma-gifts__grid,
+.ma-stay__grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.ma-gifts__card,
+.ma-stay__card {
+  flex: 1 1 280px;
+  max-width: 420px;
+  padding: 26px 22px;
+  border-radius: 24px;
+  background: var(--ma-card-bg);
+  border: 1.5px solid var(--ma-border);
+  box-shadow: var(--ma-shadow);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.ma-gifts__card--wide {
+  max-width: 480px;
+}
+
+.ma-gifts__icon,
+.ma-stay__icon {
+  color: var(--ma-cobalt);
+}
+
+.ma-gifts__card span {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  color: var(--ma-terracotta);
+}
+
+.ma-gifts__card h3,
+.ma-stay__card h3 {
+  margin: 2px 0;
+  font-family: var(--ma-heading-font);
+  font-size: 1.24rem;
+  color: var(--ma-text);
+}
+
+.ma-gifts__card p,
+.ma-stay__card p {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--ma-muted);
+}
+
+.ma-gifts__clabe {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-weight: 700;
+  color: var(--ma-text) !important;
+  background: rgba(226, 236, 235, 0.7);
+  padding: 6px 12px;
+  border-radius: 10px;
+}
+
+.ma-stay__code {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(21, 91, 138, 0.1);
+  color: var(--ma-cobalt);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+/* ==========================================================================
+   SECCIÓN 12: RECUERDOS COMPARTIDOS (ÁLBUM Y MÚSICA)
+   ========================================================================== */
+.ma-social__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  gap: 22px;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.ma-social__panel {
+  min-width: 0;
+  padding: clamp(20px, 4vw, 28px);
+  border-radius: 26px;
+  background: var(--ma-card-bg);
+  border: 1.5px solid var(--ma-border);
+  box-shadow: var(--ma-shadow);
+  text-align: center;
+}
+
+.ma-social__panel-head {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(21, 91, 138, 0.1);
+  color: var(--ma-cobalt);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  margin-bottom: 8px;
+}
+
+.ma-social__panel h3 {
+  margin: 0 0 16px;
+  font-family: var(--ma-heading-font);
+  font-size: 1.32rem;
+  color: var(--ma-text);
+}
+
+.ma-social__hashtag {
+  margin: 24px auto 0;
+  width: fit-content;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border-radius: 999px;
+  background: var(--ma-text);
+  color: #FFFDF8;
+  font-family: var(--ma-heading-font);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   SECCIÓN 13: PASE DE EMBARQUE (RSVP + CÓDIGO QR)
+   ========================================================================== */
+.ma-rsvp__pass {
+  max-width: 680px;
+  margin: 0 auto;
+  border-radius: 28px;
+  overflow: hidden;
+  background: #FFFDF8;
+  color: var(--ma-text);
+  border: 2px solid rgba(226, 236, 235, 0.55);
+  box-shadow: 0 30px 70px -24px rgba(0, 0, 0, 0.5);
+}
+
+.ma-rsvp__pass-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 14px 22px;
+  background: var(--ma-cobalt);
+  color: #FFFDF8;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.ma-rsvp__pass-bar span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.ma-rsvp__form {
+  padding: clamp(22px, 5vw, 34px);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ma-rsvp__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+}
+
+@media (min-width: 620px) {
+  .ma-rsvp__row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.ma-rsvp__field {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+}
+
+.ma-rsvp__field span {
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--ma-text);
+}
+
+.ma-rsvp__field input,
+.ma-rsvp__field select,
+.ma-rsvp__field textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1.5px solid rgba(21, 91, 138, 0.22);
+  background: #F9F6EC;
+  color: var(--ma-text);
+  font-family: inherit;
+  font-size: 0.94rem;
+}
+
+.ma-rsvp__field input:focus,
+.ma-rsvp__field select:focus,
+.ma-rsvp__field textarea:focus {
+  outline: 2px solid var(--ma-cobalt);
+  border-color: transparent;
+}
+
+.ma-rsvp__confirmed {
+  padding: clamp(26px, 5vw, 38px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+}
+
+.ma-rsvp__confirmed-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(21, 91, 138, 0.12);
+  color: var(--ma-cobalt);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.ma-rsvp__confirmed h3 {
+  margin: 0;
+  font-family: var(--ma-heading-font);
+  font-size: 1.5rem;
+  color: var(--ma-text);
+}
+
+.ma-rsvp__confirmed-meta {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--ma-muted);
+}
+
+.ma-rsvp__qr-box {
+  padding: 16px;
+  border-radius: 20px;
+  background: #FFFFFF;
+  border: 2px dashed rgba(21, 91, 138, 0.28);
+}
+
+.ma-rsvp__confirmed-note {
+  margin: 0;
+  max-width: 42ch;
+  font-size: 0.92rem;
+  color: var(--ma-muted);
+}
+
+/* ==========================================================================
+   FOOTER DE LA BAHÍA
+   ========================================================================== */
+.ma-footer {
+  padding: 58px 0 88px;
+  text-align: center;
+}
+
+.ma-footer__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.ma-footer__boat {
+  width: 68px;
+  height: 78px;
+  margin-bottom: 4px;
+}
+
+.ma-footer__kicker {
+  margin: 0;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: var(--ma-cobalt);
+}
+
+.ma-footer__title {
+  margin: 0;
+  font-family: var(--ma-heading-font);
+  font-size: clamp(1.8rem, 5vw, 2.7rem);
+  color: var(--ma-text);
+}
+
+.ma-footer__meta {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--ma-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ma-seal__spinner,
+  .ma-hero__sailboat-float,
+  .ma-marquee__track {
+    animation: none !important;
+  }
+}

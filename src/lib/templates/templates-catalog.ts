@@ -28,9 +28,9 @@ export const TEMPLATES_CATALOG: TemplateMetadata[] = [
   {
     id: 'marea-azul', name: 'Marea Azul', category: 'wedding',
     categoryLabel: 'Boda Costa / Mediterránea', badge: 'Nueva colección',
-    description: 'Una boda junto al mar narrada con horizonte, azulejos de cobalto y luz de mediodía.',
-    signatureAnimation: 'Horizonte deslizante + escenas de marea',
-    previewImage: '/images/marea-azul/cover.svg',
+    description: 'Una boda junto al mar narrada con arco mediterráneo, rosa de los vientos, velero en travesía, las 4 calas del día y azulejos de cobalto.',
+    signatureAnimation: 'Arco costero expansible + travesía con scroll',
+    previewImage: '/images/marea-azul/cover.jpg',
     colors: { bgPrimary: '#F7F4E9', bgSecondary: '#E2ECEB', textPrimary: '#102F45', textMuted: '#486A78', accentPrimary: '#155B8A', accentSecondary: '#D3865A' },
     fonts: { headingFont: 'Georgia', scriptFont: 'Cormorant Garamond', bodyFont: 'Plus Jakarta Sans' },
     envelopeVariant: 'editorial-curtain', ambientEffect: 'none',
@@ -38,9 +38,9 @@ export const TEMPLATES_CATALOG: TemplateMetadata[] = [
   {
     id: 'ritmo-de-dos', name: 'Ritmo de Dos', category: 'wedding',
     categoryLabel: 'Boda Retro / Música', badge: 'Nueva colección',
-    description: 'Una boda como el póster de un concierto íntimo: tipografía cinética, vinilo y color cálido.',
-    signatureAnimation: 'Vinilo en movimiento + póster desplegable',
-    previewImage: '/images/ritmo-de-dos/cover.svg',
+    description: 'Una boda como sesión en vinilo y concierto íntimo: disco 33⅓ RPM que se expande al hacer scroll, brazo de tornamesa, 4 tracks del álbum y boleto QR.',
+    signatureAnimation: 'Vinilo 33 RPM expansible + setlist con scroll',
+    previewImage: '/images/ritmo-de-dos/cover.jpg',
     colors: { bgPrimary: '#F9EBCF', bgSecondary: '#F2C67A', textPrimary: '#512720', textMuted: '#765244', accentPrimary: '#B83A29', accentSecondary: '#3D665F' },
     fonts: { headingFont: 'Syne', scriptFont: 'Georgia', bodyFont: 'Space Grotesk' },
     envelopeVariant: 'pass-ticket-tear', ambientEffect: 'none',
@@ -48,9 +48,9 @@ export const TEMPLATES_CATALOG: TemplateMetadata[] = [
   {
     id: 'mini-cosmos', name: 'Mini Cosmos', category: 'kids_birthday',
     categoryLabel: 'Cumpleaños Infantil / Espacio', badge: 'Nueva colección',
-    description: 'Una misión espacial para jugar y celebrar, con planetas, ruta orbital y controles claros para familias.',
-    signatureAnimation: 'Despegue orbital + constelación de capítulos',
-    previewImage: '/images/mini-cosmos/cover.svg',
+    description: 'Una misión espacial interactiva con escotilla orbital, cohete en trayectoria, centro de misión y capítulos envolventes en móvil.',
+    signatureAnimation: 'Escotilla orbital + despegue con scroll y telemetría',
+    previewImage: '/images/mini-cosmos/astronaut.jpg',
     colors: { bgPrimary: '#101B3D', bgSecondary: '#1C3059', textPrimary: '#F9F5E9', textMuted: '#B9CAE1', accentPrimary: '#B44D2E', accentSecondary: '#8AD6C5' },
     fonts: { headingFont: 'Fredoka', scriptFont: 'Fredoka', bodyFont: 'Plus Jakarta Sans' },
     envelopeVariant: 'pass-ticket-tear', ambientEffect: 'soft-stars',
@@ -58,9 +58,9 @@ export const TEMPLATES_CATALOG: TemplateMetadata[] = [
   {
     id: 'atelier-xv', name: 'Atelier XV', category: 'xv_years',
     categoryLabel: 'XV Años / Moda Editorial', badge: 'Nueva colección',
-    description: 'Quince años como manifiesto de estilo personal: recortes de atelier, cinta plateada y pasarela azul.',
-    signatureAnimation: 'Paneles de pasarela + capítulos de estilo',
-    previewImage: '/images/atelier-xv/cover.svg',
+    description: 'Quince años como edición de alta costura: retrato en arco, lazo de satén, lookbook de pasarela y capítulos luminosos.',
+    signatureAnimation: 'Arco de atelier + lookbook de pasarela con scroll',
+    previewImage: '/images/atelier-xv/cover.jpg',
     colors: { bgPrimary: '#EDEFF3', bgSecondary: '#DCE2ED', textPrimary: '#14294C', textMuted: '#5C6A83', accentPrimary: '#315BA1', accentSecondary: '#A9B5C7' },
     fonts: { headingFont: 'Times New Roman', scriptFont: 'Georgia', bodyFont: 'Montserrat' },
     envelopeVariant: 'editorial-curtain', ambientEffect: 'none',
@@ -72,10 +72,9 @@ export const TEMPLATES_CATALOG: TemplateMetadata[] = [
     categoryLabel: 'Boda Clásica / Luxury',
     badge: 'Bestseller Bodas',
     description:
-      'Una invitación de boda como pieza de papelería editorial: sobre nominal, arcos fotográficos, ilustración botánica y capítulos que se revelan al recorrerla.',
-    signatureAnimation: 'Sobre de lacre + Scrollytelling botánico',
-    previewImage:
-      'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1000&q=80',
+      'Una invitación de boda como pieza de papelería editorial de hacienda: sobre lacrado nominal, arco de cantera en 2 tiempos, los 4 tiempos de la velada, rosetón arquitectónico y blasón botánico.',
+    signatureAnimation: 'Sobre de Lacre + Arco de Cantera en 2 Tiempos',
+    previewImage: '/images/eternal-elegance/cover.jpg',
     colors: {
       bgPrimary: '#FAF7F2',
       bgSecondary: '#F2ECE1',
@@ -177,9 +176,9 @@ export const TEMPLATES_CATALOG: TemplateMetadata[] = [
     categoryLabel: 'XV Años Moderno / Nocturno',
     badge: 'Tendencia Nocturna',
     description:
-      'XV años como una noche de club: luces magenta y cian, tipografía eléctrica, órbitas luminosas y pase VIP.',
-    signatureAnimation: 'Electric Orbit Reveal + VIP Ticket Exit',
-    previewImage: '/images/neon-xv-euphoria/night-stage.jpg',
+      'XV años como una noche de club: luces magenta y cian, corona de prisma láser, los 4 beats de la noche, ecualizador interactivo y pase VIP holográfico.',
+    signatureAnimation: 'Pase VIP Holográfico + Portal Neón en 2 Tiempos',
+    previewImage: '/images/neon-xv-euphoria/cover.jpg',
     colors: {
       bgPrimary: '#090614',
       bgSecondary: '#140E29',
@@ -397,14 +396,22 @@ export function createDefaultInvitationConfig(
         quoteAuthor: customTitle,
         storyBlocks: [
           {
-            title: 'Nuestro Comienzo',
+            title: 'El primer encuentro',
             description:
               'Una tarde inolvidable llena de risas y complicidad que cambió nuestras vidas para siempre.',
+            imageUrl: '/images/eternal-elegance/vows.jpg',
+          },
+          {
+            title: 'La promesa en calma',
+            description:
+              'Entre viajes, cafés largos y sueños compartidos, descubrimos que nuestro hogar es estar juntos.',
+            imageUrl: '/images/eternal-elegance/ceremony.jpg',
           },
           {
             title: 'El Gran Día',
             description:
-              'Hoy damos el siguiente paso rodeados de las personas que más amamos en el mundo.',
+              'Hoy damos el siguiente paso en San Miguel de Allende rodeados de las personas que más amamos.',
+            imageUrl: '/images/eternal-elegance/hacienda.jpg',
           },
         ],
       },
@@ -434,8 +441,7 @@ export function createDefaultInvitationConfig(
           venueName: 'Parroquia de San Miguel Arcángel',
           time: '17:00 HRS',
           address: 'Principal S/N, Zona Centro, 37700 San Miguel de Allende, Gto.',
-          imageUrl:
-            'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=800&q=80',
+          imageUrl: '/images/eternal-elegance/ceremony.jpg',
           coordinates: { lat: 20.9144, lng: -100.7439 },
           googleMapsUrl:
             'https://www.google.com/maps/search/?api=1&query=20.9144,-100.7439',
@@ -448,8 +454,7 @@ export function createDefaultInvitationConfig(
           venueName: 'Hacienda Los Arcángeles',
           time: '19:30 HRS',
           address: 'Salida Real a Querétaro 189, Centro, San Miguel de Allende, Gto.',
-          imageUrl:
-            'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=800&q=80',
+          imageUrl: '/images/eternal-elegance/hacienda.jpg',
           coordinates: { lat: 20.9092, lng: -100.7351 },
           googleMapsUrl:
             'https://www.google.com/maps/search/?api=1&query=20.9092,-100.7351',
@@ -490,20 +495,20 @@ export function createDefaultInvitationConfig(
         layout: 'bento-grid',
         images: [
           {
-            url: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=900&q=80',
-            caption: 'Nuestro compromiso',
+            url: '/images/eternal-elegance/cover.jpg',
+            caption: 'Nuestro compromiso en San Miguel',
           },
           {
-            url: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=900&q=80',
-            caption: 'Atardecer en San Miguel',
+            url: '/images/eternal-elegance/vows.jpg',
+            caption: 'La promesa que nos une',
           },
           {
-            url: 'https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=900&q=80',
-            caption: 'Por siempre juntos',
+            url: '/images/eternal-elegance/hacienda.jpg',
+            caption: 'Nuestra mesa bajo las estrellas',
           },
           {
-            url: 'https://images.unsplash.com/photo-1537633552985-df8429e8048b?auto=format&fit=crop&w=900&q=80',
-            caption: 'Cuenta regresiva',
+            url: '/images/eternal-elegance/toast.jpg',
+            caption: 'Brindis por toda una vida juntos',
           },
         ],
       },
@@ -681,55 +686,82 @@ export function createDefaultInvitationConfig(
     config.content.hero = {
       ...config.content.hero,
       badgeText: 'MIS XV / ONE NIGHT ONLY',
-      tagline: 'Una noche para brillar · San Miguel de Allende',
-      focalPoint: { x: 50, y: 50 },
+      tagline: 'Una noche de luces, beats y energía inolvidable · San Miguel de Allende',
+      coverImageUrl: '/images/neon-xv-euphoria/cover.jpg',
+      focalPoint: { x: 50, y: 28 },
     };
     config.content.quoteStory = {
       quoteText: 'Quince años de música, amigos y momentos inolvidables. Ahora empieza mi noche favorita, y quiero que seas parte de ella.',
       quoteAuthor: quinceName,
       storyBlocks: [
-        { title: 'Mi energía', description: 'Todo lo que soy y todo lo que sueño se encuentra en esta pista.' },
-        { title: 'Nuestra noche', description: 'Bailar, reír y vivir un recuerdo que nos acompañe siempre.' },
+        {
+          title: 'De sueños a luces de neón',
+          description: 'Cada etapa de mi vida ha tenido su propio soundtrack, y hoy quiero subirle el volumen junto a las personas que siempre han estado conmigo.',
+          imageUrl: '/images/neon-xv-euphoria/glow.jpg',
+        },
+        {
+          title: 'Una noche diseñada a mi estilo',
+          description: 'Preparamos un club nocturno lleno de láseres, espejos, música increíble y sorpresas en cada rincón.',
+          imageUrl: '/images/neon-xv-euphoria/stage.jpg',
+        },
+        {
+          title: 'Contigo en primera fila',
+          description: 'Esta noche no está completa sin ti. Trae tu mejor actitud, tus ganas de bailar y prepárate para brillar hasta la medianoche.',
+          imageUrl: '/images/neon-xv-euphoria/dancefloor.jpg',
+        },
       ],
     };
     config.content.vipParents = {
-      blessingMessage: 'Con el amor de mi familia y la alegría de celebrar contigo',
+      blessingMessage: 'Con el amor de mi familia y la alegría de encender esta noche contigo',
       groups: [
         { groupTitle: 'Mis papás', names: ['Patricia Salazar', 'Alejandro Ríos'] },
         { groupTitle: 'Mis padrinos', names: ['Mariana Salazar', 'Roberto Ríos'] },
+        { groupTitle: 'VIP Crew & Familia', names: ['Mis hermanos, primos y mejores amigos'] },
       ],
     };
     config.content.locations = [{
-      ...config.content.locations[1], id: 'neon-party', type: 'reception',
-      title: 'Mi fiesta de XV años', time: '19:00 HRS',
-      imageUrl: '/images/neon-xv-euphoria/night-stage.jpg',
+      ...config.content.locations[1],
+      id: 'neon-party',
+      type: 'reception',
+      title: 'Main Stage · Mi Fiesta de XV Años',
+      time: '20:00 HRS',
+      imageUrl: '/images/neon-xv-euphoria/stage.jpg',
     }];
     config.content.timeline = [
-      { id: 'neon-1', time: '19:00 HRS', title: 'Check-in VIP', description: 'Llega, saluda y prepárate para brillar.', icon: 'party' },
-      { id: 'neon-2', time: '20:00 HRS', title: 'Mi entrada', description: 'El momento de encender la noche.', icon: 'waltz' },
-      { id: 'neon-3', time: '21:00 HRS', title: 'La pista es nuestra', description: 'DJ, luces y nuestras canciones favoritas.', icon: 'party' },
+      { id: 'neon-1', time: '20:00 HRS', title: 'Red Carpet & Glow Check-In', description: 'Pulseras holográficas, túnel de neón, glitter bar y mocktails.', icon: 'cocktail' },
+      { id: 'neon-2', time: '21:00 HRS', title: 'Main Stage · Mi Entrada XV', description: 'Show de láseres, coreografía principal y brindis con chispas frías.', icon: 'waltz' },
+      { id: 'neon-3', time: '22:15 HRS', title: 'Mirrorball & DJ Live Set', description: 'Se abre la pista LED con DJ en vivo, esferas disco y accesorios UV.', icon: 'party' },
+      { id: 'neon-4', time: '00:00 HRS', title: 'Afterglow, Pastel & Late-Night Bites', description: 'Pastel metálico de medianoche, snacks y cierre épico.', icon: 'cake' },
     ];
     config.content.gallery = {
       layout: 'cinema-slider',
       images: [
-        { url: '/images/neon-xv-euphoria/night-stage.jpg', caption: 'Luces de la noche' },
-        { url: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=900&q=80', caption: 'La música' },
-        { url: 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=900&q=80', caption: 'Todos juntos' },
+        { url: '/images/neon-xv-euphoria/cover.jpg', caption: 'Backstage Editorial · Neon XV' },
+        { url: '/images/neon-xv-euphoria/stage.jpg', caption: 'Main Stage · Laser Show' },
+        { url: '/images/neon-xv-euphoria/dancefloor.jpg', caption: 'Mirrorball & Pista LED' },
+        { url: '/images/neon-xv-euphoria/toast.jpg', caption: 'Midnight Sparklers & Afterglow' },
       ],
     };
     config.content.dressCode = {
-      title: 'Glow party', womenNotes: 'Look de noche con un detalle neón, metálico o brillante.',
-      menNotes: 'Look formal de noche con un acento de color o brillo.',
-      reservedColors: [{ name: 'Magenta', hex: '#FF2E93' }],
-      reservedNote: 'El magenta es el color protagonista de la quinceañera.',
+      title: 'Neon Noir & Metallic Glam',
+      womenNotes: 'Look de noche en tonos oscuros o metálicos con un detalle neón, plata o brillante.',
+      menNotes: 'Look formal o street-glam de noche con un acento de color o brillo.',
+      reservedColors: [
+        { name: 'Magenta Euphoria', hex: '#FF2E93' },
+        { name: 'Cyber Cyan', hex: '#00F0FF' },
+        { name: 'Violeta Ultravioleta', hex: '#A855F7' },
+        { name: 'Plata Espejo', hex: '#E2E8F0' },
+      ],
+      reservedNote: 'El magenta eléctrico es el color protagonista exclusivo de la quinceañera.',
     };
     config.content.gifts = {
-      introMessage: 'Tu presencia es el mejor regalo. Si quieres tener un detalle, habrá un espacio para lluvia de sobres durante la fiesta.',
-      registries: [], cashEnvelopeAtVenue: true,
+      introMessage: 'Tu presencia es el mejor regalo. Si quieres tener un detalle conmigo, habrá buzón para lluvia de sobres en la entrada VIP.',
+      registries: [],
+      cashEnvelopeAtVenue: true,
     };
     config.content.accommodation = [];
     config.content.socialFeatures = { enableSongRequests: true, enableAudioGuestbook: false, enableLiveDisposableCamera: true, hashtag: `#XV${quinceName.replace(/\s+/g, '')}` };
-    config.content.rsvp.customConfirmationMessage = 'Este pase es una vista previa local. La asistencia aún no se ha enviado.';
+    config.content.rsvp.customConfirmationMessage = 'Presenta tu código QR en la entrada VIP al llegar al club.';
   }
 
   if (templateId === 'royal-xv-enchanted') {
