@@ -5,6 +5,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import type { GuestGroup, InvitationConfig } from '@/types/invitation.types';
 import type { NewWorldTemplateId } from '@/lib/templates/new-world-config';
+import { newWorldHeroDesktopSrc, newWorldHeroMobileSrc } from '@/lib/templates/new-world-config';
 import { HeroMedia } from '../core/HeroMedia';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -39,12 +40,13 @@ function WorldExperience({ variant, config, eventDate, guestGroup, actionHref }:
   const copy = presentation[variant];
   const date = new Intl.DateTimeFormat('es-MX', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'America/Mexico_City' }).format(new Date(eventDate));
   const { hero, locations } = config.content;
+  const displayHero = { ...hero, coverImageUrl: newWorldHeroMobileSrc(hero.coverImageUrl) };
   return <section className={`nw-hero nw-hero--${variant}`} data-editor-section="hero" id="nw-hero" aria-label={`Portada de ${copy.brand}`}>
     <div className="nw-hero__stage">
       <div className="nw-hero__texture" aria-hidden="true" />
       <nav className="nw-nav" aria-label="Navegación de la invitación"><a className="nw-nav__brand" href="#nw-hero">{copy.symbol} {copy.brand}</a><div><a href="#nw-moments">Momentos</a><a href="#st-locations">Lugar</a><a href="#st-rsvp">Confirmar</a></div></nav>
       <div className="nw-hero__copy"><p className="nw-overline">{copy.overline}</p><h1>{hero.mainTitle}</h1><p className="nw-hero__tagline">{hero.tagline}</p><p className="nw-hero__date">{date}<span aria-hidden="true"> · </span>{locations[0]?.venueName}</p>{guestGroup && <p className="nw-hero__guest">Pase para {guestGroup.groupName}</p>}</div>
-      <div className="nw-hero__visual"><HeroMedia hero={hero} alt={`Portada de ${hero.mainTitle}`} /><span className="nw-hero__photo-tag">{hero.badgeText}</span></div>
+      <div className="nw-hero__visual"><HeroMedia hero={displayHero} alt={`Portada de ${hero.mainTitle}`} desktopSrc={newWorldHeroDesktopSrc(displayHero.coverImageUrl)} /><span className="nw-hero__photo-tag">{hero.badgeText}</span></div>
       <div className="nw-hero__emblem" aria-hidden="true"><WorldSeal variant={variant} title={hero.mainTitle}/><div className="nw-hero__emblem-core"><WorldMotif variant={variant}/></div></div>
       <div className="nw-hero__bridge" aria-hidden="true"><span>{copy.overline}</span><p>{copy.bridge}</p></div>
       <a className="nw-hero__cta" href={actionHref}>{copy.cta}<span aria-hidden="true">↗</span></a>

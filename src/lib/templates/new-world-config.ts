@@ -6,6 +6,19 @@ export const isNewWorldTemplateId = (id: TemplateId): id is NewWorldTemplateId =
 
 const image = (id: NewWorldTemplateId, name: string) => `/images/${id}/${name}.webp`;
 
+export function newWorldHeroMobileSrc(src: string): string {
+  return /^\/images\/(opera-carmesi|pequeno-atlas|archivo-futuro)\/hero\.webp$/.test(src)
+    ? src.replace(/hero\.webp$/, 'hero-mobile.webp')
+    : src;
+}
+
+// Use the matching wide image only for our seed covers. An edited cover keeps its own media.
+export function newWorldHeroDesktopSrc(mobileSrc: string): string | undefined {
+  return /^\/images\/(opera-carmesi|pequeno-atlas|archivo-futuro)\/hero(?:-mobile)?\.webp$/.test(mobileSrc)
+    ? mobileSrc.replace(/hero(?:-mobile)?\.webp$/, 'hero-desktop.webp')
+    : undefined;
+}
+
 const worlds = {
   'opera-carmesi': {
     badge: 'MIS XV · UNA NOCHE EN ESCENA', tagline: 'El telón se abre para celebrar mis quince años',
@@ -50,7 +63,7 @@ export function applyNewWorldDefaults(config: InvitationConfig, id: NewWorldTemp
   }));
   config.theme.envelope.sealMonogram = world.monogram;
   config.theme.envelope.openButtonText = world.open;
-  config.content.hero = { ...config.content.hero, mainTitle: title, badgeText: world.badge, tagline: world.tagline, coverImageUrl: image(id, 'hero'), focalPoint: { x: 50, y: 50 } };
+  config.content.hero = { ...config.content.hero, mainTitle: title, badgeText: world.badge, tagline: world.tagline, coverImageUrl: image(id, 'hero-mobile'), focalPoint: { x: 50, y: 50 } };
   config.content.quoteStory = {
     quoteText: world.quote, quoteAuthor: title,
     storyBlocks: world.beats.slice(0, 3).map((beat, index) => ({ title: beat, description: world.details[index], imageUrl: image(id, `scene-${index + 1}`) })),
