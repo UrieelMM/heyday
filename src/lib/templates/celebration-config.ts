@@ -81,20 +81,22 @@ export function applyCelebrationDefaults(config: InvitationConfig, id: Celebrati
   if (id === 'fiesta-kids-adventure') {
     config.sectionsOrder = config.sectionsOrder.map((section) => ({
       ...section,
-      enabled: ['gifts', 'accommodation'].includes(section.id) ? false : section.enabled,
+      enabled: section.id === 'accommodation' ? false : section.enabled,
     }));
     config.content.hero = {
       ...config.content.hero,
       badgeText: '¡MISIÓN CUMPLEAÑOS!',
       tagline: 'Juegos, pastel y un mundo por descubrir',
-      focalPoint: { x: 53, y: 50 },
+      coverImageUrl: '/images/fiesta-kids-adventure/adventure-island.webp',
+      focalPoint: { x: 50, y: 50 },
     };
     config.content.quoteStory = {
       quoteText: `¡La aventura de ${name} está por comenzar! Habrá juegos, risas, pastel y un montón de sorpresas. Lo mejor será vivirla contigo.`,
       quoteAuthor: `La familia de ${name}`,
       storyBlocks: [
-        { title: 'Tu misión', description: 'Trae tus ganas de jugar, explorar y hacer nuevos recuerdos.' },
-        { title: 'La recompensa', description: 'Pastel, amigos y una tarde llena de diversión.' },
+        { title: 'La invitación', description: 'Una tarde para salir a explorar, reír a carcajadas y descubrir nuevas sorpresas.', imageUrl: '/images/fiesta-kids-adventure/adventure-island.webp' },
+        { title: 'Tu misión', description: 'Trae tus ganas de jugar, explorar y hacer nuevos recuerdos.', imageUrl: '/images/fiesta-kids-adventure/explorer-camp.webp' },
+        { title: 'La recompensa', description: 'Pastel, amigos y una tarde llena de diversión.', imageUrl: '/images/fiesta-kids-adventure/birthday-feast.webp' },
       ],
     };
     config.content.vipParents = {
@@ -103,22 +105,32 @@ export function applyCelebrationDefaults(config: InvitationConfig, id: Celebrati
     };
     config.content.locations = [{
       ...config.content.locations[1], id: 'kids-party', type: 'reception',
-      title: 'Juegos y pastel', time: '13:30 HRS', imageUrl: '/images/fiesta-kids-adventure/paper-adventure.jpg',
+      title: 'Juegos y pastel', time: '13:30 HRS', imageUrl: '/images/fiesta-kids-adventure/explorer-camp.webp',
     }];
     config.content.timeline = [
       { id: 'kids-1', time: '13:30 HRS', title: '¡Llegó la pandilla!', description: 'Bienvenida y primeros juegos.', icon: 'party' },
       { id: 'kids-2', time: '15:00 HRS', title: 'Gran aventura', description: 'Sorpresas para pequeños exploradores.', icon: 'party' },
-      { id: 'kids-3', time: '16:00 HRS', title: 'Pastel y deseos', description: 'Cantamos, soplamos velitas y celebramos juntos.', icon: 'cake' },
+      { id: 'kids-3', time: '16:00 HRS', title: 'Pastel y deseos', description: 'Cantamos y soplamos velitas.', icon: 'cake' },
+      { id: 'kids-4', time: '16:30 HRS', title: 'El gran tesoro', description: 'Nos llevamos recuerdos para contar una y otra vez.', icon: 'party' },
     ];
     config.content.gallery = { layout: 'bento-grid', images: [
-      { url: '/images/fiesta-kids-adventure/paper-adventure.jpg', caption: 'El mapa de la aventura' },
-      { url: '/images/fiesta-kids-adventure/birthday-picnic.jpg', caption: '¡Pastel para todos!' },
+      { url: '/images/fiesta-kids-adventure/adventure-island.webp', caption: 'El mapa de la aventura' },
+      { url: '/images/fiesta-kids-adventure/explorer-camp.webp', caption: 'Campamento explorador' },
+      { url: '/images/fiesta-kids-adventure/paper-adventure.webp', caption: 'Un mundo por descubrir' },
+      { url: '/images/fiesta-kids-adventure/birthday-feast.webp', caption: '¡Pastel para todos!' },
+      { url: '/images/fiesta-kids-adventure/birthday-picnic.webp', caption: 'Una tarde de fiesta' },
     ] };
     config.content.dressCode = {
       title: 'Ven listo para jugar', womenNotes: 'Ropa cómoda y tenis para correr, saltar y explorar.',
       menNotes: 'Ropa casual y calzado cómodo para acompañar la aventura.', reservedColors: [], reservedNote: '',
     };
     config.content.socialFeatures = { enableSongRequests: true, enableAudioGuestbook: false, enableLiveDisposableCamera: false, hashtag: `#Cumple${name.replace(/\s+/g, '')}` };
+    config.content.gifts = { introMessage: 'Tu compañía es nuestro mejor regalo. Si quieres dejar un detalle, tendremos una pequeña cápsula de sobres en la fiesta.', registries: [], cashEnvelopeAtVenue: true };
+    config.content.sectionHeadings = {
+      ...config.content.sectionHeadings,
+      gifts: { title: 'La cápsula de regalos' },
+      social_features: { eyebrow: 'RECUERDOS DE LA AVENTURA', title: 'Comparte tus momentos' },
+    };
     return;
   }
 

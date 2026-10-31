@@ -9,8 +9,9 @@ export default async function DemoPage({ params }: { params: Promise<{ slug: str
     'marea-azul': 'Lucía & Andrés',
     'ritmo-de-dos': 'Marina & Pablo',
     'mini-cosmos': 'Leo cumple 6',
+    'fiesta-kids-adventure': 'Luna cumple 7',
     'atelier-xv': 'Valentina',
   };
-  const demoTime = slug === 'mini-cosmos' ? '13:30:00' : slug === 'atelier-xv' ? '19:00:00' : '17:00:00';
+  const demoTime = slug === 'mini-cosmos' || slug === 'fiesta-kids-adventure' ? '13:30:00' : slug === 'atelier-xv' ? '19:00:00' : '17:00:00';
   return <PublicInvitationClientView demo slug={slug} fallbackTemplateId={template.id} fallbackEventDate={`2026-12-19T${demoTime}-06:00`} fallbackConfig={createDefaultInvitationConfig(template.id, demoTitles[slug] || 'Nuestra celebración')} fallbackGuestGroup={null} />;
 }

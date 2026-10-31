@@ -228,9 +228,9 @@ export const TEMPLATES_CATALOG: TemplateMetadata[] = [
     categoryLabel: 'Cumpleaños Infantil',
     badge: 'Interactivo',
     description:
-      'Cumpleaños infantil como cuento de exploración en papel recortado: sol, camino y tarjetas llenas de juego.',
-    signatureAnimation: 'Paper Adventure Hero + Playful Bento Scroll',
-    previewImage: '/images/fiesta-kids-adventure/paper-adventure.jpg',
+      'Cumpleaños infantil como cuento de exploración: brújula animada, mapa que se dibuja y cuatro estaciones de juego.',
+    signatureAnimation: 'Adventure Compass + Sticky Storybook Journey',
+    previewImage: '/images/fiesta-kids-adventure/adventure-island.webp',
     colors: {
       bgPrimary: '#FFFDF7',
       bgSecondary: '#FFF3D6',

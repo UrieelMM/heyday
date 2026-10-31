@@ -52,6 +52,7 @@ import { AtelierXVExperience } from '../templates/AtelierXVExperience';
 import { RitmoDeDosExperience } from '../templates/RitmoDeDosExperience';
 import { MareaAzulExperience } from '../templates/MareaAzulExperience';
 import { NeonXVEuphoriaExperience } from '../templates/NeonXVEuphoriaExperience';
+import { AdventureMap, FiestaKidsAdventureHero, FiestaKidsMarquee, FiestaKidsStations, setupFiestaKidsAdventureScenes } from '../templates/FiestaKidsAdventureExperience';
 import { SignatureHero } from '../templates/SignatureHero';
 import { setupSignatureScenes } from '../templates/signature-scenes';
 import { CelebrationHero } from '../templates/CelebrationHero';
@@ -64,6 +65,7 @@ import '../templates/signature-templates.css';
 import '../templates/celebration-templates.css';
 import '../templates/occasion-templates.css';
 import '../templates/new-scenes.css';
+import '../templates/fiesta-kids-adventure.css';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -126,6 +128,7 @@ function StandardInvitationRenderer({
   const signatureTemplateId = templateId === 'boho-terracotta' || templateId === 'modern-minimal-noir' || templateId === 'neon-xv-euphoria'
     ? templateId : null;
   const celebrationTemplateId = isCelebrationTemplateId(templateId) ? templateId : null;
+  const isKidsAdventure = templateId === 'fiesta-kids-adventure';
   const occasionTemplateId = isOccasionTemplateId(templateId) ? templateId : null;
   const newSceneTemplateId = isNewSceneTemplateId(templateId) ? templateId : null;
   const hasSceneTemplate = Boolean(signatureTemplateId || celebrationTemplateId || occasionTemplateId || newSceneTemplateId);
@@ -196,7 +199,8 @@ function StandardInvitationRenderer({
         return;
       }
       if (celebrationTemplateId) {
-        setupCelebrationScenes(root, celebrationTemplateId);
+        if (isKidsAdventure) setupFiestaKidsAdventureScenes(root);
+        else setupCelebrationScenes(root, celebrationTemplateId);
         return;
       }
       if (occasionTemplateId) {
@@ -317,8 +321,9 @@ function StandardInvitationRenderer({
         '--ns-accent': colors.accentPrimary,
         '--ns-accent-2': colors.accentSecondary,
       } as React.CSSProperties}
-      className={`relative min-h-dvh w-full overflow-x-hidden selection:bg-amber-500/20${signatureTemplateId ? ` st-root st-root--${signatureTemplateId}` : ''}${celebrationTemplateId ? ` cs-root cs-root--${celebrationTemplateId}` : ''}${occasionTemplateId ? ` oc-root oc-root--${occasionTemplateId}` : ''}${newSceneTemplateId ? ` ns-root ns-root--${newSceneTemplateId}` : ''}`}
+      className={`relative min-h-dvh w-full overflow-x-hidden selection:bg-amber-500/20${signatureTemplateId ? ` st-root st-root--${signatureTemplateId}` : ''}${celebrationTemplateId ? ` cs-root cs-root--${celebrationTemplateId}` : ''}${isKidsAdventure ? ' fk-root' : ''}${occasionTemplateId ? ` oc-root oc-root--${occasionTemplateId}` : ''}${newSceneTemplateId ? ` ns-root ns-root--${newSceneTemplateId}` : ''}`}
     >
+      {isKidsAdventure && <div className="fk-progress" aria-hidden="true"><span className="fk-progress__bar" /></div>}
       {/* 1. Sobre de Apertura Interactivo */}
       {(!isBuilderPreview || previewEnvelope) && (
         <EnvelopeOpener
@@ -326,7 +331,7 @@ function StandardInvitationRenderer({
           guestGroup={guestGroup}
           isOpen={isEnvelopeOpen}
           onOpen={() => setIsEnvelopeOpen(true)}
-          sceneClassName={newSceneTemplateId ? `ns-envelope ns-envelope--${newSceneTemplateId}` : undefined}
+          sceneClassName={isKidsAdventure ? 'fk-opening' : newSceneTemplateId ? `ns-envelope ns-envelope--${newSceneTemplateId}` : undefined}
           celebrateOnOpen={!newSceneTemplateId || newSceneTemplateId === 'mini-cosmos' || newSceneTemplateId === 'ritmo-de-dos'}
         />
       )}
@@ -356,7 +361,10 @@ function StandardInvitationRenderer({
           actionHref={isSectionEnabled('quote_story') ? '#st-story' : isSectionEnabled('rsvp') ? '#st-rsvp' : isSectionEnabled('locations') ? '#st-locations' : '#st-hero'}
         />
       )}
-      {isSectionEnabled('hero') && celebrationTemplateId && (
+      {isSectionEnabled('hero') && isKidsAdventure && (
+        <FiestaKidsAdventureHero config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />
+      )}
+      {isSectionEnabled('hero') && celebrationTemplateId && !isKidsAdventure && (
         <CelebrationHero
           templateId={celebrationTemplateId}
           config={config}
@@ -365,6 +373,8 @@ function StandardInvitationRenderer({
           actionHref={isSectionEnabled('quote_story') ? '#st-story' : isSectionEnabled('rsvp') ? '#st-rsvp' : isSectionEnabled('locations') ? '#st-locations' : '#cs-hero'}
         />
       )}
+
+      {isKidsAdventure && isSectionEnabled('hero') && <FiestaKidsMarquee />}
       {isSectionEnabled('hero') && occasionTemplateId && (
         <OccasionHero
           templateId={occasionTemplateId}
@@ -442,8 +452,10 @@ function StandardInvitationRenderer({
       {isSectionEnabled('quote_story') && (
         <section
           id="st-story"
+          data-editor-section="quoteStory"
           className="inv-reveal-section st-story mx-auto max-w-3xl px-6 py-20 text-center"
         >
+          {isKidsAdventure && <AdventureMap />}
           <div
             className="mx-auto mb-6 h-12 w-px"
             style={{ backgroundColor: colors.accentPrimary }}
@@ -483,6 +495,7 @@ function StandardInvitationRenderer({
                       borderColor: `${colors.accentPrimary}30`,
                     }}
                   >
+                    {isKidsAdventure && block.imageUrl && <img className="fk-story-card__image" src={block.imageUrl} alt="" loading="lazy" />}
                     <span
                       className="text-xs font-bold tracking-widest uppercase"
                       style={{ color: colors.accentPrimary }}
@@ -508,10 +521,13 @@ function StandardInvitationRenderer({
         </section>
       )}
 
+      {isKidsAdventure && <FiestaKidsStations config={config} />}
+
       {/* SECCIÓN 3: PADRES Y PADRINOS DE HONOR */}
       {isSectionEnabled('vip_parents') &&
         content.vipParents.groups.length > 0 && (
           <section
+            data-editor-section="vipParents"
             className="inv-reveal-section st-family px-6 py-16"
             style={{ backgroundColor: colors.bgSecondary }}
           >
@@ -561,7 +577,7 @@ function StandardInvitationRenderer({
 
       {/* SECCIÓN 4: CUENTA REGRESIVA + AGENDAR EN CALENDARIO */}
       {isSectionEnabled('countdown') && (
-        <section className="inv-reveal-section st-countdown mx-auto max-w-3xl px-6 py-20 text-center">
+        <section data-editor-section="countdown" className="inv-reveal-section st-countdown mx-auto max-w-3xl px-6 py-20 text-center">
           <p
             className="mb-2 text-xs font-semibold tracking-[0.25em] uppercase"
             style={{ color: colors.accentPrimary }}
@@ -659,6 +675,7 @@ function StandardInvitationRenderer({
       {isSectionEnabled('locations') && content.locations.length > 0 && (
         <section
           id="st-locations"
+          data-editor-section="locations"
           className="inv-reveal-section st-locations px-6 py-20"
           style={{ backgroundColor: colors.bgSecondary }}
         >
@@ -759,8 +776,13 @@ function StandardInvitationRenderer({
                         <Navigation className="h-4 w-4" />
                         Abrir en Waze
                       </a>
+                      {isKidsAdventure && <>
+                        <a className="fk-route-link" href={`https://maps.apple.com/?ll=${loc.coordinates.lat},${loc.coordinates.lng}&q=${encodeURIComponent(loc.venueName)}`} target="_blank" rel="noopener noreferrer">Apple Maps</a>
+                        <a className="fk-route-link" href={`https://m.uber.com/ul/?action=setPickup&dropoff[latitude]=${loc.coordinates.lat}&dropoff[longitude]=${loc.coordinates.lng}&dropoff[nickname]=${encodeURIComponent(loc.venueName)}`} target="_blank" rel="noopener noreferrer">Uber</a>
+                      </>}
                     </div>
                   </div>
+                  {isKidsAdventure && <iframe className="fk-location-map" title={`Mapa de ${loc.venueName}`} src={`https://www.google.com/maps?q=${loc.coordinates.lat},${loc.coordinates.lng}&output=embed`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />}
                 </div>
               ))}
             </div>
@@ -770,7 +792,7 @@ function StandardInvitationRenderer({
 
       {/* SECCIÓN 6: ITINERARIO / TIMELINE ANIMADO */}
       {isSectionEnabled('timeline') && content.timeline.length > 0 && (
-        <section className="inv-reveal-section st-timeline mx-auto max-w-3xl px-6 py-20">
+        <section data-editor-section="timeline" className="inv-reveal-section st-timeline mx-auto max-w-3xl px-6 py-20">
           <div className="mb-12 text-center">
             <p
               className="mb-2 text-xs font-semibold tracking-[0.25em] uppercase"
@@ -798,7 +820,8 @@ function StandardInvitationRenderer({
             </h2>
           </div>
 
-          <div className="relative mx-auto max-w-xl pl-8">
+            <div className="relative mx-auto max-w-xl pl-8">
+              {isKidsAdventure && <span className="fk-timeline__runner" aria-hidden="true">✦</span>}
             <div
               className="st-timeline__line absolute top-2 bottom-2 left-3 w-0.5"
               style={{ backgroundColor: `${colors.accentPrimary}45` }}
@@ -840,9 +863,12 @@ function StandardInvitationRenderer({
         </section>
       )}
 
+      {isKidsAdventure && isSectionEnabled('timeline') && <FiestaKidsMarquee second />}
+
       {/* SECCIÓN 7: GALERÍA MULTIMEDIA */}
       {isSectionEnabled('gallery') && content.gallery.images.length > 0 && (
         <section
+          data-editor-section="gallery"
           className="inv-reveal-section st-gallery px-6 py-20"
           style={{ backgroundColor: colors.bgSecondary }}
         >
@@ -899,7 +925,7 @@ function StandardInvitationRenderer({
 
       {/* SECCIÓN 8: CÓDIGO DE VESTIMENTA (DRESS CODE) */}
       {isSectionEnabled('dress_code') && (
-        <section className="inv-reveal-section st-dress mx-auto max-w-3xl px-6 py-20 text-center">
+        <section data-editor-section="dressCode" className="inv-reveal-section st-dress mx-auto max-w-3xl px-6 py-20 text-center">
           <p
             className="mb-2 text-xs font-semibold tracking-[0.25em] uppercase"
             style={{ color: colors.accentPrimary }}
@@ -986,6 +1012,7 @@ function StandardInvitationRenderer({
       {/* SECCIÓN 9: MESA DE REGALOS Y TRANSFERENCIA CLABE 1-CLIC */}
       {isSectionEnabled('gifts') && (
         <section
+          data-editor-section="gifts"
           className="inv-reveal-section st-gifts px-6 py-20"
           style={{ backgroundColor: colors.bgSecondary }}
         >
@@ -1132,7 +1159,7 @@ function StandardInvitationRenderer({
       {/* SECCIÓN 10: HOSPEDAJE SUGERIDO */}
       {isSectionEnabled('accommodation') &&
         content.accommodation.length > 0 && (
-          <section className="inv-reveal-section st-stay mx-auto max-w-4xl px-6 py-20">
+          <section data-editor-section="accommodation" className="inv-reveal-section st-stay mx-auto max-w-4xl px-6 py-20">
             <div className="mb-10 text-center">
               <Hotel
                 className="mx-auto mb-3 h-7 w-7"
@@ -1183,13 +1210,13 @@ function StandardInvitationRenderer({
         )}
 
       {/* SECCIÓN 11: FEATURES DIFERENCIADORAS — DJ PLAYLIST & AUDIO GUESTBOOK */}
-      {isSectionEnabled('social_features') && <section data-editor-section="socialFeatures" className="mx-auto max-w-4xl px-6 py-12">{content.sectionHeadings?.social_features?.eyebrow && <p className="mb-3 text-xs font-semibold uppercase tracking-[0.25em]" style={{ color: colors.accentPrimary }}>{content.sectionHeadings.social_features.eyebrow}</p>}<h2 className="mb-4 text-2xl">{content.sectionHeadings?.social_features?.title || 'Álbum compartido'}</h2><SharedAlbum slug={slug} token={guestGroup?.guestToken} preview={isBuilderPreview} /></section>}
+      {isSectionEnabled('social_features') && <section data-editor-section="socialFeatures" className="st-social mx-auto max-w-4xl px-6 py-12">{content.sectionHeadings?.social_features?.eyebrow && <p className="mb-3 text-xs font-semibold uppercase tracking-[0.25em]" style={{ color: colors.accentPrimary }}>{content.sectionHeadings.social_features.eyebrow}</p>}<h2 className="mb-4 text-2xl">{content.sectionHeadings?.social_features?.title || 'Álbum compartido'}</h2><SharedAlbum slug={slug} token={guestGroup?.guestToken} preview={isBuilderPreview} /></section>}
 
-      {isSectionEnabled('social_features') && <section data-editor-section="socialFeatures" className="mx-auto max-w-4xl px-6 py-12"><SocialFeatures slug={slug} token={guestGroup?.guestToken} preview={isBuilderPreview} songsEnabled={content.socialFeatures.enableSongRequests} audioEnabled={content.socialFeatures.enableAudioGuestbook} /></section>}
+      {isSectionEnabled('social_features') && <section data-editor-section="socialFeatures" className="st-social mx-auto max-w-4xl px-6 py-12"><SocialFeatures slug={slug} token={guestGroup?.guestToken} preview={isBuilderPreview} songsEnabled={content.socialFeatures.enableSongRequests} audioEnabled={content.socialFeatures.enableAudioGuestbook} /></section>}
 
       {/* SECCIÓN 12: MÓDULO RSVP INTELIGENTE + PASE VIP QR */}
       {isSectionEnabled('rsvp') && (
-        <section id="st-rsvp" className="inv-reveal-section st-rsvp mx-auto max-w-2xl px-6 py-24">
+        <section id="st-rsvp" data-editor-section="rsvp" className="inv-reveal-section st-rsvp mx-auto max-w-2xl px-6 py-24">
           <div
             className="rounded-3xl border p-6 shadow-xl sm:p-10"
             style={{

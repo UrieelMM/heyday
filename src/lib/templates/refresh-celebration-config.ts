@@ -171,6 +171,54 @@ export function refreshCelebrationConfig(config: InvitationConfig, templateId: T
   replace(config.theme.envelope.sealMonogram === oldMonogram && config.theme.envelope.sealMonogram !== defaults.theme.envelope.sealMonogram, () => {
     updated.theme.envelope.sealMonogram = defaults.theme.envelope.sealMonogram;
   });
+  if (templateId === 'fiesta-kids-adventure') {
+    const oldCover = '/images/fiesta-kids-adventure/paper-adventure.jpg';
+    replace(config.content.hero.coverImageUrl === oldCover, () => {
+      content.hero.coverImageUrl = defaults.content.hero.coverImageUrl;
+      if (config.content.hero.focalPoint.x === 53 && config.content.hero.focalPoint.y === 50) {
+        content.hero.focalPoint = defaults.content.hero.focalPoint;
+      }
+    });
+    replace(config.content.quoteStory.storyBlocks?.length === 2 &&
+      config.content.quoteStory.storyBlocks[0]?.title === 'Tu misión' &&
+      config.content.quoteStory.storyBlocks[1]?.title === 'La recompensa' &&
+      config.content.quoteStory.storyBlocks[0]?.description === 'Trae tus ganas de jugar, explorar y hacer nuevos recuerdos.' &&
+      config.content.quoteStory.storyBlocks[1]?.description === 'Pastel, amigos y una tarde llena de diversión.' &&
+      !config.content.quoteStory.storyBlocks[0]?.imageUrl, () => {
+      content.quoteStory.storyBlocks = defaults.content.quoteStory.storyBlocks;
+    });
+    replace(config.content.locations.length === 1 &&
+      config.content.locations[0]?.id === 'kids-party' &&
+      config.content.locations[0]?.imageUrl === oldCover, () => {
+      content.locations[0].imageUrl = defaults.content.locations[0].imageUrl;
+    });
+    replace(config.content.timeline.length === 3 &&
+      config.content.timeline.map((item) => item.id).join('|') === 'kids-1|kids-2|kids-3' &&
+      config.content.timeline[0].description === 'Bienvenida y primeros juegos.' &&
+      config.content.timeline[1].description === 'Sorpresas para pequeños exploradores.' &&
+      config.content.timeline[2].description === 'Cantamos, soplamos velitas y celebramos juntos.', () => {
+      content.timeline = defaults.content.timeline;
+    });
+    replace(config.content.gallery.images.length === 2 &&
+      config.content.gallery.images[0]?.url === oldCover &&
+      config.content.gallery.images[0]?.caption === 'El mapa de la aventura' &&
+      config.content.gallery.images[1]?.url === '/images/fiesta-kids-adventure/birthday-picnic.jpg' &&
+      config.content.gallery.images[1]?.caption === '¡Pastel para todos!', () => {
+      content.gallery = defaults.content.gallery;
+    });
+    const untouchedGifts = !config.content.gifts.introMessage &&
+      config.content.gifts.registries.length === 0 &&
+      !config.content.gifts.cashEnvelopeAtVenue &&
+      !config.content.gifts.bankTransfer?.enabled;
+    replace(untouchedGifts, () => {
+      content.gifts = defaults.content.gifts;
+      updated.sectionsOrder = updated.sectionsOrder.map((section) => section.id === 'gifts' ? { ...section, enabled: true } : section);
+      content.sectionHeadings = { ...content.sectionHeadings, gifts: content.sectionHeadings?.gifts ?? defaults.content.sectionHeadings?.gifts };
+    });
+    replace(!config.content.sectionHeadings?.social_features, () => {
+      content.sectionHeadings = { ...content.sectionHeadings, social_features: defaults.content.sectionHeadings?.social_features };
+    });
+  }
   replace(templateId === 'golden-jubilee' && config.theme.fonts.headingFont === 'Playfair Display', () => {
     updated.theme.fonts.headingFont = defaults.theme.fonts.headingFont;
   });
