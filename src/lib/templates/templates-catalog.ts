@@ -9,6 +9,7 @@ import { applyCelebrationDefaults, isCelebrationTemplateId } from './celebration
 import { applyOccasionDefaults, isOccasionTemplateId } from './occasion-config';
 import { applyNewSceneDefaults, isNewSceneTemplateId } from './new-scenes-config';
 import { applyKidsWorldDefaults, isKidsWorldTemplateId } from './kids-world-config';
+import { applyNewWorldDefaults, isNewWorldTemplateId } from './new-world-config';
 
 export interface TemplateMetadata {
   id: TemplateId;
@@ -26,6 +27,36 @@ export interface TemplateMetadata {
 }
 
 export const TEMPLATES_CATALOG: TemplateMetadata[] = [
+  {
+    id: 'opera-carmesi', name: 'Ópera Carmesí', category: 'xv_years',
+    categoryLabel: 'XV años / Teatro', badge: 'Nueva colección',
+    description: 'Una noche teatral en cuatro actos: telón carmesí, sello Art Déco y una gran entrada que se revela al deslizar.',
+    signatureAnimation: 'Telón escénico + programa en cuatro actos',
+    previewImage: '/images/opera-carmesi/hero.webp',
+    colors: { bgPrimary: '#2D0D19', bgSecondary: '#451626', textPrimary: '#F8EBDD', textMuted: '#DABBB5', accentPrimary: '#D7AF72', accentSecondary: '#8E384C' },
+    fonts: { headingFont: 'Cormorant Garamond', scriptFont: 'Pinyon Script', bodyFont: 'Plus Jakarta Sans' },
+    envelopeVariant: 'pass-ticket-tear', ambientEffect: 'gold-sparkles',
+  },
+  {
+    id: 'pequeno-atlas', name: 'Pequeño Atlas', category: 'baby_shower',
+    categoryLabel: 'Baby shower / Exploración', badge: 'Nueva colección',
+    description: 'Un mapa en acuarela para celebrar una nueva vida: rosa de los vientos, postales y cuatro destinos por descubrir.',
+    signatureAnimation: 'Mapa desplegable + ruta ilustrada',
+    previewImage: '/images/pequeno-atlas/hero.webp',
+    colors: { bgPrimary: '#FAF2DF', bgSecondary: '#E5E9D7', textPrimary: '#344A3B', textMuted: '#617566', accentPrimary: '#517C70', accentSecondary: '#D7A578' },
+    fonts: { headingFont: 'Cormorant Garamond', scriptFont: 'Pinyon Script', bodyFont: 'Plus Jakarta Sans' },
+    envelopeVariant: 'editorial-curtain', ambientEffect: 'white-petals',
+  },
+  {
+    id: 'archivo-futuro', name: 'Archivo del Futuro', category: 'graduation_gala',
+    categoryLabel: 'Graduación / Arquitectura', badge: 'Nueva colección',
+    description: 'Una bitácora gráfica de la generación: geometría cobalto, horizonte de luz y cuatro hitos hacia lo que sigue.',
+    signatureAnimation: 'Acreditación editorial + riel de progreso',
+    previewImage: '/images/archivo-futuro/hero.webp',
+    colors: { bgPrimary: '#112C65', bgSecondary: '#1D448D', textPrimary: '#F4F6F3', textMuted: '#C8D6E9', accentPrimary: '#FFD064', accentSecondary: '#4F78C7' },
+    fonts: { headingFont: 'Plus Jakarta Sans', scriptFont: 'Cormorant Garamond', bodyFont: 'Plus Jakarta Sans' },
+    envelopeVariant: 'pass-ticket-tear', ambientEffect: 'none',
+  },
   {
     id: 'marea-azul', name: 'Marea Azul', category: 'wedding',
     categoryLabel: 'Boda Costa / Mediterránea', badge: 'Nueva colección',
@@ -635,6 +666,9 @@ export function createDefaultInvitationConfig(
   }
   if (isKidsWorldTemplateId(templateId)) {
     applyKidsWorldDefaults(config, templateId, customTitle);
+  }
+  if (isNewWorldTemplateId(templateId)) {
+    applyNewWorldDefaults(config, templateId, customTitle);
   }
 
   if (templateId === 'boho-terracotta') {

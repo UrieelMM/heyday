@@ -10,6 +10,8 @@ import {
   Camera,
   Check,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Clock3,
   Eye,
   Heart,
@@ -32,6 +34,7 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
 const whatsappHref = (message: string) =>
   `https://wa.me/525628051962?text=${encodeURIComponent(message)}`;
 const CONTACT_URL = whatsappHref('¡Hola, HeyDay! Me gustaría crear una invitación digital para mi evento.');
+const TEMPLATES_PER_PAGE = 9;
 
 const CATEGORY_FILTERS: Array<{ id: 'all' | EventCategory; label: string }> = [
   { id: 'all', label: 'Todas' },
@@ -132,6 +135,7 @@ function InvitationPreview() {
 export default function HomePage() {
   const landingRef = useRef<HTMLDivElement>(null);
   const [selectedCategory, setSelectedCategory] = useState<'all' | EventCategory>('all');
+  const [templatePage, setTemplatePage] = useState(1);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   useGSAP(() => {
@@ -175,6 +179,8 @@ export default function HomePage() {
   const filteredTemplates = selectedCategory === 'all'
     ? TEMPLATES_CATALOG
     : TEMPLATES_CATALOG.filter((template) => template.category === selectedCategory);
+  const templatePageCount = Math.ceil(filteredTemplates.length / TEMPLATES_PER_PAGE);
+  const visibleTemplates = filteredTemplates.slice((templatePage - 1) * TEMPLATES_PER_PAGE, templatePage * TEMPLATES_PER_PAGE);
 
   return (
     <div ref={landingRef} className="landing min-h-dvh bg-[#faf9f5] text-[#141413]">
@@ -304,18 +310,19 @@ export default function HomePage() {
           </div>
           <div className="mt-8 flex gap-2 overflow-x-auto pb-2" role="tablist" aria-label="Filtrar diseños">
             {CATEGORY_FILTERS.map((category) => (
-              <button key={category.id} type="button" role="tab" aria-selected={selectedCategory === category.id} onClick={() => setSelectedCategory(category.id)}
+              <button key={category.id} type="button" role="tab" aria-selected={selectedCategory === category.id} onClick={() => { setSelectedCategory(category.id); setTemplatePage(1); }}
                 className={`h-9 shrink-0 rounded-full px-4 text-xs font-medium transition-colors ${selectedCategory === category.id ? 'bg-[#141413] text-[#faf9f5]' : 'border border-[#d7cfc4] bg-white text-[#3d3d3a] hover:text-[#141413]'}`}>{category.label}</button>
             ))}
           </div>
-          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredTemplates.map((template, index) => (
+          <p className="landing-templates__count" aria-live="polite">Mostrando {filteredTemplates.length ? (templatePage - 1) * TEMPLATES_PER_PAGE + 1 : 0}–{Math.min(templatePage * TEMPLATES_PER_PAGE, filteredTemplates.length)} de {filteredTemplates.length} diseños</p>
+          <div className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {visibleTemplates.map((template, index) => (
               <article key={template.id} className="landing-template group overflow-hidden rounded-xl border border-[#e6dfd8] bg-white" data-scene-reveal>
                 <div className="relative aspect-[4/3] overflow-hidden bg-[#ebe6df]">
                   <img src={template.previewImage} alt={`Vista previa de ${template.name}`} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.025]" />
                   <div className="absolute inset-x-0 top-0 flex items-center justify-between p-3">
                     <span className="rounded-full bg-[#faf9f5]/90 px-2.5 py-1 text-[10px] font-medium text-[#141413] backdrop-blur-sm">{template.categoryLabel}</span>
-                    <span className="mono-label rounded-full bg-[#141413]/85 px-2.5 py-1 text-[9px] text-white">0{index + 1}</span>
+                    <span className="mono-label rounded-full bg-[#141413]/85 px-2.5 py-1 text-[9px] text-white">{String((templatePage - 1) * TEMPLATES_PER_PAGE + index + 1).padStart(2, '0')}</span>
                   </div>
                 </div>
                 <div className="p-5">
@@ -331,6 +338,11 @@ export default function HomePage() {
               </article>
             ))}
           </div>
+          {templatePageCount > 1 && <nav className="landing-templates__pagination" aria-label="Páginas de diseños">
+            <button type="button" onClick={() => setTemplatePage(page => Math.max(1, page - 1))} disabled={templatePage === 1} aria-label="Página anterior"><ChevronLeft size={18} /></button>
+            {Array.from({ length: templatePageCount }, (_, index) => index + 1).map(page => <button key={page} type="button" onClick={() => setTemplatePage(page)} aria-label={`Página ${page}`} aria-current={templatePage === page ? 'page' : undefined} className={templatePage === page ? 'is-active' : ''}>{page}</button>)}
+            <button type="button" onClick={() => setTemplatePage(page => Math.min(templatePageCount, page + 1))} disabled={templatePage === templatePageCount} aria-label="Página siguiente"><ChevronRight size={18} /></button>
+          </nav>}
         </section>
 
         <section id="precios" className="landing-pricing" data-landing-scene>

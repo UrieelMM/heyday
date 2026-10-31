@@ -14,6 +14,9 @@ export default async function DemoPage({ params }: { params: Promise<{ slug: str
     'dino-jungle-expedition': 'Nico cumple 5',
     'safari-sunrise-adventure': 'Emma cumple 6',
     'cowboy-ranch-roundup': 'Diego cumple 7',
+    'opera-carmesi': 'Valentina',
+    'pequeno-atlas': 'Baby en camino',
+    'archivo-futuro': 'Generación 2026',
     'atelier-xv': 'Valentina',
   };
   const demoTime = ['mini-cosmos', 'fiesta-kids-adventure', 'pirate-treasure-voyage', 'dino-jungle-expedition', 'safari-sunrise-adventure', 'cowboy-ranch-roundup'].includes(slug) ? '13:30:00' : slug === 'atelier-xv' ? '19:00:00' : '17:00:00';

@@ -196,6 +196,12 @@
 .landing-flow__step:hover { background: var(--color-surface-card); }
 .landing-flow__step > p { font-family: var(--font-primary); font-size: 22px; color: var(--color-ink); }
 .landing-templates { padding-block: 85px 90px; }
+.landing-templates__count { margin: 18px 0 0; color: #6c6a64; font-size: 12px; }
+.landing-templates__pagination { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 34px; }
+.landing-templates__pagination button { display: grid; place-items: center; min-width: 40px; height: 40px; padding-inline: 10px; border: 1px solid #d7cfc4; border-radius: 8px; background: white; color: #141413; font-size: 13px; transition: background .2s, color .2s; }
+.landing-templates__pagination button:hover:not(:disabled), .landing-templates__pagination button.is-active { background: #141413; color: white; }
+.landing-templates__pagination button:disabled { opacity: .38; cursor: not-allowed; }
+.landing-templates__pagination button:focus-visible { outline: 2px solid #cc785c; outline-offset: 3px; }
 .landing-template { transition: box-shadow .25s, border-color .25s; }
 .landing-template:hover { border-color: var(--color-primary); box-shadow: 0 22px 55px rgba(37,35,32,.1); }
 .landing-template h3 { font-size: 25px; line-height: 1.08; }
