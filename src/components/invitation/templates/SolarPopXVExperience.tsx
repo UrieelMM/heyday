@@ -1,0 +1,8 @@
+'use client';
+import type { GuestGroup, InvitationConfig } from '@/types/invitation.types';
+import { StoryWorldHero } from './story-world-shared';
+
+/** Layered rays keep the mark symmetric while the ring rotates around it. */
+export function SolarPopMark() { return <svg viewBox="0 0 240 240" fill="none" aria-hidden="true"><circle cx="120" cy="120" r="52" stroke="currentColor" strokeWidth="8"/><circle cx="120" cy="120" r="31" fill="currentColor" opacity=".4"/><path d="M120 5v46m0 138v46M5 120h46m138 0h46M39 39l33 33m96 96 33 33M201 39l-33 33m-96 96-33 33" stroke="currentColor" strokeWidth="12" strokeLinecap="square"/><path d="M120 70 135 105l35 15-35 15-15 35-15-35-35-15 35-15 15-35Z" fill="currentColor"/></svg>; }
+export function SolarPopStory() { return <svg className="sw-story__art" viewBox="0 0 800 500" fill="none" aria-hidden="true"><circle className="sw-story__draw" cx="400" cy="250" r="190" stroke="currentColor" strokeWidth="4"/><circle className="sw-story__draw" cx="400" cy="250" r="130" stroke="currentColor" strokeWidth="3"/><path className="sw-story__draw" d="M400 10v50m0 380v50M160 250h50m380 0h50M230 80l35 35m270 270 35 35M570 80l-35 35m-270 270-35 35M375 60l25-45 25 45m-50 380 25 45 25-45" stroke="currentColor" strokeWidth="5"/><path className="sw-story__draw" d="m400 120 33 97 97 33-97 33-33 97-33-97-97-33 97-33 33-97Z" stroke="currentColor" strokeWidth="4"/></svg>; }
+export function SolarPopXVExperience({config,eventDate,guestGroup,actionHref}:{config:InvitationConfig;eventDate:string;guestGroup?:GuestGroup|null;actionHref:string}) { return <StoryWorldHero variant="solar" config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={actionHref} motif={<SolarPopMark/>}/>; }

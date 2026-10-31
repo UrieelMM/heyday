@@ -10,6 +10,7 @@ import { applyOccasionDefaults, isOccasionTemplateId } from './occasion-config';
 import { applyNewSceneDefaults, isNewSceneTemplateId } from './new-scenes-config';
 import { applyKidsWorldDefaults, isKidsWorldTemplateId } from './kids-world-config';
 import { applyNewWorldDefaults, isNewWorldTemplateId } from './new-world-config';
+import { applyStoryWorldDefaults, isStoryWorldTemplateId } from './story-world-config';
 
 export interface TemplateMetadata {
   id: TemplateId;
@@ -27,6 +28,36 @@ export interface TemplateMetadata {
 }
 
 export const TEMPLATES_CATALOG: TemplateMetadata[] = [
+  {
+    id: 'ohana-lilo-stitch', name: 'Ohana: Lilo & Stitch', category: 'kids_birthday',
+    categoryLabel: 'Cumpleaños infantil / Isla tropical', badge: 'Nueva colección',
+    description: 'Una postal hawaiana de ohana, surf y flores con cuatro paradas para celebrar en familia.',
+    signatureAnimation: 'Postal expansible + olas dibujadas en scroll',
+    previewImage: '/images/ohana-lilo-stitch/hero-desktop.webp',
+    colors: { bgPrimary: '#F9F0D6', bgSecondary: '#D5F1E6', textPrimary: '#164A53', textMuted: '#4C7474', accentPrimary: '#D65C59', accentSecondary: '#57BFB6' },
+    fonts: { headingFont: 'Fredoka', scriptFont: 'Fredoka', bodyFont: 'Plus Jakarta Sans' },
+    envelopeVariant: 'editorial-curtain', ambientEffect: 'confetti',
+  },
+  {
+    id: 'solar-pop-xv', name: 'Solar Pop XV', category: 'xv_years',
+    categoryLabel: 'XV años / Pop solar', badge: 'Nueva colección',
+    description: 'Quince vueltas al sol entre bloques de color, collage editorial y destellos que se revelan al deslizar.',
+    signatureAnimation: 'Portal solar expansible + collage de cuatro destellos',
+    previewImage: '/images/solar-pop-xv/hero-desktop.webp',
+    colors: { bgPrimary: '#FFF5DF', bgSecondary: '#FFE0B7', textPrimary: '#153887', textMuted: '#5E5A7B', accentPrimary: '#EE368F', accentSecondary: '#FFC73D' },
+    fonts: { headingFont: 'Syne', scriptFont: 'Syne', bodyFont: 'Plus Jakarta Sans' },
+    envelopeVariant: 'pass-ticket-tear', ambientEffect: 'confetti',
+  },
+  {
+    id: 'cafe-para-siempre', name: 'Café para Siempre', category: 'wedding',
+    categoryLabel: 'Boda / Café de ciudad', badge: 'Nueva colección',
+    description: 'Una boda narrada como carta de café: conversación íntima, mesa reservada y cuatro tiempos compartidos.',
+    signatureAnimation: 'Carta expansible + menú ilustrado en scroll',
+    previewImage: '/images/cafe-para-siempre/hero-desktop.webp',
+    colors: { bgPrimary: '#F8F0E4', bgSecondary: '#EAD8BE', textPrimary: '#4A3028', textMuted: '#766056', accentPrimary: '#8C3F3D', accentSecondary: '#C58C58' },
+    fonts: { headingFont: 'Cormorant Garamond', scriptFont: 'Pinyon Script', bodyFont: 'Plus Jakarta Sans' },
+    envelopeVariant: 'wax-seal-classic', ambientEffect: 'none',
+  },
   {
     id: 'opera-carmesi', name: 'Ópera Carmesí', category: 'xv_years',
     categoryLabel: 'XV años / Teatro', badge: 'Nueva colección',
@@ -669,6 +700,9 @@ export function createDefaultInvitationConfig(
   }
   if (isNewWorldTemplateId(templateId)) {
     applyNewWorldDefaults(config, templateId, customTitle);
+  }
+  if (isStoryWorldTemplateId(templateId)) {
+    applyStoryWorldDefaults(config, templateId, customTitle);
   }
 
   if (templateId === 'boho-terracotta') {

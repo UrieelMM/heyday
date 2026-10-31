@@ -17,8 +17,11 @@ export default async function DemoPage({ params }: { params: Promise<{ slug: str
     'opera-carmesi': 'Valentina',
     'pequeno-atlas': 'Baby en camino',
     'archivo-futuro': 'Generación 2026',
+    'ohana-lilo-stitch': 'Maya cumple 6',
+    'solar-pop-xv': 'Renata XV',
+    'cafe-para-siempre': 'Clara & Julián',
     'atelier-xv': 'Valentina',
   };
-  const demoTime = ['mini-cosmos', 'fiesta-kids-adventure', 'pirate-treasure-voyage', 'dino-jungle-expedition', 'safari-sunrise-adventure', 'cowboy-ranch-roundup'].includes(slug) ? '13:30:00' : slug === 'atelier-xv' ? '19:00:00' : '17:00:00';
+  const demoTime = ['mini-cosmos', 'fiesta-kids-adventure', 'pirate-treasure-voyage', 'dino-jungle-expedition', 'safari-sunrise-adventure', 'cowboy-ranch-roundup', 'ohana-lilo-stitch'].includes(slug) ? '13:30:00' : ['atelier-xv', 'solar-pop-xv'].includes(slug) ? '19:00:00' : '17:00:00';
   return <PublicInvitationClientView demo slug={slug} fallbackTemplateId={template.id} fallbackEventDate={`2026-12-19T${demoTime}-06:00`} fallbackConfig={createDefaultInvitationConfig(template.id, demoTitles[slug] || 'Nuestra celebración')} fallbackGuestGroup={null} />;
 }

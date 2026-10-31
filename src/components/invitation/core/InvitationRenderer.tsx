@@ -61,6 +61,11 @@ import { KidsWorldMarquee, KidsWorldStations, setupKidsWorldScenes } from '../te
 import { isKidsWorldTemplateId } from '@/lib/templates/kids-world-config';
 import { isNewWorldTemplateId } from '@/lib/templates/new-world-config';
 import { OperaCarmesiExperience, PequenoAtlasExperience, ArchivoFuturoExperience, NewWorldMarquee, NewWorldMoments, NewWorldStoryArt, setupNewWorldScenes } from '../templates/NewWorldExperiences';
+import { isStoryWorldTemplateId } from '@/lib/templates/story-world-config';
+import { OhanaLiloStitchExperience, OhanaWaveStory } from '../templates/OhanaLiloStitchExperience';
+import { SolarPopXVExperience, SolarPopStory } from '../templates/SolarPopXVExperience';
+import { CafeParaSiempreExperience, CafeMenuStory } from '../templates/CafeParaSiempreExperience';
+import { StoryWorldMarquee, StoryWorldMoments, setupStoryWorldScenes } from '../templates/story-world-shared';
 import { SignatureHero } from '../templates/SignatureHero';
 import { setupSignatureScenes } from '../templates/signature-scenes';
 import { CelebrationHero } from '../templates/CelebrationHero';
@@ -80,6 +85,7 @@ import '../templates/dino-jungle-expedition.css';
 import '../templates/safari-sunrise-adventure.css';
 import '../templates/cowboy-ranch-roundup.css';
 import '../templates/new-world.css';
+import '../templates/story-world.css';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -149,9 +155,11 @@ function StandardInvitationRenderer({
       : kidsWorldId === 'cowboy-ranch-roundup' ? 'cowboy' : 'dino';
   const newWorldId = isNewWorldTemplateId(templateId) ? templateId : null;
   const newWorldVariant = newWorldId === 'opera-carmesi' ? 'opera' : newWorldId === 'pequeno-atlas' ? 'atlas' : 'future';
+  const storyWorldId = isStoryWorldTemplateId(templateId) ? templateId : null;
+  const storyVariant = storyWorldId === 'ohana-lilo-stitch' ? 'ohana' : storyWorldId === 'solar-pop-xv' ? 'solar' : 'cafe';
   const occasionTemplateId = isOccasionTemplateId(templateId) ? templateId : null;
   const newSceneTemplateId = isNewSceneTemplateId(templateId) ? templateId : null;
-  const hasSceneTemplate = Boolean(signatureTemplateId || celebrationTemplateId || occasionTemplateId || newSceneTemplateId || kidsWorldId || newWorldId);
+  const hasSceneTemplate = Boolean(signatureTemplateId || celebrationTemplateId || occasionTemplateId || newSceneTemplateId || kidsWorldId || newWorldId || storyWorldId);
   const occasionCopy = occasionTemplateId ? occasionSectionCopy[occasionTemplateId] : null;
 
   // Estado Cuenta Regresiva
@@ -226,6 +234,10 @@ function StandardInvitationRenderer({
         setupNewWorldScenes(root, newWorldId);
         return;
       }
+      if (storyWorldId) {
+        setupStoryWorldScenes(root, storyWorldId);
+        return;
+      }
       if (celebrationTemplateId) {
         if (isKidsAdventure) setupFiestaKidsAdventureScenes(root);
         else setupCelebrationScenes(root, celebrationTemplateId);
@@ -278,7 +290,7 @@ function StandardInvitationRenderer({
         );
       });
     },
-    { scope: containerRef, dependencies: [isEnvelopeOpen, templateId, signatureTemplateId, celebrationTemplateId, occasionTemplateId, newSceneTemplateId, newWorldId] }
+    { scope: containerRef, dependencies: [isEnvelopeOpen, templateId, signatureTemplateId, celebrationTemplateId, occasionTemplateId, newSceneTemplateId, newWorldId, storyWorldId] }
   );
 
   const { colors, fonts } = config.theme;
@@ -349,11 +361,12 @@ function StandardInvitationRenderer({
         '--ns-accent': colors.accentPrimary,
         '--ns-accent-2': colors.accentSecondary,
       } as React.CSSProperties}
-      className={`relative min-h-dvh w-full overflow-x-hidden selection:bg-amber-500/20${signatureTemplateId ? ` st-root st-root--${signatureTemplateId}` : ''}${celebrationTemplateId ? ` cs-root cs-root--${celebrationTemplateId}` : ''}${isKidsAdventure ? ' fk-root' : ''}${kidsWorldId ? ` kw-root kw-root--${kidsWorldVariant}` : ''}${newWorldId ? ` nw-root nw-root--${newWorldVariant}` : ''}${occasionTemplateId ? ` oc-root oc-root--${occasionTemplateId}` : ''}${newSceneTemplateId ? ` ns-root ns-root--${newSceneTemplateId}` : ''}`}
+      className={`relative min-h-dvh w-full overflow-x-hidden selection:bg-amber-500/20${signatureTemplateId ? ` st-root st-root--${signatureTemplateId}` : ''}${celebrationTemplateId ? ` cs-root cs-root--${celebrationTemplateId}` : ''}${isKidsAdventure ? ' fk-root' : ''}${kidsWorldId ? ` kw-root kw-root--${kidsWorldVariant}` : ''}${newWorldId ? ` nw-root nw-root--${newWorldVariant}` : ''}${storyWorldId ? ` sw-root sw-root--${storyVariant}` : ''}${occasionTemplateId ? ` oc-root oc-root--${occasionTemplateId}` : ''}${newSceneTemplateId ? ` ns-root ns-root--${newSceneTemplateId}` : ''}`}
     >
       {isKidsAdventure && <div className="fk-progress" aria-hidden="true"><span className="fk-progress__bar" /></div>}
       {kidsWorldId && <div className="kw-progress" aria-hidden="true"><span className="kw-progress__bar" /></div>}
       {newWorldId && <div className="nw-progress" aria-hidden="true"><span className="nw-progress__bar" /></div>}
+      {storyWorldId && <div className="sw-progress" aria-hidden="true"><span className="sw-progress__bar" /></div>}
       {/* 1. Sobre de Apertura Interactivo */}
       {(!isBuilderPreview || previewEnvelope) && (
         <EnvelopeOpener
@@ -361,7 +374,7 @@ function StandardInvitationRenderer({
           guestGroup={guestGroup}
           isOpen={isEnvelopeOpen}
           onOpen={() => setIsEnvelopeOpen(true)}
-          sceneClassName={isKidsAdventure ? 'fk-opening' : kidsWorldId ? `kw-opening kw-opening--${kidsWorldVariant}` : newWorldId ? `nw-opening nw-opening--${newWorldVariant}` : newSceneTemplateId ? `ns-envelope ns-envelope--${newSceneTemplateId}` : undefined}
+          sceneClassName={isKidsAdventure ? 'fk-opening' : kidsWorldId ? `kw-opening kw-opening--${kidsWorldVariant}` : newWorldId ? `nw-opening nw-opening--${newWorldVariant}` : storyWorldId ? `sw-opening sw-opening--${storyVariant}` : newSceneTemplateId ? `ns-envelope ns-envelope--${newSceneTemplateId}` : undefined}
           celebrateOnOpen={!newSceneTemplateId || newSceneTemplateId === 'mini-cosmos' || newSceneTemplateId === 'ritmo-de-dos'}
         />
       )}
@@ -409,6 +422,9 @@ function StandardInvitationRenderer({
       {isSectionEnabled('hero') && newWorldId === 'opera-carmesi' && <OperaCarmesiExperience config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />}
       {isSectionEnabled('hero') && newWorldId === 'pequeno-atlas' && <PequenoAtlasExperience config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />}
       {isSectionEnabled('hero') && newWorldId === 'archivo-futuro' && <ArchivoFuturoExperience config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />}
+      {isSectionEnabled('hero') && storyWorldId === 'ohana-lilo-stitch' && <OhanaLiloStitchExperience config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />}
+      {isSectionEnabled('hero') && storyWorldId === 'solar-pop-xv' && <SolarPopXVExperience config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />}
+      {isSectionEnabled('hero') && storyWorldId === 'cafe-para-siempre' && <CafeParaSiempreExperience config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />}
       {isSectionEnabled('hero') && celebrationTemplateId && !isKidsAdventure && (
         <CelebrationHero
           templateId={celebrationTemplateId}
@@ -422,6 +438,7 @@ function StandardInvitationRenderer({
       {isKidsAdventure && isSectionEnabled('hero') && <FiestaKidsMarquee />}
       {kidsWorldId && isSectionEnabled('hero') && <KidsWorldMarquee variant={kidsWorldVariant} />}
       {newWorldId && isSectionEnabled('hero') && <NewWorldMarquee variant={newWorldVariant} />}
+      {storyWorldId && isSectionEnabled('hero') && <StoryWorldMarquee variant={storyVariant} />}
       {isSectionEnabled('hero') && occasionTemplateId && (
         <OccasionHero
           templateId={occasionTemplateId}
@@ -508,6 +525,9 @@ function StandardInvitationRenderer({
           {kidsWorldId === 'safari-sunrise-adventure' && <SafariTrailBackdrop />}
           {kidsWorldId === 'cowboy-ranch-roundup' && <CowboyTrailBackdrop />}
           {newWorldId && <NewWorldStoryArt variant={newWorldVariant} />}
+          {storyWorldId === 'ohana-lilo-stitch' && <OhanaWaveStory />}
+          {storyWorldId === 'solar-pop-xv' && <SolarPopStory />}
+          {storyWorldId === 'cafe-para-siempre' && <CafeMenuStory />}
           <div
             className="mx-auto mb-6 h-12 w-px"
             style={{ backgroundColor: colors.accentPrimary }}
@@ -547,7 +567,7 @@ function StandardInvitationRenderer({
                       borderColor: `${colors.accentPrimary}30`,
                     }}
                   >
-                    {(isKidsAdventure || kidsWorldId || newWorldId) && block.imageUrl && <img className={isKidsAdventure ? 'fk-story-card__image' : kidsWorldId ? 'kw-story-card__image' : 'nw-story-card__image'} src={block.imageUrl} alt="" loading="lazy" />}
+                    {(isKidsAdventure || kidsWorldId || newWorldId || storyWorldId) && block.imageUrl && <img className={isKidsAdventure ? 'fk-story-card__image' : kidsWorldId ? 'kw-story-card__image' : newWorldId ? 'nw-story-card__image' : 'sw-story-card__image'} src={block.imageUrl} alt="" loading="lazy" />}
                     <span
                       className="text-xs font-bold tracking-widest uppercase"
                       style={{ color: colors.accentPrimary }}
@@ -576,6 +596,7 @@ function StandardInvitationRenderer({
       {isKidsAdventure && <FiestaKidsStations config={config} />}
       {kidsWorldId && isSectionEnabled('quote_story') && <KidsWorldStations variant={kidsWorldVariant} config={config} />}
       {newWorldId && isSectionEnabled('quote_story') && <NewWorldMoments variant={newWorldVariant} config={config} />}
+      {storyWorldId && isSectionEnabled('quote_story') && <StoryWorldMoments variant={storyVariant} config={config} />}
 
       {/* SECCIÓN 3: PADRES Y PADRINOS DE HONOR */}
       {isSectionEnabled('vip_parents') &&
@@ -830,15 +851,16 @@ function StandardInvitationRenderer({
                         <Navigation className="h-4 w-4" />
                         Abrir en Waze
                       </a>
-                      {(isKidsAdventure || kidsWorldId || newWorldId) && <>
-                        <a className={isKidsAdventure ? 'fk-route-link' : kidsWorldId ? 'kw-route-link' : 'nw-route-link'} href={`https://maps.apple.com/?ll=${loc.coordinates.lat},${loc.coordinates.lng}&q=${encodeURIComponent(loc.venueName)}`} target="_blank" rel="noopener noreferrer">Apple Maps</a>
-                        <a className={isKidsAdventure ? 'fk-route-link' : kidsWorldId ? 'kw-route-link' : 'nw-route-link'} href={`https://m.uber.com/ul/?action=setPickup&dropoff[latitude]=${loc.coordinates.lat}&dropoff[longitude]=${loc.coordinates.lng}&dropoff[nickname]=${encodeURIComponent(loc.venueName)}`} target="_blank" rel="noopener noreferrer">Uber</a>
+                      {(isKidsAdventure || kidsWorldId || newWorldId || storyWorldId) && <>
+                        <a className={isKidsAdventure ? 'fk-route-link' : kidsWorldId ? 'kw-route-link' : newWorldId ? 'nw-route-link' : 'sw-route-link'} href={`https://maps.apple.com/?ll=${loc.coordinates.lat},${loc.coordinates.lng}&q=${encodeURIComponent(loc.venueName)}`} target="_blank" rel="noopener noreferrer">Apple Maps</a>
+                        <a className={isKidsAdventure ? 'fk-route-link' : kidsWorldId ? 'kw-route-link' : newWorldId ? 'nw-route-link' : 'sw-route-link'} href={`https://m.uber.com/ul/?action=setPickup&dropoff[latitude]=${loc.coordinates.lat}&dropoff[longitude]=${loc.coordinates.lng}&dropoff[nickname]=${encodeURIComponent(loc.venueName)}`} target="_blank" rel="noopener noreferrer">Uber</a>
                       </>}
                     </div>
                   </div>
                   {isKidsAdventure && <iframe className="fk-location-map" title={`Mapa de ${loc.venueName}`} src={`https://www.google.com/maps?q=${loc.coordinates.lat},${loc.coordinates.lng}&output=embed`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />}
                   {kidsWorldId && <iframe className="kw-location-map" title={`Mapa de ${loc.venueName}`} src={`https://www.google.com/maps?q=${loc.coordinates.lat},${loc.coordinates.lng}&output=embed`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />}
                   {newWorldId && <iframe className="nw-location-map" title={`Mapa de ${loc.venueName}`} src={`https://www.google.com/maps?q=${loc.coordinates.lat},${loc.coordinates.lng}&output=embed`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />}
+                  {storyWorldId && <iframe className="sw-location-map" title={`Mapa de ${loc.venueName}`} src={`https://www.google.com/maps?q=${loc.coordinates.lat},${loc.coordinates.lng}&output=embed`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />}
                 </div>
               ))}
             </div>
@@ -880,6 +902,7 @@ function StandardInvitationRenderer({
               {isKidsAdventure && <span className="fk-timeline__runner" aria-hidden="true">✦</span>}
               {kidsWorldId && <span className="kw-timeline__runner" aria-hidden="true">{{ pirate: '☸', dino: '✦', safari: '◉', cowboy: '★' }[kidsWorldVariant]}</span>}
               {newWorldId && <span className="nw-timeline__runner" aria-hidden="true">{{ opera: '✦', atlas: '✺', future: '↗' }[newWorldVariant]}</span>}
+              {storyWorldId && <span className="sw-timeline__runner" aria-hidden="true">{{ ohana: '✿', solar: '✺', cafe: '♥' }[storyVariant]}</span>}
             <div
               className="st-timeline__line absolute top-2 bottom-2 left-3 w-0.5"
               style={{ backgroundColor: `${colors.accentPrimary}45` }}
@@ -924,6 +947,7 @@ function StandardInvitationRenderer({
       {isKidsAdventure && isSectionEnabled('timeline') && <FiestaKidsMarquee second />}
       {kidsWorldId && isSectionEnabled('timeline') && <KidsWorldMarquee variant={kidsWorldVariant} second />}
       {newWorldId && isSectionEnabled('timeline') && <NewWorldMarquee variant={newWorldVariant} second />}
+      {storyWorldId && isSectionEnabled('timeline') && <StoryWorldMarquee variant={storyVariant} second />}
 
       {/* SECCIÓN 7: GALERÍA MULTIMEDIA */}
       {isSectionEnabled('gallery') && content.gallery.images.length > 0 && (
