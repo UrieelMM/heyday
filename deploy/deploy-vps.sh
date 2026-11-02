@@ -31,10 +31,7 @@ compose() {
     -f "$directory/compose.yaml" "$@"
 }
 
-compose "$release" "$sha" config --quiet
-compose "$release" "$sha" build app
-
-if ! compose "$release" "$sha" up --no-build --wait --wait-timeout 180 app caddy; then
+restore_previous() {
   echo "El despliegue no quedó saludable; restaurando la versión anterior" >&2
   if [[ -f "$previous/compose.yaml" && "$previous" != "$release" ]]; then
     previous_tag="$(basename "$previous")"
@@ -44,6 +41,22 @@ if ! compose "$release" "$sha" up --no-build --wait --wait-timeout 180 app caddy
       compose "$previous" "$previous_tag" up --no-build --wait --wait-timeout 180 app caddy || true
     fi
   fi
+}
+
+compose "$release" "$sha" config --quiet
+compose "$release" "$sha" build app
+
+if ! compose "$release" "$sha" up --no-build --force-recreate --wait --wait-timeout 180 app caddy; then
+  restore_previous
+  exit 1
+fi
+
+container_id="$(compose "$release" "$sha" ps -q app)"
+expected_image_id="$(docker image inspect "heyday-app:$sha" --format '{{.Id}}')"
+actual_image_id="$(docker inspect "$container_id" --format '{{.Image}}')"
+if [[ "$actual_image_id" != "$expected_image_id" ]]; then
+  echo "El contenedor activo no usa la imagen del commit $sha" >&2
+  restore_previous
   exit 1
 fi
 
