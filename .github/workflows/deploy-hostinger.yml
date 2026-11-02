@@ -1,0 +1,88 @@
+name: CI y despliegue en Hostinger
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validar aplicación
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - name: Verificar build de Next.js
+        run: npm run build
+        env:
+          # Valores públicos de prueba. El build real usa .env.production del VPS.
+          NEXT_PUBLIC_APP_URL: https://example.invalid
+          NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_ci
+
+  deploy:
+    name: Desplegar commit en VPS
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    concurrency:
+      group: heyday-production
+      cancel-in-progress: false
+    env:
+      HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}
+      HOSTINGER_USER: ${{ secrets.HOSTINGER_USER }}
+      HOSTINGER_SSH_PRIVATE_KEY: ${{ secrets.HOSTINGER_SSH_PRIVATE_KEY }}
+      HOSTINGER_SSH_KNOWN_HOSTS: ${{ secrets.HOSTINGER_SSH_KNOWN_HOSTS }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Configurar SSH
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in HOSTINGER_HOST HOSTINGER_USER HOSTINGER_SSH_PRIVATE_KEY HOSTINGER_SSH_KNOWN_HOSTS; do
+            if [[ -z "${!name}" ]]; then
+              echo "Falta configurar el secreto $name en GitHub Actions" >&2
+              exit 1
+            fi
+          done
+          install -m 700 -d "$HOME/.ssh"
+          printf '%s\n' "$HOSTINGER_SSH_PRIVATE_KEY" > "$HOME/.ssh/heyday_deploy"
+          printf '%s\n' "$HOSTINGER_SSH_KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+          chmod 600 "$HOME/.ssh/heyday_deploy" "$HOME/.ssh/known_hosts"
+          ssh-keygen -y -f "$HOME/.ssh/heyday_deploy" > /dev/null
+      - name: Enviar archivos del commit exacto
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$GITHUB_SHA" =~ ^[a-f0-9]{40}$ ]]
+          remote="${HOSTINGER_USER}@${HOSTINGER_HOST}"
+          ssh -i "$HOME/.ssh/heyday_deploy" -o BatchMode=yes -o StrictHostKeyChecking=yes "$remote" \
+            "mkdir -p /opt/heyday/.releases/$GITHUB_SHA"
+          git archive --format=tar "$GITHUB_SHA" | ssh -i "$HOME/.ssh/heyday_deploy" \
+            -o BatchMode=yes -o StrictHostKeyChecking=yes "$remote" \
+            "tar -xf - -C /opt/heyday/.releases/$GITHUB_SHA"
+      - name: Construir, iniciar y comprobar servicios
+        shell: bash
+        run: |
+          set -euo pipefail
+          remote="${HOSTINGER_USER}@${HOSTINGER_HOST}"
+          ssh -i "$HOME/.ssh/heyday_deploy" -o BatchMode=yes -o StrictHostKeyChecking=yes "$remote" \
+            "bash /opt/heyday/.releases/$GITHUB_SHA/deploy/deploy-vps.sh $GITHUB_SHA"
+      - name: Comprobar sitio público
+        run: curl --fail --silent --show-error --retry 5 --retry-delay 3 --retry-all-errors --max-time 15 https://heyday.party/api/health

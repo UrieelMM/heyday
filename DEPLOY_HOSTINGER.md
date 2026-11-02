@@ -87,7 +87,47 @@ docker compose --env-file .env.production --profile retention stop cron
 
 ## 4. Actualizar la aplicación
 
-Después de descargar los cambios del repositorio:
+El workflow `.github/workflows/deploy-hostinger.yml` valida cada pull request a `main` y despliega automáticamente cada push a `main`. El VPS conserva `.env.production`; GitHub Actions envía solamente los archivos versionados del commit y construye allí la imagen con las variables de producción.
+
+### Activar GitHub Actions una sola vez
+
+1. Genera una llave exclusiva para el despliegue (en esta máquina ya existe `~/.ssh/heyday_github_actions`):
+
+   ```bash
+   ssh-keygen -t ed25519 -f ~/.ssh/heyday_github_actions -C heyday-github-actions
+   ```
+
+   Cuando se solicite la passphrase, déjala vacía para que GitHub Actions pueda usarla sin interacción. No reemplaces una llave existente.
+
+2. En Hostinger abre **VPS → srv2107050.hstgr.cloud → Ajustes → Claves SSH** y añade el contenido de `~/.ssh/heyday_github_actions.pub`. Sólo se copia la llave **pública** al VPS.
+3. Verifica que la nueva llave entra y que el servidor está preparado:
+
+   ```bash
+   ssh -i ~/.ssh/heyday_github_actions root@179.197.88.57 'test -f /opt/heyday/.env.production && docker compose version'
+   ```
+
+4. En GitHub abre **UrieelMM/heyday → Settings → Secrets and variables → Actions → New repository secret**. Crea estos cuatro secretos:
+
+   | Nombre | Valor |
+   | --- | --- |
+   | `HOSTINGER_HOST` | `179.197.88.57` |
+   | `HOSTINGER_USER` | `root` |
+   | `HOSTINGER_SSH_PRIVATE_KEY` | Contenido completo de `~/.ssh/heyday_github_actions` (llave **privada**). |
+   | `HOSTINGER_SSH_KNOWN_HOSTS` | Entrada verificada del VPS en `~/.ssh/known_hosts`. Obténla con `ssh-keygen -F 179.197.88.57 -f ~/.ssh/known_hosts`. |
+
+   Antes de copiar una entrada nueva de `ssh-keyscan`, verifica la huella del host por un canal confiable. No desactives `StrictHostKeyChecking`.
+
+5. Haz push a `main` y revisa **Actions → CI y despliegue en Hostinger**. El job de despliegue espera a que `app` esté saludable y comprueba `https://heyday.party/api/health`. Si el arranque falla, intenta restaurar la versión anterior.
+
+El despliegue guarda cada commit en `/opt/heyday/.releases/<SHA>` y apunta `/opt/heyday/current` a la versión activa. Para revisar qué versión corre:
+
+```bash
+readlink -f /opt/heyday/current
+```
+
+### Actualización manual
+
+Si se actualiza el checkout de `/opt/heyday` a mano:
 
 ```bash
 docker compose --env-file .env.production up -d --build

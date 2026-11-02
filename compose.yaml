@@ -2,6 +2,7 @@ name: invitaciones-digitales
 
 services:
   app:
+    image: heyday-app:${APP_IMAGE_TAG:-local}
     build:
       context: .
       dockerfile: Dockerfile
