@@ -1,6 +1,18 @@
 @import "tailwindcss";
 
 :root {
+  --font-cormorant: 'Cormorant Garamond Variable';
+  --font-playfair: 'Playfair Display Variable';
+  --font-cinzel: 'Cinzel Variable';
+  --font-syne: 'Syne Variable';
+  --font-fredoka: 'Fredoka Variable';
+  --font-pinyon: 'Pinyon Script';
+  --font-great-vibes: 'Great Vibes';
+  --font-jakarta: 'Plus Jakarta Sans Variable';
+  --font-montserrat: 'Montserrat Variable';
+  --font-inter: 'Inter Variable';
+  --font-jetbrains: 'JetBrains Mono Variable';
+  --font-space: 'Space Grotesk Variable';
   --color-primary: #cc785c;
   --color-primary-active: #a9583e;
   --color-primary-disabled: #e6dfd8;
