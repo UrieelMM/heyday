@@ -58,6 +58,16 @@
 .kw-root--mickey .kw-station:nth-child(3) .kw-station__image { background: radial-gradient(circle at 50% 55%, #fff8ec, #ffc0b8); }
 .kw-root--mickey .kw-station__image img { object-fit: contain; padding: 12px 12px 0; filter: drop-shadow(6px 9px 0 #17223830); }
 .kw-root--mickey .kw-station__content span { color: var(--mmb-red); }
+.kw-root--mickey .kw-stations { isolation: isolate; overflow: hidden; background-image: radial-gradient(#e8312a20 2px,transparent 2.5px),radial-gradient(#2b65b81c 2px,transparent 2.5px); background-size: 68px 68px,89px 89px; background-position: 0 0,34px 20px; }
+.kw-root--mickey .kw-stations__head,.kw-root--mickey .kw-stations__grid { position: relative; z-index: 1; }
+.mmb-stations__ornaments { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.mmb-stations__ornament { position: absolute; display: block; width: clamp(100px,13vw,195px); aspect-ratio: 1; filter: drop-shadow(8px 13px 6px #17223838); }
+.mmb-stations__ornament img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.mmb-stations__ornament--1 { left: 4%; top: 2%; width: clamp(95px,11vw,170px); }.mmb-stations__ornament--1 img { animation: mmb-ornament-buoy 7s ease-in-out infinite; }
+.mmb-stations__ornament--2 { right: 5%; top: 13%; width: clamp(130px,16vw,230px); }.mmb-stations__ornament--2 img { animation: mmb-ornament-orbit 16s ease-in-out -5s infinite; }
+.mmb-stations__ornament--3 { left: 12%; top: 44%; opacity: .45; }.mmb-stations__ornament--3 img { animation: mmb-ornament-waltz 11s ease-in-out -3s infinite; }
+.mmb-stations__ornament--4 { right: 8%; top: 65%; width: clamp(130px,15vw,210px); opacity: .75; }.mmb-stations__ornament--4 img { animation: mmb-ornament-buoy 9s ease-in-out -4s infinite reverse; }
+.mmb-stations__ornament--5 { left: 4%; bottom: 2%; width: clamp(85px,9vw,130px); opacity: .6; }.mmb-stations__ornament--5 img { animation: mmb-ornament-pop 10s ease-in-out -2s infinite; }
 .kw-root--mickey .st-family { background: #d7e8ff !important; }
 .kw-root--mickey .st-family__card { box-shadow: 8px 9px 0 var(--mmb-blue); }
 .kw-root--mickey .st-family__card:nth-child(2) { box-shadow: 8px 9px 0 var(--mmb-red); }
@@ -84,8 +94,61 @@
 .kw-root--mickey .st-rsvp > div { box-shadow: 9px 11px 0 var(--mmb-red); }
 .kw-root--mickey .st-rsvp button[type="submit"], .kw-root--mickey .st-locations__card a:first-child { background: var(--mmb-red) !important; color: #fff !important; }
 
+/* Graphic party motifs keep the utility chapters in Mickey's visual world. */
+.kw-root--mickey :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp) {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-image: radial-gradient(#e8312a16 2px,transparent 2.5px),radial-gradient(#2b65b812 2px,transparent 2.5px) !important;
+  background-size: 64px 64px,92px 92px;
+  background-position: 0 0,31px 22px;
+}
+.kw-root--mickey :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp) > * { position: relative; z-index: 1; }
+.kw-root--mickey :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp)::before,
+.kw-root--mickey :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp)::after {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  aspect-ratio: 1;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  filter: drop-shadow(9px 15px 7px #17223838);
+  pointer-events: none;
+}
+.kw-root--mickey :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp)::before {
+  top: var(--mmb-a-y);
+  left: var(--mmb-a-x);
+  width: var(--mmb-a-size,clamp(120px,14vw,210px));
+  opacity: var(--mmb-a-opacity,.48);
+  background-image: var(--mmb-a-image,url('/images/mickey-mouse-birthday/ambient-club-badge.svg'));
+  animation: var(--mmb-a-motion,mmb-ornament-buoy 8s ease-in-out infinite);
+}
+.kw-root--mickey :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp)::after {
+  top: var(--mmb-b-y);
+  left: var(--mmb-b-x);
+  width: var(--mmb-b-size,clamp(105px,12vw,180px));
+  opacity: var(--mmb-b-opacity,.46);
+  background-image: var(--mmb-b-image,url('/images/mickey-mouse-birthday/ambient-balloon.svg'));
+  animation: var(--mmb-b-motion,mmb-ornament-waltz 10s ease-in-out -3s infinite);
+}
+.kw-root--mickey .st-family { --mmb-a-x: 83%; --mmb-a-y: 6%; --mmb-a-motion: mmb-ornament-orbit 18s ease-in-out infinite; --mmb-b-x: 4%; --mmb-b-y: 48%; --mmb-b-motion: mmb-ornament-buoy 7s ease-in-out -2s infinite; }
+.kw-root--mickey .st-countdown { --mmb-a-x: 4%; --mmb-a-y: 12%; --mmb-a-image: url('/images/mickey-mouse-birthday/ambient-star.svg'); --mmb-a-motion: mmb-ornament-pop 9s ease-in-out infinite; --mmb-b-x: 79%; --mmb-b-y: 61%; --mmb-b-image: url('/images/mickey-mouse-birthday/ambient-bow.svg'); --mmb-b-motion: mmb-ornament-waltz 11s ease-in-out -4s infinite; }
+.kw-root--mickey .st-locations { --mmb-a-x: 81%; --mmb-a-y: 10%; --mmb-a-image: url('/images/mickey-mouse-birthday/ambient-balloon.svg'); --mmb-a-motion: mmb-ornament-buoy 8s ease-in-out infinite; --mmb-b-x: 3%; --mmb-b-y: 55%; --mmb-b-image: url('/images/mickey-mouse-birthday/ambient-star.svg'); --mmb-b-motion: mmb-ornament-orbit 16s ease-in-out -5s infinite; }
+.kw-root--mickey .st-timeline { --mmb-a-x: 5%; --mmb-a-y: 15%; --mmb-a-image: url('/images/mickey-mouse-birthday/ambient-bow.svg'); --mmb-a-motion: mmb-ornament-waltz 12s ease-in-out infinite; --mmb-b-x: 79%; --mmb-b-y: 57%; --mmb-b-image: url('/images/mickey-mouse-birthday/ambient-club-badge.svg'); --mmb-b-motion: mmb-ornament-pop 10s ease-in-out -3s infinite; }
+.kw-root--mickey .st-gallery { --mmb-a-x: 82%; --mmb-a-y: 7%; --mmb-a-image: url('/images/mickey-mouse-birthday/ambient-star.svg'); --mmb-a-motion: mmb-ornament-orbit 20s ease-in-out infinite; --mmb-b-x: 4%; --mmb-b-y: 69%; --mmb-b-motion: mmb-ornament-buoy 8s ease-in-out -4s infinite; }
+.kw-root--mickey .st-dress { --mmb-a-x: 78%; --mmb-a-y: 11%; --mmb-a-image: url('/images/mickey-mouse-birthday/ambient-bow.svg'); --mmb-a-motion: mmb-ornament-pop 9s ease-in-out infinite; --mmb-b-x: 5%; --mmb-b-y: 62%; --mmb-b-image: url('/images/mickey-mouse-birthday/ambient-club-badge.svg'); --mmb-b-motion: mmb-ornament-orbit 17s ease-in-out -6s infinite; }
+.kw-root--mickey .st-gifts { --mmb-a-x: 5%; --mmb-a-y: 13%; --mmb-a-image: url('/images/mickey-mouse-birthday/ambient-balloon.svg'); --mmb-a-motion: mmb-ornament-buoy 7s ease-in-out infinite; --mmb-b-x: 82%; --mmb-b-y: 65%; --mmb-b-image: url('/images/mickey-mouse-birthday/ambient-star.svg'); --mmb-b-motion: mmb-ornament-waltz 13s ease-in-out -5s infinite; }
+.kw-root--mickey .st-social { --mmb-a-x: 80%; --mmb-a-y: 8%; --mmb-a-motion: mmb-ornament-waltz 11s ease-in-out infinite; --mmb-b-x: 4%; --mmb-b-y: 67%; --mmb-b-image: url('/images/mickey-mouse-birthday/ambient-bow.svg'); --mmb-b-motion: mmb-ornament-buoy 8s ease-in-out -3s infinite; }
+.kw-root--mickey .st-social + .st-social { --mmb-a-x: 4%; --mmb-a-y: 20%; --mmb-a-image: url('/images/mickey-mouse-birthday/ambient-star.svg'); --mmb-a-motion: mmb-ornament-orbit 15s ease-in-out infinite; --mmb-b-x: 82%; --mmb-b-y: 62%; --mmb-b-image: url('/images/mickey-mouse-birthday/ambient-balloon.svg'); --mmb-b-motion: mmb-ornament-buoy 9s ease-in-out -5s infinite; }
+.kw-root--mickey .st-rsvp { --mmb-a-x: 4%; --mmb-a-y: 7%; --mmb-a-image: url('/images/mickey-mouse-birthday/ambient-star.svg'); --mmb-a-motion: mmb-ornament-pop 10s ease-in-out infinite; --mmb-b-x: 82%; --mmb-b-y: 78%; --mmb-b-image: url('/images/mickey-mouse-birthday/ambient-club-badge.svg'); --mmb-b-motion: mmb-ornament-waltz 12s ease-in-out -4s infinite; }
+
 @keyframes mmb-bob { 50% { translate: 0 -12px; } }
 @keyframes mmb-spin { to { transform: rotate(360deg); } }
+@keyframes mmb-ornament-buoy { 0%,100% { transform: translate3d(-7px,16px,0) rotate(-13deg); } 50% { transform: translate3d(19px,-31px,0) rotate(13deg); } }
+@keyframes mmb-ornament-orbit { 0%,100% { transform: translate3d(0,10px,0) rotate(0deg); } 25% { transform: translate3d(24px,-14px,0) rotate(75deg); } 50% { transform: translate3d(0,-37px,0) rotate(170deg); } 75% { transform: translate3d(-24px,-12px,0) rotate(275deg); } }
+@keyframes mmb-ornament-waltz { 0%,100% { transform: translate3d(-16px,9px,0) rotate(-21deg) scale(.94); } 35% { transform: translate3d(22px,-19px,0) rotate(16deg) scale(1.07); } 70% { transform: translate3d(4px,-36px,0) rotate(-11deg) scale(1); } }
+@keyframes mmb-ornament-pop { 0%,100% { transform: translate3d(0,13px,0) rotate(-13deg) scale(.86); } 50% { transform: translate3d(12px,-27px,0) rotate(15deg) scale(1.12); } }
 
 @media (max-width: 700px) {
   .kw-root--mickey .mmb-nav { width: calc(100% - 20px); }
@@ -106,6 +169,25 @@
   .mmb-hero__orbit { width: 105vw; top: 30%; right: -40%; }
   .kw-root--mickey .kw-hero__cta { bottom: 3%; }
   .kw-root--mickey .kw-station__image { height: 190px; }
+  .kw-root--mickey .kw-stations { background-size: 46px 46px,72px 72px; }
+  .mmb-stations__ornament--1 { top: 1%; left: -39px; width: 106px; opacity: .48; }
+  .mmb-stations__ornament--2 { top: 23%; right: -43px; width: 110px; opacity: .5; }
+  .mmb-stations__ornament--3 { top: 43%; left: -49px; width: 100px; opacity: .4; }
+  .mmb-stations__ornament--4 { top: 68%; right: -45px; width: 118px; opacity: .55; }
+  .mmb-stations__ornament--5 { bottom: 2%; left: -30px; width: 80px; opacity: .45; }
+  .kw-root--mickey :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp) { background-size: 48px 48px,74px 74px; }
+  .kw-root--mickey :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp)::before { width: 104px; top: var(--mmb-a-mobile-y,var(--mmb-a-y)); left: var(--mmb-a-mobile-x,var(--mmb-a-x)); opacity: .38; }
+  .kw-root--mickey :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp)::after { width: 92px; top: var(--mmb-b-mobile-y,var(--mmb-b-y)); left: var(--mmb-b-mobile-x,var(--mmb-b-x)); opacity: .37; }
+  .kw-root--mickey .st-family { --mmb-a-mobile-x: calc(100% - 62px); --mmb-a-mobile-y: 6%; --mmb-b-mobile-x: -39px; --mmb-b-mobile-y: 64%; }
+  .kw-root--mickey .st-countdown { --mmb-a-mobile-x: -43px; --mmb-a-mobile-y: 12%; --mmb-b-mobile-x: calc(100% - 62px); --mmb-b-mobile-y: 68%; }
+  .kw-root--mickey .st-locations { --mmb-a-mobile-x: calc(100% - 60px); --mmb-a-mobile-y: 7%; --mmb-b-mobile-x: -36px; --mmb-b-mobile-y: 50%; }
+  .kw-root--mickey .st-timeline { --mmb-a-mobile-x: -48px; --mmb-a-mobile-y: 18%; --mmb-b-mobile-x: calc(100% - 66px); --mmb-b-mobile-y: 58%; }
+  .kw-root--mickey .st-gallery { --mmb-a-mobile-x: calc(100% - 70px); --mmb-a-mobile-y: 9%; --mmb-b-mobile-x: -40px; --mmb-b-mobile-y: 76%; }
+  .kw-root--mickey .st-dress { --mmb-a-mobile-x: calc(100% - 57px); --mmb-a-mobile-y: 8%; --mmb-b-mobile-x: -47px; --mmb-b-mobile-y: 71%; }
+  .kw-root--mickey .st-gifts { --mmb-a-mobile-x: -36px; --mmb-a-mobile-y: 10%; --mmb-b-mobile-x: calc(100% - 62px); --mmb-b-mobile-y: 72%; }
+  .kw-root--mickey .st-social { --mmb-a-mobile-x: calc(100% - 61px); --mmb-a-mobile-y: 6%; --mmb-b-mobile-x: -41px; --mmb-b-mobile-y: 72%; }
+  .kw-root--mickey .st-social + .st-social { --mmb-a-mobile-x: -42px; --mmb-a-mobile-y: 24%; --mmb-b-mobile-x: calc(100% - 58px); --mmb-b-mobile-y: 65%; }
+  .kw-root--mickey .st-rsvp { --mmb-a-mobile-x: -48px; --mmb-a-mobile-y: 5%; --mmb-b-mobile-x: calc(100% - 60px); --mmb-b-mobile-y: 81%; }
 }
 @media (max-width: 360px) {
   .mmb-hero__copy { top: 11%; }
@@ -115,5 +197,7 @@
   .mmb-hero__motif { width: 105px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .mmb-hero__balloon, .mmb-seal, .mmb-hero__visual-rays { animation: none !important; }
+  .mmb-hero__balloon, .mmb-seal, .mmb-hero__visual-rays, .mmb-stations__ornament img,
+  .kw-root--mickey :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp)::before,
+  .kw-root--mickey :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp)::after { animation: none !important; }
 }

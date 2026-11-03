@@ -60,6 +60,12 @@ Cada capítulo responde a una pregunta narrativa y utiliza el desplazamiento (`s
 3. **Bandas cinéticas infinitas (`<KineticMarquee />`):**
    - Separadores horizontales con animación continua (`translate3d(-33.333%, 0, 0)`) y `mask-image` difuminado en los bordes laterales para dar ritmo editorial entre escenas densas.
 
+### 3.3 Fondos con identidad gráfica en todas las escenas
+1. **Ninguna sección debe quedar como un bloque de color vacío.** En inmersión temática, familia, cuenta regresiva, ubicaciones, itinerario, galería, vestimenta, regalos, participación social y RSVP, añade motivos reconocibles del universo visual del template: ilustraciones, figuras vectoriales, texturas o patrones. Deben acompañar la información sin tapar titulares, tarjetas, mapas ni controles.
+2. **Cada escena necesita su propia composición.** Alterna tipo de motivo, cantidad, escala, posición y profundidad. Evita repetir dos adornos en las mismas esquinas a lo largo de toda la página. La sección de inmersión temática también requiere un fondo escénico, aunque sus tarjetas ya contengan imágenes.
+3. **El movimiento debe ser perceptible y variado.** Combina trayectorias distintas de flotación, giro, deriva o cambio de escala con parallax reversible ligado al scroll (`scrub`) en las escenas protagonistas. Anima capas separadas cuando convivan movimiento continuo y scroll para que sus transformaciones no se sobrescriban.
+4. **Conserva legibilidad y rendimiento.** Sitúa los gráficos detrás del contenido (`isolation`, `z-index`, `pointer-events: none`), recorta dentro de la escena, ajusta tamaño/opacidad/posición para `320px–430px` y desactiva la animación con `prefers-reduced-motion`. Comprueba que no haya desbordamiento horizontal.
+
 ---
 
 ## 4. Regla de oro para el centrado matemático con GSAP
@@ -119,6 +125,7 @@ Tu objetivo es rediseñar el template `[NOMBRE_DEL_TEMPLATE]` (`[TEMPLATE_ID]`, 
   2. Un **sello circular giratorio (`<textPath>`)** con palabras clave auténticas del evento.
   3. Un **fondo geométrico / botánico / arquitectónico con trazos `strokeDasharray` / `strokeDashoffset`** que se dibuje progresivamente con el scroll en la sección de Historia/Manifiesto.
 - Genera y optimiza (con `sharp` a JPEG/WebP `< 110 KB`) un set cohesivo de **4 a 5 ilustraciones o fotografías editoriales** en `public/images/[TEMPLATE_ID]/` para la portada, la sección de experiencia temática, las ubicaciones y la galería.
+- Diseña motivos ambientales propios para las escenas con fondos de color sólido. Distribúyelos de forma diferente en cada capítulo, con varias escalas y movimientos (flotación, giro, deriva, parallax de scroll); incluye la sección de inmersión temática. Mantén estos gráficos detrás de textos y controles, adapta la composición móvil y respeta `prefers-reduced-motion`.
 
 ### 2. Impacto Mobile-First (`320px`, `375px`, `390px`, `430px`) y centrado matemático
 - Diseña primero para el viewport móvil (`390 × 844 px`) donde la mayoría de los invitados abren la invitación.
@@ -159,5 +166,6 @@ Implementa un componente dedicado `[NombreTemplate]Experience.tsx` y su hoja `[t
 - [ ] **Centrado móvil perfecto:** En `390×844`, ningún bloque de texto, imagen de portada, tarjeta única o botón queda cargado hacia un lado.
 - [ ] **Cero desbordamiento horizontal:** `document.documentElement.scrollWidth <= window.innerWidth` tanto en móvil como en escritorio.
 - [ ] **Riqueza narrativa:** Al menos 10–12 secciones/capítulos visuales (incluyendo marquesinas cinéticas y sección de experiencia temática).
+- [ ] **Fondos escénicos completos:** Ninguna sección depende solo de un color plano; los motivos temáticos cambian de posición, escala y animación entre capítulos, incluida la inmersión temática, sin obstaculizar el contenido.
 - [ ] **Scroll reversible (`scrub`):** El hero, el manifiesto por palabras, el dibujo SVG, el riel del itinerario y las tarjetas responden suavemente al subir y bajar.
 - [ ] **Compatibilidad total con el editor:** Funciona en vivo con selección de secciones, vista previa del sobre (`previewEnvelope`), cambio de colores/fuentes y generación de pase QR.

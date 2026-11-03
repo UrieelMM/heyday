@@ -107,6 +107,9 @@ export function KidsWorldStations({ variant, config }: { variant: KidsWorldVaria
   const images = config.content.gallery.images;
   return (
     <section id={stationId} className="kw-stations kw-sheet" data-editor-section="quoteStory" aria-label={stationLabel}>
+      {variant === 'mickey' && <div className="mmb-stations__ornaments" aria-hidden="true">
+        {(['balloon', 'star', 'club-badge', 'bow', 'star'] as const).map((motif, index) => <span className={`mmb-stations__ornament mmb-stations__ornament--${index + 1}`} key={index}><img src={`/images/mickey-mouse-birthday/ambient-${motif}.svg`} alt="" /></span>)}
+      </div>}
       {variant === 'minecraft' && <div className="vxb-stations__cubes" aria-hidden="true">
         {(['grass', 'diamond', 'stone', 'grass', 'diamond'] as const).map((block, index) => <span className={`vxb-stations__cube vxb-stations__cube--${index + 1}`} key={index}><img src={`/images/minecraft-birthday/ambient-${block}-cube.svg`} alt="" /></span>)}
       </div>}
@@ -176,6 +179,10 @@ export function setupKidsWorldScenes(root: HTMLElement, id: KidsWorldTemplateId)
     gsap.to(root.querySelector('.mmb-hero__friend'), { xPercent: 86, yPercent: -65, rotate: 19, scale: .7, ease: 'none', scrollTrigger: heroTrigger });
     gsap.to(root.querySelector('.mmb-hero__orbit'), { rotate: 85, scale: 1.25, ease: 'none', scrollTrigger: heroTrigger });
     gsap.to(root.querySelectorAll('.mmb-hero__star'), { y: -90, rotate: 130, ease: 'none', stagger: .08, scrollTrigger: heroTrigger });
+    const stations = root.querySelector<HTMLElement>('.kw-stations');
+    if (stations) root.querySelectorAll<HTMLElement>('.mmb-stations__ornament').forEach((ornament, index) => {
+      gsap.to(ornament, { xPercent: index % 2 ? -29 : 24, yPercent: index % 2 ? -115 : -80, rotate: index % 2 ? -32 : 27, scale: index % 2 ? .88 : 1.12, ease: 'none', scrollTrigger: trigger(stations, 'top 85%', 'bottom 20%') });
+    });
   }
   if (id === 'minecraft-birthday' && hero) {
     const heroTrigger = { trigger: hero, scroller, start: 'top top', end: 'bottom bottom', scrub: .9 };
