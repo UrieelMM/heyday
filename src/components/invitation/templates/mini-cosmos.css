@@ -2409,3 +2409,46 @@
     clip-path: none !important;
   }
 }
+
+/* Ambient spacecraft, planets and starbursts give the data chapters depth. */
+.mc-root :is(.mc-missions,.mc-family,.mc-countdown,.mc-locations,.mc-timeline,.mc-gallery,.mc-dress,.mc-gifts,.mc-stay,.mc-social,.mc-rsvp) { isolation: isolate; }
+.mc-root :is(.mc-missions,.mc-family,.mc-countdown,.mc-locations,.mc-timeline,.mc-gallery,.mc-dress,.mc-gifts,.mc-stay,.mc-social,.mc-rsvp)::before,
+.mc-root :is(.mc-missions,.mc-family,.mc-countdown,.mc-locations,.mc-timeline,.mc-gallery,.mc-dress,.mc-gifts,.mc-stay,.mc-social,.mc-rsvp)::after { content: ''; position: absolute; z-index: 0; aspect-ratio: 1; background-position: center; background-size: contain; background-repeat: no-repeat; filter: drop-shadow(0 15px 17px #040d2a80); pointer-events: none; }
+.mc-root :is(.mc-missions,.mc-family,.mc-countdown,.mc-locations,.mc-timeline,.mc-gallery,.mc-dress,.mc-gifts,.mc-stay,.mc-social,.mc-rsvp)::before { top: var(--mc-amb-a-y); left: var(--mc-amb-a-x); width: var(--mc-amb-a-size,clamp(120px,14vw,220px)); opacity: var(--mc-amb-a-opacity,.48); background-image: var(--mc-amb-a-image,url('/images/mini-cosmos/ambient-planet.svg')); animation: var(--mc-amb-a-motion,mc-amb-drift 10s ease-in-out infinite); }
+.mc-root :is(.mc-missions,.mc-family,.mc-countdown,.mc-locations,.mc-timeline,.mc-gallery,.mc-dress,.mc-gifts,.mc-stay,.mc-social,.mc-rsvp)::after { top: var(--mc-amb-b-y); left: var(--mc-amb-b-x); width: var(--mc-amb-b-size,clamp(100px,11vw,175px)); opacity: var(--mc-amb-b-opacity,.43); background-image: var(--mc-amb-b-image,url('/images/mini-cosmos/ambient-satellite.svg')); animation: var(--mc-amb-b-motion,mc-amb-orbit 16s ease-in-out -4s infinite); }
+.mc-root .mc-missions { --mc-amb-a-x: 4%; --mc-amb-a-y: 38%; --mc-amb-a-image: url('/images/mini-cosmos/ambient-satellite.svg'); --mc-amb-a-motion: mc-amb-orbit 19s ease-in-out infinite; --mc-amb-b-x: 83%; --mc-amb-b-y: 67%; --mc-amb-b-image: url('/images/mini-cosmos/ambient-starburst.svg'); --mc-amb-b-motion: mc-amb-pulse 8s ease-in-out -2s infinite; }
+.mc-root .mc-family { --mc-amb-a-x: 80%; --mc-amb-a-y: 8%; --mc-amb-a-motion: mc-amb-rise 9s ease-in-out infinite; --mc-amb-b-x: 4%; --mc-amb-b-y: 57%; --mc-amb-b-motion: mc-amb-drift 11s ease-in-out -3s infinite; }
+.mc-root .mc-countdown { --mc-amb-a-x: 5%; --mc-amb-a-y: 14%; --mc-amb-a-image: url('/images/mini-cosmos/ambient-starburst.svg'); --mc-amb-a-motion: mc-amb-pulse 8s ease-in-out infinite; --mc-amb-b-x: 82%; --mc-amb-b-y: 60%; --mc-amb-b-motion: mc-amb-orbit 17s ease-in-out -6s infinite; }
+.mc-root .mc-locations { --mc-amb-a-x: 81%; --mc-amb-a-y: 9%; --mc-amb-a-image: url('/images/mini-cosmos/ambient-satellite.svg'); --mc-amb-a-motion: mc-amb-drift 10s ease-in-out infinite; --mc-amb-b-x: 4%; --mc-amb-b-y: 66%; --mc-amb-b-image: url('/images/mini-cosmos/ambient-planet.svg'); --mc-amb-b-motion: mc-amb-rise 9s ease-in-out -4s infinite; }
+.mc-root .mc-timeline { --mc-amb-a-x: 5%; --mc-amb-a-y: 19%; --mc-amb-a-motion: mc-amb-orbit 18s ease-in-out infinite; --mc-amb-b-x: 80%; --mc-amb-b-y: 61%; --mc-amb-b-image: url('/images/mini-cosmos/ambient-starburst.svg'); --mc-amb-b-motion: mc-amb-pulse 10s ease-in-out -3s infinite; }
+.mc-root .mc-gallery { --mc-amb-a-x: 5%; --mc-amb-a-y: 14%; --mc-amb-a-image: url('/images/mini-cosmos/ambient-starburst.svg'); --mc-amb-a-motion: mc-amb-pulse 9s ease-in-out infinite; --mc-amb-b-x: 81%; --mc-amb-b-y: 69%; --mc-amb-b-motion: mc-amb-drift 11s ease-in-out -5s infinite; }
+.mc-root .mc-dress { --mc-amb-a-x: 79%; --mc-amb-a-y: 7%; --mc-amb-a-image: url('/images/mini-cosmos/ambient-satellite.svg'); --mc-amb-a-motion: mc-amb-orbit 16s ease-in-out infinite; --mc-amb-b-x: 4%; --mc-amb-b-y: 68%; --mc-amb-b-image: url('/images/mini-cosmos/ambient-planet.svg'); --mc-amb-b-motion: mc-amb-rise 8s ease-in-out -4s infinite; }
+.mc-root .mc-gifts { --mc-amb-a-x: 4%; --mc-amb-a-y: 15%; --mc-amb-a-motion: mc-amb-rise 9s ease-in-out infinite; --mc-amb-b-x: 82%; --mc-amb-b-y: 68%; --mc-amb-b-image: url('/images/mini-cosmos/ambient-starburst.svg'); --mc-amb-b-motion: mc-amb-pulse 10s ease-in-out -4s infinite; }
+.mc-root .mc-stay { --mc-amb-a-x: 80%; --mc-amb-a-y: 12%; --mc-amb-a-image: url('/images/mini-cosmos/ambient-starburst.svg'); --mc-amb-a-motion: mc-amb-pulse 9s ease-in-out infinite; --mc-amb-b-x: 3%; --mc-amb-b-y: 62%; --mc-amb-b-motion: mc-amb-drift 11s ease-in-out -3s infinite; }
+.mc-root .mc-social { --mc-amb-a-x: 5%; --mc-amb-a-y: 9%; --mc-amb-a-image: url('/images/mini-cosmos/ambient-satellite.svg'); --mc-amb-a-motion: mc-amb-orbit 19s ease-in-out infinite; --mc-amb-b-x: 81%; --mc-amb-b-y: 75%; --mc-amb-b-image: url('/images/mini-cosmos/ambient-planet.svg'); --mc-amb-b-motion: mc-amb-rise 9s ease-in-out -5s infinite; }
+.mc-root .mc-rsvp { --mc-amb-a-x: 4%; --mc-amb-a-y: 8%; --mc-amb-a-image: url('/images/mini-cosmos/ambient-starburst.svg'); --mc-amb-a-motion: mc-amb-pulse 9s ease-in-out infinite; --mc-amb-b-x: 82%; --mc-amb-b-y: 81%; --mc-amb-b-motion: mc-amb-drift 11s ease-in-out -4s infinite; }
+
+@keyframes mc-amb-rise { 0%,100% { transform: translate3d(0,16px,0) rotate(-11deg) scale(.94); } 50% { transform: translate3d(8px,-34px,0) rotate(15deg) scale(1.07); } }
+@keyframes mc-amb-drift { 0%,100% { transform: translate3d(-17px,12px,0) rotate(-19deg); } 35% { transform: translate3d(28px,-17px,0) rotate(14deg); } 70% { transform: translate3d(2px,-40px,0) rotate(-7deg); } }
+@keyframes mc-amb-pulse { 0%,100% { transform: translate3d(0,12px,0) rotate(-14deg) scale(.85); } 50% { transform: translate3d(13px,-27px,0) rotate(16deg) scale(1.14); } }
+@keyframes mc-amb-orbit { 0%,100% { transform: translate3d(0,10px,0) rotate(0deg); } 25% { transform: translate3d(25px,-14px,0) rotate(75deg); } 50% { transform: translate3d(0,-39px,0) rotate(170deg); } 75% { transform: translate3d(-25px,-12px,0) rotate(275deg); } }
+
+@media (max-width: 700px) {
+  .mc-root :is(.mc-missions,.mc-family,.mc-countdown,.mc-locations,.mc-timeline,.mc-gallery,.mc-dress,.mc-gifts,.mc-stay,.mc-social,.mc-rsvp)::before { width: 105px; top: var(--mc-amb-a-my,var(--mc-amb-a-y)); left: var(--mc-amb-a-mx,var(--mc-amb-a-x)); opacity: .38; }
+  .mc-root :is(.mc-missions,.mc-family,.mc-countdown,.mc-locations,.mc-timeline,.mc-gallery,.mc-dress,.mc-gifts,.mc-stay,.mc-social,.mc-rsvp)::after { width: 92px; top: var(--mc-amb-b-my,var(--mc-amb-b-y)); left: var(--mc-amb-b-mx,var(--mc-amb-b-x)); opacity: .34; }
+  .mc-root .mc-missions { --mc-amb-a-mx: -43px; --mc-amb-a-my: 25%; --mc-amb-b-mx: calc(100% - 58px); --mc-amb-b-my: 75%; }
+  .mc-root .mc-family { --mc-amb-a-mx: calc(100% - 62px); --mc-amb-a-my: 5%; --mc-amb-b-mx: -39px; --mc-amb-b-my: 67%; }
+  .mc-root .mc-countdown { --mc-amb-a-mx: -43px; --mc-amb-a-my: 11%; --mc-amb-b-mx: calc(100% - 59px); --mc-amb-b-my: 70%; }
+  .mc-root .mc-locations { --mc-amb-a-mx: calc(100% - 62px); --mc-amb-a-my: 6%; --mc-amb-b-mx: -42px; --mc-amb-b-my: 69%; }
+  .mc-root .mc-timeline { --mc-amb-a-mx: -40px; --mc-amb-a-my: 17%; --mc-amb-b-mx: calc(100% - 62px); --mc-amb-b-my: 65%; }
+  .mc-root .mc-gallery { --mc-amb-a-mx: -44px; --mc-amb-a-my: 12%; --mc-amb-b-mx: calc(100% - 61px); --mc-amb-b-my: 73%; }
+  .mc-root .mc-dress { --mc-amb-a-mx: calc(100% - 63px); --mc-amb-a-my: 7%; --mc-amb-b-mx: -44px; --mc-amb-b-my: 71%; }
+  .mc-root .mc-gifts { --mc-amb-a-mx: -41px; --mc-amb-a-my: 12%; --mc-amb-b-mx: calc(100% - 58px); --mc-amb-b-my: 73%; }
+  .mc-root .mc-stay { --mc-amb-a-mx: calc(100% - 60px); --mc-amb-a-my: 9%; --mc-amb-b-mx: -41px; --mc-amb-b-my: 66%; }
+  .mc-root .mc-social { --mc-amb-a-mx: -43px; --mc-amb-a-my: 7%; --mc-amb-b-mx: calc(100% - 62px); --mc-amb-b-my: 79%; }
+  .mc-root .mc-rsvp { --mc-amb-a-mx: -45px; --mc-amb-a-my: 5%; --mc-amb-b-mx: calc(100% - 59px); --mc-amb-b-my: 84%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mc-root :is(.mc-missions,.mc-family,.mc-countdown,.mc-locations,.mc-timeline,.mc-gallery,.mc-dress,.mc-gifts,.mc-stay,.mc-social,.mc-rsvp)::before,
+  .mc-root :is(.mc-missions,.mc-family,.mc-countdown,.mc-locations,.mc-timeline,.mc-gallery,.mc-dress,.mc-gifts,.mc-stay,.mc-social,.mc-rsvp)::after { animation: none !important; }
+}

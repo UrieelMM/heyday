@@ -1,0 +1,62 @@
+/* Pirate and dino motifs share a depth system while keeping distinct artwork. */
+.kw-root--pirate { --kw-ambient-one: url('/images/pirate-treasure-voyage/ambient-compass.svg'); --kw-ambient-two: url('/images/pirate-treasure-voyage/ambient-anchor.svg'); --kw-ambient-three: url('/images/pirate-treasure-voyage/ambient-treasure.svg'); --kw-ambient-texture: repeating-radial-gradient(ellipse at 50% 100%,transparent 0 30px,#2f7d8240 31px 32px); }
+.kw-root--dino { --kw-ambient-one: url('/images/dino-jungle-expedition/ambient-footprint.svg'); --kw-ambient-two: url('/images/dino-jungle-expedition/ambient-leaf.svg'); --kw-ambient-three: url('/images/dino-jungle-expedition/ambient-fossil.svg'); --kw-ambient-texture: radial-gradient(#4c794b22 1.5px,transparent 2px); }
+
+:is(.kw-root--pirate,.kw-root--dino) .kw-stations { isolation: isolate; overflow: hidden; background-image: var(--kw-ambient-texture); background-size: 52px 52px; }
+:is(.kw-root--pirate,.kw-root--dino) :is(.kw-stations__head,.kw-stations__grid) { position: relative; z-index: 1; }
+.kw-ambient__station-layer { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.kw-ambient__station-motif { position: absolute; display: block; width: clamp(110px,14vw,210px); aspect-ratio: 1; filter: drop-shadow(9px 15px 7px #142d2940); }
+.kw-ambient__station-motif img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.kw-ambient__station-motif--1 { top: 4%; left: 3%; width: clamp(135px,17vw,250px); }.kw-ambient__station-motif--1 img { animation: kwa-drift 10s ease-in-out infinite; }
+.kw-ambient__station-motif--2 { top: 15%; right: 5%; }.kw-ambient__station-motif--2 img { animation: kwa-orbit 18s ease-in-out -5s infinite; }
+.kw-ambient__station-motif--3 { top: 44%; left: 10%; opacity: .55; }.kw-ambient__station-motif--3 img { animation: kwa-rise 8s ease-in-out -3s infinite; }
+.kw-ambient__station-motif--4 { top: 64%; right: 7%; width: clamp(125px,16vw,230px); opacity: .65; }.kw-ambient__station-motif--4 img { animation: kwa-sway 12s ease-in-out -4s infinite; }
+.kw-ambient__station-motif--5 { bottom: 2%; left: 4%; width: clamp(90px,10vw,145px); opacity: .55; }.kw-ambient__station-motif--5 img { animation: kwa-orbit 15s ease-in-out -6s infinite reverse; }
+
+:is(.kw-root--pirate,.kw-root--dino) :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp) { position: relative; isolation: isolate; overflow: hidden; background-image: var(--kw-ambient-texture) !important; background-size: 52px 52px; }
+:is(.kw-root--pirate,.kw-root--dino) :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp) > * { position: relative; z-index: 1; }
+:is(.kw-root--pirate,.kw-root--dino) :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp)::before,
+:is(.kw-root--pirate,.kw-root--dino) :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp)::after { content: ''; position: absolute; z-index: 0; aspect-ratio: 1; background-position: center; background-size: contain; background-repeat: no-repeat; filter: drop-shadow(9px 15px 7px #142d2940); pointer-events: none; }
+:is(.kw-root--pirate,.kw-root--dino) :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp)::before { top: var(--kwa-a-y); left: var(--kwa-a-x); width: var(--kwa-a-size,clamp(120px,14vw,210px)); opacity: var(--kwa-a-opacity,.44); background-image: var(--kwa-a-image,var(--kw-ambient-one)); animation: var(--kwa-a-motion,kwa-drift 9s ease-in-out infinite); }
+:is(.kw-root--pirate,.kw-root--dino) :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp)::after { top: var(--kwa-b-y); left: var(--kwa-b-x); width: var(--kwa-b-size,clamp(105px,12vw,180px)); opacity: var(--kwa-b-opacity,.42); background-image: var(--kwa-b-image,var(--kw-ambient-two)); animation: var(--kwa-b-motion,kwa-sway 11s ease-in-out -3s infinite); }
+
+:is(.kw-root--pirate,.kw-root--dino) .st-family { --kwa-a-x: 4%; --kwa-a-y: 54%; --kwa-a-motion: kwa-sway 11s ease-in-out infinite; --kwa-b-x: 83%; --kwa-b-y: 7%; --kwa-b-motion: kwa-rise 8s ease-in-out -3s infinite; }
+:is(.kw-root--pirate,.kw-root--dino) .st-countdown { --kwa-a-x: 79%; --kwa-a-y: 10%; --kwa-a-image: var(--kw-ambient-three); --kwa-a-motion: kwa-orbit 16s ease-in-out infinite; --kwa-b-x: 3%; --kwa-b-y: 63%; --kwa-b-motion: kwa-drift 9s ease-in-out -4s infinite; }
+:is(.kw-root--pirate,.kw-root--dino) .st-locations { --kwa-a-x: 3%; --kwa-a-y: 45%; --kwa-a-motion: kwa-rise 8s ease-in-out infinite; --kwa-b-x: 82%; --kwa-b-y: 8%; --kwa-b-image: var(--kw-ambient-three); --kwa-b-motion: kwa-sway 12s ease-in-out -5s infinite; }
+:is(.kw-root--pirate,.kw-root--dino) .st-timeline { --kwa-a-x: 76%; --kwa-a-y: 55%; --kwa-a-image: var(--kw-ambient-two); --kwa-a-motion: kwa-drift 12s ease-in-out infinite; --kwa-b-x: 5%; --kwa-b-y: 14%; --kwa-b-image: var(--kw-ambient-one); --kwa-b-motion: kwa-orbit 17s ease-in-out -5s infinite; }
+:is(.kw-root--pirate,.kw-root--dino) .st-gallery { --kwa-a-x: 6%; --kwa-a-y: 10%; --kwa-a-image: var(--kw-ambient-three); --kwa-a-motion: kwa-sway 10s ease-in-out infinite; --kwa-b-x: 81%; --kwa-b-y: 70%; --kwa-b-motion: kwa-rise 8s ease-in-out -3s infinite; }
+:is(.kw-root--pirate,.kw-root--dino) .st-dress { --kwa-a-x: 79%; --kwa-a-y: 8%; --kwa-a-image: var(--kw-ambient-two); --kwa-a-motion: kwa-orbit 18s ease-in-out infinite; --kwa-b-x: 4%; --kwa-b-y: 64%; --kwa-b-image: var(--kw-ambient-three); --kwa-b-motion: kwa-drift 9s ease-in-out -4s infinite; }
+:is(.kw-root--pirate,.kw-root--dino) .st-gifts { --kwa-a-x: 4%; --kwa-a-y: 13%; --kwa-a-motion: kwa-rise 8s ease-in-out infinite; --kwa-b-x: 82%; --kwa-b-y: 64%; --kwa-b-image: var(--kw-ambient-three); --kwa-b-motion: kwa-sway 12s ease-in-out -5s infinite; }
+:is(.kw-root--pirate,.kw-root--dino) .st-social { --kwa-a-x: 80%; --kwa-a-y: 9%; --kwa-a-image: var(--kw-ambient-three); --kwa-a-motion: kwa-drift 10s ease-in-out infinite; --kwa-b-x: 4%; --kwa-b-y: 66%; --kwa-b-motion: kwa-rise 8s ease-in-out -3s infinite; }
+:is(.kw-root--pirate,.kw-root--dino) .st-social + .st-social { --kwa-a-x: 4%; --kwa-a-y: 20%; --kwa-a-image: var(--kw-ambient-two); --kwa-a-motion: kwa-orbit 18s ease-in-out infinite; --kwa-b-x: 82%; --kwa-b-y: 61%; --kwa-b-image: var(--kw-ambient-one); --kwa-b-motion: kwa-sway 11s ease-in-out -4s infinite; }
+:is(.kw-root--pirate,.kw-root--dino) .st-rsvp { --kwa-a-x: 4%; --kwa-a-y: 7%; --kwa-a-image: var(--kw-ambient-three); --kwa-a-motion: kwa-sway 12s ease-in-out infinite; --kwa-b-x: 82%; --kwa-b-y: 78%; --kwa-b-motion: kwa-rise 8s ease-in-out -3s infinite; }
+
+@keyframes kwa-rise { 0%,100% { transform: translate3d(0,16px,0) rotate(-11deg) scale(.94); } 50% { transform: translate3d(8px,-34px,0) rotate(15deg) scale(1.07); } }
+@keyframes kwa-drift { 0%,100% { transform: translate3d(-16px,12px,0) rotate(-18deg); } 35% { transform: translate3d(27px,-16px,0) rotate(14deg); } 70% { transform: translate3d(3px,-39px,0) rotate(-7deg); } }
+@keyframes kwa-sway { 0%,100% { transform: translate3d(-10px,9px,0) rotate(-25deg) scale(.93); } 50% { transform: translate3d(19px,-28px,0) rotate(22deg) scale(1.08); } }
+@keyframes kwa-orbit { 0%,100% { transform: translate3d(0,8px,0) rotate(0deg); } 25% { transform: translate3d(24px,-16px,0) rotate(75deg); } 50% { transform: translate3d(0,-38px,0) rotate(170deg); } 75% { transform: translate3d(-24px,-13px,0) rotate(275deg); } }
+
+@media (max-width: 700px) {
+  .kw-ambient__station-motif--1 { top: 2%; left: -43px; width: 128px; opacity: .5; }
+  .kw-ambient__station-motif--2 { top: 23%; right: -42px; width: 110px; opacity: .46; }
+  .kw-ambient__station-motif--3 { top: 44%; left: -43px; width: 102px; opacity: .42; }
+  .kw-ambient__station-motif--4 { top: 68%; right: -39px; width: 118px; opacity: .48; }
+  .kw-ambient__station-motif--5 { bottom: 2%; left: -37px; width: 92px; opacity: .4; }
+  :is(.kw-root--pirate,.kw-root--dino) :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp)::before { width: 106px; top: var(--kwa-a-mobile-y,var(--kwa-a-y)); left: var(--kwa-a-mobile-x,var(--kwa-a-x)); opacity: .36; }
+  :is(.kw-root--pirate,.kw-root--dino) :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp)::after { width: 94px; top: var(--kwa-b-mobile-y,var(--kwa-b-y)); left: var(--kwa-b-mobile-x,var(--kwa-b-x)); opacity: .35; }
+  :is(.kw-root--pirate,.kw-root--dino) .st-family { --kwa-a-mobile-x: -42px; --kwa-a-mobile-y: 62%; --kwa-b-mobile-x: calc(100% - 60px); --kwa-b-mobile-y: 6%; }
+  :is(.kw-root--pirate,.kw-root--dino) .st-countdown { --kwa-a-mobile-x: calc(100% - 63px); --kwa-a-mobile-y: 10%; --kwa-b-mobile-x: -39px; --kwa-b-mobile-y: 67%; }
+  :is(.kw-root--pirate,.kw-root--dino) .st-locations { --kwa-a-mobile-x: -46px; --kwa-a-mobile-y: 47%; --kwa-b-mobile-x: calc(100% - 59px); --kwa-b-mobile-y: 6%; }
+  :is(.kw-root--pirate,.kw-root--dino) .st-timeline { --kwa-a-mobile-x: calc(100% - 65px); --kwa-a-mobile-y: 54%; --kwa-b-mobile-x: -40px; --kwa-b-mobile-y: 16%; }
+  :is(.kw-root--pirate,.kw-root--dino) .st-gallery { --kwa-a-mobile-x: -38px; --kwa-a-mobile-y: 11%; --kwa-b-mobile-x: calc(100% - 63px); --kwa-b-mobile-y: 73%; }
+  :is(.kw-root--pirate,.kw-root--dino) .st-dress { --kwa-a-mobile-x: calc(100% - 60px); --kwa-a-mobile-y: 9%; --kwa-b-mobile-x: -44px; --kwa-b-mobile-y: 69%; }
+  :is(.kw-root--pirate,.kw-root--dino) .st-gifts { --kwa-a-mobile-x: -41px; --kwa-a-mobile-y: 13%; --kwa-b-mobile-x: calc(100% - 57px); --kwa-b-mobile-y: 71%; }
+  :is(.kw-root--pirate,.kw-root--dino) .st-social { --kwa-a-mobile-x: calc(100% - 61px); --kwa-a-mobile-y: 7%; --kwa-b-mobile-x: -38px; --kwa-b-mobile-y: 71%; }
+  :is(.kw-root--pirate,.kw-root--dino) .st-social + .st-social { --kwa-a-mobile-x: -42px; --kwa-a-mobile-y: 21%; --kwa-b-mobile-x: calc(100% - 59px); --kwa-b-mobile-y: 64%; }
+  :is(.kw-root--pirate,.kw-root--dino) .st-rsvp { --kwa-a-mobile-x: -44px; --kwa-a-mobile-y: 5%; --kwa-b-mobile-x: calc(100% - 60px); --kwa-b-mobile-y: 81%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kw-ambient__station-motif img,
+  :is(.kw-root--pirate,.kw-root--dino) :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp)::before,
+  :is(.kw-root--pirate,.kw-root--dino) :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp)::after { animation: none !important; }
+}

@@ -91,6 +91,7 @@ import '../templates/kids-world.css';
 import '../templates/pirate-treasure-voyage.css';
 import '../templates/dino-jungle-expedition.css';
 import '../templates/safari-sunrise-adventure.css';
+import '../templates/kids-world-ambient.css';
 import '../templates/cowboy-ranch-roundup.css';
 import '../templates/mickey-mouse-birthday.css';
 import '../templates/minecraft-birthday.css';

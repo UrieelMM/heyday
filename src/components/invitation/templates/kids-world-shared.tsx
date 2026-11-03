@@ -93,6 +93,11 @@ const stationLabels: Record<KidsWorldVariant, string[]> = {
   minecraft: ['ENTRAR AL MUNDO', 'RECOLECTAR RECURSOS', 'MISIÓN EN EQUIPO', 'PASTEL DESBLOQUEADO'],
 };
 
+const stationAmbient: Partial<Record<KidsWorldVariant, { directory: string; motifs: string[] }>> = {
+  pirate: { directory: 'pirate-treasure-voyage', motifs: ['compass', 'anchor', 'treasure', 'compass', 'anchor'] },
+  dino: { directory: 'dino-jungle-expedition', motifs: ['leaf', 'footprint', 'fossil', 'leaf', 'footprint'] },
+};
+
 export function KidsWorldStations({ variant, config }: { variant: KidsWorldVariant; config: InvitationConfig }) {
   const { stationId, stationLabel } = worldPresentation[variant];
   const copy: Record<KidsWorldVariant, { heading: string; description: string; chapter: string }> = {
@@ -105,8 +110,12 @@ export function KidsWorldStations({ variant, config }: { variant: KidsWorldVaria
   };
   const { heading, description, chapter } = copy[variant];
   const images = config.content.gallery.images;
+  const ambient = stationAmbient[variant];
   return (
     <section id={stationId} className="kw-stations kw-sheet" data-editor-section="quoteStory" aria-label={stationLabel}>
+      {ambient && <div className="kw-ambient__station-layer" aria-hidden="true">
+        {ambient.motifs.map((motif, index) => <span className={`kw-ambient__station-motif kw-ambient__station-motif--${index + 1}`} key={index}><img src={`/images/${ambient.directory}/ambient-${motif}.svg`} alt="" /></span>)}
+      </div>}
       {variant === 'mickey' && <div className="mmb-stations__ornaments" aria-hidden="true">
         {(['balloon', 'star', 'club-badge', 'bow', 'star'] as const).map((motif, index) => <span className={`mmb-stations__ornament mmb-stations__ornament--${index + 1}`} key={index}><img src={`/images/mickey-mouse-birthday/ambient-${motif}.svg`} alt="" /></span>)}
       </div>}
@@ -173,6 +182,12 @@ export function setupKidsWorldScenes(root: HTMLElement, id: KidsWorldTemplateId)
     if (runner) gsap.fromTo(runner, { top: '0%' }, { top: '93%', ease: 'none', scrollTrigger: trigger(timeline, 'top 78%', 'bottom 48%') });
   }
   reveal('.st-timeline__item', { x: 40, opacity: .55 });
+  if (id === 'pirate-treasure-voyage' || id === 'dino-jungle-expedition') {
+    const stations = root.querySelector<HTMLElement>('.kw-stations');
+    if (stations) root.querySelectorAll<HTMLElement>('.kw-ambient__station-motif').forEach((motif, index) => {
+      gsap.to(motif, { xPercent: index % 2 ? -26 : 30, yPercent: index % 2 ? -115 : -75, rotate: index % 2 ? -30 : 24, scale: index % 2 ? .86 : 1.14, ease: 'none', scrollTrigger: trigger(stations, 'top 86%', 'bottom 18%') });
+    });
+  }
   if (id === 'mickey-mouse-birthday' && hero) {
     const heroTrigger = { trigger: hero, scroller, start: 'top top', end: 'bottom bottom', scrub: .9 };
     gsap.to(root.querySelectorAll('.mmb-hero__balloon'), { yPercent: -115, xPercent: (index: number) => index % 2 ? 22 : -20, rotate: (index: number) => index % 2 ? 18 : -16, ease: 'none', stagger: .04, scrollTrigger: heroTrigger });
