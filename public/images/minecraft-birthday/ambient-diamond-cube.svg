@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" shape-rendering="crispEdges" aria-hidden="true">
+  <defs>
+    <clipPath id="top"><path d="M128 16 238 78 128 140 18 78Z"/></clipPath>
+    <clipPath id="left"><path d="M18 78 128 140 128 238 18 176Z"/></clipPath>
+    <clipPath id="right"><path d="M128 140 238 78 238 176 128 238Z"/></clipPath>
+  </defs>
+  <path fill="#859a98" d="M128 16 238 78 128 140 18 78Z"/>
+  <path fill="#5f7777" d="M18 78 128 140 128 238 18 176Z"/>
+  <path fill="#3d5c5d" d="M128 140 238 78 238 176 128 238Z"/>
+  <g clip-path="url(#top)" fill="#c4d0bd"><path d="m70 39 25 14-25 14-25-14zm65 15 26 15-26 15-26-15zm48 35 24 14-24 14-24-14z"/></g>
+  <g clip-path="url(#top)" fill="#5ee0d1"><path d="m121 40 17 10-17 10-17-10zm-50 45 17 10-17 10-17-10zm81 8 18 10-18 10-18-10z"/></g>
+  <g clip-path="url(#left)"><path fill="#8be9dd" d="M40 112h24v22H40zm48 38h24v23H88zm-41 26h19v20H47z"/><path fill="#2caeac" d="M56 130h19v17H56zm20 50h20v21H76zm-61-35h20v17H15z"/></g>
+  <g clip-path="url(#right)"><path fill="#55d3ca" d="M146 145h24v22h-24zm43-32h25v25h-25zm-26 72h28v21h-28z"/><path fill="#a7f8e7" d="M164 135h17v14h-17zm56 10h18v19h-18zm-44 54h19v17h-19z"/></g>
+  <path fill="none" stroke="#213f43" stroke-width="6" stroke-linejoin="miter" d="M128 16 238 78v98l-110 62L18 176V78Z M18 78l110 62 110-62 M128 140v98"/>
+</svg>
