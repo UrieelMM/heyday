@@ -30,12 +30,22 @@ export interface TemplateMetadata {
 
 export const TEMPLATES_CATALOG: TemplateMetadata[] = [
   {
-    id: 'ohana-lilo-stitch', name: 'Ohana: Lilo & Stitch', category: 'kids_birthday',
+    id: 'ohana-lilo-stitch', name: 'Ohana: Fiesta en la Isla', category: 'kids_birthday',
     categoryLabel: 'Cumpleaños infantil / Isla tropical', badge: 'Nueva colección',
     description: 'Una postal hawaiana de ohana, surf y flores con cuatro paradas para celebrar en familia.',
     signatureAnimation: 'Postal expansible + olas dibujadas en scroll',
     previewImage: '/images/ohana-lilo-stitch/hero-desktop.webp',
     colors: { bgPrimary: '#F9F0D6', bgSecondary: '#D5F1E6', textPrimary: '#164A53', textMuted: '#4C7474', accentPrimary: '#D65C59', accentSecondary: '#57BFB6' },
+    fonts: { headingFont: 'Fredoka', scriptFont: 'Fredoka', bodyFont: 'Plus Jakarta Sans' },
+    envelopeVariant: 'editorial-curtain', ambientEffect: 'confetti',
+  },
+  {
+    id: 'stitch-birthday', name: 'Stitch: Aventura Hawaiana', category: 'kids_birthday',
+    categoryLabel: 'Cumpleaños infantil / Stitch', badge: 'Nueva colección',
+    description: 'Stitch llega a la fiesta entre olas, flores, piñas y cuatro aventuras para celebrar juntos.',
+    signatureAnimation: 'Postal tropical expansible + ruta de olas en scroll',
+    previewImage: '/images/stitch-birthday/preview.webp',
+    colors: { bgPrimary: '#FFF4DB', bgSecondary: '#C9F1EC', textPrimary: '#123952', textMuted: '#416A79', accentPrimary: '#F36B69', accentSecondary: '#277FAA' },
     fonts: { headingFont: 'Fredoka', scriptFont: 'Fredoka', bodyFont: 'Plus Jakarta Sans' },
     envelopeVariant: 'editorial-curtain', ambientEffect: 'confetti',
   },

@@ -1,0 +1,53 @@
+.sw-opening--stitch { background: radial-gradient(circle at 80% 16%,#fff1a0 0 12%,transparent 12.2%),linear-gradient(160deg,#a9eee4,#4dbbd5 54%,#fce7b6) !important; }
+.sw-hero--stitch .sw-hero__stage { background: linear-gradient(155deg,#fff6dc 0%,#bcece8 53%,#68cbd7 100%); }
+.sw-hero--stitch .sw-hero__texture { background: radial-gradient(circle at 90% 22%,#fff4b5 0 9%,transparent 9.2%),repeating-radial-gradient(ellipse at 70% 90%,transparent 0 32px,#fff8dc66 33px 37px,transparent 38px 70px); }
+.sw-root--stitch .sw-hero__copy h1 { font-weight: 900; color: #123952; text-shadow: 5px 6px 0 #fff3c4; }
+.sw-hero--stitch .sw-hero__visual { border-radius: 48% 48% 28px 28px; background: radial-gradient(circle at 50% 16%,#fff6c5 0 19%,#70cddd 60%,#3283b5 100%); border-color: #fff5d7; box-shadow: 13px 15px 0 #f36b69; }
+.sw-hero--stitch .sw-hero__visual img { object-fit: contain; object-position: center bottom; }
+.sw-hero--stitch .sw-hero__photo-tag { border-radius: 100px; background: #fff5d7; }
+.sw-hero--stitch .sw-hero__accent { right: 3%; color: #17648b; }
+.sw-hero--stitch .sw-hero__motif > svg:first-child { width: 100%; height: 100%; }
+.sw-hero--stitch .stitch-hibiscus { position: absolute; right: -30%; top: -25%; width: 70% !important; height: 70% !important; animation: sw-spin 35s linear infinite; }
+.sw-hero__stitch-art { position: absolute; z-index: 3; inset: 0; pointer-events: none; }
+.sw-hero__stitch-art img { position: absolute; display: block; width: clamp(105px,13vw,190px); height: auto; filter: drop-shadow(0 12px 16px #14547c35); }
+.sw-hero__stitch-art img:first-child { left: 4%; bottom: 6%; transform: rotate(-9deg); }
+.sw-hero__stitch-art img:last-child { right: 2%; top: 7%; width: clamp(115px,15vw,225px); transform: rotate(9deg); }
+.sw-root--stitch .st-story { background: radial-gradient(circle at 10% 16%,#ffe5a3 0 10%,transparent 10.2%),linear-gradient(160deg,#fff5dd,#e4f5ec) !important; }
+.sw-root--stitch .st-story::after { content: ''; position: absolute; width: 155px; height: 155px; right: 3%; bottom: 2%; background: url('/images/stitch-birthday/stitch-sea-turtles.webp') center/contain no-repeat; opacity: .34; pointer-events: none; }
+.sw-root--stitch .st-story > :not(.sw-story__art) { position: relative; z-index: 1; }
+.sw-moments--stitch { background: radial-gradient(circle at 92% 10%,#fff5b7 0 7%,transparent 7.2%),linear-gradient(180deg,#bdeee8,#e0f5df); }
+.sw-moments--stitch::before { content: ''; position: absolute; right: 3%; top: 8%; width: 145px; height: 145px; background: url('/images/stitch-birthday/stitch-pineapple.webp') center/contain no-repeat; opacity: .3; pointer-events: none; }
+.sw-moments--stitch .sw-moments__grid { grid-template-columns: repeat(4,minmax(0,1fr)); }
+.sw-moments--stitch .sw-moment { border-radius: 44% 44% 20px 20px; box-shadow: 0 15px 28px #17547220; }
+.sw-moments--stitch .sw-moment:nth-child(even) { margin-top: 28px; }
+.sw-moments--stitch .sw-moment__image { background: linear-gradient(160deg,#fff4d5,#6fcddd); }
+.sw-moments--stitch .sw-moment__image img { object-fit: contain; padding: 12px; }
+.sw-root--stitch :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-rsvp,.st-social) { position: relative; isolation: isolate; overflow: hidden; }
+.sw-root--stitch :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-rsvp,.st-social)::before { content: ''; position: absolute; z-index: 0; width: clamp(120px,22vw,270px); aspect-ratio: 1; opacity: .15; pointer-events: none; background: url('/images/stitch-birthday/stitch-playing-the-ukulele.webp') center/contain no-repeat; }
+.sw-root--stitch :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-rsvp,.st-social) > * { position: relative; z-index: 1; }
+.sw-root--stitch .st-family { background: #d8f1e6 !important; }.sw-root--stitch .st-family::before { left: -3%; top: 4%; transform: rotate(-12deg); }
+.sw-root--stitch .st-countdown { background: #fff2d3 !important; }.sw-root--stitch .st-countdown::before { right: -2%; bottom: 2%; background-image: url('/images/stitch-birthday/stitch-pineapple.webp'); transform: rotate(12deg); }
+.sw-root--stitch .st-countdown__unit { border-radius: 50% !important; box-shadow: 0 9px 0 #f36b6940; }
+.sw-root--stitch .st-locations { background: #e3f4ef !important; }.sw-root--stitch .st-locations::before { left: 1%; top: 8%; background-image: url('/images/stitch-birthday/stitch-surfing.webp'); }
+.sw-root--stitch .st-locations__card img { object-fit: contain; background: #bcebe5; }
+.sw-root--stitch .st-timeline { background: #fff0d4 !important; }.sw-root--stitch .st-timeline::before { right: 0; top: 20%; background-image: url('/images/stitch-birthday/stitch-hula-dancing.webp'); }
+.sw-root--stitch .st-gallery { background: #cceeed !important; }.sw-root--stitch .st-gallery::before { left: 0; bottom: 0; background-image: url('/images/stitch-birthday/stitch-sea-turtles.webp'); }
+.sw-root--stitch .st-gallery__photo img { object-fit: contain; background: #fff3d7; }
+.sw-root--stitch .st-dress { background: #fff5df !important; }.sw-root--stitch .st-dress::before { right: 0; top: 4%; background-image: url('/images/stitch-birthday/stitch-pineapple-drink.webp'); }
+.sw-root--stitch .st-gifts { background: #def2e5 !important; }.sw-root--stitch .st-gifts::before { left: 0; bottom: 2%; background-image: url('/images/stitch-birthday/stitch-cookies.webp'); }
+.sw-root--stitch .st-social { background: #d8edf0 !important; }.sw-root--stitch .st-social::before { right: 0; top: 0; background-image: url('/images/stitch-birthday/stitch-playing-the-ukulele.webp'); }
+.sw-root--stitch .st-rsvp { background: #fff1d6 !important; }.sw-root--stitch .st-rsvp::before { left: 0; top: 3%; background-image: url('/images/stitch-birthday/stitch-with-open-arms.webp'); }
+@media (max-width:700px) {
+  .sw-hero--stitch .sw-hero__copy { top: 12%; }
+  .sw-hero--stitch .sw-hero__visual { top: 49%; left: 18%; width: 64%; height: 36%; }
+  .sw-hero--stitch .sw-hero__stitch-art img:first-child { left: -7%; bottom: 11%; width: 100px; }
+  .sw-hero--stitch .sw-hero__stitch-art img:last-child { right: -7%; top: 38%; width: 110px; }
+  .sw-hero--stitch .sw-hero__accent { right: -5%; bottom: 8%; width: 95px; }
+  .sw-moments--stitch .sw-moments__grid { display: block; }
+  .sw-moments--stitch .sw-moment:nth-child(even) { margin-top: 0; }
+  .sw-moments--stitch .sw-moment { position: sticky; top: calc(72px + var(--sw-stack-index) * 9px); margin-bottom: 18px; }
+  .sw-moments--stitch .sw-moment__image { height: 175px; }
+  .sw-root--stitch :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-rsvp,.st-social)::before { width: 150px; opacity: .11; }
+}
+@media (max-width:360px) { .sw-hero--stitch .sw-hero__visual { top: 52%; height: 32%; }.sw-hero--stitch .sw-hero__stitch-art img:last-child { top: 41%; } }
+@media (prefers-reduced-motion:reduce) { .sw-hero--stitch .stitch-hibiscus { animation: none; } }

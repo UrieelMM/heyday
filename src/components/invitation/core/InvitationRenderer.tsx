@@ -69,7 +69,8 @@ import { WeddingWorldMarquee, WeddingWorldStations, setupWeddingWorldScenes } fr
 import { isNewWorldTemplateId } from '@/lib/templates/new-world-config';
 import { OperaCarmesiExperience, PequenoAtlasExperience, ArchivoFuturoExperience, NewWorldMarquee, NewWorldMoments, NewWorldStoryArt, setupNewWorldScenes } from '../templates/NewWorldExperiences';
 import { isStoryWorldTemplateId } from '@/lib/templates/story-world-config';
-import { OhanaLiloStitchExperience, OhanaWaveStory } from '../templates/OhanaLiloStitchExperience';
+import { OhanaIslandExperience, OhanaWaveStory } from '../templates/OhanaIslandExperience';
+import { StitchBirthdayExperience, StitchWaveStory } from '../templates/StitchBirthdayExperience';
 import { SolarPopXVExperience, SolarPopStory } from '../templates/SolarPopXVExperience';
 import { CafeParaSiempreExperience, CafeMenuStory } from '../templates/CafeParaSiempreExperience';
 import { StoryWorldMarquee, StoryWorldMoments, setupStoryWorldScenes } from '../templates/story-world-shared';
@@ -99,6 +100,7 @@ import '../templates/midnight-constellation.css';
 import '../templates/golden-harvest-vineyard.css';
 import '../templates/new-world.css';
 import '../templates/story-world.css';
+import '../templates/stitch-birthday.css';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -174,7 +176,7 @@ function StandardInvitationRenderer({
   const newWorldId = isNewWorldTemplateId(templateId) ? templateId : null;
   const newWorldVariant = newWorldId === 'opera-carmesi' ? 'opera' : newWorldId === 'pequeno-atlas' ? 'atlas' : 'future';
   const storyWorldId = isStoryWorldTemplateId(templateId) ? templateId : null;
-  const storyVariant = storyWorldId === 'ohana-lilo-stitch' ? 'ohana' : storyWorldId === 'solar-pop-xv' ? 'solar' : 'cafe';
+  const storyVariant = storyWorldId === 'ohana-lilo-stitch' ? 'ohana' : storyWorldId === 'stitch-birthday' ? 'stitch' : storyWorldId === 'solar-pop-xv' ? 'solar' : 'cafe';
   const occasionTemplateId = isOccasionTemplateId(templateId) ? templateId : null;
   const newSceneTemplateId = isNewSceneTemplateId(templateId) ? templateId : null;
   const hasSceneTemplate = Boolean(signatureTemplateId || celebrationTemplateId || occasionTemplateId || newSceneTemplateId || kidsWorldId || weddingWorldId || newWorldId || storyWorldId);
@@ -454,7 +456,8 @@ function StandardInvitationRenderer({
       {isSectionEnabled('hero') && newWorldId === 'opera-carmesi' && <OperaCarmesiExperience config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />}
       {isSectionEnabled('hero') && newWorldId === 'pequeno-atlas' && <PequenoAtlasExperience config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />}
       {isSectionEnabled('hero') && newWorldId === 'archivo-futuro' && <ArchivoFuturoExperience config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />}
-      {isSectionEnabled('hero') && storyWorldId === 'ohana-lilo-stitch' && <OhanaLiloStitchExperience config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />}
+      {isSectionEnabled('hero') && storyWorldId === 'ohana-lilo-stitch' && <OhanaIslandExperience config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />}
+      {isSectionEnabled('hero') && storyWorldId === 'stitch-birthday' && <StitchBirthdayExperience config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />}
       {isSectionEnabled('hero') && storyWorldId === 'solar-pop-xv' && <SolarPopXVExperience config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />}
       {isSectionEnabled('hero') && storyWorldId === 'cafe-para-siempre' && <CafeParaSiempreExperience config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />}
       {isSectionEnabled('hero') && celebrationTemplateId && !isKidsAdventure && (
@@ -564,6 +567,7 @@ function StandardInvitationRenderer({
           {weddingWorldId === 'golden-harvest-vineyard' && <VineyardStoryVines />}
           {newWorldId && <NewWorldStoryArt variant={newWorldVariant} />}
           {storyWorldId === 'ohana-lilo-stitch' && <OhanaWaveStory />}
+          {storyWorldId === 'stitch-birthday' && <StitchWaveStory />}
           {storyWorldId === 'solar-pop-xv' && <SolarPopStory />}
           {storyWorldId === 'cafe-para-siempre' && <CafeMenuStory />}
           <div
@@ -943,7 +947,7 @@ function StandardInvitationRenderer({
               {kidsWorldId && <span className="kw-timeline__runner" aria-hidden="true">{{ pirate: '☸', dino: '✦', safari: '◉', cowboy: '★', mickey: '●', minecraft: '◆' }[kidsWorldVariant]}</span>}
               {weddingWorldId && <span className="ww-timeline__runner" aria-hidden="true">{{ garden: '✿', stars: '✧', vineyard: '❧' }[weddingWorldVariant]}</span>}
               {newWorldId && <span className="nw-timeline__runner" aria-hidden="true">{{ opera: '✦', atlas: '✺', future: '↗' }[newWorldVariant]}</span>}
-              {storyWorldId && <span className="sw-timeline__runner" aria-hidden="true">{{ ohana: '✿', solar: '✺', cafe: '♥' }[storyVariant]}</span>}
+              {storyWorldId && <span className="sw-timeline__runner" aria-hidden="true">{{ ohana: '✿', stitch: '🌊', solar: '✺', cafe: '♥' }[storyVariant]}</span>}
             <div
               className="st-timeline__line absolute top-2 bottom-2 left-3 w-0.5"
               style={{ backgroundColor: `${colors.accentPrimary}45` }}

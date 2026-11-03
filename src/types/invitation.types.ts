@@ -24,6 +24,7 @@ export type TemplateId =
   | 'golden-harvest-vineyard'
   | 'opera-carmesi'
   | 'ohana-lilo-stitch'
+  | 'stitch-birthday'
   | 'solar-pop-xv'
   | 'cafe-para-siempre'
   | 'pequeno-atlas'

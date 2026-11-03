@@ -177,7 +177,7 @@ export default function HomePage() {
   }, { scope: landingRef });
 
   const filteredTemplates = selectedCategory === 'all'
-    ? TEMPLATES_CATALOG
+    ? [...TEMPLATES_CATALOG].sort((a, b) => Number(b.category === 'wedding') - Number(a.category === 'wedding'))
     : TEMPLATES_CATALOG.filter((template) => template.category === selectedCategory);
   const templatePageCount = Math.ceil(filteredTemplates.length / TEMPLATES_PER_PAGE);
   const visibleTemplates = filteredTemplates.slice((templatePage - 1) * TEMPLATES_PER_PAGE, templatePage * TEMPLATES_PER_PAGE);
