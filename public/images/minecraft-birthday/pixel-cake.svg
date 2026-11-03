@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" shape-rendering="crispEdges" role="img" aria-label="Pastel de cumpleaños en bloques">
+  <path fill="#28432e" d="M32 258h256v24H32z"/>
+  <path fill="#527647" d="M48 282h224v12H48z"/>
+  <path fill="#8f563d" d="M48 158h224v100H48z"/>
+  <path fill="#b77452" d="M48 176h224v64H48z"/>
+  <path fill="#7d4939" d="M48 224h224v34H48z"/>
+  <path fill="#f6e8d4" d="M48 132h224v54H48z"/>
+  <path fill="#fffaf0" d="M48 132h224v26H48z"/>
+  <path fill="#f6e8d4" d="M64 158h24v48H64zm56 0h24v34h-24zm64 0h24v48h-24zm56 0h24v34h-24z"/>
+  <path fill="#d94e4e" d="M96 198h24v24H96zm96 0h24v24h-24z"/>
+  <path fill="#f2d5be" d="M112 190h16v16h-16zm96 0h16v16h-16z"/>
+  <path fill="#324b71" d="M84 96h20v36H84z"/>
+  <path fill="#4e9db2" d="M150 88h20v44h-20z"/>
+  <path fill="#6a9f48" d="M216 96h20v36h-20z"/>
+  <path fill="#efbb4e" d="M88 74h12v22H88zm66-30h12v44h-12zm66 30h12v22h-12z"/>
+  <path fill="#ffeb85" d="M88 58h12v16H88zm66-30h12v16h-12zm66 30h12v16h-12z"/>
+  <path fill="#fff7ba" d="M92 50h4v8h-4zm66-30h4v8h-4zm66 30h4v8h-4z"/>
+  <path fill="none" stroke="#28432e" stroke-width="8" d="M48 132h224v126H48z"/>
+</svg>

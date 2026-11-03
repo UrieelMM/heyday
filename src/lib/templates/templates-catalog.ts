@@ -50,6 +50,16 @@ export const TEMPLATES_CATALOG: TemplateMetadata[] = [
     envelopeVariant: 'pass-ticket-tear', ambientEffect: 'confetti',
   },
   {
+    id: 'minecraft-birthday', name: 'Minecraft: Aventura en Bloques', category: 'kids_birthday',
+    categoryLabel: 'Cumpleaños infantil / Minecraft', badge: 'Nueva colección',
+    description: 'Entra a un mundo de bloques: portal expansible, paisaje pixelado, cuatro misiones y una gran celebración.',
+    signatureAnimation: 'Portal al Overworld + bloques y personajes en parallax',
+    previewImage: '/images/minecraft-birthday/heroes.webp',
+    colors: { bgPrimary: '#F3F1DB', bgSecondary: '#B9D592', textPrimary: '#203326', textMuted: '#526650', accentPrimary: '#5A9D43', accentSecondary: '#A36A42' },
+    fonts: { headingFont: 'Space Grotesk', scriptFont: 'Space Grotesk', bodyFont: 'Plus Jakarta Sans' },
+    envelopeVariant: 'pass-ticket-tear', ambientEffect: 'none',
+  },
+  {
     id: 'solar-pop-xv', name: 'Solar Pop XV', category: 'xv_years',
     categoryLabel: 'XV años / Pop solar', badge: 'Nueva colección',
     description: 'Quince vueltas al sol entre bloques de color, collage editorial y destellos que se revelan al deslizar.',

@@ -1,9 +1,9 @@
 import type { InvitationConfig, TemplateId } from '@/types/invitation.types';
 
-export type KidsWorldTemplateId = Extract<TemplateId, 'pirate-treasure-voyage' | 'dino-jungle-expedition' | 'safari-sunrise-adventure' | 'cowboy-ranch-roundup' | 'mickey-mouse-birthday'>;
+export type KidsWorldTemplateId = Extract<TemplateId, 'pirate-treasure-voyage' | 'dino-jungle-expedition' | 'safari-sunrise-adventure' | 'cowboy-ranch-roundup' | 'mickey-mouse-birthday' | 'minecraft-birthday'>;
 
 export function isKidsWorldTemplateId(id: TemplateId): id is KidsWorldTemplateId {
-  return id === 'pirate-treasure-voyage' || id === 'dino-jungle-expedition' || id === 'safari-sunrise-adventure' || id === 'cowboy-ranch-roundup' || id === 'mickey-mouse-birthday';
+  return id === 'pirate-treasure-voyage' || id === 'dino-jungle-expedition' || id === 'safari-sunrise-adventure' || id === 'cowboy-ranch-roundup' || id === 'mickey-mouse-birthday' || id === 'minecraft-birthday';
 }
 
 export function kidsWorldName(title: string) {
@@ -17,6 +17,92 @@ export function kidsWorldAge(title: string) {
 }
 
 const image = (id: KidsWorldTemplateId, name: string) => `/images/${id}/${name}.webp`;
+
+function applyMinecraftDefaults(config: InvitationConfig, name: string) {
+  const asset = (file: string) => image('minecraft-birthday', file);
+  const content = config.content;
+  config.audio.enabled = false;
+  config.sectionsOrder = config.sectionsOrder.map(section => ({
+    ...section,
+    enabled: section.id === 'accommodation' ? false : section.enabled,
+  }));
+  config.theme.envelope.sealMonogram = '◆';
+  config.theme.envelope.openButtonText = 'Entrar al mundo de cumpleaños';
+  content.hero = {
+    ...content.hero,
+    mainTitle: /^(nuestra|mi) celebraci[oó]n$/i.test(name) ? 'Santiago cumple 8' : content.hero.mainTitle,
+    badgeText: 'NUEVO MUNDO DESBLOQUEADO · CUMPLEAÑOS',
+    tagline: 'Construye, explora y celebra con nosotros',
+    coverImageUrl: asset('heroes'),
+    focalPoint: { x: 50, y: 50 },
+  };
+  const player = kidsWorldName(content.hero.mainTitle);
+  content.quoteStory = {
+    quoteText: `Se ha generado un mundo nuevo para celebrar a ${player}. Esta aventura necesita exploradores, amigos y muchas ganas de construir recuerdos. ¡Tu lugar en el equipo ya está reservado!`,
+    quoteAuthor: `Equipo de ${player}`,
+    storyBlocks: [
+      { title: 'El mundo se abre', description: 'Un nuevo mapa está listo para nuestra gran aventura.', imageUrl: asset('grass-block') },
+      { title: 'Arma tu equipo', description: 'Con amigos, cada misión se vuelve más divertida.', imageUrl: asset('friends') },
+      { title: 'Encuentra la sorpresa', description: 'Juegos, pastel y un botín de momentos para guardar.', imageUrl: asset('chicken') },
+    ],
+  };
+  content.vipParents = {
+    blessingMessage: `La familia de ${player} te invita a formar parte de su mejor equipo`,
+    groups: [
+      { groupTitle: 'Anfitriones', names: [`La familia de ${player}`] },
+      { groupTitle: 'Equipo explorador', names: ['Amigos y familia'] },
+      { groupTitle: 'Jugador especial', names: ['¡Tú!'] },
+    ],
+  };
+  const address = 'Parque México, Condesa, Ciudad de México';
+  const query = encodeURIComponent(address);
+  content.locations = [{
+    id: 'minecraft-spawn', type: 'reception', title: 'Punto de aparición',
+    venueName: 'Parque México', address, time: '13:00 HRS', imageUrl: asset('friends'),
+    coordinates: { lat: 19.4115, lng: -99.1691 },
+    googleMapsUrl: `https://www.google.com/maps/search/?api=1&query=${query}`,
+    wazeUrl: `https://waze.com/ul?q=${query}&navigate=yes`,
+  }];
+  content.timeline = [
+    { id: 'minecraft-1', time: '13:00 HRS', title: 'Entramos al mundo', description: 'Aparecemos en la base y reunimos al equipo.', icon: 'party' },
+    { id: 'minecraft-2', time: '14:00 HRS', title: 'Modo creativo', description: 'Construcciones, retos y juegos por descubrir.', icon: 'party' },
+    { id: 'minecraft-3', time: '15:00 HRS', title: 'Misión en equipo', description: 'Nos unimos para encontrar la gran sorpresa.', icon: 'party' },
+    { id: 'minecraft-4', time: '16:00 HRS', title: 'Pastel desbloqueado', description: 'Soplamos las velitas y celebramos la victoria.', icon: 'cake' },
+  ];
+  content.gallery = { layout: 'bento-grid', images: [
+    { url: asset('heroes'), caption: 'Los exploradores del mundo' },
+    { url: asset('grass-block'), caption: 'Un mundo por construir' },
+    { url: asset('adventure'), caption: 'Aventura en equipo' },
+    { url: '/images/minecraft-birthday/pixel-cake.svg', caption: 'Pastel desbloqueado' },
+    { url: asset('chicken'), caption: 'Una sorpresa del mapa' },
+    { url: asset('steve'), caption: 'Héroe de la partida' },
+  ] };
+  content.dressCode = {
+    title: 'Equipo de exploración',
+    womenNotes: 'Ropa cómoda y tenis para completar todas las misiones. Un look de explorador es bienvenido.',
+    menNotes: 'Ropa fresca, calzado cómodo y energía para jugar todo el día.',
+    reservedColors: [], reservedNote: '',
+  };
+  content.gifts = {
+    introMessage: 'Tu compañía es el mejor botín. Si deseas dejar un detalle, habrá un cofre de felicitaciones durante la fiesta.',
+    registries: [], cashEnvelopeAtVenue: true,
+  };
+  content.accommodation = [];
+  content.socialFeatures = { enableSongRequests: true, enableAudioGuestbook: false, enableLiveDisposableCamera: false, hashtag: `#MundoDe${player.replace(/\s+/g, '')}` };
+  content.rsvp = { ...content.rsvp, askDietaryRestrictions: false, allowChildrenSelection: true, customConfirmationMessage: '¡Misión aceptada! Guarda tu pase digital con QR para entrar al mundo de cumpleaños.' };
+  content.sectionHeadings = {
+    quote_story: { eyebrow: '01 / NUEVO MUNDO', title: 'Una aventura hecha para ti' },
+    vip_parents: { eyebrow: '03 / MULTIJUGADOR', title: 'Nuestro mejor equipo' },
+    countdown: { eyebrow: '04 / CARGANDO PARTIDA', title: 'La aventura comienza en' },
+    locations: { eyebrow: '05 / COORDENADAS', title: 'Punto de aparición' },
+    timeline: { eyebrow: '06 / RUTA DE MISIÓN', title: 'El plan del día' },
+    gallery: { eyebrow: '07 / CAPTURAS DEL MUNDO', title: 'Explora la aventura' },
+    dress_code: { eyebrow: '08 / EQUIPAMIENTO', title: 'Listos para jugar' },
+    gifts: { eyebrow: '09 / COFRE DE DETALLES', title: 'El mejor botín eres tú' },
+    social_features: { eyebrow: '10 / MEMORIAS GUARDADAS', title: 'Comparte tus hallazgos' },
+    rsvp: { eyebrow: '11 / ACCESO AL MUNDO', title: 'Confirma tu misión' },
+  };
+}
 
 function applyMickeyDefaults(config: InvitationConfig, name: string) {
   const asset = (file: string) => image('mickey-mouse-birthday', file);
@@ -105,6 +191,10 @@ function applyMickeyDefaults(config: InvitationConfig, name: string) {
 
 export function applyKidsWorldDefaults(config: InvitationConfig, id: KidsWorldTemplateId, title: string) {
   const name = kidsWorldName(title);
+  if (id === 'minecraft-birthday') {
+    applyMinecraftDefaults(config, name);
+    return;
+  }
   if (id === 'mickey-mouse-birthday') {
     applyMickeyDefaults(config, name);
     return;

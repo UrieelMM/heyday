@@ -10,7 +10,7 @@ import { HeroMedia } from '../core/HeroMedia';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export type KidsWorldVariant = 'pirate' | 'dino' | 'safari' | 'cowboy' | 'mickey';
+export type KidsWorldVariant = 'pirate' | 'dino' | 'safari' | 'cowboy' | 'mickey' | 'minecraft';
 
 const worldPresentation: Record<KidsWorldVariant, { heroId: string; stationId: string; heroLabel: string; stationLabel: string; mark: string; mediaAlt: string }> = {
   pirate: { heroId: 'pw-hero', stationId: 'pw-stations', heroLabel: 'Portada pirata', stationLabel: 'Puertos de la travesía', mark: '☸', mediaAlt: 'Viaje pirata' },
@@ -18,6 +18,7 @@ const worldPresentation: Record<KidsWorldVariant, { heroId: string; stationId: s
   safari: { heroId: 'sf-hero', stationId: 'sf-stations', heroLabel: 'Portada del safari', stationLabel: 'Paradas del safari', mark: '◉', mediaAlt: 'Safari de cumpleaños' },
   cowboy: { heroId: 'cb-hero', stationId: 'cb-stations', heroLabel: 'Portada del rancho', stationLabel: 'Paradas del rancho', mark: '★', mediaAlt: 'Aventura vaquera' },
   mickey: { heroId: 'mm-hero', stationId: 'mm-stations', heroLabel: 'Portada del cumpleaños de Mickey', stationLabel: 'Momentos del club', mark: '●', mediaAlt: 'Club de cumpleaños Mickey Mouse' },
+  minecraft: { heroId: 'vx-hero', stationId: 'vx-stations', heroLabel: 'Portal de cumpleaños Minecraft', stationLabel: 'Misiones del mundo', mark: '◆', mediaAlt: 'Aventura en bloques' },
 };
 
 export function KidsWorldFrame({ variant, config, eventDate, guestGroup, actionHref, motif, seal, overline, bridge, visualTag, cta }: {
@@ -77,6 +78,7 @@ export function KidsWorldMarquee({ variant, second = false }: { variant: KidsWor
     safari: ['OBSERVA ✦ DESCUBRE ✦ CELEBRA ✦ ', 'UN MUNDO SALVAJE ✦ UN DÍA INOLVIDABLE ✦ '],
     cowboy: ['ENSILLA ✦ JUEGA ✦ CELEBRA ✦ ', 'RUMBO AL RANCHO ✦ AMIGOS POR SIEMPRE ✦ '],
     mickey: ['OH BOY! ✦ JUEGA ✦ RÍE ✦ CELEBRA ✦ ', 'GLOBOS ✦ AMIGOS ✦ PASTEL ✦ MAGIA ✦ '],
+    minecraft: ['NUEVO MUNDO ◆ EXPLORA ◆ CONSTRUYE ◆ CELEBRA ◆ ', 'MODO CREATIVO ◆ EQUIPO ◆ PASTEL DESBLOQUEADO ◆ '],
   };
   const phrase = phrases[variant][second ? 1 : 0];
   return <div className={`kw-marquee${second ? ' kw-marquee--second' : ''}`} aria-hidden="true"><div>{Array.from({ length: 6 }, (_, i) => <span key={i}>{phrase}</span>)}</div></div>;
@@ -88,6 +90,7 @@ const stationLabels: Record<KidsWorldVariant, string[]> = {
   safari: ['CAMPAMENTO BASE', 'SENDERO DORADO', 'AMIGOS DE LA SABANA', 'PICNIC DE CUMPLEAÑOS'],
   cowboy: ['PUERTAS DEL RANCHO', 'RUTA DEL OESTE', 'JUEGOS VAQUEROS', 'PASTEL AL ATARDECER'],
   mickey: ['PASE DE BIENVENIDA', 'JUEGOS DEL CLUB', 'FOTO CON AMIGOS', 'MOMENTO DEL PASTEL'],
+  minecraft: ['ENTRAR AL MUNDO', 'RECOLECTAR RECURSOS', 'MISIÓN EN EQUIPO', 'PASTEL DESBLOQUEADO'],
 };
 
 export function KidsWorldStations({ variant, config }: { variant: KidsWorldVariant; config: InvitationConfig }) {
@@ -98,6 +101,7 @@ export function KidsWorldStations({ variant, config }: { variant: KidsWorldVaria
     safari: { heading: 'Cuatro paradas. Un mundo salvaje.', description: 'Sigue el sendero y descubre a nuestros amigos de la sabana.', chapter: 'EL SAFARI' },
     cowboy: { heading: 'Cuatro momentos. Un gran rodeo.', description: 'Sigue la ruta del rancho hasta el pastel al atardecer.', chapter: 'EL RANCHO' },
     mickey: { heading: 'Cuatro momentos. Mil sonrisas.', description: 'Cada parada trae una nueva sorpresa para nuestra pandilla.', chapter: 'EL CLUB DE CUMPLEAÑOS' },
+    minecraft: { heading: 'Cuatro misiones. Una gran aventura.', description: 'Avanza por el mundo y desbloquea cada momento de la fiesta.', chapter: 'MODO AVENTURA' },
   };
   const { heading, description, chapter } = copy[variant];
   const images = config.content.gallery.images;
@@ -169,5 +173,13 @@ export function setupKidsWorldScenes(root: HTMLElement, id: KidsWorldTemplateId)
     gsap.to(root.querySelector('.mmb-hero__friend'), { xPercent: 86, yPercent: -65, rotate: 19, scale: .7, ease: 'none', scrollTrigger: heroTrigger });
     gsap.to(root.querySelector('.mmb-hero__orbit'), { rotate: 85, scale: 1.25, ease: 'none', scrollTrigger: heroTrigger });
     gsap.to(root.querySelectorAll('.mmb-hero__star'), { y: -90, rotate: 130, ease: 'none', stagger: .08, scrollTrigger: heroTrigger });
+  }
+  if (id === 'minecraft-birthday' && hero) {
+    const heroTrigger = { trigger: hero, scroller, start: 'top top', end: 'bottom bottom', scrub: .9 };
+    gsap.to(root.querySelectorAll('.vxb-hero__cloud'), { xPercent: (index: number) => index % 2 ? 90 : -75, yPercent: -18, ease: 'none', scrollTrigger: heroTrigger });
+    gsap.to(root.querySelectorAll('.vxb-hero__block'), { yPercent: -90, rotate: (index: number) => index % 2 ? 18 : -15, scale: .75, ease: 'none', scrollTrigger: heroTrigger });
+    gsap.to(root.querySelector('.vxb-hero__chicken'), { xPercent: 90, yPercent: -75, rotate: -12, ease: 'none', scrollTrigger: heroTrigger });
+    gsap.to(root.querySelector('.vxb-hero__diamond'), { yPercent: -110, rotate: 130, scale: 1.3, ease: 'none', scrollTrigger: heroTrigger });
+    gsap.to(root.querySelector('.vxb-hero__hills'), { yPercent: -26, scale: 1.12, ease: 'none', scrollTrigger: heroTrigger });
   }
 }
