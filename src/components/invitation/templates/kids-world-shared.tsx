@@ -107,6 +107,9 @@ export function KidsWorldStations({ variant, config }: { variant: KidsWorldVaria
   const images = config.content.gallery.images;
   return (
     <section id={stationId} className="kw-stations kw-sheet" data-editor-section="quoteStory" aria-label={stationLabel}>
+      {variant === 'minecraft' && <div className="vxb-stations__cubes" aria-hidden="true">
+        {(['grass', 'diamond', 'stone', 'grass', 'diamond'] as const).map((block, index) => <span className={`vxb-stations__cube vxb-stations__cube--${index + 1}`} key={index}><img src={`/images/minecraft-birthday/ambient-${block}-cube.svg`} alt="" /></span>)}
+      </div>}
       <div className="kw-stations__head"><p className="kw-eyebrow"><span className="kw-pulse"/>CAPÍTULO 02 · {chapter}</p><h2>{heading}</h2><p>{description}</p></div>
       <div className="kw-stations__grid">{stationLabels[variant].map((label, index) => {
         const image = images[index];
@@ -181,5 +184,9 @@ export function setupKidsWorldScenes(root: HTMLElement, id: KidsWorldTemplateId)
     gsap.to(root.querySelector('.vxb-hero__chicken'), { xPercent: 90, yPercent: -75, rotate: -12, ease: 'none', scrollTrigger: heroTrigger });
     gsap.to(root.querySelector('.vxb-hero__diamond'), { yPercent: -110, rotate: 130, scale: 1.3, ease: 'none', scrollTrigger: heroTrigger });
     gsap.to(root.querySelector('.vxb-hero__hills'), { yPercent: -26, scale: 1.12, ease: 'none', scrollTrigger: heroTrigger });
+    const stations = root.querySelector<HTMLElement>('.kw-stations');
+    if (stations) root.querySelectorAll<HTMLElement>('.vxb-stations__cube').forEach((cube, index) => {
+      gsap.to(cube, { xPercent: index % 2 ? -35 : 28, yPercent: index % 2 ? -95 : -135, rotate: index % 2 ? -28 : 32, scale: index % 2 ? .8 : 1.13, ease: 'none', scrollTrigger: trigger(stations, 'top 85%', 'bottom 20%') });
+    });
   }
 }

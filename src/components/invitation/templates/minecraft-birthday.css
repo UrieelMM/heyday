@@ -69,6 +69,16 @@
 .kw-root--minecraft .kw-station__image { background: linear-gradient(#b1dedc 0 66%,#68a956 66% 72%,#8f6546 72%); }
 .kw-root--minecraft .kw-station__image img { object-fit: contain; padding: 12px; filter: drop-shadow(7px 9px 0 #173d2a55); }
 .kw-root--minecraft .kw-station__content span { color: #446f37; font-family: 'JetBrains Mono',monospace; }
+.kw-root--minecraft .kw-stations { isolation: isolate; overflow: hidden; background-image: linear-gradient(#37683b12 1px,transparent 1px),linear-gradient(90deg,#37683b12 1px,transparent 1px); background-size: 54px 54px; }
+.kw-root--minecraft .kw-stations__head,.kw-root--minecraft .kw-stations__grid { position: relative; z-index: 1; }
+.vxb-stations__cubes { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.vxb-stations__cube { position: absolute; display: block; width: clamp(115px,15vw,225px); aspect-ratio: 1; filter: drop-shadow(11px 17px 8px #20432d55); }
+.vxb-stations__cube img { display: block; width: 100%; height: 100%; }
+.vxb-stations__cube--1 { top: 5%; left: 3%; width: clamp(140px,17vw,250px); }.vxb-stations__cube--1 img { animation: vxb-cube-tumble 11s ease-in-out infinite; }
+.vxb-stations__cube--2 { top: 16%; right: 4%; width: clamp(105px,12vw,175px); }.vxb-stations__cube--2 img { animation: vxb-cube-orbit 14s ease-in-out -4s infinite; }
+.vxb-stations__cube--3 { top: 45%; left: 11%; width: clamp(95px,10vw,155px); opacity: .55; }.vxb-stations__cube--3 img { animation: vxb-cube-rise 8s ease-in-out -2s infinite; }
+.vxb-stations__cube--4 { top: 62%; right: 8%; width: clamp(125px,14vw,210px); opacity: .68; }.vxb-stations__cube--4 img { animation: vxb-cube-wander 12s ease-in-out -3s infinite; }
+.vxb-stations__cube--5 { bottom: 3%; left: 3%; width: clamp(90px,9vw,145px); opacity: .62; }.vxb-stations__cube--5 img { animation: vxb-cube-tumble 9s ease-in-out -5s infinite reverse; }
 .kw-root--minecraft .st-family { background: #d5e4b4 !important; }
 .kw-root--minecraft .st-family__card,.kw-root--minecraft .st-dress > .grid > div { border: 3px solid #24432d !important; border-radius: 0 !important; box-shadow: 8px 9px 0 #8b6949; }
 .kw-root--minecraft .st-countdown { background: #f3f0d9; }
@@ -94,7 +104,7 @@
 .kw-root--minecraft .st-rsvp > div { border: 3px solid #24432d !important; border-radius: 0 !important; box-shadow: 9px 10px 0 #588a46; }
 .kw-root--minecraft .st-rsvp button[type="submit"],.kw-root--minecraft .st-locations__card a:first-child { border-radius: 0 !important; background: #4b8f43 !important; color: #fff !important; }
 
-/* Floating voxel blocks add depth to the otherwise flat utility scenes. */
+/* Each scene gets its own arrangement and movement, behind the editable content. */
 .kw-root--minecraft :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp) {
   position: relative;
   isolation: isolate;
@@ -111,42 +121,44 @@
   content: '';
   position: absolute;
   z-index: 0;
-  width: clamp(105px,14vw,205px);
   aspect-ratio: 1;
   background: center / contain no-repeat;
-  opacity: .45;
   filter: drop-shadow(10px 17px 9px #243b2b40);
   pointer-events: none;
-  will-change: transform;
 }
 .kw-root--minecraft :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp)::before {
-  top: var(--vxb-cube-a-top,7%);
-  left: var(--vxb-cube-a-left,-3%);
-  background-image: var(--vxb-cube-a,url('/images/minecraft-birthday/ambient-grass-cube.svg'));
-  animation: vxb-float-a 7.5s ease-in-out infinite;
+  top: var(--vxb-a-y);
+  left: var(--vxb-a-x);
+  width: var(--vxb-a-size,clamp(115px,14vw,210px));
+  opacity: var(--vxb-a-opacity,.5);
+  background-image: var(--vxb-a-image,url('/images/minecraft-birthday/ambient-grass-cube.svg'));
+  animation: var(--vxb-a-motion,vxb-cube-rise 8s ease-in-out infinite);
 }
 .kw-root--minecraft :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp)::after {
-  right: var(--vxb-cube-b-right,-3%);
-  bottom: var(--vxb-cube-b-bottom,6%);
-  width: clamp(95px,12vw,180px);
-  background-image: var(--vxb-cube-b,url('/images/minecraft-birthday/ambient-diamond-cube.svg'));
-  animation: vxb-float-b 9.2s ease-in-out -3s infinite;
+  top: var(--vxb-b-y);
+  left: var(--vxb-b-x);
+  width: var(--vxb-b-size,clamp(100px,11vw,175px));
+  opacity: var(--vxb-b-opacity,.47);
+  background-image: var(--vxb-b-image,url('/images/minecraft-birthday/ambient-diamond-cube.svg'));
+  animation: var(--vxb-b-motion,vxb-cube-orbit 13s ease-in-out -3s infinite);
 }
-.kw-root--minecraft .st-family { --vxb-cube-a-top: 12%; --vxb-cube-b-bottom: 3%; }
-.kw-root--minecraft .st-countdown { --vxb-cube-a: url('/images/minecraft-birthday/ambient-stone-cube.svg'); --vxb-cube-a-top: 28%; --vxb-cube-b-bottom: 17%; }
-.kw-root--minecraft .st-locations { --vxb-cube-a-top: 36%; --vxb-cube-b: url('/images/minecraft-birthday/ambient-stone-cube.svg'); --vxb-cube-b-bottom: 24%; }
-.kw-root--minecraft .st-timeline { --vxb-cube-a: url('/images/minecraft-birthday/ambient-diamond-cube.svg'); --vxb-cube-a-top: 27%; --vxb-cube-b: url('/images/minecraft-birthday/ambient-grass-cube.svg'); --vxb-cube-b-bottom: 13%; }
-.kw-root--minecraft .st-gallery { --vxb-cube-a: url('/images/minecraft-birthday/ambient-stone-cube.svg'); --vxb-cube-a-top: 17%; --vxb-cube-b-bottom: 19%; }
-.kw-root--minecraft .st-dress { --vxb-cube-a-top: 25%; --vxb-cube-b: url('/images/minecraft-birthday/ambient-stone-cube.svg'); --vxb-cube-b-bottom: 16%; }
-.kw-root--minecraft .st-gifts { --vxb-cube-a: url('/images/minecraft-birthday/ambient-diamond-cube.svg'); --vxb-cube-a-top: 11%; --vxb-cube-b: url('/images/minecraft-birthday/ambient-grass-cube.svg'); --vxb-cube-b-bottom: 7%; }
-.kw-root--minecraft .st-social { --vxb-cube-a: url('/images/minecraft-birthday/ambient-stone-cube.svg'); --vxb-cube-a-top: 9%; --vxb-cube-b-bottom: 4%; }
-.kw-root--minecraft .st-social + .st-social { --vxb-cube-a: url('/images/minecraft-birthday/ambient-grass-cube.svg'); --vxb-cube-b: url('/images/minecraft-birthday/ambient-stone-cube.svg'); }
-.kw-root--minecraft .st-rsvp { --vxb-cube-a-top: 5%; --vxb-cube-b-bottom: 4%; }
+.kw-root--minecraft .st-family { --vxb-a-x: 5%; --vxb-a-y: 52%; --vxb-a-size: clamp(150px,18vw,270px); --vxb-a-motion: vxb-cube-wander 10s ease-in-out infinite; --vxb-b-x: 84%; --vxb-b-y: 5%; --vxb-b-motion: vxb-cube-rise 7s ease-in-out -2s infinite; }
+.kw-root--minecraft .st-countdown { --vxb-a-x: 78%; --vxb-a-y: 12%; --vxb-a-image: url('/images/minecraft-birthday/ambient-stone-cube.svg'); --vxb-a-motion: vxb-cube-tumble 12s ease-in-out infinite; --vxb-b-x: 2%; --vxb-b-y: 58%; --vxb-b-size: clamp(115px,13vw,190px); --vxb-b-motion: vxb-cube-wander 8s ease-in-out -3s infinite; }
+.kw-root--minecraft .st-locations { --vxb-a-x: 3%; --vxb-a-y: 48%; --vxb-a-motion: vxb-cube-orbit 15s ease-in-out infinite; --vxb-b-x: 82%; --vxb-b-y: 8%; --vxb-b-image: url('/images/minecraft-birthday/ambient-stone-cube.svg'); --vxb-b-motion: vxb-cube-tumble 10s ease-in-out -4s infinite; }
+.kw-root--minecraft .st-timeline { --vxb-a-x: 76%; --vxb-a-y: 54%; --vxb-a-image: url('/images/minecraft-birthday/ambient-diamond-cube.svg'); --vxb-a-motion: vxb-cube-rise 9s ease-in-out infinite; --vxb-b-x: 5%; --vxb-b-y: 12%; --vxb-b-image: url('/images/minecraft-birthday/ambient-grass-cube.svg'); --vxb-b-motion: vxb-cube-orbit 14s ease-in-out -5s infinite; }
+.kw-root--minecraft .st-gallery { --vxb-a-x: 6%; --vxb-a-y: 11%; --vxb-a-image: url('/images/minecraft-birthday/ambient-stone-cube.svg'); --vxb-a-motion: vxb-cube-wander 11s ease-in-out infinite; --vxb-b-x: 81%; --vxb-b-y: 63%; --vxb-b-motion: vxb-cube-tumble 13s ease-in-out -6s infinite; }
+.kw-root--minecraft .st-dress { --vxb-a-x: 79%; --vxb-a-y: 6%; --vxb-a-motion: vxb-cube-tumble 9s ease-in-out infinite; --vxb-b-x: 4%; --vxb-b-y: 65%; --vxb-b-image: url('/images/minecraft-birthday/ambient-stone-cube.svg'); --vxb-b-motion: vxb-cube-rise 8s ease-in-out -3s infinite; }
+.kw-root--minecraft .st-gifts { --vxb-a-x: 5%; --vxb-a-y: 54%; --vxb-a-image: url('/images/minecraft-birthday/ambient-diamond-cube.svg'); --vxb-a-motion: vxb-cube-orbit 12s ease-in-out infinite; --vxb-b-x: 82%; --vxb-b-y: 6%; --vxb-b-image: url('/images/minecraft-birthday/ambient-grass-cube.svg'); --vxb-b-motion: vxb-cube-wander 9s ease-in-out -4s infinite; }
+.kw-root--minecraft .st-social { --vxb-a-x: 80%; --vxb-a-y: 10%; --vxb-a-image: url('/images/minecraft-birthday/ambient-stone-cube.svg'); --vxb-a-motion: vxb-cube-rise 7s ease-in-out infinite; --vxb-b-x: 4%; --vxb-b-y: 66%; --vxb-b-motion: vxb-cube-tumble 11s ease-in-out -5s infinite; }
+.kw-root--minecraft .st-social + .st-social { --vxb-a-x: 4%; --vxb-a-y: 16%; --vxb-a-image: url('/images/minecraft-birthday/ambient-grass-cube.svg'); --vxb-a-motion: vxb-cube-wander 10s ease-in-out infinite; --vxb-b-x: 82%; --vxb-b-y: 61%; --vxb-b-image: url('/images/minecraft-birthday/ambient-stone-cube.svg'); --vxb-b-motion: vxb-cube-orbit 15s ease-in-out -6s infinite; }
+.kw-root--minecraft .st-rsvp { --vxb-a-x: 5%; --vxb-a-y: 8%; --vxb-a-motion: vxb-cube-tumble 13s ease-in-out infinite; --vxb-b-x: 82%; --vxb-b-y: 76%; --vxb-b-motion: vxb-cube-rise 8s ease-in-out -2s infinite; }
 
 @keyframes vxb-bob { 50% { translate: 0 -11px; } }
 @keyframes vxb-spin { to { transform: rotate(360deg); } }
-@keyframes vxb-float-a { 0%,100% { transform: translate3d(0,0,0) rotate(-12deg); } 50% { transform: translate3d(16px,-23px,0) rotate(10deg); } }
-@keyframes vxb-float-b { 0%,100% { transform: translate3d(0,0,0) rotate(13deg); } 50% { transform: translate3d(-18px,-19px,0) rotate(-9deg); } }
+@keyframes vxb-cube-rise { 0%,100% { transform: translate3d(0,16px,0) rotate(-12deg) scale(.94); } 50% { transform: translate3d(5px,-31px,0) rotate(14deg) scale(1.06); } }
+@keyframes vxb-cube-tumble { 0%,100% { transform: translate3d(-8px,8px,0) rotate(-27deg); } 35% { transform: translate3d(24px,-23px,0) rotate(27deg); } 70% { transform: translate3d(-12px,-39px,0) rotate(68deg); } }
+@keyframes vxb-cube-orbit { 0%,100% { transform: translate3d(0,10px,0) rotate(0deg); } 25% { transform: translate3d(30px,-12px,0) rotate(75deg); } 50% { transform: translate3d(4px,-42px,0) rotate(170deg); } 75% { transform: translate3d(-26px,-15px,0) rotate(275deg); } }
+@keyframes vxb-cube-wander { 0%,100% { transform: translate3d(-15px,13px,0) rotate(-20deg) scale(.9); } 30% { transform: translate3d(28px,-11px,0) rotate(9deg) scale(1.08); } 65% { transform: translate3d(7px,-38px,0) rotate(-31deg) scale(1); } }
 @media (max-width: 700px) {
   .kw-root--minecraft .vxb-nav { width: calc(100% - 18px); padding-left: 7px; font-size: 8px; }
   .kw-root--minecraft .vxb-nav .kw-nav__brand { max-width: 132px; }
@@ -170,9 +182,25 @@
   .vxb-hero__hud { bottom: 11%; font-size: 11px; letter-spacing: 2px; }.vxb-hero__hud span:last-child { font-size: 8px; letter-spacing: 3px; }
   .kw-root--minecraft .kw-hero__cta { bottom: 3%; width: min(88%,360px); }
   .kw-root--minecraft .kw-station__image { height: 185px; }
+  .kw-root--minecraft .kw-stations { background-size: 36px 36px; }
+  .vxb-stations__cube--1 { top: 2%; left: -44px; width: 142px; opacity: .52; }
+  .vxb-stations__cube--2 { top: 13%; right: -37px; width: 112px; opacity: .5; }
+  .vxb-stations__cube--3 { top: 43%; left: -40px; width: 102px; opacity: .4; }
+  .vxb-stations__cube--4 { top: 69%; right: -34px; width: 138px; opacity: .46; }
+  .vxb-stations__cube--5 { bottom: 2%; left: -30px; width: 100px; opacity: .42; }
   .kw-root--minecraft :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp) { background-size: 32px 32px; }
-  .kw-root--minecraft :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp)::before { width: 94px; left: -34px; opacity: .34; }
-  .kw-root--minecraft :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp)::after { width: 82px; right: -29px; opacity: .34; }
+  .kw-root--minecraft :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp)::before { width: 110px; top: var(--vxb-a-mobile-y,var(--vxb-a-y)); left: var(--vxb-a-mobile-x,var(--vxb-a-x)); opacity: .4; }
+  .kw-root--minecraft :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp)::after { width: 96px; top: var(--vxb-b-mobile-y,var(--vxb-b-y)); left: var(--vxb-b-mobile-x,var(--vxb-b-x)); opacity: .38; }
+  .kw-root--minecraft .st-family { --vxb-a-mobile-x: -44px; --vxb-a-mobile-y: 62%; --vxb-b-mobile-x: calc(100% - 61px); --vxb-b-mobile-y: 8%; }
+  .kw-root--minecraft .st-countdown { --vxb-a-mobile-x: calc(100% - 66px); --vxb-a-mobile-y: 9%; --vxb-b-mobile-x: -42px; --vxb-b-mobile-y: 60%; }
+  .kw-root--minecraft .st-locations { --vxb-a-mobile-x: -48px; --vxb-a-mobile-y: 36%; --vxb-b-mobile-x: calc(100% - 56px); --vxb-b-mobile-y: 4%; }
+  .kw-root--minecraft .st-timeline { --vxb-a-mobile-x: calc(100% - 69px); --vxb-a-mobile-y: 51%; --vxb-b-mobile-x: -38px; --vxb-b-mobile-y: 17%; }
+  .kw-root--minecraft .st-gallery { --vxb-a-mobile-x: -36px; --vxb-a-mobile-y: 18%; --vxb-b-mobile-x: calc(100% - 72px); --vxb-b-mobile-y: 73%; }
+  .kw-root--minecraft .st-dress { --vxb-a-mobile-x: calc(100% - 62px); --vxb-a-mobile-y: 9%; --vxb-b-mobile-x: -50px; --vxb-b-mobile-y: 69%; }
+  .kw-root--minecraft .st-gifts { --vxb-a-mobile-x: -32px; --vxb-a-mobile-y: 56%; --vxb-b-mobile-x: calc(100% - 67px); --vxb-b-mobile-y: 7%; }
+  .kw-root--minecraft .st-social { --vxb-a-mobile-x: calc(100% - 58px); --vxb-a-mobile-y: 6%; --vxb-b-mobile-x: -39px; --vxb-b-mobile-y: 68%; }
+  .kw-root--minecraft .st-social + .st-social { --vxb-a-mobile-x: -42px; --vxb-a-mobile-y: 20%; --vxb-b-mobile-x: calc(100% - 71px); --vxb-b-mobile-y: 63%; }
+  .kw-root--minecraft .st-rsvp { --vxb-a-mobile-x: -50px; --vxb-a-mobile-y: 5%; --vxb-b-mobile-x: calc(100% - 60px); --vxb-b-mobile-y: 80%; }
 }
 @media (max-width: 360px) {
   .vxb-hero__copy { top: 10%; }
@@ -183,6 +211,7 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .vxb-hero__block,.vxb-hero__diamond,.vxb-seal,
+  .vxb-stations__cube img,
   .kw-root--minecraft :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp)::before,
   .kw-root--minecraft :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp)::after { animation: none !important; }
 }
