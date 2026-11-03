@@ -1,9 +1,9 @@
 import type { InvitationConfig, TemplateId } from '@/types/invitation.types';
 
-export type KidsWorldTemplateId = Extract<TemplateId, 'pirate-treasure-voyage' | 'dino-jungle-expedition' | 'safari-sunrise-adventure' | 'cowboy-ranch-roundup'>;
+export type KidsWorldTemplateId = Extract<TemplateId, 'pirate-treasure-voyage' | 'dino-jungle-expedition' | 'safari-sunrise-adventure' | 'cowboy-ranch-roundup' | 'mickey-mouse-birthday'>;
 
 export function isKidsWorldTemplateId(id: TemplateId): id is KidsWorldTemplateId {
-  return id === 'pirate-treasure-voyage' || id === 'dino-jungle-expedition' || id === 'safari-sunrise-adventure' || id === 'cowboy-ranch-roundup';
+  return id === 'pirate-treasure-voyage' || id === 'dino-jungle-expedition' || id === 'safari-sunrise-adventure' || id === 'cowboy-ranch-roundup' || id === 'mickey-mouse-birthday';
 }
 
 export function kidsWorldName(title: string) {
@@ -18,8 +18,97 @@ export function kidsWorldAge(title: string) {
 
 const image = (id: KidsWorldTemplateId, name: string) => `/images/${id}/${name}.webp`;
 
+function applyMickeyDefaults(config: InvitationConfig, name: string) {
+  const asset = (file: string) => image('mickey-mouse-birthday', file);
+  const content = config.content;
+  config.audio.enabled = false;
+  config.sectionsOrder = config.sectionsOrder.map(section => ({
+    ...section,
+    enabled: section.id === 'accommodation' ? false : section.enabled,
+  }));
+  config.theme.envelope.sealMonogram = '★';
+  config.theme.envelope.openButtonText = 'Abre tu pase al Club de Cumpleaños';
+  content.hero = {
+    ...content.hero,
+    mainTitle: /^(nuestra|mi) celebraci[oó]n$/i.test(name) ? 'Mateo cumple 5' : content.hero.mainTitle,
+    badgeText: 'EL CLUB DE CUMPLEAÑOS · EDICIÓN ESPECIAL',
+    tagline: 'Globos, risas y una fiesta hecha para compartir',
+    coverImageUrl: asset('mickey-hero'),
+    focalPoint: { x: 50, y: 50 },
+  };
+  const birthdayName = kidsWorldName(content.hero.mainTitle);
+  content.quoteStory = {
+    quoteText: `¡Ya casi llega el gran día de ${birthdayName}! Mickey y sus amigos nos esperan para jugar, reír y soplar las velitas. Lo único que falta para que la magia esté completa eres tú.`,
+    quoteAuthor: `La familia de ${birthdayName}`,
+    storyBlocks: [
+      { title: 'La invitación', description: 'Un pase especial para nuestra pandilla favorita.', imageUrl: asset('mickey-gift') },
+      { title: 'La aventura', description: 'Juegos, sorpresas y amigos en cada rincón.', imageUrl: asset('mickey-play') },
+      { title: 'El gran deseo', description: 'Cantamos juntos y celebramos frente al pastel.', imageUrl: asset('mickey-cake') },
+    ],
+  };
+  content.vipParents = {
+    blessingMessage: `Con muchísima emoción, la familia de ${birthdayName} te invita a celebrar`,
+    groups: [
+      { groupTitle: 'Anfitriones', names: [`La familia de ${birthdayName}`] },
+      { groupTitle: 'La pandilla', names: ['Amigos y familia'] },
+      { groupTitle: 'Invitado estrella', names: ['¡Tú!'] },
+    ],
+  };
+  const address = 'Parque México, Condesa, Ciudad de México';
+  const query = encodeURIComponent(address);
+  content.locations = [{
+    id: 'mickey-party-place', type: 'reception', title: 'La gran fiesta',
+    venueName: 'Parque México', address, time: '13:00 HRS',
+    imageUrl: asset('mickey-friends'),
+    coordinates: { lat: 19.4115, lng: -99.1691 },
+    googleMapsUrl: `https://www.google.com/maps/search/?api=1&query=${query}`,
+    wazeUrl: `https://waze.com/ul?q=${query}&navigate=yes`,
+  }];
+  content.timeline = [
+    { id: 'mickey-1', time: '13:00 HRS', title: '¡Bienvenidos al club!', description: 'Recibimos a la pandilla con globos y sonrisas.', icon: 'party' },
+    { id: 'mickey-2', time: '14:00 HRS', title: 'A jugar se ha dicho', description: 'Retos, brincos y muchas sorpresas para todos.', icon: 'party' },
+    { id: 'mickey-3', time: '15:00 HRS', title: 'Foto con la pandilla', description: 'Un recuerdo junto a nuestros amigos favoritos.', icon: 'party' },
+    { id: 'mickey-4', time: '16:00 HRS', title: 'Pastel y deseos', description: 'Las velitas se encienden para el gran momento.', icon: 'cake' },
+  ];
+  content.gallery = { layout: 'bento-grid', images: [
+    { url: asset('mickey-gift'), caption: 'Una sorpresa para ti' },
+    { url: asset('mickey-play'), caption: 'Diversión sin parar' },
+    { url: asset('mickey-friends'), caption: 'Toda la pandilla reunida' },
+    { url: asset('mickey-cake'), caption: 'El momento del pastel' },
+  ] };
+  content.dressCode = {
+    title: 'Cómodos para jugar',
+    womenNotes: 'Ropa cómoda, tenis y ganas de bailar. ¡Los colores del club son bienvenidos!',
+    menNotes: 'Ropa fresca y zapatos cómodos para jugar toda la tarde.',
+    reservedColors: [], reservedNote: '',
+  };
+  content.gifts = {
+    introMessage: 'Tu presencia es el mejor regalo. Si deseas tener un detalle, habrá un buzón de felicitaciones durante la fiesta.',
+    registries: [], cashEnvelopeAtVenue: true,
+  };
+  content.accommodation = [];
+  content.socialFeatures = { enableSongRequests: true, enableAudioGuestbook: false, enableLiveDisposableCamera: false, hashtag: `#Cumple${birthdayName.replace(/\s+/g, '')}` };
+  content.rsvp = { ...content.rsvp, askDietaryRestrictions: false, allowChildrenSelection: true, customConfirmationMessage: '¡Gracias por confirmar! Guarda tu pase digital con QR para entrar al club.' };
+  content.sectionHeadings = {
+    quote_story: { eyebrow: '01 / UNA INVITACIÓN ESPECIAL', title: 'La magia empieza contigo' },
+    vip_parents: { eyebrow: '03 / NUESTRA PANDILLA', title: 'Juntos es mejor' },
+    countdown: { eyebrow: '04 / CUENTA REGRESIVA', title: 'Falta poquito para jugar' },
+    locations: { eyebrow: '05 / PUNTO DE ENCUENTRO', title: 'Aquí nos vemos' },
+    timeline: { eyebrow: '06 / EL GRAN PLAN', title: 'Así será nuestro día' },
+    gallery: { eyebrow: '07 / POSTALES DEL CLUB', title: 'Momentos para imaginar' },
+    dress_code: { eyebrow: '08 / CÓDIGO DE DIVERSIÓN', title: 'Listos para jugar' },
+    gifts: { eyebrow: '09 / CON CARIÑO', title: 'Tu sonrisa es el regalo' },
+    social_features: { eyebrow: '10 / RECUERDOS COMPARTIDOS', title: 'Compartamos la alegría' },
+    rsvp: { eyebrow: '11 / TU PASE ESTRELLA', title: 'Confirma tu lugar' },
+  };
+}
+
 export function applyKidsWorldDefaults(config: InvitationConfig, id: KidsWorldTemplateId, title: string) {
   const name = kidsWorldName(title);
+  if (id === 'mickey-mouse-birthday') {
+    applyMickeyDefaults(config, name);
+    return;
+  }
   if (id === 'safari-sunrise-adventure' || id === 'cowboy-ranch-roundup') {
     applySafariOrCowboyDefaults(config, id, name);
     return;

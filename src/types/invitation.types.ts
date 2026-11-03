@@ -34,6 +34,7 @@ export type TemplateId =
   | 'marea-azul'
   | 'ritmo-de-dos'
   | 'mini-cosmos'
+  | 'mickey-mouse-birthday'
   | 'atelier-xv';
 
 export type EnvelopeVariant =

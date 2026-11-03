@@ -1,6 +1,6 @@
 export const EDITOR_SECTION_TARGETS: Record<string, string> = {
   envelope: '[data-editor-section="envelope"], .ee-opening, .rx-opening, .mc-opening, .ax-opening, .rd-opening, .ma-opening, .nx-opening, .fk-opening, .kw-opening, .ww-opening, .nw-opening, .sw-opening',
-  hero: '[data-editor-section="hero"], .st-hero, .cs-hero, .oc-hero, .ee-hero, .rx-hero, .mc-hero, .ax-hero, .rd-hero, .ma-hero, .nx-hero-scroll, .fk-hero, .kw-hero, .ww-hero, .nw-hero, .sw-hero',
+  hero: '[data-editor-section="hero"], .st-hero, .cs-hero, .oc-hero, .ee-hero, .rx-hero, .mc-hero, .ax-hero, .rd-hero, .ma-hero, .nx-hero-scroll, .fk-hero, .kw-hero, .mmb-hero, .ww-hero, .nw-hero, .sw-hero',
   quoteStory: '[data-editor-section="quoteStory"], .st-story, .ee-story, .rx-story, .mc-story, .ax-story, .rd-story, .ma-story, .nx-story, .fk-stations, .kw-stations, .ww-stations, .nw-moments, .sw-moments',
   vipParents: '.st-family, .ee-family, .rx-family, .mc-family, .ax-family, .rd-family, .ma-family, .nx-family',
   countdown: '.st-countdown, .ee-countdown, .rx-countdown, .mc-countdown, .ax-countdown, .rd-countdown, .ma-countdown, .nx-countdown',

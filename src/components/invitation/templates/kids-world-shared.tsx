@@ -10,13 +10,14 @@ import { HeroMedia } from '../core/HeroMedia';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export type KidsWorldVariant = 'pirate' | 'dino' | 'safari' | 'cowboy';
+export type KidsWorldVariant = 'pirate' | 'dino' | 'safari' | 'cowboy' | 'mickey';
 
 const worldPresentation: Record<KidsWorldVariant, { heroId: string; stationId: string; heroLabel: string; stationLabel: string; mark: string; mediaAlt: string }> = {
   pirate: { heroId: 'pw-hero', stationId: 'pw-stations', heroLabel: 'Portada pirata', stationLabel: 'Puertos de la travesía', mark: '☸', mediaAlt: 'Viaje pirata' },
   dino: { heroId: 'dj-hero', stationId: 'dj-stations', heroLabel: 'Portada jurásica', stationLabel: 'Estaciones jurásicas', mark: '✦', mediaAlt: 'Expedición jurásica' },
   safari: { heroId: 'sf-hero', stationId: 'sf-stations', heroLabel: 'Portada del safari', stationLabel: 'Paradas del safari', mark: '◉', mediaAlt: 'Safari de cumpleaños' },
   cowboy: { heroId: 'cb-hero', stationId: 'cb-stations', heroLabel: 'Portada del rancho', stationLabel: 'Paradas del rancho', mark: '★', mediaAlt: 'Aventura vaquera' },
+  mickey: { heroId: 'mm-hero', stationId: 'mm-stations', heroLabel: 'Portada del cumpleaños de Mickey', stationLabel: 'Momentos del club', mark: '●', mediaAlt: 'Club de cumpleaños Mickey Mouse' },
 };
 
 export function KidsWorldFrame({ variant, config, eventDate, guestGroup, actionHref, motif, seal, overline, bridge, visualTag, cta }: {
@@ -75,6 +76,7 @@ export function KidsWorldMarquee({ variant, second = false }: { variant: KidsWor
     dino: ['EXPLORA ✦ EXCAVA ✦ CELEBRA ✦ ', 'HUELLAS GIGANTES ✦ RECUERDOS ETERNOS ✦ '],
     safari: ['OBSERVA ✦ DESCUBRE ✦ CELEBRA ✦ ', 'UN MUNDO SALVAJE ✦ UN DÍA INOLVIDABLE ✦ '],
     cowboy: ['ENSILLA ✦ JUEGA ✦ CELEBRA ✦ ', 'RUMBO AL RANCHO ✦ AMIGOS POR SIEMPRE ✦ '],
+    mickey: ['OH BOY! ✦ JUEGA ✦ RÍE ✦ CELEBRA ✦ ', 'GLOBOS ✦ AMIGOS ✦ PASTEL ✦ MAGIA ✦ '],
   };
   const phrase = phrases[variant][second ? 1 : 0];
   return <div className={`kw-marquee${second ? ' kw-marquee--second' : ''}`} aria-hidden="true"><div>{Array.from({ length: 6 }, (_, i) => <span key={i}>{phrase}</span>)}</div></div>;
@@ -85,6 +87,7 @@ const stationLabels: Record<KidsWorldVariant, string[]> = {
   dino: ['ENTRADA A LA SELVA', 'ZONA DE FÓSILES', 'SENDERO GIGANTE', 'GRAN FESTEJO'],
   safari: ['CAMPAMENTO BASE', 'SENDERO DORADO', 'AMIGOS DE LA SABANA', 'PICNIC DE CUMPLEAÑOS'],
   cowboy: ['PUERTAS DEL RANCHO', 'RUTA DEL OESTE', 'JUEGOS VAQUEROS', 'PASTEL AL ATARDECER'],
+  mickey: ['PASE DE BIENVENIDA', 'JUEGOS DEL CLUB', 'FOTO CON AMIGOS', 'MOMENTO DEL PASTEL'],
 };
 
 export function KidsWorldStations({ variant, config }: { variant: KidsWorldVariant; config: InvitationConfig }) {
@@ -94,11 +97,12 @@ export function KidsWorldStations({ variant, config }: { variant: KidsWorldVaria
     dino: { heading: 'Cuatro hallazgos. Una gran aventura.', description: 'Sigue las huellas y descubre todo lo que nos espera.', chapter: 'LA EXPEDICIÓN' },
     safari: { heading: 'Cuatro paradas. Un mundo salvaje.', description: 'Sigue el sendero y descubre a nuestros amigos de la sabana.', chapter: 'EL SAFARI' },
     cowboy: { heading: 'Cuatro momentos. Un gran rodeo.', description: 'Sigue la ruta del rancho hasta el pastel al atardecer.', chapter: 'EL RANCHO' },
+    mickey: { heading: 'Cuatro momentos. Mil sonrisas.', description: 'Cada parada trae una nueva sorpresa para nuestra pandilla.', chapter: 'EL CLUB DE CUMPLEAÑOS' },
   };
   const { heading, description, chapter } = copy[variant];
   const images = config.content.gallery.images;
   return (
-    <section id={stationId} className="kw-stations kw-sheet" aria-label={stationLabel}>
+    <section id={stationId} className="kw-stations kw-sheet" data-editor-section="quoteStory" aria-label={stationLabel}>
       <div className="kw-stations__head"><p className="kw-eyebrow"><span className="kw-pulse"/>CAPÍTULO 02 · {chapter}</p><h2>{heading}</h2><p>{description}</p></div>
       <div className="kw-stations__grid">{stationLabels[variant].map((label, index) => {
         const image = images[index];
@@ -159,4 +163,11 @@ export function setupKidsWorldScenes(root: HTMLElement, id: KidsWorldTemplateId)
     if (runner) gsap.fromTo(runner, { top: '0%' }, { top: '93%', ease: 'none', scrollTrigger: trigger(timeline, 'top 78%', 'bottom 48%') });
   }
   reveal('.st-timeline__item', { x: 40, opacity: .55 });
+  if (id === 'mickey-mouse-birthday' && hero) {
+    const heroTrigger = { trigger: hero, scroller, start: 'top top', end: 'bottom bottom', scrub: .9 };
+    gsap.to(root.querySelectorAll('.mmb-hero__balloon'), { yPercent: -115, xPercent: (index: number) => index % 2 ? 22 : -20, rotate: (index: number) => index % 2 ? 18 : -16, ease: 'none', stagger: .04, scrollTrigger: heroTrigger });
+    gsap.to(root.querySelector('.mmb-hero__friend'), { xPercent: 86, yPercent: -65, rotate: 19, scale: .7, ease: 'none', scrollTrigger: heroTrigger });
+    gsap.to(root.querySelector('.mmb-hero__orbit'), { rotate: 85, scale: 1.25, ease: 'none', scrollTrigger: heroTrigger });
+    gsap.to(root.querySelectorAll('.mmb-hero__star'), { y: -90, rotate: 130, ease: 'none', stagger: .08, scrollTrigger: heroTrigger });
+  }
 }

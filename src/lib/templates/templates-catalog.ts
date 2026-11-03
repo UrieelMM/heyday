@@ -40,6 +40,16 @@ export const TEMPLATES_CATALOG: TemplateMetadata[] = [
     envelopeVariant: 'editorial-curtain', ambientEffect: 'confetti',
   },
   {
+    id: 'mickey-mouse-birthday', name: 'Mickey Mouse: Club de Cumpleaños', category: 'kids_birthday',
+    categoryLabel: 'Cumpleaños infantil / Mickey Mouse', badge: 'Nueva colección',
+    description: 'Un pase al club más divertido: personajes, globos, juegos y pastel en una fiesta que cobra vida al deslizar.',
+    signatureAnimation: 'Pase de fiesta + escenario expansible + globos viajeros',
+    previewImage: '/images/mickey-mouse-birthday/mickey-hero.webp',
+    colors: { bgPrimary: '#FFF8E9', bgSecondary: '#FFE9B0', textPrimary: '#172238', textMuted: '#4E5870', accentPrimary: '#E8312A', accentSecondary: '#2B65B8' },
+    fonts: { headingFont: 'Fredoka', scriptFont: 'Fredoka', bodyFont: 'Plus Jakarta Sans' },
+    envelopeVariant: 'pass-ticket-tear', ambientEffect: 'confetti',
+  },
+  {
     id: 'solar-pop-xv', name: 'Solar Pop XV', category: 'xv_years',
     categoryLabel: 'XV años / Pop solar', badge: 'Nueva colección',
     description: 'Quince vueltas al sol entre bloques de color, collage editorial y destellos que se revelan al deslizar.',
