@@ -58,6 +58,7 @@ import { DinoJungleExperience, DinoStoryFossils } from '../templates/DinoJungleE
 import { SafariSunriseExperience, SafariTrailBackdrop } from '../templates/SafariSunriseExperience';
 import { CowboyRanchExperience, CowboyTrailBackdrop } from '../templates/CowboyRanchExperience';
 import { MickeyMouseBirthdayExperience, MickeyStoryBackdrop } from '../templates/MickeyMouseBirthdayExperience';
+import { BlueyBirthdayExperience, BlueyChalkStory } from '../templates/BlueyBirthdayExperience';
 import { MinecraftBirthdayExperience, MinecraftStoryMap } from '../templates/MinecraftBirthdayExperience';
 import { KidsWorldMarquee, KidsWorldStations, setupKidsWorldScenes } from '../templates/kids-world-shared';
 import { isKidsWorldTemplateId } from '@/lib/templates/kids-world-config';
@@ -94,6 +95,7 @@ import '../templates/safari-sunrise-adventure.css';
 import '../templates/cowboy-ranch-roundup.css';
 import '../templates/kids-world-ambient.css';
 import '../templates/mickey-mouse-birthday.css';
+import '../templates/bluey-birthday.css';
 import '../templates/minecraft-birthday.css';
 import '../templates/wedding-world.css';
 import '../templates/glass-garden-vows.css';
@@ -170,6 +172,7 @@ function StandardInvitationRenderer({
     : kidsWorldId === 'safari-sunrise-adventure' ? 'safari'
       : kidsWorldId === 'cowboy-ranch-roundup' ? 'cowboy'
         : kidsWorldId === 'mickey-mouse-birthday' ? 'mickey'
+          : kidsWorldId === 'bluey-birthday' ? 'bluey'
           : kidsWorldId === 'minecraft-birthday' ? 'minecraft' : 'dino';
   const weddingWorldId = isWeddingWorldTemplateId(templateId) ? templateId : null;
   const weddingWorldVariant = weddingWorldId === 'glass-garden-vows' ? 'garden'
@@ -448,6 +451,9 @@ function StandardInvitationRenderer({
       {isSectionEnabled('hero') && kidsWorldId === 'mickey-mouse-birthday' && (
         <MickeyMouseBirthdayExperience config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />
       )}
+      {isSectionEnabled('hero') && kidsWorldId === 'bluey-birthday' && (
+        <BlueyBirthdayExperience config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />
+      )}
       {isSectionEnabled('hero') && kidsWorldId === 'minecraft-birthday' && (
         <MinecraftBirthdayExperience config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />
       )}
@@ -562,6 +568,7 @@ function StandardInvitationRenderer({
           {kidsWorldId === 'safari-sunrise-adventure' && <SafariTrailBackdrop />}
           {kidsWorldId === 'cowboy-ranch-roundup' && <CowboyTrailBackdrop />}
           {kidsWorldId === 'mickey-mouse-birthday' && <MickeyStoryBackdrop />}
+          {kidsWorldId === 'bluey-birthday' && <BlueyChalkStory />}
           {kidsWorldId === 'minecraft-birthday' && <MinecraftStoryMap />}
           {weddingWorldId === 'glass-garden-vows' && <GardenStoryTrellis />}
           {weddingWorldId === 'midnight-constellation' && <ConstellationStorySky />}
@@ -945,7 +952,7 @@ function StandardInvitationRenderer({
 
             <div className="relative mx-auto max-w-xl pl-8">
               {isKidsAdventure && <span className="fk-timeline__runner" aria-hidden="true">✦</span>}
-              {kidsWorldId && <span className="kw-timeline__runner" aria-hidden="true">{{ pirate: '☸', dino: '✦', safari: '◉', cowboy: '★', mickey: '●', minecraft: '◆' }[kidsWorldVariant]}</span>}
+              {kidsWorldId && <span className="kw-timeline__runner" aria-hidden="true">{{ pirate: '☸', dino: '✦', safari: '◉', cowboy: '★', mickey: '●', bluey: '✿', minecraft: '◆' }[kidsWorldVariant]}</span>}
               {weddingWorldId && <span className="ww-timeline__runner" aria-hidden="true">{{ garden: '✿', stars: '✧', vineyard: '❧' }[weddingWorldVariant]}</span>}
               {newWorldId && <span className="nw-timeline__runner" aria-hidden="true">{{ opera: '✦', atlas: '✺', future: '↗' }[newWorldVariant]}</span>}
               {storyWorldId && <span className="sw-timeline__runner" aria-hidden="true">{{ ohana: '✿', stitch: '🌊', solar: '✺', cafe: '♥' }[storyVariant]}</span>}

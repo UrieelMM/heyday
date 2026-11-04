@@ -60,6 +60,16 @@ export const TEMPLATES_CATALOG: TemplateMetadata[] = [
     envelopeVariant: 'pass-ticket-tear', ambientEffect: 'confetti',
   },
   {
+    id: 'bluey-birthday', name: 'Bluey: El Gran Día de Juegos', category: 'kids_birthday',
+    categoryLabel: 'Cumpleaños infantil / Bluey', badge: 'Nueva colección',
+    description: 'Un cumpleaños como tarde de juegos en el patio: globos, huellas de tiza, cuatro juegos y toda la familia de Bluey.',
+    signatureAnimation: 'Globo viajero + ventana de patio expansible + ruta de tiza',
+    previewImage: '/images/bluey-birthday/bluey-bingo-keepy-uppy-red-balloon.webp',
+    colors: { bgPrimary: '#FFF9E7', bgSecondary: '#D9F0F5', textPrimary: '#203B68', textMuted: '#526887', accentPrimary: '#F26955', accentSecondary: '#5DAAD7' },
+    fonts: { headingFont: 'Fredoka', scriptFont: 'Fredoka', bodyFont: 'Plus Jakarta Sans' },
+    envelopeVariant: 'pass-ticket-tear', ambientEffect: 'confetti',
+  },
+  {
     id: 'minecraft-birthday', name: 'Minecraft: Aventura en Bloques', category: 'kids_birthday',
     categoryLabel: 'Cumpleaños infantil / Minecraft', badge: 'Nueva colección',
     description: 'Entra a un mundo de bloques: portal expansible, paisaje pixelado, cuatro misiones y una gran celebración.',

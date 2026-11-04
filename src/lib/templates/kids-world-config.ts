@@ -1,9 +1,9 @@
 import type { InvitationConfig, TemplateId } from '@/types/invitation.types';
 
-export type KidsWorldTemplateId = Extract<TemplateId, 'pirate-treasure-voyage' | 'dino-jungle-expedition' | 'safari-sunrise-adventure' | 'cowboy-ranch-roundup' | 'mickey-mouse-birthday' | 'minecraft-birthday'>;
+export type KidsWorldTemplateId = Extract<TemplateId, 'pirate-treasure-voyage' | 'dino-jungle-expedition' | 'safari-sunrise-adventure' | 'cowboy-ranch-roundup' | 'mickey-mouse-birthday' | 'bluey-birthday' | 'minecraft-birthday'>;
 
 export function isKidsWorldTemplateId(id: TemplateId): id is KidsWorldTemplateId {
-  return id === 'pirate-treasure-voyage' || id === 'dino-jungle-expedition' || id === 'safari-sunrise-adventure' || id === 'cowboy-ranch-roundup' || id === 'mickey-mouse-birthday' || id === 'minecraft-birthday';
+  return id === 'pirate-treasure-voyage' || id === 'dino-jungle-expedition' || id === 'safari-sunrise-adventure' || id === 'cowboy-ranch-roundup' || id === 'mickey-mouse-birthday' || id === 'bluey-birthday' || id === 'minecraft-birthday';
 }
 
 export function kidsWorldName(title: string) {
@@ -189,6 +189,98 @@ function applyMickeyDefaults(config: InvitationConfig, name: string) {
   };
 }
 
+function applyBlueyDefaults(config: InvitationConfig, title: string) {
+  const asset = (name: string) => image('bluey-birthday', name);
+  const content = config.content;
+  const mainTitle = /^(nuestra|mi) celebraci[oó]n$|^Sofía\s*&\s*Mateo$/i.test(title)
+    ? 'Emma cumple 5' : title;
+  const name = kidsWorldName(mainTitle);
+  config.audio.enabled = false;
+  config.sectionsOrder = config.sectionsOrder.map(section => ({
+    ...section, enabled: section.id === 'accommodation' ? false : section.enabled,
+  }));
+  config.theme.envelope.sealMonogram = '✿';
+  config.theme.envelope.openButtonText = 'Abre tu pase al gran día de juegos';
+  content.hero = {
+    ...content.hero, mainTitle,
+    badgeText: 'EL GRAN DÍA DE JUEGOS · ¡ESTÁS INVITADO!',
+    tagline: 'Una tarde para imaginar, jugar y celebrar juntos',
+    coverImageUrl: asset('bluey-bingo-keepy-uppy-red-balloon'),
+    focalPoint: { x: 50, y: 50 },
+  };
+  content.quoteStory = {
+    quoteText: `Para ${name}, el mejor juego siempre empieza cuando llegan sus amigos. Bluey y Bingo tienen un lugar reservado para ti en una tarde de risas, imaginación y pastel.`,
+    quoteAuthor: `La familia de ${name}`,
+    storyBlocks: [
+      { title: 'Un pase para jugar', description: 'Cruza la puerta del patio: aquí empieza nuestra historia.', imageUrl: asset('bluey-cheering') },
+      { title: 'Inventemos juntos', description: 'Cada amigo trae una idea distinta para hacer magia con lo cotidiano.', imageUrl: asset('bluey-bob-bilby-puppet') },
+      { title: 'El mejor recuerdo', description: 'Una tarde juntos se convierte en una historia para contar después.', imageUrl: asset('bluey-family') },
+    ],
+  };
+  content.vipParents = {
+    blessingMessage: `La familia de ${name} te espera para llenar el patio de juegos y abrazos`,
+    groups: [
+      { groupTitle: 'Los anfitriones', names: [`La familia de ${name}`] },
+      { groupTitle: 'La pandilla', names: ['Amigos y familia'] },
+      { groupTitle: 'Jugador especial', names: ['¡Tú!'] },
+    ],
+  };
+  const address = 'Parque México, Condesa, Ciudad de México';
+  const query = encodeURIComponent(address);
+  content.locations = [{
+    id: 'bluey-playground', type: 'reception', title: 'El patio de juegos',
+    venueName: 'Parque México', address, time: '13:30 HRS',
+    imageUrl: asset('bluey-family'), coordinates: { lat: 19.4115, lng: -99.1691 },
+    googleMapsUrl: `https://www.google.com/maps/search/?api=1&query=${query}`,
+    wazeUrl: `https://waze.com/ul?q=${query}&navigate=yes`,
+  }];
+  content.timeline = [
+    { id: 'bluey-1', time: '13:30 HRS', title: '¡Llegó la pandilla!', description: 'Nos encontramos, saludamos y elegimos nuestro primer juego.', icon: 'party' },
+    { id: 'bluey-2', time: '14:15 HRS', title: 'Keepy Uppy', description: 'Que el globo no toque el suelo: ¡todos podemos jugar!', icon: 'party' },
+    { id: 'bluey-3', time: '15:00 HRS', title: 'Baile congelado', description: 'Música, pasos locos y estatuas muy divertidas.', icon: 'party' },
+    { id: 'bluey-4', time: '16:00 HRS', title: 'Pastel y deseos', description: 'Nos reunimos para cantar y soplar las velitas.', icon: 'cake' },
+  ];
+  content.gallery = { layout: 'bento-grid', images: [
+    { url: asset('bluey-cheering'), caption: 'Patio abierto' },
+    { url: asset('bluey-bingo-keepy-uppy-red-balloon'), caption: 'Keepy Uppy' },
+    { url: asset('bluey-dancing'), caption: 'Baile congelado' },
+    { url: asset('bluey-family'), caption: 'Fiesta en familia' },
+    { url: asset('bingo-dancing'), caption: 'La pandilla baila' },
+    { url: asset('bluey-bingo-muffin-flowers'), caption: 'Juntos es mejor' },
+  ] };
+  content.dressCode = {
+    title: 'Uniforme para jugar',
+    womenNotes: 'Ropa cómoda, tenis y muchas ganas de correr, imaginar y bailar.',
+    menNotes: 'Prendas frescas y zapatos cómodos para una tarde de juegos.',
+    reservedColors: [], reservedNote: '',
+  };
+  content.gifts = {
+    introMessage: 'Tu compañía hace la fiesta. Si deseas dejar un detalle, tendremos un buzón de cariño en el patio.',
+    registries: [], cashEnvelopeAtVenue: true,
+  };
+  content.accommodation = [];
+  content.socialFeatures = {
+    enableSongRequests: true, enableAudioGuestbook: false, enableLiveDisposableCamera: false,
+    hashtag: `#JugamosCon${name.replace(/\s+/g, '')}`,
+  };
+  content.rsvp = {
+    ...content.rsvp, askDietaryRestrictions: false, allowChildrenSelection: true,
+    customConfirmationMessage: '¡Qué emoción! Guarda tu pase digital con QR y ven a jugar con nosotros.',
+  };
+  content.sectionHeadings = {
+    quote_story: { eyebrow: '01 / HABÍA UNA VEZ UN JUEGO', title: 'La mejor parte eres tú' },
+    vip_parents: { eyebrow: '03 / NUESTRA PANDILLA', title: 'Juntos jugamos mejor' },
+    countdown: { eyebrow: '04 / FALTA POQUITO', title: 'La diversión empieza en' },
+    locations: { eyebrow: '05 / PUNTO DE ENCUENTRO', title: 'Nos vemos en el patio' },
+    timeline: { eyebrow: '06 / PLAN DE JUEGOS', title: 'La ruta de la diversión' },
+    gallery: { eyebrow: '07 / POSTALES DEL PATIO', title: 'Imagina lo que nos espera' },
+    dress_code: { eyebrow: '08 / LISTOS PARA JUGAR', title: 'Cómodos para la aventura' },
+    gifts: { eyebrow: '09 / CON MUCHO CARIÑO', title: 'El mejor regalo es jugar juntos' },
+    social_features: { eyebrow: '10 / ÁLBUM DE LA PANDILLA', title: 'Guardemos las sonrisas' },
+    rsvp: { eyebrow: '11 / TU PASE DE JUEGO', title: 'Confirma tu lugar' },
+  };
+}
+
 export function applyKidsWorldDefaults(config: InvitationConfig, id: KidsWorldTemplateId, title: string) {
   const name = kidsWorldName(title);
   if (id === 'minecraft-birthday') {
@@ -197,6 +289,10 @@ export function applyKidsWorldDefaults(config: InvitationConfig, id: KidsWorldTe
   }
   if (id === 'mickey-mouse-birthday') {
     applyMickeyDefaults(config, name);
+    return;
+  }
+  if (id === 'bluey-birthday') {
+    applyBlueyDefaults(config, title);
     return;
   }
   if (id === 'safari-sunrise-adventure' || id === 'cowboy-ranch-roundup') {
