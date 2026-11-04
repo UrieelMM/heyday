@@ -37,6 +37,7 @@ export type TemplateId =
   | 'mini-cosmos'
   | 'mickey-mouse-birthday'
   | 'bluey-birthday'
+  | 'paw-patrol-birthday'
   | 'minecraft-birthday'
   | 'atelier-xv';
 

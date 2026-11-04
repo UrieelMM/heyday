@@ -1,9 +1,9 @@
 import type { InvitationConfig, TemplateId } from '@/types/invitation.types';
 
-export type KidsWorldTemplateId = Extract<TemplateId, 'pirate-treasure-voyage' | 'dino-jungle-expedition' | 'safari-sunrise-adventure' | 'cowboy-ranch-roundup' | 'mickey-mouse-birthday' | 'bluey-birthday' | 'minecraft-birthday'>;
+export type KidsWorldTemplateId = Extract<TemplateId, 'pirate-treasure-voyage' | 'dino-jungle-expedition' | 'safari-sunrise-adventure' | 'cowboy-ranch-roundup' | 'mickey-mouse-birthday' | 'bluey-birthday' | 'paw-patrol-birthday' | 'minecraft-birthday'>;
 
 export function isKidsWorldTemplateId(id: TemplateId): id is KidsWorldTemplateId {
-  return id === 'pirate-treasure-voyage' || id === 'dino-jungle-expedition' || id === 'safari-sunrise-adventure' || id === 'cowboy-ranch-roundup' || id === 'mickey-mouse-birthday' || id === 'bluey-birthday' || id === 'minecraft-birthday';
+  return id === 'pirate-treasure-voyage' || id === 'dino-jungle-expedition' || id === 'safari-sunrise-adventure' || id === 'cowboy-ranch-roundup' || id === 'mickey-mouse-birthday' || id === 'bluey-birthday' || id === 'paw-patrol-birthday' || id === 'minecraft-birthday';
 }
 
 export function kidsWorldName(title: string) {
@@ -281,6 +281,97 @@ function applyBlueyDefaults(config: InvitationConfig, title: string) {
   };
 }
 
+function applyPawPatrolDefaults(config: InvitationConfig, title: string) {
+  const asset = (name: string) => image('paw-patrol-birthday', name);
+  const mainTitle = /^(nuestra|mi) celebraci[oó]n$|^Sofía\s*&\s*Mateo$/i.test(title)
+    ? 'Leo cumple 6' : title;
+  const name = kidsWorldName(mainTitle);
+  const content = config.content;
+  config.audio.enabled = false;
+  config.sectionsOrder = config.sectionsOrder.map(section => ({
+    ...section, enabled: section.id === 'accommodation' ? false : section.enabled,
+  }));
+  config.theme.envelope.sealMonogram = '✦';
+  config.theme.envelope.openButtonText = 'Abrir la misión de cumpleaños';
+  content.hero = {
+    ...content.hero, mainTitle,
+    badgeText: 'CENTRO DE MISIONES · PATRULLA CUMPLEAÑOS',
+    tagline: 'La patrulla necesita un héroe más: ¡tú!',
+    coverImageUrl: asset('chase-action'), focalPoint: { x: 50, y: 50 },
+  };
+  content.quoteStory = {
+    quoteText: `¡Atención, patrulla! La misión más importante del año es celebrar a ${name}. Chase, Skye y sus amigos ya están listos. Con tu ayuda, tendremos una tarde llena de juegos, aventuras y pastel.`,
+    quoteAuthor: `El equipo de ${name}`,
+    storyBlocks: [
+      { title: 'Llamada de la torre', description: 'Una señal especial reúne al equipo para el gran día.', imageUrl: asset('chase') },
+      { title: 'Todos a bordo', description: 'Cada cachorro aporta una idea para salvar la diversión.', imageUrl: asset('skye') },
+      { title: 'Misión cumplida', description: 'Los mejores héroes celebran siempre en compañía.', imageUrl: asset('rocky') },
+    ],
+  };
+  content.vipParents = {
+    blessingMessage: `La familia de ${name} convoca a toda la patrulla para celebrar`,
+    groups: [
+      { groupTitle: 'Cuartel general', names: [`La familia de ${name}`] },
+      { groupTitle: 'Equipo de rescate', names: ['Amigos y familia'] },
+      { groupTitle: 'Refuerzo especial', names: ['¡Tú!'] },
+    ],
+  };
+  const address = 'Parque México, Condesa, Ciudad de México';
+  const query = encodeURIComponent(address);
+  content.locations = [{
+    id: 'paw-patrol-base', type: 'reception', title: 'Base de la patrulla',
+    venueName: 'Parque México', address, time: '13:00 HRS', imageUrl: asset('logo'),
+    coordinates: { lat: 19.4115, lng: -99.1691 },
+    googleMapsUrl: `https://www.google.com/maps/search/?api=1&query=${query}`,
+    wazeUrl: `https://waze.com/ul?q=${query}&navigate=yes`,
+  }];
+  content.timeline = [
+    { id: 'paw-1', time: '13:00 HRS', title: 'Reunión en la torre', description: 'Registramos a los nuevos héroes y formamos la patrulla.', icon: 'party' },
+    { id: 'paw-2', time: '14:00 HRS', title: 'Rescate aéreo', description: 'Skye nos guía entre pistas y retos para todos.', icon: 'party' },
+    { id: 'paw-3', time: '15:00 HRS', title: 'Sigue las huellas', description: 'Chase y Rocky nos esperan con juegos de equipo.', icon: 'party' },
+    { id: 'paw-4', time: '16:00 HRS', title: 'Misión: pastel', description: 'Nos reunimos para cantar y celebrar al héroe del día.', icon: 'cake' },
+  ];
+  content.gallery = { layout: 'bento-grid', images: [
+    { url: asset('chase'), caption: 'Reunión en la torre' },
+    { url: asset('skye-flight'), caption: 'Rescate aéreo' },
+    { url: asset('rocky'), caption: 'Sigue las huellas' },
+    { url: asset('logo'), caption: 'Misión: pastel' },
+    { url: asset('chase-action'), caption: 'Chase en acción' },
+    { url: asset('skye'), caption: 'La patrulla está lista' },
+  ] };
+  content.dressCode = {
+    title: 'Equipo listo para la acción',
+    womenNotes: 'Ropa cómoda, tenis y energía para correr de una misión a otra.',
+    menNotes: 'Prendas frescas y calzado cómodo para todos los juegos de la patrulla.',
+    reservedColors: [], reservedNote: '',
+  };
+  content.gifts = {
+    introMessage: 'Tu presencia es el mejor refuerzo. Si quieres dejar un detalle, habrá una estación de felicitaciones en la base.',
+    registries: [], cashEnvelopeAtVenue: true,
+  };
+  content.accommodation = [];
+  content.socialFeatures = {
+    enableSongRequests: true, enableAudioGuestbook: false, enableLiveDisposableCamera: false,
+    hashtag: `#MisionCumple${name.replace(/\s+/g, '')}`,
+  };
+  content.rsvp = {
+    ...content.rsvp, askDietaryRestrictions: false, allowChildrenSelection: true,
+    customConfirmationMessage: '¡Misión aceptada! Guarda tu pase digital con QR para entrar a la base de la patrulla.',
+  };
+  content.sectionHeadings = {
+    quote_story: { eyebrow: '01 / LLAMADA DE EMERGENCIA', title: 'Una misión para celebrar' },
+    vip_parents: { eyebrow: '03 / EL EQUIPO', title: 'Nuestra patrulla' },
+    countdown: { eyebrow: '04 / RELOJ DE MISIÓN', title: 'Despegamos en' },
+    locations: { eyebrow: '05 / COORDENADAS DE LA BASE', title: 'Aquí inicia la aventura' },
+    timeline: { eyebrow: '06 / PLAN DE RESCATE', title: 'La ruta del gran día' },
+    gallery: { eyebrow: '07 / ARCHIVO DE LA PATRULLA', title: 'Héroes en acción' },
+    dress_code: { eyebrow: '08 / EQUIPAMIENTO', title: 'Listos para entrar en acción' },
+    gifts: { eyebrow: '09 / ESTACIÓN DE DETALLES', title: 'Tu compañía es el mejor regalo' },
+    social_features: { eyebrow: '10 / BITÁCORA DEL EQUIPO', title: 'Guardemos la misión' },
+    rsvp: { eyebrow: '11 / PASE DE ACCESO', title: 'Confirma tu misión' },
+  };
+}
+
 export function applyKidsWorldDefaults(config: InvitationConfig, id: KidsWorldTemplateId, title: string) {
   const name = kidsWorldName(title);
   if (id === 'minecraft-birthday') {
@@ -293,6 +384,10 @@ export function applyKidsWorldDefaults(config: InvitationConfig, id: KidsWorldTe
   }
   if (id === 'bluey-birthday') {
     applyBlueyDefaults(config, title);
+    return;
+  }
+  if (id === 'paw-patrol-birthday') {
+    applyPawPatrolDefaults(config, title);
     return;
   }
   if (id === 'safari-sunrise-adventure' || id === 'cowboy-ranch-roundup') {

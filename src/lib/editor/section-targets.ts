@@ -1,7 +1,7 @@
 export const EDITOR_SECTION_TARGETS: Record<string, string> = {
-  envelope: '[data-editor-section="envelope"], .ee-opening, .rx-opening, .mc-opening, .ax-opening, .rd-opening, .ma-opening, .nx-opening, .fk-opening, .kw-opening, .kw-opening--bluey, .ww-opening, .nw-opening, .sw-opening',
-  hero: '[data-editor-section="hero"], .st-hero, .cs-hero, .oc-hero, .ee-hero, .rx-hero, .mc-hero, .ax-hero, .rd-hero, .ma-hero, .nx-hero-scroll, .fk-hero, .kw-hero, .mmb-hero, .bb-hero, .vxb-hero, .ww-hero, .nw-hero, .sw-hero',
-  quoteStory: '[data-editor-section="quoteStory"], .st-story, .ee-story, .rx-story, .mc-story, .ax-story, .rd-story, .ma-story, .nx-story, .fk-stations, .kw-stations, .bb-stations, .ww-stations, .nw-moments, .sw-moments',
+  envelope: '[data-editor-section="envelope"], .ee-opening, .rx-opening, .mc-opening, .ax-opening, .rd-opening, .ma-opening, .nx-opening, .fk-opening, .kw-opening, .kw-opening--bluey, .kw-opening--pawpatrol, .ww-opening, .nw-opening, .sw-opening',
+  hero: '[data-editor-section="hero"], .st-hero, .cs-hero, .oc-hero, .ee-hero, .rx-hero, .mc-hero, .ax-hero, .rd-hero, .ma-hero, .nx-hero-scroll, .fk-hero, .kw-hero, .mmb-hero, .bb-hero, .pp-hero, .vxb-hero, .ww-hero, .nw-hero, .sw-hero',
+  quoteStory: '[data-editor-section="quoteStory"], .st-story, .ee-story, .rx-story, .mc-story, .ax-story, .rd-story, .ma-story, .nx-story, .fk-stations, .kw-stations, .bb-stations, .pp-stations, .ww-stations, .nw-moments, .sw-moments',
   vipParents: '.st-family, .ee-family, .rx-family, .mc-family, .ax-family, .rd-family, .ma-family, .nx-family',
   countdown: '.st-countdown, .ee-countdown, .rx-countdown, .mc-countdown, .ax-countdown, .rd-countdown, .ma-countdown, .nx-countdown',
   locations: '.st-locations, .ee-locations, .rx-location, .mc-locations, .ax-locations, .rd-locations, .ma-locations, .nx-locations',

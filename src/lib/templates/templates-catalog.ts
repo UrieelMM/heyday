@@ -70,6 +70,16 @@ export const TEMPLATES_CATALOG: TemplateMetadata[] = [
     envelopeVariant: 'pass-ticket-tear', ambientEffect: 'confetti',
   },
   {
+    id: 'paw-patrol-birthday', name: 'Paw Patrol: Misión Cumpleaños', category: 'kids_birthday',
+    categoryLabel: 'Cumpleaños infantil / Paw Patrol', badge: 'Nueva colección',
+    description: 'Una misión de cumpleaños desde la torre de vigilancia: insignia, radar, cachorros en acción y cuatro rescates llenos de diversión.',
+    signatureAnimation: 'Insignia expansible + radar de rescate + ruta de huellas',
+    previewImage: '/images/paw-patrol-birthday/chase-action.webp',
+    colors: { bgPrimary: '#F5F8F2', bgSecondary: '#DBEBF4', textPrimary: '#17345D', textMuted: '#516987', accentPrimary: '#E34E48', accentSecondary: '#2674B9' },
+    fonts: { headingFont: 'Fredoka', scriptFont: 'Fredoka', bodyFont: 'Plus Jakarta Sans' },
+    envelopeVariant: 'pass-ticket-tear', ambientEffect: 'confetti',
+  },
+  {
     id: 'minecraft-birthday', name: 'Minecraft: Aventura en Bloques', category: 'kids_birthday',
     categoryLabel: 'Cumpleaños infantil / Minecraft', badge: 'Nueva colección',
     description: 'Entra a un mundo de bloques: portal expansible, paisaje pixelado, cuatro misiones y una gran celebración.',

@@ -10,7 +10,7 @@ import { HeroMedia } from '../core/HeroMedia';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export type KidsWorldVariant = 'pirate' | 'dino' | 'safari' | 'cowboy' | 'mickey' | 'bluey' | 'minecraft';
+export type KidsWorldVariant = 'pirate' | 'dino' | 'safari' | 'cowboy' | 'mickey' | 'bluey' | 'pawpatrol' | 'minecraft';
 
 const worldPresentation: Record<KidsWorldVariant, { heroId: string; stationId: string; heroLabel: string; stationLabel: string; mark: string; mediaAlt: string }> = {
   pirate: { heroId: 'pw-hero', stationId: 'pw-stations', heroLabel: 'Portada pirata', stationLabel: 'Puertos de la travesía', mark: '☸', mediaAlt: 'Viaje pirata' },
@@ -19,6 +19,7 @@ const worldPresentation: Record<KidsWorldVariant, { heroId: string; stationId: s
   cowboy: { heroId: 'cb-hero', stationId: 'cb-stations', heroLabel: 'Portada del rancho', stationLabel: 'Paradas del rancho', mark: '★', mediaAlt: 'Aventura vaquera' },
   mickey: { heroId: 'mm-hero', stationId: 'mm-stations', heroLabel: 'Portada del cumpleaños de Mickey', stationLabel: 'Momentos del club', mark: '●', mediaAlt: 'Club de cumpleaños Mickey Mouse' },
   bluey: { heroId: 'bb-hero', stationId: 'bb-stations', heroLabel: 'Portada del cumpleaños de Bluey', stationLabel: 'Juegos del patio', mark: '✿', mediaAlt: 'El gran día de juegos de Bluey' },
+  pawpatrol: { heroId: 'pp-hero', stationId: 'pp-stations', heroLabel: 'Portada de la misión Paw Patrol', stationLabel: 'Misiones de la patrulla', mark: '✦', mediaAlt: 'Misión de cumpleaños Paw Patrol' },
   minecraft: { heroId: 'vx-hero', stationId: 'vx-stations', heroLabel: 'Portal de cumpleaños Minecraft', stationLabel: 'Misiones del mundo', mark: '◆', mediaAlt: 'Aventura en bloques' },
 };
 
@@ -80,6 +81,7 @@ export function KidsWorldMarquee({ variant, second = false }: { variant: KidsWor
     cowboy: ['ENSILLA ✦ JUEGA ✦ CELEBRA ✦ ', 'RUMBO AL RANCHO ✦ AMIGOS POR SIEMPRE ✦ '],
     mickey: ['OH BOY! ✦ JUEGA ✦ RÍE ✦ CELEBRA ✦ ', 'GLOBOS ✦ AMIGOS ✦ PASTEL ✦ MAGIA ✦ '],
     bluey: ['KEEPY UPPY ✿ IMAGINA ✿ JUEGA ✿ CELEBRA ✿ ', 'BLUEY ✿ BINGO ✿ AMIGOS ✿ PASTEL ✿ '],
+    pawpatrol: ['PATRULLA EN ACCIÓN ★ MISIÓN CUMPLEAÑOS ★ ', 'RESCATA ★ EXPLORA ★ CELEBRA ★ '],
     minecraft: ['NUEVO MUNDO ◆ EXPLORA ◆ CONSTRUYE ◆ CELEBRA ◆ ', 'MODO CREATIVO ◆ EQUIPO ◆ PASTEL DESBLOQUEADO ◆ '],
   };
   const phrase = phrases[variant][second ? 1 : 0];
@@ -93,6 +95,7 @@ const stationLabels: Record<KidsWorldVariant, string[]> = {
   cowboy: ['PUERTAS DEL RANCHO', 'RUTA DEL OESTE', 'JUEGOS VAQUEROS', 'PASTEL AL ATARDECER'],
   mickey: ['PASE DE BIENVENIDA', 'JUEGOS DEL CLUB', 'FOTO CON AMIGOS', 'MOMENTO DEL PASTEL'],
   bluey: ['PATIO ABIERTO', 'KEEPY UPPY', 'BAILE CONGELADO', 'FIESTA EN FAMILIA'],
+  pawpatrol: ['REUNIÓN EN LA TORRE', 'RESCATE AÉREO', 'SIGUE LAS HUELLAS', 'MISIÓN: PASTEL'],
   minecraft: ['ENTRAR AL MUNDO', 'RECOLECTAR RECURSOS', 'MISIÓN EN EQUIPO', 'PASTEL DESBLOQUEADO'],
 };
 
@@ -102,6 +105,7 @@ const stationAmbient: Partial<Record<KidsWorldVariant, { directory: string; moti
   safari: { directory: 'safari-sunrise-adventure', motifs: ['sun', 'acacia', 'binoculars', 'sun', 'acacia'] },
   cowboy: { directory: 'cowboy-ranch-roundup', motifs: ['hat', 'horseshoe', 'sheriff-star', 'hat', 'horseshoe'] },
   bluey: { directory: 'bluey-birthday', motifs: ['balloon', 'paw', 'sun', 'paw', 'balloon'] },
+  pawpatrol: { directory: 'paw-patrol-birthday', motifs: ['signal', 'paw', 'rotor', 'signal', 'paw'] },
 };
 
 export function KidsWorldStations({ variant, config }: { variant: KidsWorldVariant; config: InvitationConfig }) {
@@ -113,6 +117,7 @@ export function KidsWorldStations({ variant, config }: { variant: KidsWorldVaria
     cowboy: { heading: 'Cuatro momentos. Un gran rodeo.', description: 'Sigue la ruta del rancho hasta el pastel al atardecer.', chapter: 'EL RANCHO' },
     mickey: { heading: 'Cuatro momentos. Mil sonrisas.', description: 'Cada parada trae una nueva sorpresa para nuestra pandilla.', chapter: 'EL CLUB DE CUMPLEAÑOS' },
     bluey: { heading: 'Cuatro juegos. Un gran día.', description: 'Sigue las huellas de tiza: cada parada guarda una nueva forma de jugar.', chapter: 'EL PATIO DE JUEGOS' },
+    pawpatrol: { heading: 'Cuatro misiones. Un gran equipo.', description: 'Desde la torre hasta el pastel: cada parada necesita nuevos héroes.', chapter: 'CENTRO DE MISIONES' },
     minecraft: { heading: 'Cuatro misiones. Una gran aventura.', description: 'Avanza por el mundo y desbloquea cada momento de la fiesta.', chapter: 'MODO AVENTURA' },
   };
   const { heading, description, chapter } = copy[variant];
@@ -189,7 +194,7 @@ export function setupKidsWorldScenes(root: HTMLElement, id: KidsWorldTemplateId)
     if (runner) gsap.fromTo(runner, { top: '0%' }, { top: '93%', ease: 'none', scrollTrigger: trigger(timeline, 'top 78%', 'bottom 48%') });
   }
   reveal('.st-timeline__item', { x: 40, opacity: .55 });
-  if (id === 'pirate-treasure-voyage' || id === 'dino-jungle-expedition' || id === 'safari-sunrise-adventure' || id === 'cowboy-ranch-roundup' || id === 'bluey-birthday') {
+  if (id === 'pirate-treasure-voyage' || id === 'dino-jungle-expedition' || id === 'safari-sunrise-adventure' || id === 'cowboy-ranch-roundup' || id === 'bluey-birthday' || id === 'paw-patrol-birthday') {
     const stations = root.querySelector<HTMLElement>('.kw-stations');
     if (stations) root.querySelectorAll<HTMLElement>('.kw-ambient__station-motif').forEach((motif, index) => {
       gsap.to(motif, { xPercent: index % 2 ? -26 : 30, yPercent: index % 2 ? -115 : -75, rotate: index % 2 ? -30 : 24, scale: index % 2 ? .86 : 1.14, ease: 'none', scrollTrigger: trigger(stations, 'top 86%', 'bottom 18%') });
@@ -212,6 +217,13 @@ export function setupKidsWorldScenes(root: HTMLElement, id: KidsWorldTemplateId)
     gsap.to(root.querySelector('.bb-hero__sun'), { yPercent: -45, scale: 1.22, ease: 'none', scrollTrigger: heroTrigger });
     gsap.to(root.querySelectorAll('.bb-hero__chalk'), { yPercent: -100, rotate: (index: number) => index % 2 ? 70 : -58, stagger: .04, ease: 'none', scrollTrigger: heroTrigger });
     gsap.to(root.querySelector('.bb-hero__sky'), { backgroundPositionY: '45%', ease: 'none', scrollTrigger: heroTrigger });
+  }
+  if (id === 'paw-patrol-birthday' && hero) {
+    const heroTrigger = { trigger: hero, scroller, start: 'top top', end: 'bottom bottom', scrub: .9 };
+    gsap.to(root.querySelector('.pp-hero__friend'), { xPercent: -76, yPercent: -90, rotate: -15, scale: .72, ease: 'none', scrollTrigger: heroTrigger });
+    gsap.to(root.querySelector('.pp-hero__tower'), { yPercent: -33, scale: 1.1, ease: 'none', scrollTrigger: heroTrigger });
+    gsap.to(root.querySelector('.pp-hero__radar'), { rotate: 90, scale: 1.3, ease: 'none', scrollTrigger: heroTrigger });
+    gsap.to(root.querySelector('.pp-hero__logo'), { yPercent: -100, rotate: 16, opacity: 0, ease: 'none', scrollTrigger: heroTrigger });
   }
   if (id === 'minecraft-birthday' && hero) {
     const heroTrigger = { trigger: hero, scroller, start: 'top top', end: 'bottom bottom', scrub: .9 };

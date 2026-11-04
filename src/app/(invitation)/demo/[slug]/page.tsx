@@ -12,6 +12,7 @@ export default async function DemoPage({ params }: { params: Promise<{ slug: str
     'mickey-mouse-birthday': 'Mateo cumple 5',
     'minecraft-birthday': 'Santiago cumple 8',
     'bluey-birthday': 'Emma cumple 5',
+    'paw-patrol-birthday': 'Leo cumple 6',
     'fiesta-kids-adventure': 'Luna cumple 7',
     'pirate-treasure-voyage': 'Mateo cumple 7',
     'dino-jungle-expedition': 'Nico cumple 5',
@@ -29,6 +30,6 @@ export default async function DemoPage({ params }: { params: Promise<{ slug: str
     'cafe-para-siempre': 'Clara & Julián',
     'atelier-xv': 'Valentina',
   };
-  const demoTime = slug === 'mickey-mouse-birthday' || slug === 'minecraft-birthday' ? '13:00:00' : ['mini-cosmos', 'fiesta-kids-adventure', 'pirate-treasure-voyage', 'dino-jungle-expedition', 'safari-sunrise-adventure', 'cowboy-ranch-roundup', 'ohana-lilo-stitch', 'stitch-birthday', 'bluey-birthday'].includes(slug) ? '13:30:00' : ['atelier-xv', 'solar-pop-xv'].includes(slug) ? '19:00:00' : '17:00:00';
+  const demoTime = ['mickey-mouse-birthday', 'minecraft-birthday', 'paw-patrol-birthday'].includes(slug) ? '13:00:00' : ['mini-cosmos', 'fiesta-kids-adventure', 'pirate-treasure-voyage', 'dino-jungle-expedition', 'safari-sunrise-adventure', 'cowboy-ranch-roundup', 'ohana-lilo-stitch', 'stitch-birthday', 'bluey-birthday'].includes(slug) ? '13:30:00' : ['atelier-xv', 'solar-pop-xv'].includes(slug) ? '19:00:00' : '17:00:00';
   return <PublicInvitationClientView demo slug={slug} fallbackTemplateId={template.id} fallbackEventDate={`2026-12-19T${demoTime}-06:00`} fallbackConfig={createDefaultInvitationConfig(template.id, demoTitles[slug] || 'Nuestra celebración')} fallbackGuestGroup={null} />;
 }
