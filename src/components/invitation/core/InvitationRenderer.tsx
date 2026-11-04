@@ -105,6 +105,7 @@ import '../templates/midnight-constellation.css';
 import '../templates/golden-harvest-vineyard.css';
 import '../templates/new-world.css';
 import '../templates/story-world.css';
+import '../templates/ohana-island-ambient.css';
 import '../templates/stitch-birthday.css';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);

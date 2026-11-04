@@ -56,7 +56,7 @@ export function StoryWorldMarquee({ variant, second = false }: { variant: StoryV
 export function StoryWorldMoments({ variant, config }: { variant: StoryVariant; config: InvitationConfig }) {
   const title = variant === 'ohana' ? 'El mapa de nuestra fiesta.' : variant === 'stitch' ? 'Cuatro aventuras con Stitch.' : variant === 'solar' ? 'Cuatro formas de brillar.' : 'Nuestra carta del día.';
   const description = variant === 'ohana' ? 'Cada parada trae una nueva sorpresa.' : variant === 'stitch' ? 'Un recorrido de juegos, olas, pastel y música.' : variant === 'solar' ? 'Una noche hecha de energía y color.' : 'Cada momento se sirve con amor.';
-  return <section className={`sw-moments sw-moments--${variant}`} id="sw-moments" data-editor-section="quoteStory" aria-label="Cuatro momentos de la celebración"><header className="sw-moments__head"><p className="sw-overline">CAPÍTULO 02 · {copy[variant].chapter}</p><h2>{title}</h2><p>{description}</p></header><div className="sw-moments__grid">{config.content.gallery.images.slice(0,4).map((item,index)=><article className="sw-moment" style={{'--sw-stack-index':index} as CSSProperties} key={index}><div className="sw-moment__image"><img src={item.url} alt={item.caption} loading="lazy"/></div><div className="sw-moment__body"><span>0{index+1} / 04</span><h3>{item.caption}</h3><p>{config.content.timeline[index]?.description}</p></div></article>)}</div></section>;
+  return <section className={`sw-moments sw-moments--${variant}`} id="sw-moments" data-editor-section="quoteStory" aria-label="Cuatro momentos de la celebración">{variant === 'ohana' && <div className="sw-ohana__motif-layer" aria-hidden="true">{(['hibiscus','surfboard','shell','sun','hibiscus'] as const).map((motif,index)=><span className={`sw-ohana__motif sw-ohana__motif--${index+1}`} key={index}><img src={`/images/ohana-lilo-stitch/ambient-${motif}.svg`} alt=""/></span>)}</div>}<header className="sw-moments__head"><p className="sw-overline">CAPÍTULO 02 · {copy[variant].chapter}</p><h2>{title}</h2><p>{description}</p></header><div className="sw-moments__grid">{config.content.gallery.images.slice(0,4).map((item,index)=><article className="sw-moment" style={{'--sw-stack-index':index} as CSSProperties} key={index}><div className="sw-moment__image"><img src={item.url} alt={item.caption} loading="lazy"/></div><div className="sw-moment__body"><span>0{index+1} / 04</span><h3>{item.caption}</h3><p>{config.content.timeline[index]?.description}</p></div></article>)}</div></section>;
 }
 
 export function setupStoryWorldScenes(root: HTMLElement, id: StoryWorldTemplateId) {
@@ -81,6 +81,10 @@ export function setupStoryWorldScenes(root: HTMLElement, id: StoryWorldTemplateI
     story.querySelectorAll<SVGGeometryElement>('.sw-story__draw').forEach(path=>{const length=path.getTotalLength();gsap.fromTo(path,{strokeDasharray:length,strokeDashoffset:length},{strokeDashoffset:0,ease:'none',scrollTrigger:scrub(story,'top 83%','bottom 45%')});});
   }
   root.querySelectorAll<HTMLElement>('.st-story > .grid > div, .sw-moment, .st-family__card, .st-countdown__unit, .st-locations__card, .st-gallery__photo, .st-dress > .grid > div, .st-gifts .grid > div').forEach((card,index)=>gsap.fromTo(card,{y:45,rotate:index%2?4:-4,scale:.93,opacity:.52},{y:0,rotate:0,scale:1,opacity:1,ease:'none',scrollTrigger:scrub(card)}));
+  if (id === 'ohana-lilo-stitch') {
+    const moments = root.querySelector<HTMLElement>('.sw-moments--ohana');
+    if (moments) moments.querySelectorAll<HTMLElement>('.sw-ohana__motif').forEach((motif,index)=>gsap.to(motif,{xPercent:index%2?-30:26,yPercent:index%2?-68:-105,rotate:index%2?-28:36,scale:index%2?.84:1.16,ease:'none',scrollTrigger:scrub(moments,'top 88%','bottom 15%')}));
+  }
   const timeline=root.querySelector<HTMLElement>('.st-timeline');
   if(timeline){
     const line=timeline.querySelector('.st-timeline__line');const runner=timeline.querySelector('.sw-timeline__runner');

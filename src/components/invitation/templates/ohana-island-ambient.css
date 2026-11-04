@@ -1,0 +1,103 @@
+/* Island illustrations sit behind each scene, with different routes and depths. */
+.sw-root--ohana {
+  --ohana-flower: url('/images/ohana-lilo-stitch/ambient-hibiscus.svg');
+  --ohana-board: url('/images/ohana-lilo-stitch/ambient-surfboard.svg');
+  --ohana-shell: url('/images/ohana-lilo-stitch/ambient-shell.svg');
+  --ohana-sun: url('/images/ohana-lilo-stitch/ambient-sun.svg');
+  --ohana-sand: radial-gradient(#dc9e7940 1.4px, transparent 2px);
+  --ohana-bubbles: radial-gradient(#63b7a833 1.5px, transparent 2px);
+}
+
+.sw-root--ohana .sw-moments {
+  isolation: isolate;
+  overflow: hidden;
+  background-image: var(--ohana-sand), linear-gradient(165deg,#fff2d7,#e9f5e4 85%);
+  background-size: 61px 61px, auto;
+}
+.sw-root--ohana .sw-moments :is(.sw-moments__head,.sw-moments__grid) { position: relative; z-index: 1; }
+.sw-ohana__motif-layer { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.sw-ohana__motif { position: absolute; display: block; width: clamp(105px,14vw,205px); aspect-ratio: 1; filter: drop-shadow(9px 13px 8px #355c5540); }
+.sw-ohana__motif img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.sw-ohana__motif--1 { left: 2%; top: 5%; width: clamp(135px,17vw,245px); }
+.sw-ohana__motif--1 img { animation: ohana-flower-float 10s ease-in-out infinite; }
+.sw-ohana__motif--2 { right: 3%; top: 2%; width: clamp(100px,12vw,170px); opacity: .82; }
+.sw-ohana__motif--2 img { animation: ohana-board-rock 13s ease-in-out -4s infinite; }
+.sw-ohana__motif--3 { left: 7%; top: 49%; width: clamp(95px,12vw,165px); opacity: .56; }
+.sw-ohana__motif--3 img { animation: ohana-shell-drift 11s ease-in-out -3s infinite; }
+.sw-ohana__motif--4 { right: 8%; top: 53%; width: clamp(130px,15vw,220px); opacity: .48; }
+.sw-ohana__motif--4 img { animation: ohana-sun-orbit 19s ease-in-out -7s infinite; }
+.sw-ohana__motif--5 { left: 42%; bottom: -3%; width: clamp(105px,12vw,175px); opacity: .38; }
+.sw-ohana__motif--5 img { animation: ohana-flower-float 12s ease-in-out -6s infinite reverse; }
+
+.sw-root--ohana :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp) {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-image: var(--ohana-scene-texture,var(--ohana-sand));
+  background-size: var(--ohana-texture-size,61px 61px);
+}
+.sw-root--ohana :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp) > * { position: relative; z-index: 1; }
+.sw-root--ohana :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp)::before,
+.sw-root--ohana :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp)::after {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  width: var(--ohana-size-a,clamp(115px,15vw,215px));
+  aspect-ratio: 1;
+  top: var(--ohana-y-a);
+  left: var(--ohana-x-a);
+  background: var(--ohana-image-a,var(--ohana-flower)) center/contain no-repeat;
+  opacity: var(--ohana-opacity-a,.5);
+  filter: drop-shadow(9px 13px 8px #355c5540);
+  pointer-events: none;
+  animation: var(--ohana-motion-a,ohana-flower-float 10s ease-in-out infinite);
+}
+.sw-root--ohana :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp)::after {
+  width: var(--ohana-size-b,clamp(100px,12vw,175px));
+  top: var(--ohana-y-b);
+  left: var(--ohana-x-b);
+  background-image: var(--ohana-image-b,var(--ohana-shell));
+  opacity: var(--ohana-opacity-b,.43);
+  animation: var(--ohana-motion-b,ohana-shell-drift 12s ease-in-out -4s infinite);
+}
+.sw-root--ohana .st-family { --ohana-x-a: 2%; --ohana-y-a: 47%; --ohana-motion-a: ohana-flower-float 11s ease-in-out infinite; --ohana-x-b: 82%; --ohana-y-b: 3%; --ohana-image-b: var(--ohana-sun); --ohana-motion-b: ohana-sun-orbit 17s ease-in-out -3s infinite; }
+.sw-root--ohana .st-countdown { --ohana-x-a: 78%; --ohana-y-a: 4%; --ohana-image-a: var(--ohana-board); --ohana-motion-a: ohana-board-rock 12s ease-in-out infinite; --ohana-x-b: 4%; --ohana-y-b: 61%; --ohana-image-b: var(--ohana-flower); --ohana-motion-b: ohana-flower-float 9s ease-in-out -5s infinite; }
+.sw-root--ohana .st-locations { --ohana-x-a: 2%; --ohana-y-a: 48%; --ohana-image-a: var(--ohana-shell); --ohana-motion-a: ohana-shell-drift 13s ease-in-out infinite; --ohana-x-b: 82%; --ohana-y-b: 6%; --ohana-image-b: var(--ohana-board); --ohana-motion-b: ohana-board-rock 11s ease-in-out -5s infinite; --ohana-scene-texture: var(--ohana-bubbles); }
+.sw-root--ohana .st-timeline { --ohana-x-a: 77%; --ohana-y-a: 58%; --ohana-image-a: var(--ohana-sun); --ohana-motion-a: ohana-sun-orbit 20s ease-in-out infinite; --ohana-x-b: 5%; --ohana-y-b: 7%; --ohana-image-b: var(--ohana-flower); --ohana-motion-b: ohana-flower-float 10s ease-in-out -6s infinite; }
+.sw-root--ohana .st-gallery { --ohana-x-a: 3%; --ohana-y-a: 5%; --ohana-image-a: var(--ohana-board); --ohana-motion-a: ohana-board-rock 14s ease-in-out infinite; --ohana-x-b: 83%; --ohana-y-b: 69%; --ohana-image-b: var(--ohana-shell); --ohana-motion-b: ohana-shell-drift 9s ease-in-out -3s infinite; }
+.sw-root--ohana .st-dress { --ohana-x-a: 80%; --ohana-y-a: 5%; --ohana-image-a: var(--ohana-flower); --ohana-motion-a: ohana-flower-float 10s ease-in-out -2s infinite; --ohana-x-b: 3%; --ohana-y-b: 68%; --ohana-image-b: var(--ohana-sun); --ohana-motion-b: ohana-sun-orbit 16s ease-in-out -4s infinite; }
+.sw-root--ohana .st-gifts { --ohana-x-a: 2%; --ohana-y-a: 9%; --ohana-image-a: var(--ohana-shell); --ohana-motion-a: ohana-shell-drift 10s ease-in-out infinite; --ohana-x-b: 83%; --ohana-y-b: 65%; --ohana-image-b: var(--ohana-board); --ohana-motion-b: ohana-board-rock 13s ease-in-out -4s infinite; }
+.sw-root--ohana .st-social { --ohana-x-a: 81%; --ohana-y-a: 7%; --ohana-image-a: var(--ohana-sun); --ohana-motion-a: ohana-sun-orbit 17s ease-in-out infinite; --ohana-x-b: 3%; --ohana-y-b: 66%; --ohana-image-b: var(--ohana-flower); --ohana-motion-b: ohana-flower-float 11s ease-in-out -3s infinite; --ohana-scene-texture: var(--ohana-bubbles); }
+.sw-root--ohana .st-social + .st-social { --ohana-x-a: 4%; --ohana-y-a: 14%; --ohana-image-a: var(--ohana-board); --ohana-motion-a: ohana-board-rock 15s ease-in-out infinite; --ohana-x-b: 82%; --ohana-y-b: 66%; --ohana-image-b: var(--ohana-shell); --ohana-motion-b: ohana-shell-drift 12s ease-in-out -6s infinite; }
+.sw-root--ohana .st-rsvp { --ohana-x-a: 3%; --ohana-y-a: 5%; --ohana-image-a: var(--ohana-flower); --ohana-motion-a: ohana-flower-float 12s ease-in-out infinite; --ohana-x-b: 83%; --ohana-y-b: 77%; --ohana-image-b: var(--ohana-sun); --ohana-motion-b: ohana-sun-orbit 19s ease-in-out -5s infinite; }
+
+@keyframes ohana-flower-float { 0%,100% { transform: translate3d(-8px,12px,0) rotate(-13deg) scale(.94); } 50% { transform: translate3d(19px,-27px,0) rotate(15deg) scale(1.07); } }
+@keyframes ohana-board-rock { 0%,100% { transform: translate3d(10px,17px,0) rotate(13deg); } 45% { transform: translate3d(-19px,-19px,0) rotate(-19deg); } 75% { transform: translate3d(5px,-33px,0) rotate(6deg); } }
+@keyframes ohana-shell-drift { 0%,100% { transform: translate3d(-12px,10px,0) rotate(-18deg); } 35% { transform: translate3d(22px,-15px,0) rotate(10deg); } 70% { transform: translate3d(5px,-31px,0) rotate(-4deg); } }
+@keyframes ohana-sun-orbit { 0%,100% { transform: translate3d(0,16px,0) rotate(0) scale(.93); } 50% { transform: translate3d(16px,-21px,0) rotate(23deg) scale(1.1); } }
+
+@media (max-width: 700px) {
+  .sw-ohana__motif--1 { left: -43px; top: 3%; width: 118px; opacity: .68; }
+  .sw-ohana__motif--2 { right: -27px; top: 14%; width: 93px; opacity: .57; }
+  .sw-ohana__motif--3 { left: -35px; top: 43%; width: 95px; opacity: .4; }
+  .sw-ohana__motif--4 { right: -39px; top: 67%; width: 107px; opacity: .38; }
+  .sw-ohana__motif--5 { left: -33px; bottom: 0; width: 88px; opacity: .32; }
+  .sw-root--ohana :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp)::before { width: 105px; top: var(--ohana-mobile-y-a,var(--ohana-y-a)); left: var(--ohana-mobile-x-a,var(--ohana-x-a)); opacity: .32; }
+  .sw-root--ohana :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp)::after { width: 88px; top: var(--ohana-mobile-y-b,var(--ohana-y-b)); left: var(--ohana-mobile-x-b,var(--ohana-x-b)); opacity: .31; }
+  .sw-root--ohana .st-family { --ohana-mobile-x-a: -39px; --ohana-mobile-y-a: 59%; --ohana-mobile-x-b: calc(100% - 56px); --ohana-mobile-y-b: 4%; }
+  .sw-root--ohana .st-countdown { --ohana-mobile-x-a: calc(100% - 58px); --ohana-mobile-y-a: 9%; --ohana-mobile-x-b: -34px; --ohana-mobile-y-b: 73%; }
+  .sw-root--ohana .st-locations { --ohana-mobile-x-a: -43px; --ohana-mobile-y-a: 44%; --ohana-mobile-x-b: calc(100% - 56px); --ohana-mobile-y-b: 5%; }
+  .sw-root--ohana .st-timeline { --ohana-mobile-x-a: calc(100% - 60px); --ohana-mobile-y-a: 60%; --ohana-mobile-x-b: -34px; --ohana-mobile-y-b: 10%; }
+  .sw-root--ohana .st-gallery { --ohana-mobile-x-a: -39px; --ohana-mobile-y-a: 6%; --ohana-mobile-x-b: calc(100% - 57px); --ohana-mobile-y-b: 73%; }
+  .sw-root--ohana .st-dress { --ohana-mobile-x-a: calc(100% - 57px); --ohana-mobile-y-a: 6%; --ohana-mobile-x-b: -40px; --ohana-mobile-y-b: 70%; }
+  .sw-root--ohana .st-gifts { --ohana-mobile-x-a: -40px; --ohana-mobile-y-a: 9%; --ohana-mobile-x-b: calc(100% - 56px); --ohana-mobile-y-b: 70%; }
+  .sw-root--ohana .st-social { --ohana-mobile-x-a: calc(100% - 58px); --ohana-mobile-y-a: 7%; --ohana-mobile-x-b: -37px; --ohana-mobile-y-b: 69%; }
+  .sw-root--ohana .st-social + .st-social { --ohana-mobile-x-a: -42px; --ohana-mobile-y-a: 17%; --ohana-mobile-x-b: calc(100% - 55px); --ohana-mobile-y-b: 70%; }
+  .sw-root--ohana .st-rsvp { --ohana-mobile-x-a: -37px; --ohana-mobile-y-a: 5%; --ohana-mobile-x-b: calc(100% - 55px); --ohana-mobile-y-b: 82%; }
+}
+@media (max-width: 360px) { .sw-ohana__motif--1 { left: -62px; top: -2%; width: 92px; } }
+@media (prefers-reduced-motion: reduce) {
+  .sw-root--ohana .sw-ohana__motif img,
+  .sw-root--ohana :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp)::before,
+  .sw-root--ohana :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-social,.st-rsvp)::after { animation: none !important; }
+}
