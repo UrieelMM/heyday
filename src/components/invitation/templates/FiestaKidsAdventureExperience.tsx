@@ -118,6 +118,9 @@ const stations = [
 export function FiestaKidsStations({ config }: { config: InvitationConfig }) {
   return (
     <section id="fk-stations" className="fk-stations fk-sheet" aria-label="Estaciones de la aventura">
+      <div className="kw-ambient__station-layer" aria-hidden="true">
+        {(['kite', 'balloon', 'map-pin', 'kite', 'balloon'] as const).map((motif, index) => <span className={`kw-ambient__station-motif kw-ambient__station-motif--${index + 1}`} key={index}><img src={`${imageRoot}/ambient-${motif}.svg`} alt="" /></span>)}
+      </div>
       <div className="fk-stations__head"><p className="fk-eyebrow"><span className="fk-dot"/>CAPÍTULO 02 · EL RECORRIDO</p><h2>Cuatro paradas. <em>Una gran aventura.</em></h2><p>Hay un mundo entero por descubrir antes de soplar las velitas.</p></div>
       <div className="fk-stations__grid">{stations.map((station, index) => (
         <article className="fk-station" key={station.number} style={{ '--fk-stack-index': index } as CSSProperties}>
@@ -161,6 +164,10 @@ export function setupFiestaKidsAdventureScenes(root: HTMLElement) {
   });
   reveal('.st-story > .grid > div', { y: 50, rotateY: 12, opacity: .55 });
   reveal('.fk-station', { y: 65, scale: .9, opacity: .6 }, 'top 65%');
+  const stationScene = root.querySelector<HTMLElement>('.fk-stations');
+  if (stationScene) stationScene.querySelectorAll<HTMLElement>('.kw-ambient__station-motif').forEach((motif, index) => {
+    gsap.to(motif, { xPercent: index % 2 ? -26 : 30, yPercent: index % 2 ? -115 : -75, rotate: index % 2 ? -30 : 24, scale: index % 2 ? .86 : 1.14, ease: 'none', scrollTrigger: options(stationScene, 'top 86%', 'bottom 18%') });
+  });
   reveal('.st-family__card', { y: 45, rotate: 5, scale: .92, opacity: .55 });
   reveal('.st-countdown__unit', { y: 45, rotate: 8, scale: .8, opacity: .5 });
   reveal('.st-locations__card', { y: 50, opacity: .5 });

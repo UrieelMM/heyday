@@ -96,6 +96,8 @@ const stationLabels: Record<KidsWorldVariant, string[]> = {
 const stationAmbient: Partial<Record<KidsWorldVariant, { directory: string; motifs: string[] }>> = {
   pirate: { directory: 'pirate-treasure-voyage', motifs: ['compass', 'anchor', 'treasure', 'compass', 'anchor'] },
   dino: { directory: 'dino-jungle-expedition', motifs: ['leaf', 'footprint', 'fossil', 'leaf', 'footprint'] },
+  safari: { directory: 'safari-sunrise-adventure', motifs: ['sun', 'acacia', 'binoculars', 'sun', 'acacia'] },
+  cowboy: { directory: 'cowboy-ranch-roundup', motifs: ['hat', 'horseshoe', 'sheriff-star', 'hat', 'horseshoe'] },
 };
 
 export function KidsWorldStations({ variant, config }: { variant: KidsWorldVariant; config: InvitationConfig }) {
@@ -182,7 +184,7 @@ export function setupKidsWorldScenes(root: HTMLElement, id: KidsWorldTemplateId)
     if (runner) gsap.fromTo(runner, { top: '0%' }, { top: '93%', ease: 'none', scrollTrigger: trigger(timeline, 'top 78%', 'bottom 48%') });
   }
   reveal('.st-timeline__item', { x: 40, opacity: .55 });
-  if (id === 'pirate-treasure-voyage' || id === 'dino-jungle-expedition') {
+  if (id === 'pirate-treasure-voyage' || id === 'dino-jungle-expedition' || id === 'safari-sunrise-adventure' || id === 'cowboy-ranch-roundup') {
     const stations = root.querySelector<HTMLElement>('.kw-stations');
     if (stations) root.querySelectorAll<HTMLElement>('.kw-ambient__station-motif').forEach((motif, index) => {
       gsap.to(motif, { xPercent: index % 2 ? -26 : 30, yPercent: index % 2 ? -115 : -75, rotate: index % 2 ? -30 : 24, scale: index % 2 ? .86 : 1.14, ease: 'none', scrollTrigger: trigger(stations, 'top 86%', 'bottom 18%') });
