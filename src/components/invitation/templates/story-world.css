@@ -62,7 +62,7 @@
 .sw-root .st-story blockquote { max-width: 850px; margin-inline: auto; font: 500 clamp(30px,4vw,58px)/1.17 var(--inv-heading-font),Georgia,serif !important; }
 .sw-root .st-story > .grid { display: flex; justify-content: center; flex-wrap: wrap; }
 .sw-root .st-story > .grid > div { flex: 1 1 240px; max-width: 330px; border: 1px solid var(--sw-accent) !important; background: var(--sw-bg) !important; text-align: center; }
-.sw-story-card__image { display: block; width: 100%; height: 155px; margin-bottom: 18px; object-fit: cover; }
+.sw-story-card__image { display: block; width: 100%; height: 155px; margin-bottom: 18px; object-fit: contain; }
 .sw-root--ohana .st-story > .grid > div { border-radius: 25px 7px 25px 7px; }.sw-root--solar .st-story > .grid > div { border-radius: 0; box-shadow: 7px 7px 0 var(--sw-second); }.sw-root--cafe .st-story > .grid > div { border-radius: 2px; border-style: dashed !important; }
 .sw-moments { position: relative; z-index: 2; padding: 95px 24px 120px; background: var(--sw-paper); }
 .sw-moments__head { max-width: 780px; margin: 0 auto 48px; text-align: center; }

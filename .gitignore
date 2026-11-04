@@ -41,5 +41,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-#marketing
-/marketing/*
+# Local marketing workspace, source assets, and rendered media
+/marketing/
