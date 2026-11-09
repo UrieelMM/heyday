@@ -1,6 +1,6 @@
 'use client';
 
-import type { CSSProperties, ReactNode } from 'react';
+import { Fragment, type CSSProperties, type ReactNode } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import type { GuestGroup, InvitationConfig } from '@/types/invitation.types';
@@ -142,13 +142,16 @@ export function KidsWorldStations({ variant, config }: { variant: KidsWorldVaria
       <div className="kw-stations__head"><p className="kw-eyebrow"><span className="kw-pulse"/>CAPÍTULO 02 · {chapter}</p><h2>{heading}</h2><p>{description}</p></div>
       <div className="kw-stations__grid">{stationLabels[variant].map((label, index) => {
         const image = images[index];
-        return <article className="kw-station" key={label} style={{ '--kw-stack-index': index } as CSSProperties}>
-          <div className="kw-station__image">
-            <img src={image?.url || config.content.hero.coverImageUrl} alt={image?.caption || label} loading="lazy" />
-            {variant === 'rodeo' && <span className="rr-station__doors" aria-hidden="true"><i className="rr-station__door" /><i className="rr-station__door" /></span>}
-          </div>
-          <div className="kw-station__content"><span>0{index + 1} / {label}</span><h3>{image?.caption || label}</h3><p>{config.content.timeline[index]?.description || description}</p></div>
-        </article>;
+        return <Fragment key={label}>
+          {variant === 'rodeo' && <span className="rr-station__anchor" aria-hidden="true" />}
+          <article className="kw-station" style={{ '--kw-stack-index': index } as CSSProperties}>
+            <div className="kw-station__image">
+              <img src={image?.url || config.content.hero.coverImageUrl} alt={image?.caption || label} loading="lazy" />
+              {variant === 'rodeo' && <span className="rr-station__doors" aria-hidden="true"><i className="rr-station__door" /><i className="rr-station__door" /></span>}
+            </div>
+            <div className="kw-station__content"><span>0{index + 1} / {label}</span><h3>{image?.caption || label}</h3><p>{config.content.timeline[index]?.description || description}</p></div>
+          </article>
+        </Fragment>;
       })}</div>
     </section>
   );
