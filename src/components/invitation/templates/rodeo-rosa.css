@@ -38,10 +38,31 @@
 }
 .kw-root--rodeo .kw-opening [role="button"] {
   height: clamp(174px, 32svh, 236px);
-  background: var(--rr-cream) var(--rr-hide) center / 150px !important;
+  isolation: isolate;
+  background: transparent !important;
   border: 2px dashed var(--rr-rose) !important;
   box-shadow: 0 12px 0 var(--kw-second), 0 27px 55px var(--rr-shadow) !important;
 }
+.kw-root--rodeo .kw-opening [role="button"]::before,
+.kw-root--rodeo .kw-opening [role="button"]::after {
+  inset: 0 50% 0 0;
+  z-index: -1;
+  width: auto;
+  height: auto;
+  border-radius: 22px 0 0 22px;
+  border-inline-end: 1px dashed var(--rr-rose);
+  background: var(--rr-cream) var(--rr-hide) center / 150px;
+  transform: none;
+}
+.kw-root--rodeo .kw-opening [role="button"]::after {
+  inset: 0 0 0 50%;
+  border: 0;
+  border-radius: 0 22px 22px 0;
+}
+.kw-opening--rodeo[data-opening] [role="button"]::before { animation: rr-ticket-tear-left .65s .1s both; }
+.kw-opening--rodeo[data-opening] [role="button"]::after { animation: rr-ticket-tear-right .65s .1s both; }
+@keyframes rr-ticket-tear-left { to { transform: translate(-48%, 17%) rotate(-16deg); opacity: 0; } }
+@keyframes rr-ticket-tear-right { to { transform: translate(54%, 23%) rotate(18deg); opacity: 0; } }
 .kw-root--rodeo .kw-opening [role="button"] > svg { opacity: 0; }
 .kw-root--rodeo .kw-opening [role="button"] > p {
   margin-top: 1rem;
@@ -185,6 +206,7 @@
 .rr-hero .kw-hero__scroll { color: var(--kw-ink); }
 .kw-root--rodeo .kw-marquee { border-block: 1px dashed var(--rr-stitch); }
 .kw-root--rodeo .kw-marquee--second { color: var(--kw-ink); }
+.kw-root--rodeo .kw-marquee--second > div { animation-direction: reverse; animation-duration: 32s; }
 
 .kw-root--rodeo .st-story {
   --rr-motif: var(--rr-bandana); --rr-x: 88%; --rr-y: 18%;
@@ -199,7 +221,7 @@
   opacity: .26;
 }
 .kw-root--rodeo .st-story blockquote { color: var(--kw-ink); overflow-wrap: anywhere; }
-.kw-root--rodeo .st-story > .grid > div { border-width: 1px !important; }
+.kw-root--rodeo .st-story > .grid > div { border-width: 1px !important; overflow: hidden; }
 .kw-root--rodeo .kw-stations {
   isolation: isolate;
   background: radial-gradient(ellipse at center, var(--rr-cream), var(--rr-pink));
@@ -223,7 +245,24 @@
 .kw-root--rodeo .kw-ambient__station-motif--4 { right: 2%; top: 70%; }
 .kw-root--rodeo .kw-ambient__station-motif--5 { left: 9%; bottom: 2%; }
 .kw-root--rodeo .kw-station { border: 1px solid var(--rr-rose); background: var(--rr-cream); box-shadow: 0 9px 0 var(--kw-second); }
+.kw-root--rodeo .kw-station__image { position: relative; }
 .kw-root--rodeo .kw-station__content { border-top: 2px dashed var(--rr-stitch); }
+.rr-station__doors { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.rr-station__door {
+  position: absolute;
+  inset: 0 50% 0 0;
+  transform: translateX(-102%);
+  border: 1px solid var(--rr-rose);
+  border-radius: 0 24px 24px 0;
+  background: var(--rr-star) center / 44px no-repeat,
+    repeating-linear-gradient(90deg, transparent 0 19%, var(--rr-stitch) 19% 20%) var(--rr-pink);
+  box-shadow: inset 0 0 0 6px var(--rr-cream);
+}
+.rr-station__door + .rr-station__door {
+  inset: 0 0 0 50%;
+  transform: translateX(102%);
+  border-radius: 24px 0 0 24px;
+}
 @media (min-width: 701px) {
   .kw-root--rodeo .kw-stations__grid { grid-template-columns: repeat(12, minmax(0, 1fr)); }
   .kw-root--rodeo .kw-station { grid-column: span 5; }
@@ -357,6 +396,32 @@
 .kw-root--rodeo .st-stay > .grid > div { flex: 1 1 245px; max-width: 350px; }
 .kw-root--rodeo .st-countdown__unit { border: 2px dashed var(--rr-stitch) !important; background: var(--rr-cream) !important; }
 .kw-root--rodeo .st-countdown__unit:nth-child(even) { background: var(--rr-pink) !important; }
+.rr-dial {
+  position: absolute;
+  inset: 5%;
+  width: 90%;
+  height: 90%;
+  pointer-events: none;
+}
+.rr-dial__ticks { stroke: var(--rr-stitch); stroke-width: 2.2; stroke-dasharray: .22 .78; }
+.rr-dial__sweep { stroke: var(--rr-rose); stroke-opacity: .4; stroke-width: 1.15; stroke-dasharray: 1; }
+.rr-family__seal, .rr-dress__badge, .rr-rsvp__stamp {
+  display: block;
+  width: 56px;
+  aspect-ratio: 1;
+  margin: 0 auto .65rem;
+  border: 1px dashed var(--rr-stitch);
+  border-radius: 50%;
+  background: var(--rr-badge, var(--rr-shoe)) center / 64% no-repeat var(--rr-pink);
+}
+.rr-dress__badge--boots { --rr-badge: var(--rr-boots); }
+.rr-dress__badge--hat { --rr-badge: var(--rr-hat); }
+.rr-rsvp__stamp {
+  width: 62px;
+  border: 3px double var(--rr-rose);
+  border-radius: 12px;
+  box-shadow: 3px 4px 0 var(--rr-stitch);
+}
 .kw-root--rodeo :is(.kw-route-link,.kw-timeline__runner) { border-color: var(--rr-stitch); background: var(--rr-cream); }
 .kw-root--rodeo .kw-timeline__runner img { width: 69%; height: 69%; }
 .kw-root--rodeo .st-timeline__track {
@@ -364,7 +429,19 @@
   --rr-runner-size: 2rem;
   padding-inline-start: calc(var(--rr-rail-x) + 1.5rem);
 }
-.kw-root--rodeo .st-timeline__line { left: calc(var(--rr-rail-x) - 1px); }
+.kw-root--rodeo .st-timeline__track::before {
+  content: '';
+  position: absolute;
+  inset: .5rem auto .5rem calc(var(--rr-rail-x) - 1px);
+  border-left: 2px dashed var(--rr-stitch);
+  pointer-events: none;
+}
+.kw-root--rodeo .st-timeline__line {
+  left: calc(var(--rr-rail-x) - 2px);
+  width: 4px;
+  border-radius: 3px;
+  background: repeating-linear-gradient(35deg, var(--rr-rose) 0 3px, var(--kw-second) 3px 5px) !important;
+}
 .kw-root--rodeo .kw-timeline__runner {
   left: calc(var(--rr-rail-x) - var(--rr-runner-size) / 2);
   width: var(--rr-runner-size);
@@ -379,6 +456,74 @@
 }
 .kw-root--rodeo .st-timeline__dot { left: calc(-1.5rem - .4375rem); top: calc(var(--rr-runner-size) / 2 - .4375rem); }
 .kw-root--rodeo .st-gallery__photo { border-color: var(--rr-cream); box-shadow: 0 8px 0 var(--kw-second); }
+.kw-root--rodeo .st-gallery__photo img { transition-property: scale; }
+.rr-letter {
+  position: relative;
+  display: block;
+  width: 76px;
+  height: 64px;
+  margin: 0 auto .8rem;
+  perspective: 250px;
+}
+.rr-letter__paper {
+  position: absolute;
+  inset: 1px 17% 18px;
+  display: grid;
+  place-items: start center;
+  padding-top: 3px;
+  color: var(--rr-rose);
+  background: var(--rr-cream);
+  border: 1px dashed var(--rr-rose);
+  border-radius: 5px;
+}
+.rr-letter__front, .rr-letter__flap {
+  position: absolute;
+  inset: auto 0 0;
+  height: 65%;
+  border: 1px solid var(--rr-rose);
+  border-radius: 6px;
+  background: linear-gradient(148deg, var(--rr-pink) 49%, var(--rr-stitch) 50% 51%, var(--rr-pink) 52%);
+}
+.rr-letter__flap {
+  bottom: 62%;
+  height: 37%;
+  border-radius: 24px 24px 0 0;
+  background: var(--kw-second);
+  clip-path: polygon(0 100%, 50% 0, 100% 100%);
+  transform-origin: bottom;
+}
+.rr-film {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  width: min(100%, 270px);
+  margin: 0 auto 1.15rem;
+  padding: 7px 8px;
+  border-block: 3px dotted var(--rr-cream);
+  border-radius: 5px;
+  background: var(--rr-rose);
+}
+.rr-film__frame {
+  flex: 1 1 0;
+  min-width: 0;
+  aspect-ratio: 1.35;
+  overflow: hidden;
+  background: var(--rr-pink);
+}
+.rr-film__frame img { width: 100%; height: 100%; object-fit: contain; padding: 5px; }
+.rr-record { display: flex; justify-content: center; align-items: center; gap: .85rem; margin-bottom: .85rem; }
+.rr-record__disc {
+  width: 55px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: conic-gradient(from 20deg, transparent 32%, var(--rr-stitch) 33% 43%, transparent 44%),
+    radial-gradient(circle, var(--rr-cream) 0 5%, var(--kw-second) 6% 27%, transparent 28%),
+    repeating-radial-gradient(circle, var(--rr-rose) 0 3px, var(--kw-ink) 4px 5px);
+}
+.rr-record__bars { display: flex; align-items: center; gap: 4px; }
+.rr-record__bars i { width: 4px; height: 16px; border-radius: 3px; background: var(--rr-rose); }
+.rr-record__bars i:nth-child(even) { height: 25px; background: var(--kw-second); }
+.rr-record__bars i:nth-child(3) { height: 35px; }
 .kw-root--rodeo .st-social--album h2 {
   font: 700 clamp(1.7rem, 4vw, 2.4rem)/1.12 var(--inv-heading-font), serif;
 }
@@ -438,4 +583,5 @@
 @media (prefers-reduced-motion: reduce) {
   .kw-root--rodeo .kw-station { position: static; }
   .kw-root--rodeo .kw-progress { display: none; }
+  .rr-station__doors { display: none; }
 }

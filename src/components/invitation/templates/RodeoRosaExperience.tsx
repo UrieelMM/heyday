@@ -68,6 +68,46 @@ export function RodeoSceneArt() {
   );
 }
 
+export function RodeoCountdownDial() {
+  return (
+    <svg className="rr-dial" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+      <circle className="rr-dial__ticks" cx="50" cy="50" r="45" pathLength="60" />
+      <circle className="rr-dial__sweep" cx="50" cy="50" r="42" pathLength="1" transform="rotate(-90 50 50)" />
+    </svg>
+  );
+}
+
+export function RodeoFilmStrip() {
+  return (
+    <div className="rr-film" aria-hidden="true">
+      {['hat', 'boots', 'bow'].map(motif => (
+        <span className="rr-film__frame" key={motif}>
+          <img src={`/images/rodeo-rosa/ambient-${motif}.svg`} alt="" loading="lazy" />
+        </span>
+      ))}
+    </div>
+  );
+}
+
+export function RodeoRecord() {
+  return (
+    <div className="rr-record" aria-hidden="true">
+      <span className="rr-record__disc" />
+      <span className="rr-record__bars"><i /><i /><i /><i /><i /></span>
+    </div>
+  );
+}
+
+export function RodeoGiftLetter() {
+  return (
+    <span className="rr-letter" aria-hidden="true">
+      <span className="rr-letter__flap" />
+      <span className="rr-letter__paper">♥</span>
+      <span className="rr-letter__front" />
+    </span>
+  );
+}
+
 export function RodeoRosaExperience({ config, eventDate, guestGroup, isSectionEnabled }: {
   config: InvitationConfig;
   eventDate: string;

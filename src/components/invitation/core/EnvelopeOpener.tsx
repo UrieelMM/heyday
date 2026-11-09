@@ -63,6 +63,7 @@ export function EnvelopeOpener({
         <motion.div
           key="envelope-overlay"
           data-editor-section="envelope"
+          data-opening={isOpening || undefined}
           initial={{ opacity: 1 }}
           exit={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 1.06, filter: 'blur(8px)' }}
           transition={{ duration: reduceMotion ? 0 : 0.85, ease: [0.22, 1, 0.36, 1] }}

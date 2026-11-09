@@ -57,7 +57,8 @@ import { PirateStoryMap, PirateTreasureExperience } from '../templates/PirateTre
 import { DinoJungleExperience, DinoStoryFossils } from '../templates/DinoJungleExperience';
 import { SafariSunriseExperience, SafariTrailBackdrop } from '../templates/SafariSunriseExperience';
 import { CowboyRanchExperience, CowboyTrailBackdrop } from '../templates/CowboyRanchExperience';
-import { RodeoLassoStory, RodeoRosaExperience, RodeoSceneArt } from '../templates/RodeoRosaExperience';
+import { RodeoCountdownDial, RodeoFilmStrip, RodeoGiftLetter, RodeoLassoStory, RodeoRecord, RodeoRosaExperience, RodeoSceneArt } from '../templates/RodeoRosaExperience';
+import { setupRodeoRosaScenes } from '../templates/rodeo-rosa-scenes';
 import { MickeyMouseBirthdayExperience, MickeyStoryBackdrop } from '../templates/MickeyMouseBirthdayExperience';
 import { BlueyBirthdayExperience, BlueyChalkStory } from '../templates/BlueyBirthdayExperience';
 import { PawPatrolBirthdayExperience, PawPatrolRadarStory } from '../templates/PawPatrolBirthdayExperience';
@@ -258,6 +259,7 @@ function StandardInvitationRenderer({
         setupSignatureScenes(root, signatureTemplateId);
         return;
       }
+      if (isRodeo) return setupRodeoRosaScenes(root);
       if (kidsWorldId) {
         setupKidsWorldScenes(root, kidsWorldId);
         return;
@@ -329,14 +331,7 @@ function StandardInvitationRenderer({
     {
       scope: containerRef,
       revertOnUpdate: isRodeo,
-      dependencies: [isEnvelopeOpen, templateId, signatureTemplateId, celebrationTemplateId, occasionTemplateId, newSceneTemplateId, weddingWorldId, newWorldId, storyWorldId,
-        isRodeo ? config.sectionsOrder.filter(section => section.enabled).map(section => section.id).join(',') : '',
-        isRodeo ? config.content.gallery.images.length : 0,
-        isRodeo ? config.content.quoteStory.quoteText : '',
-        isRodeo ? config.content.quoteStory.storyBlocks?.length : 0,
-        isRodeo ? config.content.vipParents.groups.length : 0,
-        isRodeo ? config.content.locations.length : 0,
-        isRodeo ? config.content.timeline.length : 0],
+      dependencies: [isEnvelopeOpen, templateId, signatureTemplateId, celebrationTemplateId, occasionTemplateId, newSceneTemplateId, weddingWorldId, newWorldId, storyWorldId, isRodeo ? config : undefined],
     }
   );
 
@@ -609,7 +604,7 @@ function StandardInvitationRenderer({
           {storyWorldId === 'solar-pop-xv' && <SolarPopStory />}
           {storyWorldId === 'cafe-para-siempre' && <CafeMenuStory />}
           <div
-            className="mx-auto mb-6 h-12 w-px"
+            className="st-story__rule mx-auto mb-6 h-12 w-px"
             style={{ backgroundColor: colors.accentPrimary }}
           />
           {content.sectionHeadings?.quote_story?.eyebrow && <p className="mb-5 text-xs font-semibold uppercase tracking-[0.25em]" style={{ color: colors.accentPrimary }}>{content.sectionHeadings.quote_story.eyebrow}</p>}
@@ -628,7 +623,7 @@ function StandardInvitationRenderer({
           </blockquote>
           {content.quoteStory.quoteAuthor && (
             <p
-              className="mt-4 text-xs font-semibold tracking-[0.25em] uppercase"
+              className="st-story__signature mt-4 text-xs font-semibold tracking-[0.25em] uppercase"
               style={{ color: colors.accentPrimary }}
             >
               — {content.quoteStory.quoteAuthor}
@@ -708,6 +703,7 @@ function StandardInvitationRenderer({
                       borderColor: `${colors.accentPrimary}33`,
                     }}
                   >
+                    {isRodeo && <span className="rr-family__seal" aria-hidden="true" />}
                     <h3
                       className="mb-3 text-xs font-bold tracking-[0.22em] uppercase"
                       style={{ color: colors.accentPrimary }}
@@ -770,12 +766,13 @@ function StandardInvitationRenderer({
             ].map((item) => (
               <div
                 key={item.label}
-                className="st-countdown__unit flex flex-col items-center justify-center rounded-2xl border py-5 shadow-xs"
+                className="st-countdown__unit relative flex flex-col items-center justify-center rounded-2xl border py-5 shadow-xs"
                 style={{
                   backgroundColor: colors.bgSecondary,
                   borderColor: `${colors.accentPrimary}35`,
                 }}
               >
+                {isRodeo && <RodeoCountdownDial />}
                 <span
                   className="text-3xl font-bold tabular-nums sm:text-4xl"
                   style={{ fontFamily: invitationFontStack(fonts.headingFont) }}
@@ -879,7 +876,7 @@ function StandardInvitationRenderer({
                   }}
                 >
                   {loc.imageUrl && (
-                    <div className="h-52 w-full overflow-hidden">
+                    <div className="st-locations__photo h-52 w-full overflow-hidden">
                       <img
                         src={loc.imageUrl}
                         alt={celebrationTemplateId || newSceneTemplateId || kidsWorldId || weddingWorldId ? `Ambiente de ${loc.title}` : loc.venueName}
@@ -888,7 +885,7 @@ function StandardInvitationRenderer({
                     </div>
                   )}
                   <div className="flex flex-1 flex-col justify-between p-6 sm:p-8">
-                    <div>
+                    <div className="st-locations__details">
                       <div className="mb-2 inline-flex items-center gap-1.5 text-xs font-bold tracking-widest uppercase"
                         style={{ color: colors.accentPrimary }}
                       >
@@ -1007,7 +1004,7 @@ function StandardInvitationRenderer({
                     }}
                   />
                   <span
-                    className="text-xs font-bold tracking-widest uppercase"
+                    className="st-timeline__time text-xs font-bold tracking-widest uppercase"
                     style={{ color: colors.accentPrimary }}
                   >
                     {item.time}
@@ -1087,7 +1084,7 @@ function StandardInvitationRenderer({
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   {img.caption && (
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent p-3 text-xs text-white">
+                    <div className="st-gallery__caption absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent p-3 text-xs text-white">
                       {img.caption}
                     </div>
                   )}
@@ -1127,6 +1124,7 @@ function StandardInvitationRenderer({
                 borderColor: `${colors.accentPrimary}30`,
               }}
             >
+              {isRodeo && <span className="rr-dress__badge rr-dress__badge--boots" aria-hidden="true" />}
               <h3 className="text-sm font-bold tracking-widest uppercase">
                 {occasionCopy?.dressLeft ?? (celebrationTemplateId === 'fiesta-kids-adventure' || kidsWorldId ? 'Peques' : 'Mujeres')}
               </h3>
@@ -1144,6 +1142,7 @@ function StandardInvitationRenderer({
                 borderColor: `${colors.accentPrimary}30`,
               }}
             >
+              {isRodeo && <span className="rr-dress__badge rr-dress__badge--hat" aria-hidden="true" />}
               <h3 className="text-sm font-bold tracking-widest uppercase">
                 {occasionCopy?.dressRight ?? (celebrationTemplateId === 'fiesta-kids-adventure' || kidsWorldId ? 'Adultos' : 'Hombres')}
               </h3>
@@ -1328,7 +1327,7 @@ function StandardInvitationRenderer({
               )}
               {content.gifts.cashEnvelopeAtVenue && content.gifts.registries.length === 0 && !content.gifts.bankTransfer?.enabled && (
                 <div className="st-gifts__envelope rounded-2xl border p-8 text-center md:col-span-2" style={{ borderColor: `${colors.accentPrimary}55` }}>
-                  <Gift className="mx-auto mb-3 h-7 w-7" style={{ color: colors.accentPrimary }} aria-hidden="true" />
+                  {isRodeo ? <RodeoGiftLetter /> : <Gift className="mx-auto mb-3 h-7 w-7" style={{ color: colors.accentPrimary }} aria-hidden="true" />}
                   <p className="text-sm font-semibold tracking-widest uppercase">Lluvia de sobres en el evento</p>
                   <p className="mt-2 text-sm" style={{ color: colors.textMuted }}>Habrá un espacio para dejar tu detalle durante la celebración.</p>
                 </div>
@@ -1398,6 +1397,7 @@ function StandardInvitationRenderer({
           {rodeoArtwork}
           {content.sectionHeadings?.social_features?.eyebrow && <p className="mb-3 text-xs font-semibold uppercase tracking-[0.25em]" style={{ color: colors.accentPrimary }}>{content.sectionHeadings.social_features.eyebrow}</p>}
           <h2 className="mb-4 text-2xl">{content.sectionHeadings?.social_features?.title || 'Álbum compartido'}</h2>
+          {isRodeo && <RodeoFilmStrip />}
           <SharedAlbum slug={slug} token={guestGroup?.guestToken} preview={isBuilderPreview} />
         </section>
       )}
@@ -1405,6 +1405,7 @@ function StandardInvitationRenderer({
       {isSectionEnabled('social_features') && (
         <section data-editor-section="socialFeatures" className="st-social st-social--music mx-auto max-w-4xl px-6 py-12">
           {rodeoArtwork}
+          {isRodeo && (content.socialFeatures.enableSongRequests || content.socialFeatures.enableAudioGuestbook) && <RodeoRecord />}
           <SocialFeatures slug={slug} token={guestGroup?.guestToken} preview={isBuilderPreview} songsEnabled={content.socialFeatures.enableSongRequests} audioEnabled={content.socialFeatures.enableAudioGuestbook} />
         </section>
       )}
@@ -1421,10 +1422,10 @@ function StandardInvitationRenderer({
             }}
           >
             <div className="mb-8 text-center">
-              <Users
+              {isRodeo ? <span className="rr-rsvp__stamp" aria-hidden="true" /> : <Users
                 className="mx-auto mb-2 h-7 w-7"
                 style={{ color: colors.accentPrimary }}
-              />
+              />}
               {isRodeo && content.sectionHeadings?.rsvp?.eyebrow && (
                 <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em]" style={{ color: colors.accentPrimary }}>
                   {content.sectionHeadings.rsvp.eyebrow}

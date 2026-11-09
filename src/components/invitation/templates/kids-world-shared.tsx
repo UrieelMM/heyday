@@ -143,7 +143,10 @@ export function KidsWorldStations({ variant, config }: { variant: KidsWorldVaria
       <div className="kw-stations__grid">{stationLabels[variant].map((label, index) => {
         const image = images[index];
         return <article className="kw-station" key={label} style={{ '--kw-stack-index': index } as CSSProperties}>
-          <div className="kw-station__image"><img src={image?.url || config.content.hero.coverImageUrl} alt={image?.caption || label} loading="lazy" /></div>
+          <div className="kw-station__image">
+            <img src={image?.url || config.content.hero.coverImageUrl} alt={image?.caption || label} loading="lazy" />
+            {variant === 'rodeo' && <span className="rr-station__doors" aria-hidden="true"><i className="rr-station__door" /><i className="rr-station__door" /></span>}
+          </div>
           <div className="kw-station__content"><span>0{index + 1} / {label}</span><h3>{image?.caption || label}</h3><p>{config.content.timeline[index]?.description || description}</p></div>
         </article>;
       })}</div>
@@ -153,7 +156,6 @@ export function KidsWorldStations({ variant, config }: { variant: KidsWorldVaria
 
 export function setupKidsWorldScenes(root: HTMLElement, id: KidsWorldTemplateId) {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const isRodeo = id === 'rodeo-rosa';
   const scroller = root.closest('[data-invitation-scroller]') || undefined;
   const trigger = (element: Element, start = 'top 90%', end = 'top 48%') => ({ trigger: element, scroller, start, end, scrub: .9 });
   const hero = root.querySelector<HTMLElement>('.kw-hero');
@@ -164,7 +166,6 @@ export function setupKidsWorldScenes(root: HTMLElement, id: KidsWorldTemplateId)
       .to(root.querySelector('.kw-hero__motif'), { xPercent: id === 'pirate-treasure-voyage' || id === 'cowboy-ranch-roundup' ? 68 : -62, yPercent: -58, rotate: id === 'pirate-treasure-voyage' || id === 'cowboy-ranch-roundup' ? 120 : -20, scale: .65, opacity: .25, duration: .67 }, .12)
       .to(visual, { left: '0%', top: '0%', width: '100%', height: '100%', borderRadius: '0px', borderWidth: 0, duration: .7 }, .17)
       .fromTo(root.querySelector('.kw-hero__bridge'), { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: .22 }, .76);
-    if (isRodeo) tl.to(hero.querySelectorAll('.kw-hero__visual-label, .kw-hero__scroll'), { opacity: 0, duration: .3 }, .4);
     root.querySelectorAll<HTMLElement>('.kw-hero__ornament').forEach((item, index) => {
       gsap.to(item, { x: index ? 70 : -60, y: index ? -35 : 25, rotate: index ? 16 : -14, scrollTrigger: trigger(hero, 'top top', 'bottom bottom') });
     });
@@ -173,29 +174,14 @@ export function setupKidsWorldScenes(root: HTMLElement, id: KidsWorldTemplateId)
   if (progress) gsap.fromTo(progress, { scaleX: 0 }, { scaleX: 1, ease: 'none', scrollTrigger: { trigger: root, scroller, start: 'top top', end: 'bottom bottom', scrub: .4 } });
   const story = root.querySelector<HTMLElement>('.st-story');
   if (story) {
-    const quote = story.querySelector('blockquote');
-    const words = quote?.querySelectorAll('.st-story__word');
-    // The first and last lines enter at the same viewport edge as their reveal.
-    const quoteTrigger = isRodeo && quote
-      ? { ...trigger(quote, 'top bottom', 'bottom bottom'), scrub: true }
-      : trigger(story, 'top 75%', 'bottom 53%');
-    if (words?.length) {
-      gsap.fromTo(words, { opacity: isRodeo ? .63 : .3 }, {
-        ...(isRodeo && { duration: .28 }),
-        opacity: 1,
-        stagger: isRodeo ? { amount: .72 } : .05, ease: 'none', scrollTrigger: quoteTrigger,
-      });
-    }
+    gsap.fromTo(story.querySelectorAll('.st-story__word'), { opacity: .3 }, { opacity: 1, stagger: .05, ease: 'none', scrollTrigger: trigger(story, 'top 75%', 'bottom 53%') });
     story.querySelectorAll<SVGGeometryElement>('.kw-story__draw').forEach((path) => {
       if (typeof path.getTotalLength !== 'function') return;
       const length = path.getTotalLength();
-      gsap.fromTo(path, { strokeDasharray: length, strokeDashoffset: length }, { strokeDashoffset: 0, ease: 'none', scrollTrigger: isRodeo ? quoteTrigger : trigger(story, 'top 80%', 'bottom 47%') });
+      gsap.fromTo(path, { strokeDasharray: length, strokeDashoffset: length }, { strokeDashoffset: 0, ease: 'none', scrollTrigger: trigger(story, 'top 80%', 'bottom 47%') });
     });
     const backdrop = story.querySelector<SVGSVGElement>('.kw-story__map');
-    if (backdrop) {
-      const xPercent = isRodeo ? 0 : -50;
-      gsap.fromTo(backdrop, { xPercent, scale: .82, rotate: -12 }, { xPercent, scale: 1.07, rotate: 8, scrollTrigger: trigger(story, 'top 85%', 'bottom 45%') });
-    }
+    if (backdrop) gsap.fromTo(backdrop, { xPercent: -50, scale: .82, rotate: -12 }, { xPercent: -50, scale: 1.07, rotate: 8, scrollTrigger: trigger(story, 'top 85%', 'bottom 45%') });
   }
   const reveal = (selector: string, from: gsap.TweenVars, end = 'top 56%') => root.querySelectorAll<HTMLElement>(selector).forEach((item, index) => {
     gsap.fromTo(item, { ...from, rotate: typeof from.rotate === 'number' ? from.rotate * (index % 2 ? -1 : 1) : from.rotate }, { x: 0, y: 0, rotate: 0, rotateY: 0, scale: 1, opacity: 1, ease: 'none', scrollTrigger: trigger(item, 'top 96%', end) });
@@ -207,41 +193,16 @@ export function setupKidsWorldScenes(root: HTMLElement, id: KidsWorldTemplateId)
   reveal('.st-locations__card', { y: 52, opacity: .52 });
   root.querySelectorAll<HTMLElement>('.st-locations__card img').forEach(photo => gsap.fromTo(photo, { clipPath: 'inset(12% 10% round 25px)' }, { clipPath: 'inset(0% 0% round 0px)', ease: 'none', scrollTrigger: trigger(photo, 'top 90%', 'top 45%') }));
   reveal('.st-gallery__photo', { y: 58, rotate: 8, opacity: .52 });
-  if (isRodeo) {
-    reveal('.st-dress > .grid > div', { y: 32, rotateY: 14, opacity: .65 });
-    reveal('.st-gifts h2, .st-social h2, .st-social h3, .st-rsvp h2', { scale: .98, opacity: .72 });
-    root.querySelectorAll<HTMLElement>('.rr-scene-art').forEach(art => {
-      const scene = art.closest('.rr-hero') ?? art.parentElement;
-      if (!scene || scene.classList.contains('kw-opening')) return;
-      gsap.to(art.querySelectorAll('.rr-scene-art__motif'), {
-        y: (index: number) => index ? 44 : -58,
-        rotate: (index: number) => index ? -17 : 14,
-        ease: 'none',
-        scrollTrigger: scene === hero ? trigger(scene, 'top top', 'bottom bottom') : trigger(scene, 'top bottom', 'bottom top'),
-      });
-    });
-  } else {
-    reveal('.st-dress > .grid > div, .st-gifts > div, .st-social > div', { y: 42, opacity: .55 });
-  }
+  reveal('.st-dress > .grid > div, .st-gifts > div, .st-social > div', { y: 42, opacity: .55 });
   const timeline = root.querySelector<HTMLElement>('.st-timeline');
   if (timeline) {
     const rail = timeline.querySelector<HTMLElement>('.st-timeline__line');
     const runner = timeline.querySelector<HTMLElement>('.kw-timeline__runner');
-    const track = timeline.querySelector<HTMLElement>('.st-timeline__track');
-    const timelineTrigger = isRodeo && track
-      ? { ...trigger(track, 'top 78%', 'bottom 70%'), scrub: true, invalidateOnRefresh: true }
-      : trigger(timeline, 'top 78%', 'bottom 48%');
-    if (rail) gsap.fromTo(rail, { scaleY: 0 }, { scaleY: 1, transformOrigin: 'top', ease: 'none', scrollTrigger: timelineTrigger });
-    if (runner) {
-      if (isRodeo && track) {
-        gsap.fromTo(runner, { y: 0 }, { y: () => track.clientHeight - runner.offsetHeight, ease: 'none', scrollTrigger: timelineTrigger });
-      } else {
-        gsap.fromTo(runner, { top: '0%' }, { top: '93%', ease: 'none', scrollTrigger: timelineTrigger });
-      }
-    }
+    if (rail) gsap.fromTo(rail, { scaleY: 0 }, { scaleY: 1, transformOrigin: 'top', ease: 'none', scrollTrigger: trigger(timeline, 'top 78%', 'bottom 48%') });
+    if (runner) gsap.fromTo(runner, { top: '0%' }, { top: '93%', ease: 'none', scrollTrigger: trigger(timeline, 'top 78%', 'bottom 48%') });
   }
-  reveal('.st-timeline__item', isRodeo ? { y: 22, opacity: .72 } : { x: 40, opacity: .55 });
-  if (id === 'pirate-treasure-voyage' || id === 'dino-jungle-expedition' || id === 'safari-sunrise-adventure' || id === 'cowboy-ranch-roundup' || id === 'rodeo-rosa' || id === 'bluey-birthday' || id === 'paw-patrol-birthday') {
+  reveal('.st-timeline__item', { x: 40, opacity: .55 });
+  if (id === 'pirate-treasure-voyage' || id === 'dino-jungle-expedition' || id === 'safari-sunrise-adventure' || id === 'cowboy-ranch-roundup' || id === 'bluey-birthday' || id === 'paw-patrol-birthday') {
     const stations = root.querySelector<HTMLElement>('.kw-stations');
     if (stations) root.querySelectorAll<HTMLElement>('.kw-ambient__station-motif').forEach((motif, index) => {
       gsap.to(motif, { xPercent: index % 2 ? -26 : 30, yPercent: index % 2 ? -115 : -75, rotate: index % 2 ? -30 : 24, scale: index % 2 ? .86 : 1.14, ease: 'none', scrollTrigger: trigger(stations, 'top 86%', 'bottom 18%') });
