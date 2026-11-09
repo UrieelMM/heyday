@@ -59,6 +59,15 @@ export function RodeoLassoStory() {
   );
 }
 
+export function RodeoSceneArt() {
+  return (
+    <span className="rr-scene-art" aria-hidden="true">
+      <span className="rr-scene-art__motif"><span /></span>
+      <span className="rr-scene-art__motif rr-scene-art__motif--companion"><span /></span>
+    </span>
+  );
+}
+
 export function RodeoRosaExperience({ config, eventDate, guestGroup, isSectionEnabled }: {
   config: InvitationConfig;
   eventDate: string;
@@ -81,6 +90,7 @@ export function RodeoRosaExperience({ config, eventDate, guestGroup, isSectionEn
     <section id="rr-hero" className="kw-hero rr-hero" data-editor-section="hero" aria-label="Portada de Rodeo Rosa">
       <div className="kw-hero__stage rr-hero__stage">
         <div className="kw-hero__atmosphere rr-hero__atmosphere" aria-hidden="true" />
+        <RodeoSceneArt />
         <div className="kw-hero__ornament rr-hero__ornament rr-hero__ornament--bow" aria-hidden="true" />
         <div className="kw-hero__ornament rr-hero__ornament rr-hero__ornament--star" aria-hidden="true" />
         <nav className="kw-nav rr-nav" aria-label="Navegación de la invitación">

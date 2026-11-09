@@ -13,6 +13,7 @@ interface EnvelopeOpenerProps {
   isOpen: boolean;
   onOpen: () => void;
   sceneClassName?: string;
+  artwork?: React.ReactNode;
   celebrateOnOpen?: boolean;
 }
 
@@ -22,6 +23,7 @@ export function EnvelopeOpener({
   isOpen,
   onOpen,
   sceneClassName = '',
+  artwork,
   celebrateOnOpen = true,
 }: EnvelopeOpenerProps) {
   const [isOpening, setIsOpening] = useState(false);
@@ -76,6 +78,7 @@ export function EnvelopeOpener({
             style={{ borderColor: colors.accentPrimary }}
           />
 
+          {artwork}
           <motion.div
             animate={
               isOpening

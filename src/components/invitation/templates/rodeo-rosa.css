@@ -7,12 +7,20 @@
   --rr-bow: url('/images/rodeo-rosa/ambient-bow.svg');
   --rr-star: url('/images/rodeo-rosa/ambient-star.svg');
   --rr-shoe: url('/images/rodeo-rosa/ambient-horseshoe.svg');
+  --rr-hat: url('/images/rodeo-rosa/ambient-hat.svg');
+  --rr-boots: url('/images/rodeo-rosa/ambient-boots.svg');
+  --rr-bandana: url('/images/rodeo-rosa/ambient-bandana.svg');
+  --rr-disco: url('/images/rodeo-rosa/ambient-disco.svg');
   --rr-hide: url('/images/rodeo-rosa/cowhide.svg');
   --rr-check: linear-gradient(90deg, var(--rr-stitch) 50%, transparent 50%),
     linear-gradient(var(--rr-stitch) 50%, transparent 50%);
 }
 
-.kw-root--rodeo .kw-opening { background: radial-gradient(ellipse, var(--rr-cream) 10%, var(--rr-pink) 75%) !important; }
+.kw-root--rodeo .kw-opening {
+  --rr-motif: var(--rr-hat); --rr-x: 19%; --rr-y: 24%;
+  --rr-companion: var(--rr-disco); --rr-companion-x: 84%; --rr-companion-y: 66%;
+  background: radial-gradient(ellipse, var(--rr-cream) 10%, var(--rr-pink) 75%) !important;
+}
 .kw-root--rodeo .kw-opening::before {
   content: '';
   position: absolute;
@@ -51,7 +59,12 @@
 }
 
 .kw-root--rodeo .rr-hero { scroll-margin-top: 0; }
-.rr-hero__stage { min-height: 0; background: var(--rr-pink); }
+.rr-hero__stage {
+  --rr-motif: var(--rr-shoe); --rr-x: 14%; --rr-y: 17%; --rr-size: 10vw;
+  --rr-companion: var(--rr-disco); --rr-companion-x: 94%; --rr-companion-y: 62%;
+  min-height: 0;
+  background: var(--rr-pink);
+}
 .rr-hero__atmosphere {
   background: radial-gradient(ellipse at 41% 49%, var(--rr-cream), transparent 72%),
     linear-gradient(122deg, var(--rr-cream), var(--rr-pink) 48%, var(--kw-second));
@@ -173,7 +186,11 @@
 .kw-root--rodeo .kw-marquee { border-block: 1px dashed var(--rr-stitch); }
 .kw-root--rodeo .kw-marquee--second { color: var(--kw-ink); }
 
-.kw-root--rodeo .st-story { background: radial-gradient(ellipse at top, var(--rr-pink), var(--rr-cream) 69%); }
+.kw-root--rodeo .st-story {
+  --rr-motif: var(--rr-bandana); --rr-x: 88%; --rr-y: 18%;
+  --rr-companion: var(--rr-bow); --rr-companion-x: 8%; --rr-companion-y: 37%;
+  background: radial-gradient(ellipse at top, var(--rr-pink), var(--rr-cream) 69%);
+}
 .kw-root--rodeo .rr-story__lasso {
   inset-inline: 0;
   width: min(960px, 100%);
@@ -181,7 +198,7 @@
   color: var(--rr-rose);
   opacity: .26;
 }
-.kw-root--rodeo .st-story blockquote { color: var(--kw-ink); }
+.kw-root--rodeo .st-story blockquote { color: var(--kw-ink); overflow-wrap: anywhere; }
 .kw-root--rodeo .st-story > .grid > div { border-width: 1px !important; }
 .kw-root--rodeo .kw-stations {
   isolation: isolate;
@@ -213,13 +230,13 @@
   .kw-root--rodeo .kw-station:nth-child(3n + 1) { grid-column: span 7; }
 }
 
-.kw-root--rodeo :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-stay,.st-social,.st-rsvp) {
+.kw-root--rodeo :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-stay,.st-social,.st-rsvp,footer) {
   position: relative;
   isolation: isolate;
   overflow: clip;
   background: var(--rr-section, var(--rr-cream)) !important;
 }
-.kw-root--rodeo :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-stay,.st-social,.st-rsvp)::before {
+.kw-root--rodeo :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-stay,.st-social,.st-rsvp,footer)::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -230,30 +247,106 @@
   opacity: .22;
   mask-image: radial-gradient(ellipse at center, transparent 24%, #000);
 }
-.kw-root--rodeo :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-stay,.st-social,.st-rsvp)::after {
+.rr-scene-art,
+.kw-root--rodeo .st-story > .rr-scene-art {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: clip;
+  pointer-events: none;
+}
+.kw-root--rodeo .st-story > .rr-scene-art { z-index: 0; }
+.rr-hero__stage > .rr-scene-art { z-index: 1; }
+.kw-opening--rodeo > .rr-scene-art { z-index: 0; }
+.rr-scene-art__motif {
+  --rr-art-size: clamp(86px, var(--rr-size, 15vw), 225px);
+  position: absolute;
+  left: var(--rr-x);
+  top: var(--rr-y);
+  width: var(--rr-art-size);
+  margin: calc(var(--rr-art-size) / -2) 0 0 calc(var(--rr-art-size) / -2);
+  aspect-ratio: 1;
+  opacity: .56;
+}
+.rr-scene-art__motif > span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--rr-motif) center / contain no-repeat;
+  animation: var(--rr-motion, rr-swing) 9s ease-in-out infinite;
+}
+.rr-scene-art__motif--companion {
+  --rr-art-size: clamp(54px, 9vw, 145px);
+  left: var(--rr-companion-x);
+  top: var(--rr-companion-y);
+  opacity: .44;
+}
+.rr-scene-art__motif--companion > span {
+  background-image: var(--rr-companion, var(--rr-star));
+  animation: rr-drift 7s ease-in-out -2s infinite;
+}
+.rr-scene-art__motif--companion::after {
   content: '';
   position: absolute;
-  z-index: -1;
-  pointer-events: none;
-  left: var(--rr-x, 4%);
-  top: var(--rr-y, 12%);
-  width: clamp(78px, var(--rr-size, 17vw), 250px);
+  inset: -10% -15% auto auto;
+  width: 33%;
   aspect-ratio: 1;
-  background: var(--rr-motif, var(--rr-star)) center / contain no-repeat;
-  opacity: .37;
-  animation: var(--rr-motion, rr-drift) 9s ease-in-out infinite;
+  background: var(--rr-star) center / contain no-repeat;
+  animation: rr-twinkle 5s ease-in-out infinite;
 }
-.kw-root--rodeo .st-family { --rr-section: var(--rr-pink); --rr-motif: var(--rr-bow); --rr-x: 78%; --rr-y: 2%; --rr-size: 21vw; --rr-motion: rr-swing; }
-.kw-root--rodeo .st-countdown { --rr-motif: var(--rr-shoe); --rr-x: 7%; --rr-y: 42%; --rr-size: 18vw; --rr-pattern: var(--rr-hide); --rr-repeat: 250px; }
-.kw-root--rodeo .st-locations { --rr-section: var(--rr-pink); --rr-x: 83%; --rr-y: 25%; --rr-size: 13vw; --rr-motion: rr-spin; }
-.kw-root--rodeo .st-timeline { --rr-motif: var(--rr-shoe); --rr-x: 4%; --rr-y: 69%; --rr-size: 23vw; --rr-motion: rr-swing; }
-.kw-root--rodeo .st-gallery { --rr-section: var(--rr-pink); --rr-motif: var(--rr-bow); --rr-x: 4%; --rr-y: 2%; --rr-size: 14vw; --rr-pattern: var(--rr-hide); --rr-repeat: 185px; }
-.kw-root--rodeo .st-dress { --rr-x: 76%; --rr-y: 62%; --rr-size: 20vw; --rr-motion: rr-spin; }
-.kw-root--rodeo .st-gifts { --rr-section: var(--rr-pink); --rr-motif: var(--rr-bow); --rr-x: 14%; --rr-y: 58%; --rr-size: 12vw; --rr-motion: rr-swing; }
-.kw-root--rodeo .st-stay { --rr-motif: var(--rr-shoe); --rr-x: 77%; --rr-y: 40%; --rr-pattern: var(--rr-hide); --rr-repeat: 240px; }
-.kw-root--rodeo .st-social { --rr-motif: var(--rr-bow); --rr-x: 87%; --rr-y: 12%; --rr-size: 12vw; }
-.kw-root--rodeo .st-social + .st-social { --rr-motif: var(--rr-star); --rr-x: 1%; --rr-y: 52%; --rr-motion: rr-spin; }
-.kw-root--rodeo .st-rsvp { --rr-section: var(--rr-pink); --rr-motif: var(--rr-shoe); --rr-x: 79%; --rr-y: 64%; --rr-pattern: var(--rr-hide); --rr-repeat: 295px; }
+.kw-root--rodeo .st-family {
+  --rr-section: var(--rr-pink); --rr-motif: var(--rr-hat); --rr-x: 88%; --rr-y: 25%; --rr-size: 17vw;
+  --rr-companion: var(--rr-bow); --rr-companion-x: 13%; --rr-companion-y: 61%;
+}
+.kw-root--rodeo .st-countdown {
+  --rr-motif: var(--rr-shoe); --rr-x: 14%; --rr-y: 46%; --rr-motion: rr-spin;
+  --rr-companion: var(--rr-disco); --rr-companion-x: 87%; --rr-companion-y: 58%;
+  --rr-pattern: var(--rr-hide); --rr-repeat: 250px;
+}
+.kw-root--rodeo .st-locations {
+  --rr-section: var(--rr-pink); --rr-motif: var(--rr-bandana); --rr-x: 15%; --rr-y: 33%;
+  --rr-companion: var(--rr-hat); --rr-companion-x: 87%; --rr-companion-y: 63%;
+}
+.kw-root--rodeo .st-timeline {
+  --rr-motif: var(--rr-boots); --rr-x: 87%; --rr-y: 28%; --rr-motion: rr-drift;
+  --rr-companion: var(--rr-shoe); --rr-companion-x: 12%; --rr-companion-y: 71%;
+}
+.kw-root--rodeo .st-gallery {
+  --rr-section: var(--rr-pink); --rr-motif: var(--rr-disco); --rr-x: 12%; --rr-y: 25%;
+  --rr-companion: var(--rr-bow); --rr-companion-x: 88%; --rr-companion-y: 69%;
+  --rr-pattern: var(--rr-hide); --rr-repeat: 185px;
+}
+.kw-root--rodeo .st-dress {
+  --rr-motif: var(--rr-boots); --rr-x: 87%; --rr-y: 48%; --rr-size: 19vw;
+  --rr-companion: var(--rr-bandana); --rr-companion-x: 12%; --rr-companion-y: 70%;
+}
+.kw-root--rodeo .st-gifts {
+  --rr-section: var(--rr-pink); --rr-motif: var(--rr-bow); --rr-x: 14%; --rr-y: 57%;
+  --rr-companion: var(--rr-bandana); --rr-companion-x: 86%; --rr-companion-y: 34%;
+}
+.kw-root--rodeo .st-stay {
+  --rr-motif: var(--rr-hat); --rr-x: 84%; --rr-y: 37%;
+  --rr-companion: var(--rr-shoe); --rr-companion-x: 10%; --rr-companion-y: 69%;
+  --rr-pattern: var(--rr-hide); --rr-repeat: 240px;
+}
+.kw-root--rodeo .st-social--album {
+  --rr-motif: var(--rr-bow); --rr-x: 87%; --rr-y: 42%; --rr-size: 12vw;
+  --rr-companion: var(--rr-hat); --rr-companion-x: 11%; --rr-companion-y: 65%;
+}
+.kw-root--rodeo .st-social--music {
+  --rr-section: color-mix(in srgb, var(--rr-cream) 52%, var(--rr-pink));
+  --rr-motif: var(--rr-disco); --rr-x: 12%; --rr-y: 34%;
+  --rr-companion-x: 87%; --rr-companion-y: 64%;
+}
+.kw-root--rodeo .st-rsvp {
+  --rr-section: var(--rr-pink); --rr-motif: var(--rr-shoe); --rr-x: 85%; --rr-y: 56%; --rr-motion: rr-spin;
+  --rr-companion: var(--rr-bow); --rr-companion-x: 12%; --rr-companion-y: 29%;
+  --rr-pattern: var(--rr-hide); --rr-repeat: 295px;
+}
+.kw-root--rodeo footer {
+  --rr-motif: var(--rr-hat); --rr-x: 19%; --rr-y: 40%; --rr-size: 6vw;
+  --rr-companion-x: 82%; --rr-companion-y: 62%;
+}
 
 .kw-root--rodeo :is(.st-family__card,.st-locations__card,.st-dress > .grid > div,.st-gifts .grid > div) {
   border: 1px solid var(--rr-stitch) !important;
@@ -266,13 +359,47 @@
 .kw-root--rodeo .st-countdown__unit:nth-child(even) { background: var(--rr-pink) !important; }
 .kw-root--rodeo :is(.kw-route-link,.kw-timeline__runner) { border-color: var(--rr-stitch); background: var(--rr-cream); }
 .kw-root--rodeo .kw-timeline__runner img { width: 69%; height: 69%; }
-.kw-root--rodeo .st-timeline__item { background: var(--rr-pink); }
+.kw-root--rodeo .st-timeline__track {
+  --rr-rail-x: 1rem;
+  --rr-runner-size: 2rem;
+  padding-inline-start: calc(var(--rr-rail-x) + 1.5rem);
+}
+.kw-root--rodeo .st-timeline__line { left: calc(var(--rr-rail-x) - 1px); }
+.kw-root--rodeo .kw-timeline__runner {
+  left: calc(var(--rr-rail-x) - var(--rr-runner-size) / 2);
+  width: var(--rr-runner-size);
+  height: var(--rr-runner-size);
+}
+.kw-root--rodeo .st-timeline__item {
+  min-width: 0;
+  margin-inline-start: 0;
+  padding: clamp(.85rem, 3vw, 1.25rem);
+  background: var(--rr-pink);
+  overflow-wrap: anywhere;
+}
+.kw-root--rodeo .st-timeline__dot { left: calc(-1.5rem - .4375rem); top: calc(var(--rr-runner-size) / 2 - .4375rem); }
 .kw-root--rodeo .st-gallery__photo { border-color: var(--rr-cream); box-shadow: 0 8px 0 var(--kw-second); }
+.kw-root--rodeo .st-social--album h2 {
+  font: 700 clamp(1.7rem, 4vw, 2.4rem)/1.12 var(--inv-heading-font), serif;
+}
+.kw-root--rodeo .shared-album__note {
+  max-width: 48ch;
+  margin: 0 auto .7rem;
+  color: var(--ns-muted);
+  font-size: .78rem;
+  line-height: 1.6;
+}
+.kw-root--rodeo .shared-album__availability {
+  display: block;
+  font-size: .875rem;
+  font-weight: 650;
+}
 .kw-root--rodeo .st-rsvp > div { border: 2px dashed var(--rr-rose) !important; background: var(--rr-cream) !important; }
 
 @keyframes rr-drift { 50% { transform: translate(12px, -14px) scale(1.05); } }
 @keyframes rr-swing { 50% { transform: translateY(11px) rotate(-13deg); } }
 @keyframes rr-spin { 50% { transform: rotate(24deg) scale(.9); } }
+@keyframes rr-twinkle { 50% { transform: rotate(18deg) scale(1.2); opacity: .55; } }
 
 @media (max-width: 700px) {
   .kw-root--rodeo .rr-nav > div a:first-child { display: inline-flex; }
@@ -298,7 +425,9 @@
   .kw-root--rodeo .kw-ambient__station-layer { mask-image: none; opacity: .21; }
   .kw-root--rodeo .kw-ambient__station-motif--3 { left: -13%; }
   .kw-root--rodeo .kw-ambient__station-motif--4 { right: -9%; }
-  .kw-root--rodeo :is(.st-family,.st-countdown,.st-locations,.st-timeline,.st-gallery,.st-dress,.st-gifts,.st-stay,.st-social,.st-rsvp)::after { opacity: .24; }
+  .rr-scene-art__motif { --rr-art-size: clamp(72px, 22vw, 122px); opacity: .4; }
+  .rr-scene-art__motif--companion { --rr-art-size: clamp(52px, 16vw, 80px); opacity: .32; }
+  .kw-root--rodeo .st-timeline__track { --rr-rail-x: .8125rem; --rr-runner-size: 1.625rem; }
   .kw-root--rodeo .st-rsvp > div { box-shadow: 0 8px 0 var(--kw-second); }
 }
 @media (max-width: 700px) and (max-height: 680px) {

@@ -57,7 +57,7 @@ import { PirateStoryMap, PirateTreasureExperience } from '../templates/PirateTre
 import { DinoJungleExperience, DinoStoryFossils } from '../templates/DinoJungleExperience';
 import { SafariSunriseExperience, SafariTrailBackdrop } from '../templates/SafariSunriseExperience';
 import { CowboyRanchExperience, CowboyTrailBackdrop } from '../templates/CowboyRanchExperience';
-import { RodeoLassoStory, RodeoRosaExperience } from '../templates/RodeoRosaExperience';
+import { RodeoLassoStory, RodeoRosaExperience, RodeoSceneArt } from '../templates/RodeoRosaExperience';
 import { MickeyMouseBirthdayExperience, MickeyStoryBackdrop } from '../templates/MickeyMouseBirthdayExperience';
 import { BlueyBirthdayExperience, BlueyChalkStory } from '../templates/BlueyBirthdayExperience';
 import { PawPatrolBirthdayExperience, PawPatrolRadarStory } from '../templates/PawPatrolBirthdayExperience';
@@ -332,6 +332,7 @@ function StandardInvitationRenderer({
       dependencies: [isEnvelopeOpen, templateId, signatureTemplateId, celebrationTemplateId, occasionTemplateId, newSceneTemplateId, weddingWorldId, newWorldId, storyWorldId,
         isRodeo ? config.sectionsOrder.filter(section => section.enabled).map(section => section.id).join(',') : '',
         isRodeo ? config.content.gallery.images.length : 0,
+        isRodeo ? config.content.quoteStory.quoteText : '',
         isRodeo ? config.content.quoteStory.storyBlocks?.length : 0,
         isRodeo ? config.content.vipParents.groups.length : 0,
         isRodeo ? config.content.locations.length : 0,
@@ -341,6 +342,7 @@ function StandardInvitationRenderer({
 
   const { colors, fonts } = config.theme;
   const { content } = config;
+  const rodeoArtwork = isRodeo ? <RodeoSceneArt /> : null;
 
   const isSectionEnabled = (id: string) =>
     config.sectionsOrder.find((s) => s.id === id)?.enabled ?? true;
@@ -421,6 +423,7 @@ function StandardInvitationRenderer({
           guestGroup={guestGroup}
           isOpen={isEnvelopeOpen}
           onOpen={() => setIsEnvelopeOpen(true)}
+          artwork={rodeoArtwork}
           sceneClassName={isKidsAdventure ? 'fk-opening' : kidsWorldId ? `kw-opening kw-opening--${kidsWorldVariant}` : weddingWorldId ? `ww-opening ww-opening--${weddingWorldVariant}` : newWorldId ? `nw-opening nw-opening--${newWorldVariant}` : storyWorldId ? `sw-opening sw-opening--${storyVariant}` : newSceneTemplateId ? `ns-envelope ns-envelope--${newSceneTemplateId}` : undefined}
           celebrateOnOpen={!weddingWorldId && (!newSceneTemplateId || newSceneTemplateId === 'mini-cosmos' || newSceneTemplateId === 'ritmo-de-dos')}
         />
@@ -592,6 +595,7 @@ function StandardInvitationRenderer({
           {kidsWorldId === 'safari-sunrise-adventure' && <SafariTrailBackdrop />}
           {kidsWorldId === 'cowboy-ranch-roundup' && <CowboyTrailBackdrop />}
           {isRodeo && <RodeoLassoStory />}
+          {rodeoArtwork}
           {kidsWorldId === 'mickey-mouse-birthday' && <MickeyStoryBackdrop />}
           {kidsWorldId === 'bluey-birthday' && <BlueyChalkStory />}
           {kidsWorldId === 'paw-patrol-birthday' && <PawPatrolRadarStory />}
@@ -683,6 +687,7 @@ function StandardInvitationRenderer({
             className="inv-reveal-section st-family px-6 py-16"
             style={{ backgroundColor: colors.bgSecondary }}
           >
+            {rodeoArtwork}
             <div className="mx-auto max-w-4xl text-center">
               {content.sectionHeadings?.vip_parents?.eyebrow && <p className="mb-3 text-xs font-semibold uppercase tracking-[0.25em]" style={{ color: colors.accentPrimary }}>{content.sectionHeadings.vip_parents.eyebrow}</p>}
               {content.sectionHeadings?.vip_parents?.title && <h2 className="mb-5 text-3xl font-semibold" style={{ fontFamily: invitationFontStack(fonts.headingFont) }}>{content.sectionHeadings.vip_parents.title}</h2>}
@@ -730,6 +735,7 @@ function StandardInvitationRenderer({
       {/* SECCIÓN 4: CUENTA REGRESIVA + AGENDAR EN CALENDARIO */}
       {isSectionEnabled('countdown') && (
         <section data-editor-section="countdown" className="inv-reveal-section st-countdown mx-auto max-w-3xl px-6 py-20 text-center">
+          {rodeoArtwork}
           <p
             className="mb-2 text-xs font-semibold tracking-[0.25em] uppercase"
             style={{ color: colors.accentPrimary }}
@@ -807,18 +813,20 @@ function StandardInvitationRenderer({
               Agendar en Google Calendar
             </a>
 
-            <button
-              type="button"
-              onClick={handleDownloadIcs}
-              style={{
-                borderColor: colors.accentPrimary,
-                color: colors.textPrimary,
-              }}
-              className="inline-flex items-center gap-2 rounded-full border px-6 py-3 text-xs font-semibold tracking-wider uppercase transition-transform hover:scale-105"
-            >
-              <Calendar className="h-4 w-4" />
-              Apple Calendar / Outlook (.ics)
-            </button>
+            {!isRodeo && (
+              <button
+                type="button"
+                onClick={handleDownloadIcs}
+                style={{
+                  borderColor: colors.accentPrimary,
+                  color: colors.textPrimary,
+                }}
+                className="inline-flex items-center gap-2 rounded-full border px-6 py-3 text-xs font-semibold tracking-wider uppercase transition-transform hover:scale-105"
+              >
+                <Calendar className="h-4 w-4" />
+                Apple Calendar / Outlook (.ics)
+              </button>
+            )}
           </div>
         </section>
       )}
@@ -831,6 +839,7 @@ function StandardInvitationRenderer({
           className="inv-reveal-section st-locations px-6 py-20"
           style={{ backgroundColor: colors.bgSecondary }}
         >
+          {rodeoArtwork}
           <div className="mx-auto max-w-5xl">
             <div className="mb-12 text-center">
               <p
@@ -949,6 +958,7 @@ function StandardInvitationRenderer({
       {/* SECCIÓN 6: ITINERARIO / TIMELINE ANIMADO */}
       {isSectionEnabled('timeline') && content.timeline.length > 0 && (
         <section data-editor-section="timeline" className="inv-reveal-section st-timeline mx-auto max-w-3xl px-6 py-20">
+          {rodeoArtwork}
           <div className="mb-12 text-center">
             <p
               className="mb-2 text-xs font-semibold tracking-[0.25em] uppercase"
@@ -976,7 +986,7 @@ function StandardInvitationRenderer({
             </h2>
           </div>
 
-            <div className="relative mx-auto max-w-xl pl-8">
+            <div className="st-timeline__track relative mx-auto max-w-xl pl-8">
               {isKidsAdventure && <span className="fk-timeline__runner" aria-hidden="true">✦</span>}
               {kidsWorldId && <span className="kw-timeline__runner" aria-hidden="true">{kidsWorldVariant === 'rodeo' ? <img src="/images/rodeo-rosa/ambient-horseshoe.svg" alt="" /> : { pirate: '☸', dino: '✦', safari: '◉', cowboy: '★', mickey: '●', bluey: '✿', pawpatrol: '★', minecraft: '◆' }[kidsWorldVariant]}</span>}
               {weddingWorldId && <span className="ww-timeline__runner" aria-hidden="true">{{ garden: '✿', stars: '✧', vineyard: '❧' }[weddingWorldVariant]}</span>}
@@ -990,7 +1000,7 @@ function StandardInvitationRenderer({
               {content.timeline.map((item) => (
                 <div key={item.id} className="st-timeline__item relative">
                   <div
-                    className="absolute top-1.5 -left-6.5 h-3.5 w-3.5 rounded-full border-2"
+                    className="st-timeline__dot absolute top-1.5 -left-6.5 h-3.5 w-3.5 rounded-full border-2"
                     style={{
                       backgroundColor: colors.accentPrimary,
                       borderColor: colors.bgPrimary,
@@ -1036,6 +1046,7 @@ function StandardInvitationRenderer({
           className="inv-reveal-section st-gallery px-6 py-20"
           style={{ backgroundColor: colors.bgSecondary }}
         >
+          {rodeoArtwork}
           <div className="mx-auto max-w-5xl">
             <div className="mb-10 text-center">
               <p
@@ -1090,6 +1101,7 @@ function StandardInvitationRenderer({
       {/* SECCIÓN 8: CÓDIGO DE VESTIMENTA (DRESS CODE) */}
       {isSectionEnabled('dress_code') && (
         <section data-editor-section="dressCode" className="inv-reveal-section st-dress mx-auto max-w-3xl px-6 py-20 text-center">
+          {rodeoArtwork}
           <p
             className="mb-2 text-xs font-semibold tracking-[0.25em] uppercase"
             style={{ color: colors.accentPrimary }}
@@ -1180,6 +1192,7 @@ function StandardInvitationRenderer({
           className="inv-reveal-section st-gifts px-6 py-20"
           style={{ backgroundColor: colors.bgSecondary }}
         >
+          {rodeoArtwork}
           <div className="mx-auto max-w-4xl text-center">
             <Gift
               className="mx-auto mb-3 h-8 w-8"
@@ -1329,6 +1342,7 @@ function StandardInvitationRenderer({
       {isSectionEnabled('accommodation') &&
         content.accommodation.length > 0 && (
           <section data-editor-section="accommodation" className="inv-reveal-section st-stay mx-auto max-w-4xl px-6 py-20">
+            {rodeoArtwork}
             <div className="mb-10 text-center">
               <Hotel
                 className="mx-auto mb-3 h-7 w-7"
@@ -1379,13 +1393,26 @@ function StandardInvitationRenderer({
         )}
 
       {/* SECCIÓN 11: FEATURES DIFERENCIADORAS — DJ PLAYLIST & AUDIO GUESTBOOK */}
-      {isSectionEnabled('social_features') && <section data-editor-section="socialFeatures" className="st-social mx-auto max-w-4xl px-6 py-12">{content.sectionHeadings?.social_features?.eyebrow && <p className="mb-3 text-xs font-semibold uppercase tracking-[0.25em]" style={{ color: colors.accentPrimary }}>{content.sectionHeadings.social_features.eyebrow}</p>}<h2 className="mb-4 text-2xl">{content.sectionHeadings?.social_features?.title || 'Álbum compartido'}</h2><SharedAlbum slug={slug} token={guestGroup?.guestToken} preview={isBuilderPreview} /></section>}
+      {isSectionEnabled('social_features') && (
+        <section data-editor-section="socialFeatures" className="st-social st-social--album mx-auto max-w-4xl px-6 py-12">
+          {rodeoArtwork}
+          {content.sectionHeadings?.social_features?.eyebrow && <p className="mb-3 text-xs font-semibold uppercase tracking-[0.25em]" style={{ color: colors.accentPrimary }}>{content.sectionHeadings.social_features.eyebrow}</p>}
+          <h2 className="mb-4 text-2xl">{content.sectionHeadings?.social_features?.title || 'Álbum compartido'}</h2>
+          <SharedAlbum slug={slug} token={guestGroup?.guestToken} preview={isBuilderPreview} />
+        </section>
+      )}
 
-      {isSectionEnabled('social_features') && <section data-editor-section="socialFeatures" className="st-social mx-auto max-w-4xl px-6 py-12"><SocialFeatures slug={slug} token={guestGroup?.guestToken} preview={isBuilderPreview} songsEnabled={content.socialFeatures.enableSongRequests} audioEnabled={content.socialFeatures.enableAudioGuestbook} /></section>}
+      {isSectionEnabled('social_features') && (
+        <section data-editor-section="socialFeatures" className="st-social st-social--music mx-auto max-w-4xl px-6 py-12">
+          {rodeoArtwork}
+          <SocialFeatures slug={slug} token={guestGroup?.guestToken} preview={isBuilderPreview} songsEnabled={content.socialFeatures.enableSongRequests} audioEnabled={content.socialFeatures.enableAudioGuestbook} />
+        </section>
+      )}
 
       {/* SECCIÓN 12: MÓDULO RSVP INTELIGENTE + PASE VIP QR */}
       {isSectionEnabled('rsvp') && (
         <section id="st-rsvp" data-editor-section="rsvp" className="inv-reveal-section st-rsvp mx-auto max-w-2xl px-6 py-24">
+          {rodeoArtwork}
           <div
             className="rounded-3xl border p-6 shadow-xl sm:p-10"
             style={{
@@ -1660,6 +1687,7 @@ function StandardInvitationRenderer({
 
       {/* FOOTER DE LA INVITACIÓN */}
       <footer className="border-t py-10 text-center text-xs opacity-60">
+        {rodeoArtwork}
         <p>
           {content.hero.mainTitle} • Invitación Digital Interactiva
         </p>
