@@ -390,7 +390,7 @@ function applyRodeoRosaDefaults(config: InvitationConfig, title: string) {
     focalPoint: { x: 50, y: 58 },
   };
   content.quoteStory = {
-    quoteText: 'Me hace ilusión celebrar mi cumpleaños contigo. Habrá fotos con sombrero, juegos de rancho y una rebanada de pastel para cada persona de mi pandilla.',
+    quoteText: 'Me hace ilusión celebrar mi cumpleaños contigo. Habrá fotos con sombrero, juegos de rancho y pastel para compartir con mi gente favorita.',
     quoteAuthor: name,
     storyBlocks: [
       { title: 'Botas y moños', description: 'Un pañuelo rosa y tus botas favoritas son todo lo que necesitas para la foto.', imageUrl: asset('boots') },
@@ -402,7 +402,7 @@ function applyRodeoRosaDefaults(config: InvitationConfig, title: string) {
     blessingMessage: `La familia de ${name} te espera con mucho cariño.`,
     groups: [
       { groupTitle: 'Anfitriones', names: [`La familia de ${name}`] },
-      { groupTitle: 'Nuestra pandilla', names: ['Amigas, amigos y familia'] },
+      { groupTitle: 'Nuestros invitados', names: ['Amigas, amigos y familia'] },
     ],
   };
   const address = 'Parque México, Hipódromo, Ciudad de México';
@@ -450,14 +450,14 @@ function applyRodeoRosaDefaults(config: InvitationConfig, title: string) {
   };
   content.sectionHeadings = {
     quote_story: { eyebrow: '01 / Una carta del rancho' },
-    vip_parents: { eyebrow: '03 / La pandilla', title: 'Quienes te esperan' },
+    vip_parents: { eyebrow: '03 / En buena compañía', title: 'Quienes te esperan' },
     countdown: { eyebrow: '04 / El reloj del rodeo', title: 'La fiesta comienza en' },
     locations: { eyebrow: '05 / Coordenadas', title: 'Camino al rancho' },
     timeline: { eyebrow: '06 / El programa', title: 'Una tarde de rodeo' },
     gallery: { eyebrow: '07 / El álbum', title: 'Postales del oeste' },
     dress_code: { eyebrow: '08 / Vestimenta', title: content.dressCode.title },
     gifts: { eyebrow: '09 / El buzón', title: 'Un detalle para el rancho' },
-    social_features: { eyebrow: '10 / Recuerdos', title: 'Álbum de la pandilla' },
+    social_features: { eyebrow: '10 / Recuerdos', title: 'Álbum del rodeo' },
     rsvp: { eyebrow: '11 / Tu boleto de acceso', title: 'Confirma tu lugar en el rodeo' },
   };
 }
