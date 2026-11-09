@@ -70,6 +70,16 @@ export const TEMPLATES_CATALOG: TemplateMetadata[] = [
     envelopeVariant: 'pass-ticket-tear', ambientEffect: 'confetti',
   },
   {
+    id: 'rodeo-rosa', name: 'Rodeo Rosa', category: 'kids_birthday',
+    categoryLabel: 'Cumpleaños infantil / Vaquera', badge: 'Nueva colección',
+    description: 'Un cumpleaños vaquero entre moños, ponis, botas rosas y pastel en el rancho.',
+    signatureAnimation: 'Boleto de rodeo, arco expansible y herradura viajera',
+    previewImage: '/images/rodeo-rosa/hero-desktop.webp',
+    colors: { bgPrimary: '#FFF7EA', bgSecondary: '#F8DBDC', textPrimary: '#51282D', textMuted: '#765052', accentPrimary: '#9B3457', accentSecondary: '#E9A0B5' },
+    fonts: { headingFont: 'Playfair Display', scriptFont: 'Great Vibes', bodyFont: 'Plus Jakarta Sans' },
+    envelopeVariant: 'pass-ticket-tear', ambientEffect: 'none',
+  },
+  {
     id: 'paw-patrol-birthday', name: 'Paw Patrol: Misión Cumpleaños', category: 'kids_birthday',
     categoryLabel: 'Cumpleaños infantil / Paw Patrol', badge: 'Nueva colección',
     description: 'Una misión de cumpleaños desde la torre de vigilancia: insignia, radar, cachorros en acción y cuatro rescates llenos de diversión.',

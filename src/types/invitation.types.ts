@@ -19,6 +19,7 @@ export type TemplateId =
   | 'dino-jungle-expedition'
   | 'safari-sunrise-adventure'
   | 'cowboy-ranch-roundup'
+  | 'rodeo-rosa'
   | 'glass-garden-vows'
   | 'midnight-constellation'
   | 'golden-harvest-vineyard'

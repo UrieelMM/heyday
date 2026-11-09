@@ -8,6 +8,7 @@ const heroDesktopByMobile: Record<string, string> = {
   '/images/dino-jungle-expedition/hero-mobile.webp': '/images/dino-jungle-expedition/hero-desktop.webp',
   '/images/safari-sunrise-adventure/hero-mobile.webp': '/images/safari-sunrise-adventure/hero-desktop.webp',
   '/images/cowboy-ranch-roundup/hero-mobile.webp': '/images/cowboy-ranch-roundup/hero-desktop.webp',
+  '/images/rodeo-rosa/hero-mobile.webp': '/images/rodeo-rosa/hero-desktop.webp',
 };
 
 export function kidsHeroDesktopSrc(mobileSrc: string): string | undefined {

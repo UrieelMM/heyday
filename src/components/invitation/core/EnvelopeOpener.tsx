@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { Sparkles, Ticket, Volume2 } from 'lucide-react';
 import type { GuestGroup, InvitationConfig } from '@/types/invitation.types';
@@ -25,10 +25,15 @@ export function EnvelopeOpener({
   celebrateOnOpen = true,
 }: EnvelopeOpenerProps) {
   const [isOpening, setIsOpening] = useState(false);
+  const reduceMotion = useReducedMotion();
   const { colors, envelope, fonts } = config.theme;
 
   const handleTriggerOpen = () => {
     if (isOpening) return;
+    if (reduceMotion) {
+      onOpen();
+      return;
+    }
     setIsOpening(true);
 
     if (celebrateOnOpen) {
@@ -57,8 +62,8 @@ export function EnvelopeOpener({
           key="envelope-overlay"
           data-editor-section="envelope"
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, scale: 1.06, filter: 'blur(8px)' }}
-          transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+          exit={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 1.06, filter: 'blur(8px)' }}
+          transition={{ duration: reduceMotion ? 0 : 0.85, ease: [0.22, 1, 0.36, 1] }}
           style={{
             backgroundColor: colors.bgPrimary,
             color: colors.textPrimary,
@@ -124,7 +129,10 @@ export function EnvelopeOpener({
               role="button"
               tabIndex={0}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') handleTriggerOpen();
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleTriggerOpen();
+                }
               }}
               className="group relative flex h-64 w-full cursor-pointer flex-col items-center justify-center border p-8 shadow-2xl transition-transform duration-500 hover:scale-[1.02] active:scale-[0.99]"
               style={{
@@ -156,10 +164,10 @@ export function EnvelopeOpener({
 
               {/* Sello de Lacre / Botón Central */}
               <motion.div
-                whileHover={{ scale: 1.08, rotate: 3 }}
-                whileTap={{ scale: 0.92 }}
+                whileHover={reduceMotion ? undefined : { scale: 1.08, rotate: 3 }}
+                whileTap={reduceMotion ? undefined : { scale: 0.92 }}
                 animate={
-                  isOpening
+                  reduceMotion ? undefined : isOpening
                     ? { scale: [1, 1.25, 0], rotate: 15 }
                     : { scale: [1, 1.04, 1] }
                 }

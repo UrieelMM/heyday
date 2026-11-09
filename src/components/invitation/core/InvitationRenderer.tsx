@@ -57,6 +57,7 @@ import { PirateStoryMap, PirateTreasureExperience } from '../templates/PirateTre
 import { DinoJungleExperience, DinoStoryFossils } from '../templates/DinoJungleExperience';
 import { SafariSunriseExperience, SafariTrailBackdrop } from '../templates/SafariSunriseExperience';
 import { CowboyRanchExperience, CowboyTrailBackdrop } from '../templates/CowboyRanchExperience';
+import { RodeoLassoStory, RodeoRosaExperience } from '../templates/RodeoRosaExperience';
 import { MickeyMouseBirthdayExperience, MickeyStoryBackdrop } from '../templates/MickeyMouseBirthdayExperience';
 import { BlueyBirthdayExperience, BlueyChalkStory } from '../templates/BlueyBirthdayExperience';
 import { PawPatrolBirthdayExperience, PawPatrolRadarStory } from '../templates/PawPatrolBirthdayExperience';
@@ -94,6 +95,7 @@ import '../templates/pirate-treasure-voyage.css';
 import '../templates/dino-jungle-expedition.css';
 import '../templates/safari-sunrise-adventure.css';
 import '../templates/cowboy-ranch-roundup.css';
+import '../templates/rodeo-rosa.css';
 import '../templates/kids-world-ambient.css';
 import '../templates/mickey-mouse-birthday.css';
 import '../templates/bluey-birthday.css';
@@ -171,8 +173,10 @@ function StandardInvitationRenderer({
   const celebrationTemplateId = isCelebrationTemplateId(templateId) ? templateId : null;
   const isKidsAdventure = templateId === 'fiesta-kids-adventure';
   const kidsWorldId = isKidsWorldTemplateId(templateId) ? templateId : null;
+  const isRodeo = kidsWorldId === 'rodeo-rosa';
   const kidsWorldVariant = kidsWorldId === 'pirate-treasure-voyage' ? 'pirate'
     : kidsWorldId === 'safari-sunrise-adventure' ? 'safari'
+      : isRodeo ? 'rodeo'
       : kidsWorldId === 'cowboy-ranch-roundup' ? 'cowboy'
         : kidsWorldId === 'mickey-mouse-birthday' ? 'mickey'
           : kidsWorldId === 'bluey-birthday' ? 'bluey'
@@ -322,7 +326,17 @@ function StandardInvitationRenderer({
         );
       });
     },
-    { scope: containerRef, dependencies: [isEnvelopeOpen, templateId, signatureTemplateId, celebrationTemplateId, occasionTemplateId, newSceneTemplateId, weddingWorldId, newWorldId, storyWorldId] }
+    {
+      scope: containerRef,
+      revertOnUpdate: isRodeo,
+      dependencies: [isEnvelopeOpen, templateId, signatureTemplateId, celebrationTemplateId, occasionTemplateId, newSceneTemplateId, weddingWorldId, newWorldId, storyWorldId,
+        isRodeo ? config.sectionsOrder.filter(section => section.enabled).map(section => section.id).join(',') : '',
+        isRodeo ? config.content.gallery.images.length : 0,
+        isRodeo ? config.content.quoteStory.storyBlocks?.length : 0,
+        isRodeo ? config.content.vipParents.groups.length : 0,
+        isRodeo ? config.content.locations.length : 0,
+        isRodeo ? config.content.timeline.length : 0],
+    }
   );
 
   const { colors, fonts } = config.theme;
@@ -452,6 +466,9 @@ function StandardInvitationRenderer({
       {isSectionEnabled('hero') && kidsWorldId === 'cowboy-ranch-roundup' && (
         <CowboyRanchExperience config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />
       )}
+      {isSectionEnabled('hero') && isRodeo && (
+        <RodeoRosaExperience config={config} eventDate={eventDate} guestGroup={guestGroup} isSectionEnabled={isSectionEnabled} />
+      )}
       {isSectionEnabled('hero') && kidsWorldId === 'mickey-mouse-birthday' && (
         <MickeyMouseBirthdayExperience config={config} eventDate={eventDate} guestGroup={guestGroup} actionHref={isSectionEnabled('quote_story') ? '#st-story' : '#st-rsvp'} />
       )}
@@ -574,6 +591,7 @@ function StandardInvitationRenderer({
           {kidsWorldId === 'dino-jungle-expedition' && <DinoStoryFossils />}
           {kidsWorldId === 'safari-sunrise-adventure' && <SafariTrailBackdrop />}
           {kidsWorldId === 'cowboy-ranch-roundup' && <CowboyTrailBackdrop />}
+          {isRodeo && <RodeoLassoStory />}
           {kidsWorldId === 'mickey-mouse-birthday' && <MickeyStoryBackdrop />}
           {kidsWorldId === 'bluey-birthday' && <BlueyChalkStory />}
           {kidsWorldId === 'paw-patrol-birthday' && <PawPatrolRadarStory />}
@@ -960,7 +978,7 @@ function StandardInvitationRenderer({
 
             <div className="relative mx-auto max-w-xl pl-8">
               {isKidsAdventure && <span className="fk-timeline__runner" aria-hidden="true">✦</span>}
-              {kidsWorldId && <span className="kw-timeline__runner" aria-hidden="true">{{ pirate: '☸', dino: '✦', safari: '◉', cowboy: '★', mickey: '●', bluey: '✿', pawpatrol: '★', minecraft: '◆' }[kidsWorldVariant]}</span>}
+              {kidsWorldId && <span className="kw-timeline__runner" aria-hidden="true">{kidsWorldVariant === 'rodeo' ? <img src="/images/rodeo-rosa/ambient-horseshoe.svg" alt="" /> : { pirate: '☸', dino: '✦', safari: '◉', cowboy: '★', mickey: '●', bluey: '✿', pawpatrol: '★', minecraft: '◆' }[kidsWorldVariant]}</span>}
               {weddingWorldId && <span className="ww-timeline__runner" aria-hidden="true">{{ garden: '✿', stars: '✧', vineyard: '❧' }[weddingWorldVariant]}</span>}
               {newWorldId && <span className="nw-timeline__runner" aria-hidden="true">{{ opera: '✦', atlas: '✺', future: '↗' }[newWorldVariant]}</span>}
               {storyWorldId && <span className="sw-timeline__runner" aria-hidden="true">{{ ohana: '✿', stitch: '🌊', solar: '✺', cafe: '♥' }[storyVariant]}</span>}
@@ -1167,6 +1185,11 @@ function StandardInvitationRenderer({
               className="mx-auto mb-3 h-8 w-8"
               style={{ color: colors.accentPrimary }}
             />
+            {isRodeo && content.sectionHeadings?.gifts?.eyebrow && (
+              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em]" style={{ color: colors.accentPrimary }}>
+                {content.sectionHeadings.gifts.eyebrow}
+              </p>
+            )}
             <h2
               className="mb-3 text-3xl font-semibold sm:text-4xl"
               style={{ fontFamily: invitationFontStack(fonts.headingFont) }}
@@ -1375,6 +1398,11 @@ function StandardInvitationRenderer({
                 className="mx-auto mb-2 h-7 w-7"
                 style={{ color: colors.accentPrimary }}
               />
+              {isRodeo && content.sectionHeadings?.rsvp?.eyebrow && (
+                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em]" style={{ color: colors.accentPrimary }}>
+                  {content.sectionHeadings.rsvp.eyebrow}
+                </p>
+              )}
               <h2
                 className="text-3xl font-semibold sm:text-4xl"
                 style={{ fontFamily: invitationFontStack(fonts.headingFont) }}

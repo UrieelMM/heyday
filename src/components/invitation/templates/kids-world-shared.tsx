@@ -10,13 +10,14 @@ import { HeroMedia } from '../core/HeroMedia';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export type KidsWorldVariant = 'pirate' | 'dino' | 'safari' | 'cowboy' | 'mickey' | 'bluey' | 'pawpatrol' | 'minecraft';
+export type KidsWorldVariant = 'pirate' | 'dino' | 'safari' | 'cowboy' | 'rodeo' | 'mickey' | 'bluey' | 'pawpatrol' | 'minecraft';
 
 const worldPresentation: Record<KidsWorldVariant, { heroId: string; stationId: string; heroLabel: string; stationLabel: string; mark: string; mediaAlt: string }> = {
   pirate: { heroId: 'pw-hero', stationId: 'pw-stations', heroLabel: 'Portada pirata', stationLabel: 'Puertos de la travesía', mark: '☸', mediaAlt: 'Viaje pirata' },
   dino: { heroId: 'dj-hero', stationId: 'dj-stations', heroLabel: 'Portada jurásica', stationLabel: 'Estaciones jurásicas', mark: '✦', mediaAlt: 'Expedición jurásica' },
   safari: { heroId: 'sf-hero', stationId: 'sf-stations', heroLabel: 'Portada del safari', stationLabel: 'Paradas del safari', mark: '◉', mediaAlt: 'Safari de cumpleaños' },
   cowboy: { heroId: 'cb-hero', stationId: 'cb-stations', heroLabel: 'Portada del rancho', stationLabel: 'Paradas del rancho', mark: '★', mediaAlt: 'Aventura vaquera' },
+  rodeo: { heroId: 'rr-hero', stationId: 'rr-stations', heroLabel: 'Portada de Rodeo Rosa', stationLabel: 'Paradas del rodeo', mark: '✧', mediaAlt: 'Cumpleaños vaquero' },
   mickey: { heroId: 'mm-hero', stationId: 'mm-stations', heroLabel: 'Portada del cumpleaños de Mickey', stationLabel: 'Momentos del club', mark: '●', mediaAlt: 'Club de cumpleaños Mickey Mouse' },
   bluey: { heroId: 'bb-hero', stationId: 'bb-stations', heroLabel: 'Portada del cumpleaños de Bluey', stationLabel: 'Juegos del patio', mark: '✿', mediaAlt: 'El gran día de juegos de Bluey' },
   pawpatrol: { heroId: 'pp-hero', stationId: 'pp-stations', heroLabel: 'Portada de la misión Paw Patrol', stationLabel: 'Misiones de la patrulla', mark: '✦', mediaAlt: 'Misión de cumpleaños Paw Patrol' },
@@ -79,6 +80,7 @@ export function KidsWorldMarquee({ variant, second = false }: { variant: KidsWor
     dino: ['EXPLORA ✦ EXCAVA ✦ CELEBRA ✦ ', 'HUELLAS GIGANTES ✦ RECUERDOS ETERNOS ✦ '],
     safari: ['OBSERVA ✦ DESCUBRE ✦ CELEBRA ✦ ', 'UN MUNDO SALVAJE ✦ UN DÍA INOLVIDABLE ✦ '],
     cowboy: ['ENSILLA ✦ JUEGA ✦ CELEBRA ✦ ', 'RUMBO AL RANCHO ✦ AMIGOS POR SIEMPRE ✦ '],
+    rodeo: ['BOTAS ROSAS ✦ MOÑOS ✦ PONIS ✦ PASTEL ✦ ', 'SOMBREROS ARRIBA ✦ QUE SUENEN LAS MAÑANITAS ✦ '],
     mickey: ['OH BOY! ✦ JUEGA ✦ RÍE ✦ CELEBRA ✦ ', 'GLOBOS ✦ AMIGOS ✦ PASTEL ✦ MAGIA ✦ '],
     bluey: ['KEEPY UPPY ✿ IMAGINA ✿ JUEGA ✿ CELEBRA ✿ ', 'BLUEY ✿ BINGO ✿ AMIGOS ✿ PASTEL ✿ '],
     pawpatrol: ['PATRULLA EN ACCIÓN ★ MISIÓN CUMPLEAÑOS ★ ', 'RESCATA ★ EXPLORA ★ CELEBRA ★ '],
@@ -93,6 +95,7 @@ const stationLabels: Record<KidsWorldVariant, string[]> = {
   dino: ['ENTRADA A LA SELVA', 'ZONA DE FÓSILES', 'SENDERO GIGANTE', 'GRAN FESTEJO'],
   safari: ['CAMPAMENTO BASE', 'SENDERO DORADO', 'AMIGOS DE LA SABANA', 'PICNIC DE CUMPLEAÑOS'],
   cowboy: ['PUERTAS DEL RANCHO', 'RUTA DEL OESTE', 'JUEGOS VAQUEROS', 'PASTEL AL ATARDECER'],
+  rodeo: ['BIENVENIDA', 'FOTOS', 'JUEGOS', 'PASTEL'],
   mickey: ['PASE DE BIENVENIDA', 'JUEGOS DEL CLUB', 'FOTO CON AMIGOS', 'MOMENTO DEL PASTEL'],
   bluey: ['PATIO ABIERTO', 'KEEPY UPPY', 'BAILE CONGELADO', 'FIESTA EN FAMILIA'],
   pawpatrol: ['REUNIÓN EN LA TORRE', 'RESCATE AÉREO', 'SIGUE LAS HUELLAS', 'MISIÓN: PASTEL'],
@@ -104,6 +107,7 @@ const stationAmbient: Partial<Record<KidsWorldVariant, { directory: string; moti
   dino: { directory: 'dino-jungle-expedition', motifs: ['leaf', 'footprint', 'fossil', 'leaf', 'footprint'] },
   safari: { directory: 'safari-sunrise-adventure', motifs: ['sun', 'acacia', 'binoculars', 'sun', 'acacia'] },
   cowboy: { directory: 'cowboy-ranch-roundup', motifs: ['hat', 'horseshoe', 'sheriff-star', 'hat', 'horseshoe'] },
+  rodeo: { directory: 'rodeo-rosa', motifs: ['bow', 'star', 'horseshoe', 'bow', 'star'] },
   bluey: { directory: 'bluey-birthday', motifs: ['balloon', 'paw', 'sun', 'paw', 'balloon'] },
   pawpatrol: { directory: 'paw-patrol-birthday', motifs: ['signal', 'paw', 'rotor', 'signal', 'paw'] },
 };
@@ -115,6 +119,7 @@ export function KidsWorldStations({ variant, config }: { variant: KidsWorldVaria
     dino: { heading: 'Cuatro hallazgos. Una gran aventura.', description: 'Sigue las huellas y descubre todo lo que nos espera.', chapter: 'LA EXPEDICIÓN' },
     safari: { heading: 'Cuatro paradas. Un mundo salvaje.', description: 'Sigue el sendero y descubre a nuestros amigos de la sabana.', chapter: 'EL SAFARI' },
     cowboy: { heading: 'Cuatro momentos. Un gran rodeo.', description: 'Sigue la ruta del rancho hasta el pastel al atardecer.', chapter: 'EL RANCHO' },
+    rodeo: { heading: 'Cuatro paradas en el rancho', description: 'Del primer saludo a las mañanitas.', chapter: 'LA FIESTA' },
     mickey: { heading: 'Cuatro momentos. Mil sonrisas.', description: 'Cada parada trae una nueva sorpresa para nuestra pandilla.', chapter: 'EL CLUB DE CUMPLEAÑOS' },
     bluey: { heading: 'Cuatro juegos. Un gran día.', description: 'Sigue las huellas de tiza: cada parada guarda una nueva forma de jugar.', chapter: 'EL PATIO DE JUEGOS' },
     pawpatrol: { heading: 'Cuatro misiones. Un gran equipo.', description: 'Desde la torre hasta el pastel: cada parada necesita nuevos héroes.', chapter: 'CENTRO DE MISIONES' },
@@ -158,6 +163,7 @@ export function setupKidsWorldScenes(root: HTMLElement, id: KidsWorldTemplateId)
       .to(root.querySelector('.kw-hero__motif'), { xPercent: id === 'pirate-treasure-voyage' || id === 'cowboy-ranch-roundup' ? 68 : -62, yPercent: -58, rotate: id === 'pirate-treasure-voyage' || id === 'cowboy-ranch-roundup' ? 120 : -20, scale: .65, opacity: .25, duration: .67 }, .12)
       .to(visual, { left: '0%', top: '0%', width: '100%', height: '100%', borderRadius: '0px', borderWidth: 0, duration: .7 }, .17)
       .fromTo(root.querySelector('.kw-hero__bridge'), { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: .22 }, .76);
+    if (id === 'rodeo-rosa') tl.to(hero.querySelectorAll('.kw-hero__visual-label, .kw-hero__scroll'), { opacity: 0, duration: .3 }, .4);
     root.querySelectorAll<HTMLElement>('.kw-hero__ornament').forEach((item, index) => {
       gsap.to(item, { x: index ? 70 : -60, y: index ? -35 : 25, rotate: index ? 16 : -14, scrollTrigger: trigger(hero, 'top top', 'bottom bottom') });
     });
@@ -166,14 +172,17 @@ export function setupKidsWorldScenes(root: HTMLElement, id: KidsWorldTemplateId)
   if (progress) gsap.fromTo(progress, { scaleX: 0 }, { scaleX: 1, ease: 'none', scrollTrigger: { trigger: root, scroller, start: 'top top', end: 'bottom bottom', scrub: .4 } });
   const story = root.querySelector<HTMLElement>('.st-story');
   if (story) {
-    gsap.fromTo(story.querySelectorAll('.st-story__word'), { opacity: .3 }, { opacity: 1, stagger: .05, ease: 'none', scrollTrigger: trigger(story, 'top 75%', 'bottom 53%') });
+    gsap.fromTo(story.querySelectorAll('.st-story__word'), { opacity: id === 'rodeo-rosa' ? .62 : .3 }, { opacity: 1, stagger: .05, ease: 'none', scrollTrigger: trigger(story, 'top 75%', 'bottom 53%') });
     story.querySelectorAll<SVGGeometryElement>('.kw-story__draw').forEach((path) => {
       if (typeof path.getTotalLength !== 'function') return;
       const length = path.getTotalLength();
       gsap.fromTo(path, { strokeDasharray: length, strokeDashoffset: length }, { strokeDashoffset: 0, ease: 'none', scrollTrigger: trigger(story, 'top 80%', 'bottom 47%') });
     });
     const backdrop = story.querySelector<SVGSVGElement>('.kw-story__map');
-    if (backdrop) gsap.fromTo(backdrop, { xPercent: -50, scale: .82, rotate: -12 }, { xPercent: -50, scale: 1.07, rotate: 8, scrollTrigger: trigger(story, 'top 85%', 'bottom 45%') });
+    if (backdrop) {
+      const xPercent = id === 'rodeo-rosa' ? 0 : -50;
+      gsap.fromTo(backdrop, { xPercent, scale: .82, rotate: -12 }, { xPercent, scale: 1.07, rotate: 8, scrollTrigger: trigger(story, 'top 85%', 'bottom 45%') });
+    }
   }
   const reveal = (selector: string, from: gsap.TweenVars, end = 'top 56%') => root.querySelectorAll<HTMLElement>(selector).forEach((item, index) => {
     gsap.fromTo(item, { ...from, rotate: typeof from.rotate === 'number' ? from.rotate * (index % 2 ? -1 : 1) : from.rotate }, { x: 0, y: 0, rotate: 0, rotateY: 0, scale: 1, opacity: 1, ease: 'none', scrollTrigger: trigger(item, 'top 96%', end) });
@@ -185,7 +194,12 @@ export function setupKidsWorldScenes(root: HTMLElement, id: KidsWorldTemplateId)
   reveal('.st-locations__card', { y: 52, opacity: .52 });
   root.querySelectorAll<HTMLElement>('.st-locations__card img').forEach(photo => gsap.fromTo(photo, { clipPath: 'inset(12% 10% round 25px)' }, { clipPath: 'inset(0% 0% round 0px)', ease: 'none', scrollTrigger: trigger(photo, 'top 90%', 'top 45%') }));
   reveal('.st-gallery__photo', { y: 58, rotate: 8, opacity: .52 });
-  reveal('.st-dress > .grid > div, .st-gifts > div, .st-social > div', { y: 42, opacity: .55 });
+  if (id === 'rodeo-rosa') {
+    reveal('.st-dress > .grid > div', { y: 32, rotateY: 14, opacity: .65 });
+    reveal('.st-gifts h2, .st-social h2, .st-rsvp h2', { y: 24, opacity: .68 });
+  } else {
+    reveal('.st-dress > .grid > div, .st-gifts > div, .st-social > div', { y: 42, opacity: .55 });
+  }
   const timeline = root.querySelector<HTMLElement>('.st-timeline');
   if (timeline) {
     const rail = timeline.querySelector<HTMLElement>('.st-timeline__line');
@@ -194,7 +208,7 @@ export function setupKidsWorldScenes(root: HTMLElement, id: KidsWorldTemplateId)
     if (runner) gsap.fromTo(runner, { top: '0%' }, { top: '93%', ease: 'none', scrollTrigger: trigger(timeline, 'top 78%', 'bottom 48%') });
   }
   reveal('.st-timeline__item', { x: 40, opacity: .55 });
-  if (id === 'pirate-treasure-voyage' || id === 'dino-jungle-expedition' || id === 'safari-sunrise-adventure' || id === 'cowboy-ranch-roundup' || id === 'bluey-birthday' || id === 'paw-patrol-birthday') {
+  if (id === 'pirate-treasure-voyage' || id === 'dino-jungle-expedition' || id === 'safari-sunrise-adventure' || id === 'cowboy-ranch-roundup' || id === 'rodeo-rosa' || id === 'bluey-birthday' || id === 'paw-patrol-birthday') {
     const stations = root.querySelector<HTMLElement>('.kw-stations');
     if (stations) root.querySelectorAll<HTMLElement>('.kw-ambient__station-motif').forEach((motif, index) => {
       gsap.to(motif, { xPercent: index % 2 ? -26 : 30, yPercent: index % 2 ? -115 : -75, rotate: index % 2 ? -30 : 24, scale: index % 2 ? .86 : 1.14, ease: 'none', scrollTrigger: trigger(stations, 'top 86%', 'bottom 18%') });

@@ -1,9 +1,9 @@
 import type { InvitationConfig, TemplateId } from '@/types/invitation.types';
 
-export type KidsWorldTemplateId = Extract<TemplateId, 'pirate-treasure-voyage' | 'dino-jungle-expedition' | 'safari-sunrise-adventure' | 'cowboy-ranch-roundup' | 'mickey-mouse-birthday' | 'bluey-birthday' | 'paw-patrol-birthday' | 'minecraft-birthday'>;
+export type KidsWorldTemplateId = Extract<TemplateId, 'pirate-treasure-voyage' | 'dino-jungle-expedition' | 'safari-sunrise-adventure' | 'cowboy-ranch-roundup' | 'rodeo-rosa' | 'mickey-mouse-birthday' | 'bluey-birthday' | 'paw-patrol-birthday' | 'minecraft-birthday'>;
 
 export function isKidsWorldTemplateId(id: TemplateId): id is KidsWorldTemplateId {
-  return id === 'pirate-treasure-voyage' || id === 'dino-jungle-expedition' || id === 'safari-sunrise-adventure' || id === 'cowboy-ranch-roundup' || id === 'mickey-mouse-birthday' || id === 'bluey-birthday' || id === 'paw-patrol-birthday' || id === 'minecraft-birthday';
+  return id === 'pirate-treasure-voyage' || id === 'dino-jungle-expedition' || id === 'safari-sunrise-adventure' || id === 'cowboy-ranch-roundup' || id === 'rodeo-rosa' || id === 'mickey-mouse-birthday' || id === 'bluey-birthday' || id === 'paw-patrol-birthday' || id === 'minecraft-birthday';
 }
 
 export function kidsWorldName(title: string) {
@@ -372,7 +372,101 @@ function applyPawPatrolDefaults(config: InvitationConfig, title: string) {
   };
 }
 
+function applyRodeoRosaDefaults(config: InvitationConfig, title: string) {
+  const asset = (name: string) => image('rodeo-rosa', name);
+  const mainTitle = /^(?:(?:nuestra|mi) celebraci[oó]n|Sofía\s*&\s*Mateo)$/i.test(title.trim()) ? 'Arlet' : title;
+  const name = kidsWorldName(mainTitle);
+  const { content } = config;
+  config.audio.enabled = false;
+  config.sectionsOrder = config.sectionsOrder.map(section => section.id === 'accommodation' ? { ...section, enabled: false } : section);
+  config.theme.envelope.sealMonogram = name[0]?.toUpperCase() || '✦';
+  config.theme.envelope.openButtonText = 'Abrir mi boleto al rodeo';
+  content.hero = {
+    ...content.hero,
+    mainTitle,
+    badgeText: 'Cumpleaños vaquero',
+    tagline: 'Ponte las botas y ven a festejar conmigo.',
+    coverImageUrl: asset('hero-mobile'),
+    focalPoint: { x: 50, y: 58 },
+  };
+  content.quoteStory = {
+    quoteText: 'Me hace ilusión celebrar mi cumpleaños contigo. Habrá fotos con sombrero, juegos de rancho y una rebanada de pastel para cada persona de mi pandilla.',
+    quoteAuthor: name,
+    storyBlocks: [
+      { title: 'Botas y moños', description: 'Un pañuelo rosa y tus botas favoritas son todo lo que necesitas para la foto.', imageUrl: asset('boots') },
+      { title: 'El corral de juegos', description: 'Los caballitos de madera esperan a sus jinetes.', imageUrl: asset('corral') },
+      { title: 'La mesa de los deseos', description: 'Nos juntamos alrededor del pastel para cantar y pedir un deseo.', imageUrl: asset('cake') },
+    ],
+  };
+  content.vipParents = {
+    blessingMessage: `La familia de ${name} te espera con mucho cariño.`,
+    groups: [
+      { groupTitle: 'Anfitriones', names: [`La familia de ${name}`] },
+      { groupTitle: 'Nuestra pandilla', names: ['Amigas, amigos y familia'] },
+    ],
+  };
+  const address = 'Parque México, Hipódromo, Ciudad de México';
+  const query = encodeURIComponent(address);
+  content.locations = [{
+    id: 'rodeo-rosa-venue', type: 'reception', title: 'Punto de encuentro',
+    venueName: 'Parque México', address, time: '15:00 HRS', imageUrl: asset('hero-desktop'),
+    coordinates: { lat: 19.4115, lng: -99.1691 },
+    googleMapsUrl: `https://www.google.com/maps/search/?api=1&query=${query}`,
+    wazeUrl: `https://waze.com/ul?q=${query}&navigate=yes`,
+  }];
+  content.timeline = [
+    { id: 'rodeo-1', time: '15:00 HRS', title: 'Llegada al rancho', description: 'Te recibimos con un pañuelo y un saludo vaquero.', icon: 'party' },
+    { id: 'rodeo-2', time: '15:30 HRS', title: 'Postales del oeste', description: 'Pasa por el rincón de fotos con tus botas o sombrero favorito.', icon: 'party' },
+    { id: 'rodeo-3', time: '16:00 HRS', title: 'Juegos en el corral', description: 'Formamos equipos para jugar con los caballitos y lanzar herraduras.', icon: 'party' },
+    { id: 'rodeo-4', time: '17:00 HRS', title: 'Pastel y velitas', description: `Nos reunimos para cantarle las mañanitas a ${name}.`, icon: 'cake' },
+  ];
+  content.gallery = {
+    layout: 'bento-grid',
+    images: [
+      { url: asset('hero-desktop'), caption: 'Llegada al rancho' },
+      { url: asset('boots'), caption: 'Postales del oeste' },
+      { url: asset('corral'), caption: 'Juegos en el corral' },
+      { url: asset('cake'), caption: 'Pastel y velitas' },
+    ],
+  };
+  content.dressCode = {
+    title: 'Saca tus botas favoritas',
+    womenNotes: 'Mezclilla, un moño o un pañuelo rosa. Ven con botas o tenis cómodos.',
+    menNotes: 'Sombrero, mezclilla y un pañuelo si te apetece. Elige calzado cómodo para jugar.',
+    reservedColors: [], reservedNote: '',
+  };
+  content.gifts = {
+    introMessage: 'El mejor regalo es compartir la tarde contigo. Si quieres dejar un detalle, habrá un buzón de sobres en la fiesta.',
+    registries: [], cashEnvelopeAtVenue: true,
+  };
+  content.accommodation = [];
+  content.socialFeatures = {
+    enableSongRequests: true, enableAudioGuestbook: false, enableLiveDisposableCamera: false,
+    hashtag: `#RodeoDe${name.replace(/\s+/g, '')}`,
+  };
+  content.rsvp = {
+    askDietaryRestrictions: false, allowChildrenSelection: true,
+    customConfirmationMessage: '¡Nos vemos en el rodeo! Guarda tu boleto con código QR para mostrarlo al llegar.',
+  };
+  content.sectionHeadings = {
+    quote_story: { eyebrow: '01 / Una carta del rancho' },
+    vip_parents: { eyebrow: '03 / La pandilla', title: 'Quienes te esperan' },
+    countdown: { eyebrow: '04 / El reloj del rodeo', title: 'La fiesta comienza en' },
+    locations: { eyebrow: '05 / Coordenadas', title: 'Camino al rancho' },
+    timeline: { eyebrow: '06 / El programa', title: 'Una tarde de rodeo' },
+    gallery: { eyebrow: '07 / El álbum', title: 'Postales del oeste' },
+    dress_code: { eyebrow: '08 / Vestimenta', title: content.dressCode.title },
+    gifts: { eyebrow: '09 / El buzón', title: 'Un detalle para el rancho' },
+    social_features: { eyebrow: '10 / Recuerdos', title: 'Álbum de la pandilla' },
+    rsvp: { eyebrow: '11 / Tu boleto de acceso', title: 'Confirma tu lugar en el rodeo' },
+  };
+}
+
 export function applyKidsWorldDefaults(config: InvitationConfig, id: KidsWorldTemplateId, title: string) {
+  if (id === 'rodeo-rosa') {
+    applyRodeoRosaDefaults(config, title);
+    return;
+  }
   const name = kidsWorldName(title);
   if (id === 'minecraft-birthday') {
     applyMinecraftDefaults(config, name);
