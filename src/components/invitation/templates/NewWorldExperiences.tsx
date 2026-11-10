@@ -3,6 +3,7 @@
 import type { CSSProperties } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { createQuoteReveal, drawQuotePaths, quoteWordTiming } from './quote-reveal';
 import type { GuestGroup, InvitationConfig } from '@/types/invitation.types';
 import type { NewWorldTemplateId } from '@/lib/templates/new-world-config';
 import { newWorldHeroDesktopSrc, newWorldHeroMobileSrc } from '@/lib/templates/new-world-config';
@@ -84,10 +85,12 @@ export function setupNewWorldScenes(root: HTMLElement, id: NewWorldTemplateId) {
     .fromTo(root.querySelector('.nw-hero__bridge'), { opacity: 0, y: 35 }, { opacity: 1, y: 0, duration: .2 }, .78);
   const progress = root.querySelector<HTMLElement>('.nw-progress__bar');
   if (progress) gsap.fromTo(progress, { scaleX: 0 }, { scaleX: 1, ease: 'none', scrollTrigger: { trigger: root, scroller, start: 'top top', end: 'bottom bottom', scrub: .4 } });
-  const story = root.querySelector<HTMLElement>('.st-story');
-  if (story) {
-    gsap.fromTo(story.querySelectorAll('.st-story__word'), { opacity: .24 }, { opacity: 1, stagger: .045, ease: 'none', scrollTrigger: config(story, 'top 75%', 'bottom 45%') });
-    story.querySelectorAll<SVGGeometryElement>('.nw-story__draw').forEach(path => { const length = path.getTotalLength(); gsap.fromTo(path, { strokeDasharray: length, strokeDashoffset: length }, { strokeDashoffset: 0, ease: 'none', scrollTrigger: config(story, 'top 85%', 'bottom 45%') }); });
+  const story = root.querySelector('.st-story');
+  const quote = story?.querySelector('blockquote');
+  if (story && quote) {
+    const reveal = createQuoteReveal(quote);
+    reveal.fromTo(quote.querySelectorAll('.st-story__word'), { opacity: .24 }, { opacity: 1, ...quoteWordTiming }, 0);
+    drawQuotePaths(reveal, story.querySelectorAll<SVGGeometryElement>('.nw-story__draw'));
   }
   root.querySelectorAll<HTMLElement>('.st-story > .grid > div, .nw-moment, .st-family__card, .st-countdown__unit, .st-locations__card, .st-gallery__photo, .st-dress > .grid > div, .st-gifts .grid > div').forEach((card, index) => gsap.fromTo(card, { y: 46, rotate: index % 2 ? 3 : -3, scale: .94, opacity: .48 }, { y: 0, rotate: 0, scale: 1, opacity: 1, ease: 'none', scrollTrigger: config(card) }));
   const timeline = root.querySelector<HTMLElement>('.st-timeline');

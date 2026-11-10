@@ -1,5 +1,6 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { createQuoteReveal, quoteWordTiming } from './quote-reveal';
 import type { OccasionTemplateId } from '@/lib/templates/occasion-config';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -67,24 +68,13 @@ export function setupOccasionScenes(
     );
   }
 
-  const story = root.querySelector<HTMLElement>('.st-story');
-  const words = root.querySelectorAll<HTMLElement>('.st-story__word');
-  if (story && words.length) {
-    gsap.fromTo(
-      words,
+  const quote = root.querySelector('.st-story blockquote');
+  if (quote) {
+    createQuoteReveal(quote).fromTo(
+      quote.querySelectorAll('.st-story__word'),
       { opacity: templateId === 'sweet-oh-baby' ? 0.3 : 0.18 },
-      {
-        opacity: 1,
-        stagger: 0.04,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: story,
-          scroller,
-          start: 'top 76%',
-          end: 'bottom 55%',
-          scrub: 0.7,
-        },
-      }
+      { opacity: 1, ...quoteWordTiming },
+      0,
     );
   }
 

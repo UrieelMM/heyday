@@ -1,5 +1,6 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { createQuoteReveal, quoteWordTiming } from './quote-reveal';
 import type { NewSceneTemplateId } from '@/lib/templates/new-scenes-config';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -33,11 +34,15 @@ export function setupNewScenes(root: HTMLElement, templateId: NewSceneTemplateId
     scene.fromTo(outro, { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.18 }, 0.79);
   }
 
-  const story = root.querySelector<HTMLElement>('.st-story');
-  const words = story?.querySelectorAll<HTMLElement>('.st-story__word');
-  if (story && words?.length) gsap.fromTo(words, { opacity: 0.25 }, { opacity: 1, stagger: 0.035, ease: 'none', scrollTrigger: {
-    trigger: story, scroller, start: 'top 82%', end: 'bottom 58%', scrub: 0.65,
-  } });
+  const quote = root.querySelector('.st-story blockquote');
+  if (quote) {
+    createQuoteReveal(quote).fromTo(
+      quote.querySelectorAll('.st-story__word'),
+      { opacity: 0.25 },
+      { opacity: 1, ...quoteWordTiming },
+      0,
+    );
+  }
 
   root.querySelectorAll<HTMLElement>('.st-family__card').forEach((card, i) => {
     gsap.fromTo(card, {

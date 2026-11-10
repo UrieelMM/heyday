@@ -1,5 +1,6 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { createQuoteReveal, quoteWordTiming } from './quote-reveal';
 import type { TemplateId } from '@/types/invitation.types';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -34,13 +35,14 @@ export function setupSignatureScenes(root: HTMLElement, templateId: TemplateId) 
     timeline.fromTo(final, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.18 }, 0.8);
   }
 
-  const words = root.querySelectorAll<HTMLElement>('.st-story__word');
-  const story = root.querySelector<HTMLElement>('.st-story');
-  if (story && words.length) {
-    gsap.fromTo(words, { opacity: 0.22 }, {
-      opacity: 1, stagger: 0.04, ease: 'none',
-      scrollTrigger: { trigger: story, scroller, start: 'top 75%', end: 'bottom 55%', scrub: 0.7 },
-    });
+  const quote = root.querySelector('.st-story blockquote');
+  if (quote) {
+    createQuoteReveal(quote).fromTo(
+      quote.querySelectorAll('.st-story__word'),
+      { opacity: 0.22 },
+      { opacity: 1, ...quoteWordTiming },
+      0,
+    );
   }
 
   const cards = root.querySelectorAll<HTMLElement>('.st-family .st-family__card');

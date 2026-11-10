@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { createQuoteReveal, drawQuotePaths, quoteWordTiming } from './quote-reveal';
 import { useGSAP } from '@gsap/react';
 import confetti from 'canvas-confetti';
 import { QRCodeSVG } from 'qrcode.react';
@@ -999,66 +1000,26 @@ export function MareaAzulExperience({
       });
 
       // 2. TRAVESÍA / MANIFIESTO: Carta náutica SVG dibujada + palabras iluminadas
-      const chartBackdrop = root.querySelector<SVGElement>('.ma-chart-backdrop');
-      if (chartBackdrop) {
-        gsap.fromTo(
-          chartBackdrop,
-          { scale: 0.82, rotate: -12, opacity: 0.25 },
-          {
-            scale: 1.06,
-            rotate: 10,
-            opacity: 0.9,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: '.ma-story',
-              start: 'top bottom',
-              end: 'bottom top',
-              scrub: 0.9,
-              ...scrollerOption,
-            },
-          }
-        );
-
-        chartBackdrop.querySelectorAll<SVGGeometryElement>('.ma-draw-path').forEach((path) => {
-          const length = path.getTotalLength ? path.getTotalLength() : 900;
-          gsap.fromTo(
-            path,
-            { strokeDasharray: length, strokeDashoffset: length },
-            {
-              strokeDashoffset: 0,
-              ease: 'none',
-              scrollTrigger: {
-                trigger: '.ma-story',
-                start: 'top 82%',
-                end: 'center 42%',
-                scrub: 0.8,
-                ...scrollerOption,
-              },
-            }
-          );
-        });
-      }
-
-      const storyWords = root.querySelectorAll<HTMLElement>('.ma-story__word');
-      const storyQuote = root.querySelector<HTMLElement>('.ma-story__quote');
-      if (storyQuote && storyWords.length) {
-        gsap.fromTo(
-          storyWords,
+      const storyQuote = root.querySelector('.ma-story__quote');
+      if (storyQuote) {
+        const reveal = createQuoteReveal(storyQuote);
+        reveal.fromTo(
+          storyQuote.querySelectorAll('.ma-story__word'),
           { opacity: 0.22, y: 8 },
-          {
-            opacity: 1,
-            y: 0,
-            stagger: 0.04,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: storyQuote,
-              start: 'top 84%',
-              end: 'bottom 48%',
-              scrub: 0.65,
-              ...scrollerOption,
-            },
-          }
+          { opacity: 1, y: 0, ...quoteWordTiming },
+          0,
         );
+
+        const chartBackdrop = root.querySelector('.ma-chart-backdrop');
+        if (chartBackdrop) {
+          reveal.fromTo(
+            chartBackdrop,
+            { scale: 0.82, rotate: -12, opacity: 0.25 },
+            { scale: 1.06, rotate: 10, opacity: 0.9 },
+            0,
+          );
+          drawQuotePaths(reveal, chartBackdrop.querySelectorAll<SVGGeometryElement>('.ma-draw-path'));
+        }
       }
 
       root.querySelectorAll<HTMLElement>('.ma-story__card').forEach((card, idx) => {

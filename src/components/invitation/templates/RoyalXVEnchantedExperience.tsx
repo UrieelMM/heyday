@@ -6,6 +6,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { createQuoteReveal, quoteWordTiming } from './quote-reveal';
 import { useGSAP } from '@gsap/react';
 import { QRCodeSVG } from 'qrcode.react';
 import { toast } from 'sonner';
@@ -169,8 +170,10 @@ export function RoyalXVEnchantedExperience({ slug, eventDate, config, guestGroup
     gsap.utils.toArray<HTMLElement>('.rx-section-heading h2').forEach((title) => {
       gsap.fromTo(title, { scale: .86, opacity: .35 }, { scale: 1, opacity: 1, ease: 'none', scrollTrigger: { trigger: title, start: 'top 95%', end: 'top 48%', scrub: .8 } });
     });
-    const words = gsap.utils.toArray<HTMLElement>('.rx-story__word');
-    if (words.length) gsap.to(words, { opacity: 1, stagger: .055, ease: 'none', scrollTrigger: { trigger: '.rx-story blockquote', start: 'top 78%', end: 'bottom 42%', scrub: .6 } });
+    const quote = rootRef.current?.querySelector('.rx-story blockquote');
+    if (quote) {
+      createQuoteReveal(quote).to(quote.querySelectorAll('.rx-story__word'), { opacity: 1, ...quoteWordTiming }, 0);
+    }
     gsap.utils.toArray<HTMLElement>('.rx-family__card').forEach((card, index) => {
       gsap.fromTo(card, { y: 95, rotate: index % 2 ? 8 : -8, scale: .85, opacity: .25 }, { y: 0, rotate: 0, scale: 1, opacity: 1, ease: 'none', scrollTrigger: { trigger: card, start: 'top 95%', end: 'top 50%', scrub: .75 } });
     });

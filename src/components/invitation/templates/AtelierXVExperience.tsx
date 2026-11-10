@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { createQuoteReveal, drawQuotePaths, quoteWordTiming } from './quote-reveal';
 import { useGSAP } from '@gsap/react';
 import { QRCodeSVG } from 'qrcode.react';
 import { toast } from 'sonner';
@@ -691,65 +692,26 @@ export function AtelierXVExperience({
       });
 
       // 2. MANIFIESTO DE ESTILO: Patronaje SVG dibujado + palabras iluminadas
-      const pattern = root.querySelector<SVGElement>('.ax-pattern-backdrop');
-      if (pattern) {
-        gsap.fromTo(
-          pattern,
-          { scale: 0.82, rotate: -10, opacity: 0.25 },
-          {
-            scale: 1.05,
-            rotate: 8,
-            opacity: 0.85,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: '.ax-story',
-              start: 'top bottom',
-              end: 'bottom top',
-              scrub: 0.9,
-              ...scrollerOption,
-            },
-          }
-        );
-        pattern.querySelectorAll<SVGGeometryElement>('.ax-draw-path').forEach((path) => {
-          const length = path.getTotalLength ? path.getTotalLength() : 900;
-          gsap.fromTo(
-            path,
-            { strokeDasharray: length, strokeDashoffset: length },
-            {
-              strokeDashoffset: 0,
-              ease: 'none',
-              scrollTrigger: {
-                trigger: '.ax-story',
-                start: 'top 82%',
-                end: 'center 42%',
-                scrub: 0.8,
-                ...scrollerOption,
-              },
-            }
-          );
-        });
-      }
-
-      const storyWords = root.querySelectorAll<HTMLElement>('.ax-story__word');
-      const storyQuote = root.querySelector<HTMLElement>('.ax-story__quote');
-      if (storyQuote && storyWords.length) {
-        gsap.fromTo(
-          storyWords,
+      const storyQuote = root.querySelector('.ax-story__quote');
+      if (storyQuote) {
+        const reveal = createQuoteReveal(storyQuote);
+        reveal.fromTo(
+          storyQuote.querySelectorAll('.ax-story__word'),
           { opacity: 0.2, y: 8 },
-          {
-            opacity: 1,
-            y: 0,
-            stagger: 0.04,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: storyQuote,
-              start: 'top 84%',
-              end: 'bottom 48%',
-              scrub: 0.65,
-              ...scrollerOption,
-            },
-          }
+          { opacity: 1, y: 0, ...quoteWordTiming },
+          0,
         );
+
+        const pattern = root.querySelector('.ax-pattern-backdrop');
+        if (pattern) {
+          reveal.fromTo(
+            pattern,
+            { scale: 0.82, rotate: -10, opacity: 0.25 },
+            { scale: 1.05, rotate: 8, opacity: 0.85 },
+            0,
+          );
+          drawQuotePaths(reveal, pattern.querySelectorAll<SVGGeometryElement>('.ax-draw-path'));
+        }
       }
 
       root.querySelectorAll<HTMLElement>('.ax-story__card').forEach((card, idx) => {

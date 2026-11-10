@@ -1,5 +1,6 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { createQuoteReveal, quoteWordTiming } from './quote-reveal';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -54,8 +55,8 @@ export function setupRodeoRosaScenes(root: HTMLElement) {
       const quote = one('blockquote', story);
       const words = quote ? all('.st-story__word', quote) : [];
       if (quote && words.length) {
-        const timeline = scene(quote, 'top bottom', 'bottom bottom', true);
-        timeline.fromTo(words, { opacity: .73 }, { opacity: 1, stagger: { amount: .67 }, duration: .33 }, 0);
+        const timeline = createQuoteReveal(quote, 'sine.inOut');
+        timeline.fromTo(words, { opacity: .73 }, { opacity: 1, ...quoteWordTiming }, 0);
         all('.kw-story__draw', story).forEach((path, index) => {
           const length = (path as SVGGeometryElement).getTotalLength();
           timeline.fromTo(path, { strokeDasharray: length, strokeDashoffset: length }, { strokeDashoffset: 0, duration: .66 }, .08 * index);

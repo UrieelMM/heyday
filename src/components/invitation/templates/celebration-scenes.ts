@@ -1,5 +1,6 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { createQuoteReveal, quoteWordTiming } from './quote-reveal';
 import type { CelebrationTemplateId } from '@/lib/templates/celebration-config';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -36,13 +37,14 @@ export function setupCelebrationScenes(root: HTMLElement, templateId: Celebratio
     timeline.fromTo(final, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.21 }, 0.76);
   }
 
-  const story = root.querySelector<HTMLElement>('.st-story');
-  const words = root.querySelectorAll<HTMLElement>('.st-story__word');
-  if (story && words.length) {
-    gsap.fromTo(words, { opacity: templateId === 'celestial-baptism' ? 0.5 : 0.55 }, {
-      opacity: 1, stagger: 0.04, ease: 'none',
-      scrollTrigger: { trigger: story, scroller, start: 'top 78%', end: 'bottom 56%', scrub: 0.7 },
-    });
+  const quote = root.querySelector('.st-story blockquote');
+  if (quote) {
+    createQuoteReveal(quote).fromTo(
+      quote.querySelectorAll('.st-story__word'),
+      { opacity: templateId === 'celestial-baptism' ? 0.5 : 0.55 },
+      { opacity: 1, ...quoteWordTiming },
+      0,
+    );
   }
 
   root.querySelectorAll<HTMLElement>('.st-story > .grid > div').forEach((card, index) => {

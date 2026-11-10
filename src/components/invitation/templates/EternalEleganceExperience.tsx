@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { createQuoteReveal, drawQuotePaths, quoteWordTiming } from './quote-reveal';
 import { useGSAP } from '@gsap/react';
 import confetti from 'canvas-confetti';
 import { QRCodeSVG } from 'qrcode.react';
@@ -1246,9 +1247,26 @@ export function EternalEleganceExperience({
           });
 
         // 3. STORY ROSE-WINDOW SVG DRAW + WORD-BY-WORD ILLUMINATION
+        const quote = root.querySelector('.ee-story__quote');
+        const quoteSection = quote?.closest('section');
+        if (quote) {
+          const reveal = createQuoteReveal(quote);
+          reveal.fromTo(
+            quote.querySelectorAll('.ee-story__word'),
+            { opacity: 0.18, y: 6 },
+            { opacity: 1, y: 0, ...quoteWordTiming },
+            0,
+          );
+          if (quoteSection) {
+            drawQuotePaths(reveal, quoteSection.querySelectorAll<SVGGeometryElement>('.ee-draw-path, .ee-draw'));
+          }
+        }
+
+        // Flourishes outside the story follow their own sections.
         root
           .querySelectorAll<SVGGeometryElement>('.ee-draw-path, .ee-draw')
           .forEach((path) => {
+            if (quoteSection?.contains(path)) return;
             const length = path.getTotalLength ? path.getTotalLength() : 600;
             gsap.fromTo(
               path,
@@ -1266,29 +1284,6 @@ export function EternalEleganceExperience({
               },
             );
           });
-
-        const quoteWords =
-          root.querySelectorAll<HTMLElement>('.ee-story__word');
-        const quote = root.querySelector('.ee-story__quote');
-        if (quote && quoteWords.length) {
-          gsap.fromTo(
-            quoteWords,
-            { opacity: 0.18, y: 6 },
-            {
-              opacity: 1,
-              y: 0,
-              stagger: 0.05,
-              ease: 'none',
-              scrollTrigger: {
-                trigger: quote,
-                start: 'top 80%',
-                end: 'bottom 45%',
-                scrub: 0.65,
-                ...scrollerOption,
-              },
-            },
-          );
-        }
 
         // Story cards alternating entrance
         root

@@ -3,6 +3,7 @@
 import type { CSSProperties, ReactNode } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { createQuoteReveal, drawQuotePaths, quoteWordTiming } from './quote-reveal';
 import type { GuestGroup, InvitationConfig } from '@/types/invitation.types';
 import type { WeddingWorldTemplateId } from '@/lib/templates/wedding-world-config';
 import { weddingHeroDesktopSrc } from '@/lib/templates/wedding-world-config';
@@ -73,12 +74,14 @@ export function setupWeddingWorldScenes(root: HTMLElement, id: WeddingWorldTempl
   }
   const progress = root.querySelector<HTMLElement>('.ww-progress__bar');
   if (progress) gsap.fromTo(progress, { scaleX: 0 }, { scaleX: 1, ease: 'none', scrollTrigger: { trigger: root, scroller, start: 'top top', end: 'bottom bottom', scrub: .4 } });
-  const story = root.querySelector<HTMLElement>('.st-story');
-  if (story) {
-    gsap.fromTo(story.querySelectorAll('.st-story__word'), { opacity: .24 }, { opacity: 1, stagger: .05, ease: 'none', scrollTrigger: tween(story, 'top 75%', 'bottom 45%') });
-    story.querySelectorAll<SVGGeometryElement>('.ww-story__draw').forEach(path => { if (typeof path.getTotalLength !== 'function') return; const length = path.getTotalLength(); gsap.fromTo(path, { strokeDasharray: length, strokeDashoffset: length }, { strokeDashoffset: 0, ease: 'none', scrollTrigger: tween(story, 'top 85%', 'bottom 45%') }); });
-    const art = story.querySelector<SVGSVGElement>('.ww-story__art');
-    if (art) gsap.fromTo(art, { xPercent: -50, scale: .84, rotate: -8 }, { xPercent: -50, scale: 1.08, rotate: 5, scrollTrigger: tween(story, 'top 85%', 'bottom 40%') });
+  const story = root.querySelector('.st-story');
+  const quote = story?.querySelector('blockquote');
+  if (story && quote) {
+    const reveal = createQuoteReveal(quote);
+    reveal.fromTo(quote.querySelectorAll('.st-story__word'), { opacity: .24 }, { opacity: 1, ...quoteWordTiming }, 0);
+    drawQuotePaths(reveal, story.querySelectorAll<SVGGeometryElement>('.ww-story__draw'));
+    const art = story.querySelector('.ww-story__art');
+    if (art) reveal.fromTo(art, { xPercent: -50, scale: .84, rotate: -8 }, { xPercent: -50, scale: 1.08, rotate: 5 }, 0);
   }
   const reveal = (selector: string, from: gsap.TweenVars) => root.querySelectorAll<HTMLElement>(selector).forEach((item, index) => gsap.fromTo(item, { ...from, rotate: typeof from.rotate === 'number' ? from.rotate * (index % 2 ? -1 : 1) : from.rotate }, { x: 0, y: 0, rotate: 0, scale: 1, opacity: 1, ease: 'none', scrollTrigger: tween(item) }));
   reveal('.st-story > .grid > div, .ww-station', { y: 65, opacity: .55, scale: .92 });

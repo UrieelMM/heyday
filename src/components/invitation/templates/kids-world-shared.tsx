@@ -3,6 +3,7 @@
 import { Fragment, type CSSProperties, type ReactNode } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { createQuoteReveal, drawQuotePaths, quoteWordTiming } from './quote-reveal';
 import type { GuestGroup, InvitationConfig } from '@/types/invitation.types';
 import { kidsWorldAge, kidsWorldName, type KidsWorldTemplateId } from '@/lib/templates/kids-world-config';
 import { kidsHeroDesktopSrc } from '@/lib/templates/kids-hero-media';
@@ -175,16 +176,14 @@ export function setupKidsWorldScenes(root: HTMLElement, id: KidsWorldTemplateId)
   }
   const progress = root.querySelector<HTMLElement>('.kw-progress__bar');
   if (progress) gsap.fromTo(progress, { scaleX: 0 }, { scaleX: 1, ease: 'none', scrollTrigger: { trigger: root, scroller, start: 'top top', end: 'bottom bottom', scrub: .4 } });
-  const story = root.querySelector<HTMLElement>('.st-story');
-  if (story) {
-    gsap.fromTo(story.querySelectorAll('.st-story__word'), { opacity: .3 }, { opacity: 1, stagger: .05, ease: 'none', scrollTrigger: trigger(story, 'top 75%', 'bottom 53%') });
-    story.querySelectorAll<SVGGeometryElement>('.kw-story__draw').forEach((path) => {
-      if (typeof path.getTotalLength !== 'function') return;
-      const length = path.getTotalLength();
-      gsap.fromTo(path, { strokeDasharray: length, strokeDashoffset: length }, { strokeDashoffset: 0, ease: 'none', scrollTrigger: trigger(story, 'top 80%', 'bottom 47%') });
-    });
-    const backdrop = story.querySelector<SVGSVGElement>('.kw-story__map');
-    if (backdrop) gsap.fromTo(backdrop, { xPercent: -50, scale: .82, rotate: -12 }, { xPercent: -50, scale: 1.07, rotate: 8, scrollTrigger: trigger(story, 'top 85%', 'bottom 45%') });
+  const story = root.querySelector('.st-story');
+  const quote = story?.querySelector('blockquote');
+  if (story && quote) {
+    const reveal = createQuoteReveal(quote);
+    reveal.fromTo(quote.querySelectorAll('.st-story__word'), { opacity: .3 }, { opacity: 1, ...quoteWordTiming }, 0);
+    drawQuotePaths(reveal, story.querySelectorAll<SVGGeometryElement>('.kw-story__draw'));
+    const backdrop = story.querySelector('.kw-story__map');
+    if (backdrop) reveal.fromTo(backdrop, { xPercent: -50, scale: .82, rotate: -12 }, { xPercent: -50, scale: 1.07, rotate: 8 }, 0);
   }
   const reveal = (selector: string, from: gsap.TweenVars, end = 'top 56%') => root.querySelectorAll<HTMLElement>(selector).forEach((item, index) => {
     gsap.fromTo(item, { ...from, rotate: typeof from.rotate === 'number' ? from.rotate * (index % 2 ? -1 : 1) : from.rotate }, { x: 0, y: 0, rotate: 0, rotateY: 0, scale: 1, opacity: 1, ease: 'none', scrollTrigger: trigger(item, 'top 96%', end) });

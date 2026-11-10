@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { createQuoteReveal, drawQuotePaths, quoteWordTiming } from './quote-reveal';
 import { useGSAP } from '@gsap/react';
 import confetti from 'canvas-confetti';
 import { QRCodeSVG } from 'qrcode.react';
@@ -982,33 +983,11 @@ export function NeonXVEuphoriaExperience({
           }
 
           // 2. STORY WORD-BY-WORD NEON ILLUMINATION + SVG STROKE DRAW
-          const storySection = root.querySelector('#nx-story');
-          const words = root.querySelectorAll('.nx-word');
-          const drawPaths = root.querySelectorAll('.nx-draw-path');
-
-          drawPaths.forEach((path) => {
-            if (path instanceof SVGGeometryElement) {
-              const len = path.getTotalLength();
-              gsap.set(path, {
-                strokeDasharray: len,
-                strokeDashoffset: len,
-              });
-              gsap.to(path, {
-                strokeDashoffset: 0,
-                ease: 'none',
-                scrollTrigger: {
-                  trigger: storySection,
-                  start: 'top 80%',
-                  end: 'bottom 30%',
-                  scrub: 1,
-                },
-              });
-            }
-          });
-
-          if (storySection && words.length > 0) {
-            gsap.fromTo(
-              words,
+          const quote = root.querySelector('#nx-story .nx-quote-text');
+          if (quote) {
+            const reveal = createQuoteReveal(quote);
+            reveal.fromTo(
+              quote.querySelectorAll('.nx-word'),
               {
                 opacity: 0.16,
                 color: '#7A7099',
@@ -1018,16 +997,11 @@ export function NeonXVEuphoriaExperience({
                 opacity: 1,
                 color: '#F8F7FF',
                 textShadow: '0 0 18px rgba(255,46,147,0.45)',
-                stagger: 0.06,
-                ease: 'none',
-                scrollTrigger: {
-                  trigger: storySection,
-                  start: 'top 72%',
-                  end: 'center center',
-                  scrub: 0.7,
-                },
+                ...quoteWordTiming,
               },
+              0,
             );
+            drawQuotePaths(reveal, root.querySelectorAll<SVGGeometryElement>('#nx-story .nx-draw-path'));
           }
 
           // Story cards alternating entrance

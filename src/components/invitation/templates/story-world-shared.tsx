@@ -3,6 +3,7 @@
 import type { CSSProperties, ReactNode } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { createQuoteReveal, drawQuotePaths, quoteWordTiming } from './quote-reveal';
 import type { GuestGroup, InvitationConfig } from '@/types/invitation.types';
 import type { StoryWorldTemplateId } from '@/lib/templates/story-world-config';
 import { storyWorldDesktopSrc } from '@/lib/templates/story-world-config';
@@ -75,10 +76,12 @@ export function setupStoryWorldScenes(root: HTMLElement, id: StoryWorldTemplateI
   }
   const progress=root.querySelector<HTMLElement>('.sw-progress__bar');
   if(progress) gsap.fromTo(progress,{scaleX:0},{scaleX:1,ease:'none',scrollTrigger:{trigger:root,scroller,start:'top top',end:'bottom bottom',scrub:.4}});
-  const story=root.querySelector<HTMLElement>('.st-story');
-  if(story){
-    gsap.fromTo(story.querySelectorAll('.st-story__word'),{opacity:.23},{opacity:1,stagger:.04,ease:'none',scrollTrigger:scrub(story,'top 75%','bottom 43%')});
-    story.querySelectorAll<SVGGeometryElement>('.sw-story__draw').forEach(path=>{const length=path.getTotalLength();gsap.fromTo(path,{strokeDasharray:length,strokeDashoffset:length},{strokeDashoffset:0,ease:'none',scrollTrigger:scrub(story,'top 83%','bottom 45%')});});
+  const story = root.querySelector('.st-story');
+  const quote = story?.querySelector('blockquote');
+  if (story && quote) {
+    const reveal = createQuoteReveal(quote);
+    reveal.fromTo(quote.querySelectorAll('.st-story__word'), { opacity: .23 }, { opacity: 1, ...quoteWordTiming }, 0);
+    drawQuotePaths(reveal, story.querySelectorAll<SVGGeometryElement>('.sw-story__draw'));
   }
   root.querySelectorAll<HTMLElement>('.st-story > .grid > div, .sw-moment, .st-family__card, .st-countdown__unit, .st-locations__card, .st-gallery__photo, .st-dress > .grid > div, .st-gifts .grid > div').forEach((card,index)=>gsap.fromTo(card,{y:45,rotate:index%2?4:-4,scale:.93,opacity:.52},{y:0,rotate:0,scale:1,opacity:1,ease:'none',scrollTrigger:scrub(card)}));
   if (id === 'ohana-lilo-stitch') {

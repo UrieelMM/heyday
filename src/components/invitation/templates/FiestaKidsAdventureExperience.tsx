@@ -3,6 +3,7 @@
 import type { CSSProperties } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { createQuoteReveal, drawQuotePaths, quoteWordTiming } from './quote-reveal';
 import type { GuestGroup, InvitationConfig } from '@/types/invitation.types';
 import { celebrationAge, celebrationName } from '@/lib/templates/celebration-config';
 import { kidsHeroDesktopSrc } from '@/lib/templates/kids-hero-media';
@@ -149,15 +150,14 @@ export function setupFiestaKidsAdventureScenes(root: HTMLElement) {
   }
   const progress = root.querySelector<HTMLElement>('.fk-progress__bar');
   if (progress) gsap.fromTo(progress, { scaleX: 0 }, { scaleX: 1, ease: 'none', scrollTrigger: { trigger: root, scroller, start: 'top top', end: 'bottom bottom', scrub: .4 } });
-  const story = root.querySelector<HTMLElement>('.st-story');
-  if (story) {
-    gsap.fromTo(story.querySelectorAll('.st-story__word'), { opacity: .32 }, { opacity: 1, stagger: .05, ease: 'none', scrollTrigger: options(story, 'top 75%', 'bottom 55%') });
-    story.querySelectorAll<SVGGeometryElement>('.fk-map__draw').forEach((path) => {
-      const length = path.getTotalLength();
-      gsap.fromTo(path, { strokeDasharray: length, strokeDashoffset: length }, { strokeDashoffset: 0, ease: 'none', scrollTrigger: options(story, 'top 78%', 'bottom 48%') });
-    });
-    const map = story.querySelector<SVGSVGElement>('.fk-map');
-    if (map) gsap.fromTo(map, { xPercent: -50, rotate: -12, scale: .82 }, { xPercent: -50, rotate: 8, scale: 1.08, scrollTrigger: options(story, 'top 85%', 'bottom 45%') });
+  const story = root.querySelector('.st-story');
+  const quote = story?.querySelector('blockquote');
+  if (story && quote) {
+    const reveal = createQuoteReveal(quote);
+    reveal.fromTo(quote.querySelectorAll('.st-story__word'), { opacity: .32 }, { opacity: 1, ...quoteWordTiming }, 0);
+    drawQuotePaths(reveal, story.querySelectorAll<SVGGeometryElement>('.fk-map__draw'));
+    const map = story.querySelector('.fk-map');
+    if (map) reveal.fromTo(map, { xPercent: -50, rotate: -12, scale: .82 }, { xPercent: -50, rotate: 8, scale: 1.08 }, 0);
   }
   const reveal = (selector: string, from: gsap.TweenVars, end = 'top 55%') => root.querySelectorAll<HTMLElement>(selector).forEach((item, index) => {
     gsap.fromTo(item, { ...from, rotate: typeof from.rotate === 'number' ? from.rotate * (index % 2 ? -1 : 1) : from.rotate }, { x: 0, y: 0, rotate: 0, rotateY: 0, scale: 1, opacity: 1, ease: 'none', scrollTrigger: options(item, 'top 96%', end) });

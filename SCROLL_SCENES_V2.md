@@ -68,6 +68,8 @@ Cada capítulo responde a una pregunta narrativa y utiliza el desplazamiento (`s
 
 ### 3.4 Movimiento suave y revelaciones en móvil
 
+Para el manifiesto, usa [`createQuoteReveal`](src/components/invitation/templates/quote-reveal.ts) con el `blockquote` como disparador. Coloca las palabras y los trazos de la ilustración en esa misma línea de tiempo para que la última línea y el dibujo estén completos al entrar en pantalla, aunque debajo haya tarjetas o cambie el número de líneas en móvil. Prueba también el scroll inverso y la llegada desde un enlace interno.
+
 **Rodeo Rosa** usa una coreografía dedicada para distinguir las escenas con gestos propios de la temática. El boleto se separa en dos, las estaciones abren sus puertas y el álbum revela una tira de película. Los fondos se mueven en planos separados del contenido. [Escenas de Rodeo Rosa](src/components/invitation/templates/rodeo-rosa-scenes.ts) · [Estilos de Rodeo Rosa](src/components/invitation/templates/rodeo-rosa.css)
 
 | Escena | Ajuste aplicado en Rodeo Rosa | Criterio para futuros templates |
@@ -159,7 +161,7 @@ Implementa un componente dedicado `[NombreTemplate]Experience.tsx` y su hoja `[t
    - Estado 1: Copy editorial + chips de fecha/sede + motivo vectorial + imagen enmarcada (arco, escotilla, vinilo, ventana).
    - Durante la transición, el copy se retira, el motivo protagonista se desplaza, el marco se expande a pantalla completa y emerge una tarjeta puente hacia la historia. Ajusta el `scrub` al recorrido del hero.
 4. **Banda cinética (`Marquee`):** Cinta horizontal continua con `mask-image` lateral que aporta ritmo entre capítulos.
-5. **Manifiesto / Historia (`data-editor-section="quoteStory"`).** Ilumina las palabras de la cita sobre el dibujo SVG (`strokeDashoffset`) y termina de revelarlas cuando la última línea entre en pantalla. Da a las 3 tarjetas de historia un gesto suave ligado a la temática.
+5. **Manifiesto / Historia (`data-editor-section="quoteStory"`).** Ilumina las palabras de la cita y dibuja el SVG (`strokeDashoffset`) en la línea de tiempo de `createQuoteReveal`, disparada por el `blockquote`. Completa ambos efectos cuando la última línea entre en pantalla. Da a las 3 tarjetas de historia su propio gesto suave ligado a la temática.
 6. **Inmersión temática (4 estaciones o momentos destacados).** Crea 4 tarjetas ilustradas y un fondo propio. Usa una cuadrícula Bento en escritorio. Si apilas tarjetas `sticky` en móvil, usa un marcador independiente por tarjeta y muestra el estado inicial de cada revelación antes de animarla.
 7. **Familia / Círculo de Honor (`data-editor-section="vipParents"`).** Centra las tarjetas y anima con moderación el desplazamiento, la escala o sus detalles decorativos.
 8. **Cuenta regresiva (`data-editor-section="countdown"`).** Mantén números y etiquetas fijos y legibles. Si animas arcos, trazos o cambios de opacidad, vincúlalos al scroll y separa la animación del reloj. Incluye las acciones de calendario solicitadas y centra el botón si hay uno solo.
