@@ -1,6 +1,9 @@
 'use client';
 
-import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { googleLocationUrl, wazeLocationUrl } from '@/lib/invitation/location-links';
+import { TimelineIcon, DressInspiration, HotelLinks } from '../core/InvitationDetails';
+import { RsvpExtras } from '../core/RsvpExtras';
+import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import gsap from 'gsap';
@@ -39,10 +42,11 @@ import { sectionHeading } from '@/lib/templates/section-heading';
 import { invitationFontStack } from '@/lib/fonts/invitation-fonts';
 import type { GuestGroup, InvitationConfig } from '@/types/invitation.types';
 import { buildGoogleCalendarUrl, buildIcsFileContent } from '@/lib/calendar/ics-generator';
-import { createDefaultInvitationConfig } from '@/lib/templates/templates-catalog';
 import { AmbientParticlesCanvas } from '../core/AmbientParticlesCanvas';
 import { FloatingAudioPlayer } from '../core/FloatingAudioPlayer';
 import { HeroMedia } from '../core/HeroMedia';
+import { EnvelopeOpener } from '../core/EnvelopeOpener';
+import { GalleryLayout } from '../core/GalleryLayout';
 import { SharedAlbum } from '../core/SharedAlbum';
 import { SocialFeatures } from '../core/SocialFeatures';
 import './atelier-xv.css';
@@ -78,56 +82,6 @@ const extractQuinceName = (title: string) =>
  * Upgrades unmodified legacy SVG seed paths ("cover.svg" / "detail.svg") to the new
  * luminous editorial photography while preserving 100% of user/editor customizations.
  */
-function atelierContent(config: InvitationConfig) {
-  const source = config.content;
-  const defaults = createDefaultInvitationConfig(
-    'atelier-xv',
-    source.hero.mainTitle || 'Valentina'
-  ).content;
-
-  const isLegacyCover =
-    !source.hero.coverImageUrl ||
-    source.hero.coverImageUrl === '/images/atelier-xv/cover.svg';
-
-  const isLegacyGallery =
-    source.gallery.images.length <= 2 &&
-    source.gallery.images.every(
-      (img) =>
-        img.url === '/images/atelier-xv/cover.svg' ||
-        img.url === '/images/atelier-xv/detail.svg'
-    );
-
-  const isLegacyBlocks =
-    (source.quoteStory.storyBlocks?.length ?? 0) === 2 &&
-    source.quoteStory.storyBlocks?.[0]?.title === 'Lo que soy';
-
-  const isLegacyTimeline =
-    source.timeline.length === 3 &&
-    source.timeline[0]?.id === 'atelier-1' &&
-    source.timeline[0]?.title === 'Bienvenida';
-
-  return {
-    ...source,
-    hero: {
-      ...source.hero,
-      coverImageUrl: isLegacyCover ? defaults.hero.coverImageUrl : source.hero.coverImageUrl,
-    },
-    quoteStory: {
-      ...source.quoteStory,
-      storyBlocks: isLegacyBlocks ? defaults.quoteStory.storyBlocks : source.quoteStory.storyBlocks,
-    },
-    locations: source.locations.map((loc) => ({
-      ...loc,
-      imageUrl:
-        !loc.imageUrl || loc.imageUrl === '/images/atelier-xv/cover.svg'
-          ? '/images/atelier-xv/runway.jpg'
-          : loc.imageUrl,
-    })),
-    timeline: isLegacyTimeline ? defaults.timeline : source.timeline,
-    gallery: isLegacyGallery ? defaults.gallery : source.gallery,
-  };
-}
-
 /**
  * Symmetrical Haute-Couture Satin Bow & Diamond Clasp SVG (`viewBox="0 0 260 190"`, center x = 130).
  */
@@ -531,7 +485,7 @@ export function AtelierXVExperience({
     tableName: string;
   } | null>(null);
 
-  const content = useMemo(() => atelierContent(config), [config]);
+  const content = config.content;
   const { colors, fonts, envelope } = config.theme;
   const quinceName = extractQuinceName(content.hero.mainTitle);
   const dateLabel = formatDate(eventDate);
@@ -955,7 +909,7 @@ export function AtelierXVExperience({
         );
       }
     },
-    { scope: rootRef, dependencies: [isOpen, isBuilderPreview, sectionSignature] }
+    { scope: rootRef, revertOnUpdate: true, dependencies: [isOpen, isBuilderPreview, sectionSignature] }
   );
 
   const openInvitation = useCallback(() => setIsOpen(true), []);
@@ -1103,7 +1057,7 @@ export function AtelierXVExperience({
       }
     >
       {/* 1. CARPETA DE INVITACIÓN FRONT ROW */}
-      {(!isBuilderPreview || previewEnvelope) && (
+      {(!isBuilderPreview || previewEnvelope) && (envelope.variant === 'editorial-curtain' ? (
         <Opening
           config={config}
           guestGroup={guestGroup}
@@ -1112,7 +1066,9 @@ export function AtelierXVExperience({
           isOpen={isOpen}
           onOpen={openInvitation}
         />
-      )}
+      ) : (
+        <EnvelopeOpener config={config} guestGroup={guestGroup} isOpen={isOpen} onOpen={openInvitation} />
+      ))}
 
       {/* 2. PARTÍCULAS + AUDIO */}
       <AmbientParticlesCanvas
@@ -1120,9 +1076,7 @@ export function AtelierXVExperience({
         accentColor={colors.accentPrimary}
       />
       <FloatingAudioPlayer
-        enabled={config.audio.enabled}
-        trackUrl={config.audio.trackUrl}
-        trackTitle={config.audio.trackTitle}
+        {...config.audio}
         isEnvelopeOpen={isOpen}
         accentColor={colors.accentPrimary}
       />
@@ -1368,6 +1322,7 @@ export function AtelierXVExperience({
                           <Scissors size={16} />
                         </div>
                         <h3>{block.title}</h3>
+                        {block.imageUrl && <img className="mb-3 w-full rounded-lg object-cover" src={block.imageUrl} alt="" loading="lazy" />}
                         <p>{block.description}</p>
                       </article>
                     ))}
@@ -1579,11 +1534,11 @@ export function AtelierXVExperience({
                     <article className="ax-location-card" key={loc.id || idx}>
                       <div className="ax-location-card__visual-col">
                         <div className="ax-location-card__media">
-                          <img
-                            src={loc.imageUrl || '/images/atelier-xv/runway.jpg'}
+                          {loc.imageUrl && <img
+                            src={loc.imageUrl}
                             alt={`Escenario en ${loc.venueName}`}
                             loading="lazy"
-                          />
+                          />}
                           <span className="ax-location-card__coord">
                             <Compass size={14} />
                             <span>
@@ -1619,7 +1574,7 @@ export function AtelierXVExperience({
 
                         <div className="ax-location-card__routes">
                           <a
-                            href={loc.googleMapsUrl}
+                            href={googleLocationUrl(loc)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="ax-route-btn ax-route-btn--primary"
@@ -1628,7 +1583,7 @@ export function AtelierXVExperience({
                             <span>Google Maps</span>
                           </a>
                           <a
-                            href={loc.wazeUrl}
+                            href={wazeLocationUrl(loc)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="ax-route-btn"
@@ -1704,7 +1659,7 @@ export function AtelierXVExperience({
                       </div>
                       <div className="ax-timeline__card">
                         <div className="ax-timeline__meta">
-                          <span className="ax-timeline__time">{item.time}</span>
+                          <span className="ax-timeline__time"><TimelineIcon icon={item.icon} />{item.time}</span>
                           <span className="ax-timeline__step">
                             ACTO 0{idx + 1}
                           </span>
@@ -1744,7 +1699,7 @@ export function AtelierXVExperience({
                 )}
               />
 
-              <div className="ax-gallery__grid">
+              <GalleryLayout layout={content.gallery.layout} className="ax-gallery__grid">
                 {content.gallery.images.map((img, idx) => (
                   <figure
                     className="ax-gallery__card"
@@ -1768,7 +1723,7 @@ export function AtelierXVExperience({
                     )}
                   </figure>
                 ))}
-              </div>
+              </GalleryLayout>
             </div>
           </section>
         )}
@@ -1863,6 +1818,7 @@ export function AtelierXVExperience({
                 </div>
               )}
             </div>
+            <DressInspiration url={content.dressCode.pinterestBoardUrl} />
           </section>
         )}
 
@@ -1923,6 +1879,7 @@ export function AtelierXVExperience({
                       <p className="ax-gifts__clabe">
                         CLABE: {content.gifts.bankTransfer.clabe}
                       </p>
+                    {content.gifts.bankTransfer.accountNumber && <small className="block">Cuenta: {content.gifts.bankTransfer.accountNumber}</small>}
                       {content.gifts.bankTransfer.conceptNote && (
                         <small>
                           Concepto: {content.gifts.bankTransfer.conceptNote}
@@ -1996,6 +1953,7 @@ export function AtelierXVExperience({
                         Código: {hotel.discountCode}
                       </span>
                     )}
+                    <HotelLinks hotel={hotel} />
                   </article>
                 ))}
               </div>
@@ -2029,18 +1987,20 @@ export function AtelierXVExperience({
               />
 
               <div className="ax-social__grid">
-                <div className="ax-social__panel">
-                  <div className="ax-social__panel-head">
-                    <Camera size={20} />
-                    <span>ÁLBUM DE INVITADOS</span>
+                {content.socialFeatures.enableLiveDisposableCamera && (
+                  <div className="ax-social__panel">
+                    <div className="ax-social__panel-head">
+                      <Camera size={20} />
+                      <span>ÁLBUM DE INVITADOS</span>
+                    </div>
+                    <h3>La gala desde tu lente</h3>
+                    <SharedAlbum
+                      slug={slug}
+                      token={guestGroup?.guestToken}
+                      preview={isBuilderPreview}
+                    />
                   </div>
-                  <h3>La gala desde tu lente</h3>
-                  <SharedAlbum
-                    slug={slug}
-                    token={guestGroup?.guestToken}
-                    preview={isBuilderPreview}
-                  />
-                </div>
+                )}
 
                 {(content.socialFeatures.enableSongRequests ||
                   content.socialFeatures.enableAudioGuestbook) && (
@@ -2297,6 +2257,7 @@ export function AtelierXVExperience({
                 )}
               </div>
             </div>
+            <RsvpExtras phone={content.rsvp.plannerContactWhatsapp} previewMessage={isBuilderPreview ? content.rsvp.customConfirmationMessage : undefined} />
           </section>
         )}
       </main>

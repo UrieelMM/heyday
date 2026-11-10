@@ -186,11 +186,11 @@ export function EnvelopeOpener({
                 }}
                 className="relative z-10 flex h-24 w-24 flex-col items-center justify-center rounded-full border-4 border-white/30 text-white shadow-xl"
               >
-                {envelope.variant === 'pass-ticket-tear' ? (
+                {envelope.variant === 'pass-ticket-tear' && !envelope.sealMonogram ? (
                   <Ticket className="h-8 w-8" />
                 ) : (
                   <span
-                    className="text-xl font-bold tracking-wider"
+                    className="max-w-full px-1 text-center text-sm font-bold tracking-wide break-all"
                     style={{ fontFamily: invitationFontStack(fonts.headingFont) }}
                   >
                     {envelope.sealMonogram}

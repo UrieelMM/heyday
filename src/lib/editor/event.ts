@@ -2,6 +2,8 @@ import 'server-only';
 
 import { createAdminClient } from '@/lib/supabase/admin';
 import { canEditEvent } from './access';
+import { resolveInvitationConfig } from '@/lib/templates/resolve-invitation-config';
+import type { InvitationConfig, TemplateId } from '@/types/invitation.types';
 
 export async function authorizedEvent(slug: string) {
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return null;
@@ -28,6 +30,7 @@ export function publicEditorEvent(event: {
     id: event.id, slug: event.slug, title: event.title,
     clientName: event.client_name, templateId: event.template_id,
     eventDate: event.event_date, status: event.status,
-    config: event.config, updatedAt: event.updated_at,
+    config: resolveInvitationConfig(event.template_id as TemplateId, event.config as InvitationConfig),
+    updatedAt: event.updated_at,
   };
 }

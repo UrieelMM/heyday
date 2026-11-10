@@ -50,7 +50,7 @@ export function SignatureHero({
 
   return (
     <section id="st-hero" className="st-hero" aria-label="Portada de la invitación">
-      <div className="st-hero__stage">
+      <div className="st-hero__stage" style={{ backgroundColor: config.theme.colors.bgPrimary, color: config.theme.colors.textPrimary }}>
         <div className="st-hero__texture" aria-hidden="true" />
         <div className="st-hero__symbol" aria-hidden="true">{copy.mark}</div>
         {templateId === 'boho-terracotta' && (
@@ -76,9 +76,9 @@ export function SignatureHero({
 
         <div className="st-hero__copy">
           <p className="st-hero__eyebrow">{copy.eyebrow}</p>
-          <p className="st-hero__event-label">{templateId === 'neon-xv-euphoria' ? 'MIS QUINCE AÑOS' : 'CELEBRAMOS NUESTRA BODA'}</p>
-          <h1 aria-label={neonNameBreak ? title : undefined}>{neonNameBreak ? <>{title.slice(0, neonNameBreak)}<br className="st-hero__mobile-break" />{title.slice(neonNameBreak)}</> : title}</h1>
-          <p className="st-hero__tagline">{hero.tagline}</p>
+          <p className="st-hero__event-label">{hero.badgeText || (templateId === 'neon-xv-euphoria' ? 'MIS QUINCE AÑOS' : 'CELEBRAMOS NUESTRA BODA')}</p>
+          <h1 style={{ fontFamily: 'var(--inv-heading-font)' }} aria-label={neonNameBreak ? title : undefined}>{neonNameBreak ? <>{title.slice(0, neonNameBreak)}<br className="st-hero__mobile-break" />{title.slice(neonNameBreak)}</> : title}</h1>
+          <p className="st-hero__tagline" style={{ color: config.theme.colors.textMuted }}>{hero.tagline}</p>
           {guestGroup && <p className="st-hero__guest">Invitación para {guestGroup.groupName}</p>}
           <p className="st-hero__date">{date}</p>
         </div>

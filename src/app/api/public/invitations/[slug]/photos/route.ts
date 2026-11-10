@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { compressPhoto } from '@/lib/media/compress-photo';
 import { validatePhoto } from '@/lib/media/validate';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { resolveInvitationConfig } from '@/lib/templates/resolve-invitation-config';
+import type { InvitationConfig, TemplateId } from '@/types/invitation.types';
 
 export const runtime = 'nodejs';
 
@@ -9,11 +11,14 @@ async function access(slug: string, token: string) {
   const db = createAdminClient();
   const { data: event } = await db
     .from('events')
-    .select('id,album_expires_at,album_purged_at')
+    .select('id,template_id,config,album_expires_at,album_purged_at')
     .eq('slug', slug)
     .eq('status', 'published')
     .maybeSingle();
   if (!event || !token) return null;
+  const config = resolveInvitationConfig(event.template_id as TemplateId, event.config as InvitationConfig);
+  if (config.sectionsOrder.find(section => section.id === 'social_features')?.enabled === false ||
+      !config.content.socialFeatures.enableLiveDisposableCamera) return null;
   const { data: group } = await db
     .from('guest_groups')
     .select('id,group_name')

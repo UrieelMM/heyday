@@ -441,7 +441,7 @@ function applyRodeoRosaDefaults(config: InvitationConfig, title: string) {
   };
   content.accommodation = [];
   content.socialFeatures = {
-    enableSongRequests: true, enableAudioGuestbook: false, enableLiveDisposableCamera: false,
+    enableSongRequests: true, enableAudioGuestbook: false, enableLiveDisposableCamera: true,
     hashtag: `#RodeoDe${name.replace(/\s+/g, '')}`,
   };
   content.rsvp = {

@@ -29,7 +29,7 @@ export function WeddingWorldHero({ variant, config, eventDate, guestGroup, actio
     <div className="ww-hero__stage">
       <div className="ww-hero__texture" aria-hidden="true" />
       <nav className="ww-nav" aria-label="Navegación de la invitación"><a className="ww-nav__brand" href="#ww-hero">{copy.symbol} {copy.brand}</a><div><a href="#ww-stations">Momentos</a><a href="#st-locations">Lugar</a><a href="#st-rsvp">Confirmar</a></div></nav>
-      <div className="ww-hero__copy"><p className="ww-overline">{copy.overline}</p><h1>{hero.mainTitle}</h1><span className="ww-hairline" aria-hidden="true"/><p className="ww-hero__tagline">{hero.tagline}</p><p className="ww-hero__date">{date}<span aria-hidden="true"> · </span>{locations[0]?.venueName}</p>{guestGroup && <p className="ww-hero__guest">Una invitación especial para {guestGroup.groupName}</p>}</div>
+      <div className="ww-hero__copy"><p className="ww-overline">{hero.badgeText || copy.overline}</p><h1>{hero.mainTitle}</h1><span className="ww-hairline" aria-hidden="true"/><p className="ww-hero__tagline">{hero.tagline}</p><p className="ww-hero__date">{date}<span aria-hidden="true"> · </span>{locations[0]?.venueName}</p>{guestGroup && <p className="ww-hero__guest">Una invitación especial para {guestGroup.groupName}</p>}</div>
       <div className="ww-hero__visual"><HeroMedia hero={hero} alt={`Celebración de ${hero.mainTitle}`} desktopSrc={weddingHeroDesktopSrc(hero.coverImageUrl)} /><span className="ww-hero__photo-tag">{hero.badgeText}</span></div>
       <div className="ww-hero__emblem" aria-hidden="true">{seal}<div className="ww-hero__emblem-core">{motif}</div></div>
       <div className="ww-hero__bridge" aria-hidden="true"><span>{copy.overline}</span><p>{copy.bridge}</p></div>

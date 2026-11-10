@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { InvitationRenderer } from '@/components/invitation/core/InvitationRenderer';
 import { editorTargetForElement, editorTargetForSection } from '@/lib/editor/section-targets';
 import type { InvitationConfig, TemplateId } from '@/types/invitation.types';
@@ -15,6 +16,18 @@ export function EditorPreview({ slug, templateId, eventDate, initialConfig }: { 
   const [preview, setPreview] = useState({ config: initialConfig, eventDate, templateId, previewEnvelope: false });
   const [pickMode, setPickMode] = useState(false);
   const hovered = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    let frame = 0;
+    const observer = new ResizeObserver(() => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => ScrollTrigger.refresh(true));
+    });
+    observer.observe(document.body);
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(frame);
+    };
+  }, []);
   useEffect(() => {
     const receive = (event: MessageEvent<PreviewMessage>) => {
       if (event.origin !== window.location.origin || event.source !== window.parent) return;

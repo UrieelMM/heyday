@@ -1,6 +1,9 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { googleLocationUrl, locationTypeLabels, wazeLocationUrl } from '@/lib/invitation/location-links';
+import { TimelineIcon, DressInspiration, HotelLinks } from '../core/InvitationDetails';
+import { RsvpExtras } from '../core/RsvpExtras';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { createQuoteReveal, drawQuotePaths, quoteWordTiming } from './quote-reveal';
@@ -43,8 +46,13 @@ import {
 } from '@/lib/calendar/ics-generator';
 import { invitationFontStack } from '@/lib/fonts/invitation-fonts';
 import { HeroMedia } from '../core/HeroMedia';
+import { EnvelopeOpener } from '../core/EnvelopeOpener';
+import { GalleryLayout } from '../core/GalleryLayout';
 import { FloatingAudioPlayer } from '../core/FloatingAudioPlayer';
 import { SharedAlbum } from '../core/SharedAlbum';
+import { AmbientParticlesCanvas } from '../core/AmbientParticlesCanvas';
+import { sectionHeading } from '@/lib/templates/section-heading';
+import { submitGuestRsvp } from '@/lib/invitation/submit-rsvp';
 import { SocialFeatures } from '../core/SocialFeatures';
 import './neon-xv-euphoria.css';
 
@@ -153,161 +161,6 @@ function formatDate(eventDate: string) {
  * nuevas como existentes tengan imágenes editoriales nocturnas de XV, 3 capítulos de
  * historia, familia, 4 momentos de lineup y galería completa sin sobrescribir ediciones.
  */
-function neonContent(config: InvitationConfig): InvitationConfig['content'] {
-  const raw = config.content;
-
-  const isLegacyCover =
-    !raw.hero.coverImageUrl ||
-    raw.hero.coverImageUrl.includes('unsplash.com/photo-1519741497674') ||
-    raw.hero.coverImageUrl.includes('unsplash.com');
-
-  const hero = {
-    ...raw.hero,
-    badgeText:
-      !raw.hero.badgeText || raw.hero.badgeText === 'MIS XV AÑOS'
-        ? 'NEON XV EUPHORIA · VIP NIGHT'
-        : raw.hero.badgeText,
-    mainTitle:
-      !raw.hero.mainTitle || raw.hero.mainTitle.includes('Sofía & Mateo')
-        ? 'Renata · XV'
-        : raw.hero.mainTitle,
-    tagline:
-      !raw.hero.tagline || raw.hero.tagline.includes('Huatulco')
-        ? 'Una noche de luces, beats y energía inolvidable'
-        : raw.hero.tagline,
-    coverImageUrl: isLegacyCover
-      ? '/images/neon-xv-euphoria/cover.jpg'
-      : raw.hero.coverImageUrl,
-  };
-
-  const defaultBlocks = [
-    {
-      title: 'De sueños a luces de neón',
-      description:
-        'Cada etapa de mi vida ha tenido su propio soundtrack, y hoy quiero subirle el volumen junto a las personas que siempre han estado conmigo.',
-      imageUrl: '/images/neon-xv-euphoria/glow.jpg',
-    },
-    {
-      title: 'Una noche diseñada a mi estilo',
-      description:
-        'Nada de protocolos aburridos: preparamos un club nocturno lleno de láseres, espejos, música increíble y sorpresas en cada rincón.',
-      imageUrl: '/images/neon-xv-euphoria/stage.jpg',
-    },
-    {
-      title: 'Contigo en primera fila',
-      description:
-        'Esta noche no está completa sin ti. Trae tu mejor actitud, tus ganas de bailar y prepárate para brillar hasta la medianoche.',
-      imageUrl: '/images/neon-xv-euphoria/dancefloor.jpg',
-    },
-  ];
-
-  const existingBlocks = raw.quoteStory.storyBlocks || [];
-  const isDefaultSeedBlocks =
-    existingBlocks.length < 3 ||
-    existingBlocks[0]?.title === 'El encuentro';
-
-  const quoteStory = {
-    ...raw.quoteStory,
-    quoteText:
-      raw.quoteStory.quoteText ||
-      'Quince años de sueños se encienden hoy en una sola frecuencia: brillar sin límites con quienes hacen única mi historia.',
-    quoteAuthor: raw.quoteStory.quoteAuthor || hero.mainTitle,
-    storyBlocks: isDefaultSeedBlocks ? defaultBlocks : existingBlocks,
-  };
-
-  const defaultGroups = [
-    { groupTitle: 'Mis Padres', names: ['Claudia Morales & Alejandro Vega'] },
-    { groupTitle: 'Mis Padrinos', names: ['Mariana Solís & Rodrigo Méndez'] },
-    { groupTitle: 'Crew & Familia', names: ['Mis hermanos, primos y mejores amigos'] },
-  ];
-
-  const vipParents = {
-    blessingMessage:
-      raw.vipParents.blessingMessage ||
-      'Gracias por acompañarme en cada paso y encender conmigo el escenario más especial de mis XV años.',
-    groups:
-      raw.vipParents.groups && raw.vipParents.groups.length >= 2
-        ? raw.vipParents.groups
-        : defaultGroups,
-  };
-
-  const defaultTimeline = [
-    {
-      id: 'nx-1',
-      time: '20:00 HRS',
-      title: 'Red Carpet & Glow Check-In',
-      description: 'Pulseras holográficas, túnel de neón, glitter bar y mocktails.',
-      icon: 'cocktail' as const,
-    },
-    {
-      id: 'nx-2',
-      time: '21:00 HRS',
-      title: 'Main Stage · Mi Entrada XV',
-      description: 'Show de láseres, coreografía principal y brindis con chispas frías.',
-      icon: 'waltz' as const,
-    },
-    {
-      id: 'nx-3',
-      time: '22:15 HRS',
-      title: 'Mirrorball & DJ Live Set',
-      description: 'Se abre la pista LED con DJ en vivo, robots de luz y accesorios UV.',
-      icon: 'party' as const,
-    },
-    {
-      id: 'nx-4',
-      time: '00:00 HRS',
-      title: 'Afterglow, Pastel & Late-Night Bites',
-      description: 'Pastel metálico de medianoche, snacks y cierre épico.',
-      icon: 'cake' as const,
-    },
-  ];
-
-  const isLegacyTimeline =
-    !raw.timeline ||
-    raw.timeline.length < 4 ||
-    raw.timeline[0]?.title === 'Ceremonia Religiosa';
-
-  const timeline = isLegacyTimeline ? defaultTimeline : raw.timeline;
-
-  const isLegacyGallery =
-    !raw.gallery?.images ||
-    raw.gallery.images.length === 0 ||
-    raw.gallery.images.some((img) => img.url.includes('unsplash.com'));
-
-  const gallery = {
-    ...raw.gallery,
-    images: isLegacyGallery
-      ? [
-          {
-            url: '/images/neon-xv-euphoria/cover.jpg',
-            caption: 'Backstage Editorial · Neon XV',
-          },
-          {
-            url: '/images/neon-xv-euphoria/stage.jpg',
-            caption: 'Main Stage · Laser Show',
-          },
-          {
-            url: '/images/neon-xv-euphoria/dancefloor.jpg',
-            caption: 'Mirrorball & Pista LED',
-          },
-          {
-            url: '/images/neon-xv-euphoria/toast.jpg',
-            caption: 'Midnight Sparklers & Afterglow',
-          },
-        ]
-      : raw.gallery.images,
-  };
-
-  return {
-    ...raw,
-    hero,
-    quoteStory,
-    vipParents,
-    timeline,
-    gallery,
-  };
-}
-
 /**
  * Symmetrical Neon Crown & Crystal Star Prism SVG
  * Strictly centered at x = 120 in a 240x240 viewBox.
@@ -687,7 +540,7 @@ export function NeonXVEuphoriaExperience({
   const timelineTrackRef = useRef<HTMLDivElement | null>(null);
   const timelinePrismRef = useRef<HTMLDivElement | null>(null);
 
-  const content = useMemo(() => neonContent(config), [config]);
+  const content = config.content;
   const { colors, fonts, envelope } = config.theme;
   const dateLabel = formatDate(eventDate);
 
@@ -712,10 +565,12 @@ export function NeonXVEuphoriaExperience({
     guestGroup?.groupName ?? '',
   );
   const [guestsCount, setGuestsCount] = useState<number>(
-    guestGroup?.allocatedAdults ? Math.min(2, guestGroup.allocatedAdults) : 2,
+    guestGroup ? Math.min(2, guestGroup.allocatedAdults) : 2,
   );
   const [dietaryNotes, setDietaryNotes] = useState<string>('');
   const [guestMessage, setGuestMessage] = useState<string>('');
+  const [childrenCount, setChildrenCount] = useState(0);
+  const [qrPayload, setQrPayload] = useState('');
   const [rsvpSubmitted, setRsvpSubmitted] = useState<boolean>(false);
   const [isSubmittingRsvp, setIsSubmittingRsvp] = useState<boolean>(false);
   const [copiedClabe, setCopiedClabe] = useState<boolean>(false);
@@ -827,26 +682,22 @@ export function NeonXVEuphoriaExperience({
   // Submit RSVP
   const handleRsvpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!guestName.trim()) {
-      toast.error('Escribe tu nombre para generar tu VIP Pass');
+    if (isBuilderPreview || !guestGroup) {
+      toast.error('Abre tu enlace personal para confirmar');
       return;
     }
     setIsSubmittingRsvp(true);
     try {
-      await fetch(`/api/public/invitations/${encodeURIComponent(slug)}/rsvp`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          groupId: guestGroup?.id,
-          groupName: guestName.trim(),
-          status: attending === 'yes' ? 'confirmed' : 'declined',
-          confirmedAdults: attending === 'yes' ? guestsCount : 0,
-          confirmedChildren: 0,
-          dietaryRestrictions: dietaryNotes.trim(),
-          message: guestMessage.trim(),
-        }),
-      }).catch(() => null);
-
+      const pass = await submitGuestRsvp(slug, {
+        guestToken: guestGroup.guestToken,
+        groupName: guestName.trim(),
+        willAttend: attending === 'yes',
+        confirmedAdults: attending === 'yes' ? guestsCount : 0,
+        confirmedChildren: attending === 'yes' && content.rsvp.allowChildrenSelection ? childrenCount : 0,
+        dietaryNotes: content.rsvp.askDietaryRestrictions ? dietaryNotes.trim() : undefined,
+        guestMessage: guestMessage.trim(),
+      });
+      setQrPayload(pass?.qrPayload ?? '');
       setRsvpSubmitted(true);
       toast.success(
         attending === 'yes'
@@ -861,28 +712,23 @@ export function NeonXVEuphoriaExperience({
           colors: ['#FF2E93', '#00F0FF', '#A855F7'],
         });
       }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'No se pudo guardar tu respuesta');
     } finally {
       setIsSubmittingRsvp(false);
     }
   };
 
   // Story quote words for word-by-word neon illumination
-  const quoteWords = useMemo(() => {
-    const raw =
-      content.quoteStory.quoteText ||
-      'Hoy las luces se encienden para celebrar quién soy, rodeada de la gente que hace brillar mi mundo.';
-    return raw.split(/\s+/).filter(Boolean);
-  }, [content.quoteStory.quoteText]);
+  const quoteWords = content.quoteStory.quoteText.split(/\s+/).filter(Boolean);
 
   const storyChapters = content.quoteStory.storyBlocks || [];
   const galleryPhotos = content.gallery.images || [];
-  const dressSwatches =
-    content.dressCode.reservedColors &&
-    content.dressCode.reservedColors.length > 0
-      ? content.dressCode.reservedColors
-      : DEFAULT_NEON_SWATCHES;
+  const dressSwatches = content.dressCode.reservedColors;
 
   // GSAP Scroll Scenes Architecture (SCROLL_SCENES_V2.md)
+  const sectionSignature = config.sectionsOrder.map(section => `${section.id}:${section.enabled}`).join('|');
+
   useGSAP(
     () => {
       if (!rootRef.current) return;
@@ -990,13 +836,11 @@ export function NeonXVEuphoriaExperience({
               quote.querySelectorAll('.nx-word'),
               {
                 opacity: 0.16,
-                color: '#7A7099',
                 textShadow: '0 0 0px rgba(255,46,147,0)',
               },
               {
                 opacity: 1,
-                color: '#F8F7FF',
-                textShadow: '0 0 18px rgba(255,46,147,0.45)',
+                textShadow: '0 0 18px var(--nx-magenta)',
                 ...quoteWordTiming,
               },
               0,
@@ -1116,21 +960,12 @@ export function NeonXVEuphoriaExperience({
 
       return () => mm.revert();
     },
-    { scope: rootRef, dependencies: [isPassUnlocked] },
+    { scope: rootRef, revertOnUpdate: true, dependencies: [isPassUnlocked, sectionSignature] },
   );
 
   const selectedLocation =
     content.locations[activeLocationIdx] || content.locations[0];
 
-  const qrPayload = useMemo(() => {
-    return JSON.stringify({
-      event: content.hero.mainTitle,
-      slug,
-      guest: guestName || guestGroup?.groupName || 'Invitado VIP',
-      passes: attending === 'yes' ? guestsCount : 0,
-      status: attending === 'yes' ? 'VIP_CONFIRMED' : 'DECLINED',
-    });
-  }, [attending, content.hero.mainTitle, guestGroup?.groupName, guestName, guestsCount, slug]);
 
   return (
     <div
@@ -1140,12 +975,19 @@ export function NeonXVEuphoriaExperience({
       }`}
       style={
         {
+          '--nx-bg-primary': colors.bgPrimary,
+          '--nx-bg-secondary': colors.bgSecondary,
+          '--nx-text': colors.textPrimary,
+          '--nx-muted': colors.textMuted,
+          '--nx-magenta': clubMood === 1 ? colors.accentSecondary : clubMood === 2 ? '#c084fc' : colors.accentPrimary,
+          '--nx-cyan': clubMood === 1 ? colors.accentPrimary : colors.accentSecondary,
           '--nx-font-heading': invitationFontStack(fonts.headingFont || 'Syne'),
           '--nx-font-script': invitationFontStack(fonts.scriptFont || 'Syne'),
           '--nx-font-body': invitationFontStack(fonts.bodyFont || 'Space Grotesk'),
         } as React.CSSProperties
       }
     >
+      <AmbientParticlesCanvas effect={config.theme.ambientEffect} accentColor={colors.accentPrimary} />
       {/* Ambient Laser & Grid Backdrop */}
       <div className="nx-ambient" aria-hidden="true">
         <div className="nx-ambient__orb nx-ambient__orb--magenta" />
@@ -1157,7 +999,7 @@ export function NeonXVEuphoriaExperience({
       {/* ====================================================================
           SCENE 0: HOLOGRAPHIC ALL-ACCESS VIP PASS OPENING
          ==================================================================== */}
-      {(!isPassUnlocked || (isBuilderPreview && previewEnvelope)) && (
+      {!isPassUnlocked && (envelope.variant === 'pass-ticket-tear' ? (
         <div
           className="nx-opening"
           data-editor-section="envelope"
@@ -1173,7 +1015,7 @@ export function NeonXVEuphoriaExperience({
                 <Sparkles className="w-3.5 h-3.5" />
                 ALL ACCESS VIP PASS
               </span>
-              <span className="nx-opening__serial">
+              <span className="nx-opening__serial" style={{ borderColor: envelope.sealColor, color: envelope.sealColor }}>
                 {envelope.sealMonogram || 'NXV-2026'}
               </span>
             </div>
@@ -1221,7 +1063,9 @@ export function NeonXVEuphoriaExperience({
             </button>
           </div>
         </div>
-      )}
+      ) : (
+        <EnvelopeOpener config={config} guestGroup={guestGroup} isOpen={isPassUnlocked} onOpen={handleUnlockVipPass} />
+      ))}
 
       {/* ====================================================================
           SCENE 1: TWO-BEAT STICKY HERO PORTAL (#nx-hero)
@@ -1326,9 +1170,9 @@ export function NeonXVEuphoriaExperience({
             <div className="nx-section-header">
               <span className="nx-eyebrow">
                 <Sparkles className="w-3.5 h-3.5" />
-                MANIFIESTO DE LA NOCHE · MI FRECUENCIA
+                {sectionHeading(config, 'quote_story', 'eyebrow', 'MANIFIESTO DE LA NOCHE · MI FRECUENCIA')}
               </span>
-              <h2 className="nx-section-title">Mi Energía, Mi Escenario</h2>
+              <h2 className="nx-section-title">{sectionHeading(config, 'quote_story', 'title', 'Mi Energía, Mi Escenario')}</h2>
             </div>
 
             {/* Word-by-word Neon Quote */}
@@ -1355,16 +1199,7 @@ export function NeonXVEuphoriaExperience({
               {storyChapters.map((item, idx) => (
                 <article key={idx} className="nx-story-card">
                   <div className="nx-story-card__media">
-                    <img
-                      src={
-                        item.imageUrl ||
-                        `/images/neon-xv-euphoria/${
-                          idx === 0 ? 'glow' : idx === 1 ? 'stage' : 'dancefloor'
-                        }.jpg`
-                      }
-                      alt={item.title}
-                      loading="lazy"
-                    />
+                    {item.imageUrl && <img src={item.imageUrl} alt={item.title} loading="lazy" />}
                     <span className="nx-story-card__badge">SET 0{idx + 1}</span>
                   </div>
                   <div className="nx-story-card__body">
@@ -1480,10 +1315,10 @@ export function NeonXVEuphoriaExperience({
             <div className="nx-section-header">
               <span className="nx-eyebrow">
                 <Users className="w-3.5 h-3.5" />
-                ALL ACCESS BACKSTAGE CREW
+                {sectionHeading(config, 'vip_parents', 'eyebrow', 'ALL ACCESS BACKSTAGE CREW')}
               </span>
               <h2 className="nx-section-title">
-                Quienes hacen posible este sueño
+                {sectionHeading(config, 'vip_parents', 'title', 'Quienes hacen posible este sueño')}
               </h2>
               <p className="nx-section-subtitle">
                 {content.vipParents.blessingMessage}
@@ -1531,10 +1366,10 @@ export function NeonXVEuphoriaExperience({
               <div className="nx-section-header">
                 <span className="nx-eyebrow">
                   <Clock3 className="w-3.5 h-3.5" />
-                  CONTEO REGRESIVO · STAGE DROP
+                  {sectionHeading(config, 'countdown', 'eyebrow', 'CONTEO REGRESIVO · STAGE DROP')}
                 </span>
                 <h2 className="nx-section-title">
-                  La cuenta regresiva para el drop
+                  {sectionHeading(config, 'countdown', 'title', 'La cuenta regresiva para el drop')}
                 </h2>
                 <p className="nx-section-subtitle">
                   Guarda la fecha en tu calendario y prepárate para cuando se
@@ -1597,9 +1432,9 @@ export function NeonXVEuphoriaExperience({
             <div className="nx-section-header">
               <span className="nx-eyebrow">
                 <MapPin className="w-3.5 h-3.5" />
-                COORDENADAS DEL EVENTO · VENUE
+                {sectionHeading(config, 'locations', 'eyebrow', 'COORDENADAS DEL EVENTO · VENUE')}
               </span>
-              <h2 className="nx-section-title">El Club & Coordenadas VIP</h2>
+              <h2 className="nx-section-title">{sectionHeading(config, 'locations', 'title', 'El Club & Coordenadas VIP')}</h2>
             </div>
 
             <div className="nx-venue-layout">
@@ -1614,19 +1449,18 @@ export function NeonXVEuphoriaExperience({
                   >
                     <div className="nx-venue-card__top">
                       <span className="nx-pill nx-pill--cyan">
-                        {loc.type === 'religious_ceremony'
-                          ? 'PRE-SHOW'
-                          : 'MAIN STAGE'}
+                        {locationTypeLabels[loc.type]}
                       </span>
                       <span className="nx-venue-card__time">{loc.time}</span>
                     </div>
+                    {loc.imageUrl && <img className="mb-3 max-h-48 w-full rounded-lg object-cover" src={loc.imageUrl} alt={loc.venueName} loading="lazy" />}
                     <h3 className="nx-venue-card__title">{loc.title}</h3>
                     <p className="nx-venue-card__name">{loc.venueName}</p>
                     <p className="nx-venue-card__address">{loc.address}</p>
 
                     <div className="nx-venue-card__actions">
                       <a
-                        href={loc.googleMapsUrl}
+                        href={googleLocationUrl(loc)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="nx-btn nx-btn--neon nx-btn--sm"
@@ -1636,7 +1470,7 @@ export function NeonXVEuphoriaExperience({
                       </a>
                       {loc.wazeUrl && (
                         <a
-                          href={loc.wazeUrl}
+                          href={wazeLocationUrl(loc)}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="nx-btn nx-btn--outline nx-btn--sm"
@@ -1694,9 +1528,9 @@ export function NeonXVEuphoriaExperience({
             <div className="nx-section-header">
               <span className="nx-eyebrow">
                 <Music className="w-3.5 h-3.5" />
-                SETLIST OFICIAL · MINUTO A MINUTO
+                {sectionHeading(config, 'timeline', 'eyebrow', 'SETLIST OFICIAL · MINUTO A MINUTO')}
               </span>
-              <h2 className="nx-section-title">Lineup de la Noche</h2>
+              <h2 className="nx-section-title">{sectionHeading(config, 'timeline', 'title', 'Lineup de la Noche')}</h2>
             </div>
 
             <div ref={timelineTrackRef} className="nx-timeline-track">
@@ -1716,7 +1550,7 @@ export function NeonXVEuphoriaExperience({
                         : 'nx-timeline-card--right'
                     }`}
                   >
-                    <span className="nx-timeline-card__time">{item.time}</span>
+                    <span className="nx-timeline-card__time"><TimelineIcon icon={item.icon} />{item.time}</span>
                     <h3 className="nx-timeline-card__title">{item.title}</h3>
                     {item.description && (
                       <p className="nx-timeline-card__desc">{item.description}</p>
@@ -1742,12 +1576,12 @@ export function NeonXVEuphoriaExperience({
             <div className="nx-section-header">
               <span className="nx-eyebrow">
                 <Sparkles className="w-3.5 h-3.5" />
-                VISUAL ARCHIVE · NEON EDITORIAL
+                {sectionHeading(config, 'gallery', 'eyebrow', 'VISUAL ARCHIVE · NEON EDITORIAL')}
               </span>
-              <h2 className="nx-section-title">Destellos de esta Etapa</h2>
+              <h2 className="nx-section-title">{sectionHeading(config, 'gallery', 'title', 'Destellos de esta Etapa')}</h2>
             </div>
 
-            <div className="nx-gallery-grid">
+            <GalleryLayout layout={content.gallery.layout} className="nx-gallery-grid">
               {galleryPhotos.map((photo, idx) => (
                 <figure
                   key={idx}
@@ -1769,7 +1603,7 @@ export function NeonXVEuphoriaExperience({
                   )}
                 </figure>
               ))}
-            </div>
+            </GalleryLayout>
           </div>
         </section>
       )}
@@ -1788,10 +1622,10 @@ export function NeonXVEuphoriaExperience({
               <div className="nx-dress-panel__info">
                 <span className="nx-eyebrow">
                   <Shirt className="w-3.5 h-3.5" />
-                  ESTILO DE LA NOCHE · DRESS CODE
+                  {sectionHeading(config, 'dress_code', 'eyebrow', 'ESTILO DE LA NOCHE · DRESS CODE')}
                 </span>
                 <h2 className="nx-section-title">
-                  {content.dressCode.title || 'Neon Noir & Metallic Glam'}
+                  {sectionHeading(config, 'dress_code', 'title', content.dressCode.title || 'Neon Noir & Metallic Glam')}
                 </h2>
                 <p className="nx-dress-panel__code">
                   {content.dressCode.womenNotes}
@@ -1822,6 +1656,7 @@ export function NeonXVEuphoriaExperience({
               </div>
             </div>
           </div>
+          <DressInspiration url={content.dressCode.pinterestBoardUrl} />
         </section>
       )}
 
@@ -1838,9 +1673,9 @@ export function NeonXVEuphoriaExperience({
             <div className="nx-section-header">
               <span className="nx-eyebrow">
                 <Gift className="w-3.5 h-3.5" />
-                DETALLES & MESA DE REGALOS
+                {sectionHeading(config, 'gifts', 'eyebrow', 'DETALLES & MESA DE REGALOS')}
               </span>
-              <h2 className="nx-section-title">Mi Baúl de Deseos</h2>
+              <h2 className="nx-section-title">{sectionHeading(config, 'gifts', 'title', 'Mi Baúl de Deseos')}</h2>
               <p className="nx-section-subtitle">
                 {content.gifts.introMessage}
               </p>
@@ -1885,6 +1720,7 @@ export function NeonXVEuphoriaExperience({
                       )}
                     </button>
                   </div>
+                    {content.gifts.bankTransfer.accountNumber && <small className="block">Cuenta: {content.gifts.bankTransfer.accountNumber}</small>}
                   {content.gifts.bankTransfer.conceptNote && (
                     <p className="nx-gift-card__notes">
                       {content.gifts.bankTransfer.conceptNote}
@@ -1892,6 +1728,8 @@ export function NeonXVEuphoriaExperience({
                   )}
                 </article>
               )}
+
+              {content.gifts.cashEnvelopeAtVenue && <p className="nx-gift-card">Habrá un espacio para lluvia de sobres el día del evento.</p>}
 
               {content.gifts.registries.map((reg, idx) => (
                 <article key={idx} className="nx-gift-card">
@@ -1937,9 +1775,9 @@ export function NeonXVEuphoriaExperience({
               <div className="nx-section-header">
                 <span className="nx-eyebrow">
                   <Hotel className="w-3.5 h-3.5" />
-                  PARA INVITADOS FORÁNEOS
+                  {sectionHeading(config, 'accommodation', 'eyebrow', 'PARA INVITADOS FORÁNEOS')}
                 </span>
-                <h2 className="nx-section-title">Hospedaje Sugerido</h2>
+                <h2 className="nx-section-title">{sectionHeading(config, 'accommodation', 'title', 'Hospedaje Sugerido')}</h2>
               </div>
 
               <div className="nx-stay-grid">
@@ -1968,6 +1806,7 @@ export function NeonXVEuphoriaExperience({
                         </a>
                       </div>
                     )}
+                    <HotelLinks hotel={hotel} includeBooking={false} />
                   </article>
                 ))}
               </div>
@@ -1988,10 +1827,10 @@ export function NeonXVEuphoriaExperience({
             <div className="nx-section-header">
               <span className="nx-eyebrow">
                 <Radio className="w-3.5 h-3.5" />
-                BACKSTAGE INTERACTIVO · LIVE FEED
+                {sectionHeading(config, 'social_features', 'eyebrow', 'BACKSTAGE INTERACTIVO · LIVE FEED')}
               </span>
               <h2 className="nx-section-title">
-                Sube tus Fotos & Pide tu Canción
+                {sectionHeading(config, 'social_features', 'title', 'Sube tus Fotos & Pide tu Canción')}
               </h2>
             </div>
 
@@ -2016,6 +1855,7 @@ export function NeonXVEuphoriaExperience({
                 />
               </div>
             </div>
+            {content.socialFeatures.hashtag && <p className="mt-6 text-center">{content.socialFeatures.hashtag}</p>}
           </div>
         </section>
       )}
@@ -2034,11 +1874,11 @@ export function NeonXVEuphoriaExperience({
               <div className="nx-rsvp-ticket__header">
                 <span className="nx-pill nx-pill--magenta">
                   <Ticket className="w-3.5 h-3.5" />
-                  BOLETERA OFICIAL · ALL ACCESS VIP
+                  {sectionHeading(config, 'rsvp', 'eyebrow', 'BOLETERA OFICIAL · ALL ACCESS VIP')}
                 </span>
-                <h2 className="nx-section-title">Confirma tu Pase VIP</h2>
+                <h2 className="nx-section-title">{sectionHeading(config, 'rsvp', 'title', 'Confirma tu Pase VIP')}</h2>
                 <p className="nx-section-subtitle">
-                  {content.rsvp.customConfirmationMessage}
+                  Confirma tu asistencia para guardar tu pase digital.
                 </p>
               </div>
 
@@ -2087,7 +1927,7 @@ export function NeonXVEuphoriaExperience({
                           value={guestsCount}
                           onChange={(e) => setGuestsCount(Number(e.target.value))}
                         >
-                          {[1, 2, 3, 4, 5, 6].map((n) => (
+                          {Array.from({ length: (guestGroup?.allocatedAdults ?? 6) + 1 }, (_, index) => index).map((n) => (
                             <option key={n} value={n}>
                               {n} {n === 1 ? 'pase VIP' : 'pases VIP'}
                             </option>
@@ -2095,6 +1935,16 @@ export function NeonXVEuphoriaExperience({
                         </select>
                       </div>
 
+                      {content.rsvp.allowChildrenSelection && (guestGroup?.allocatedChildren ?? 2) > 0 && (
+                        <div className="nx-rsvp-field">
+                          <label htmlFor="nx-children-count">Niños</label>
+                          <select id="nx-children-count" value={childrenCount} onChange={event => setChildrenCount(Number(event.target.value))}>
+                            {Array.from({ length: (guestGroup?.allocatedChildren ?? 2) + 1 }, (_, index) => (
+                              <option key={index} value={index}>{index}</option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
                       {content.rsvp.askDietaryRestrictions && (
                         <div className="nx-rsvp-field">
                           <label htmlFor="nx-dietary">
@@ -2148,11 +1998,12 @@ export function NeonXVEuphoriaExperience({
                     <h3>{guestName}</h3>
                     <p>
                       {attending === 'yes'
-                        ? `${guestsCount} ${
-                            guestsCount === 1 ? 'Acceso VIP' : 'Accesos VIP'
+                        ? `${guestsCount + (content.rsvp.allowChildrenSelection ? childrenCount : 0)} ${
+                            guestsCount + (content.rsvp.allowChildrenSelection ? childrenCount : 0) === 1 ? 'Acceso VIP' : 'Accesos VIP'
                           } · ${dateLabel}`
                         : 'Gracias por notificarnos'}
                     </p>
+                    {qrPayload && content.rsvp.customConfirmationMessage && <p>{content.rsvp.customConfirmationMessage}</p>}
                     <button
                       type="button"
                       onClick={() => setRsvpSubmitted(false)}
@@ -2162,7 +2013,7 @@ export function NeonXVEuphoriaExperience({
                     </button>
                   </div>
 
-                  {attending === 'yes' && (
+                  {qrPayload && (
                     <div className="nx-qr-pass__code">
                       <QRCodeSVG
                         value={qrPayload}
@@ -2178,6 +2029,7 @@ export function NeonXVEuphoriaExperience({
               )}
             </div>
           </div>
+          <RsvpExtras phone={content.rsvp.plannerContactWhatsapp} previewMessage={isBuilderPreview ? content.rsvp.customConfirmationMessage : undefined} />
         </section>
       )}
 
@@ -2192,9 +2044,7 @@ export function NeonXVEuphoriaExperience({
 
       {/* Floating Audio Player */}
       <FloatingAudioPlayer
-        enabled={config.audio.enabled}
-        trackUrl={config.audio.trackUrl}
-        trackTitle={config.audio.trackTitle}
+        {...config.audio}
         isEnvelopeOpen={isPassUnlocked}
         accentColor={colors.accentPrimary}
       />

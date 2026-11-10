@@ -118,12 +118,16 @@ interface UseVinylTurntableOptions {
   tracks?: VinylTrackSpec[];
   externalTrackUrl?: string;
   preferExternalAudio?: boolean;
+  enabled?: boolean;
+  startSecond?: number;
 }
 
 export function useVinylTurntable({
   tracks = DEFAULT_VINYL_TRACKS,
   externalTrackUrl,
   preferExternalAudio = false,
+  enabled = true,
+  startSecond = 0,
 }: UseVinylTurntableOptions = {}) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [activeTrackIndex, setActiveTrackIndex] = useState(0);
@@ -140,11 +144,17 @@ export function useVinylTurntable({
   const crackleSourceRef = useRef<AudioBufferSourceNode | null>(null);
   const stepTimerRef = useRef<number | null>(null);
   const vuTimerRef = useRef<number | null>(null);
-  const stepCountRef = useRef(0);
+  const stepCountRef = useRef(Math.floor(startSecond * (tracks[0]?.bpm ?? 100) / 30));
   const externalAudioRef = useRef<HTMLAudioElement | null>(null);
+  const externalSourceRef = useRef<string | null>(null);
 
   const activeTrack = tracks[activeTrackIndex] || tracks[0];
   const speedMultiplier = (rpm === 45 ? 45 / 33.333 : 1) * (1 + pitchPercent / 100);
+
+  useEffect(() => {
+    stepCountRef.current = Math.floor(startSecond * activeTrack.bpm / 30);
+    if (externalAudioRef.current) externalAudioRef.current.currentTime = startSecond;
+  }, [activeTrack.bpm, startSecond]);
 
   // Tonearm angle: -28deg when parked off the record, or grooveAngle + subtle progress when playing
   const tonearmAngle = isPlaying
@@ -152,7 +162,7 @@ export function useVinylTurntable({
     : -28;
 
   const ensureAudioContext = useCallback(() => {
-    if (typeof window === 'undefined') return null;
+    if (typeof window === 'undefined' || !enabled) return null;
     if (!audioCtxRef.current) {
       const Ctx =
         window.AudioContext ||
@@ -169,7 +179,7 @@ export function useVinylTurntable({
       audioCtxRef.current.resume().catch(() => {});
     }
     return audioCtxRef.current;
-  }, [volume]);
+  }, [enabled, volume]);
 
   /**
    * Plays a tactile mechanical needle-drop / needle-lift sound effect
@@ -381,7 +391,7 @@ export function useVinylTurntable({
 
   // Main sequencer & VU meter loop when playing
   useEffect(() => {
-    if (!isPlaying) {
+    if (!enabled || !isPlaying) {
       if (stepTimerRef.current) window.clearInterval(stepTimerRef.current);
       if (vuTimerRef.current) window.clearInterval(vuTimerRef.current);
       if (crackleSourceRef.current) {
@@ -404,14 +414,21 @@ export function useVinylTurntable({
 
     const useExternal = Boolean(preferExternalAudio && externalTrackUrl);
     if (useExternal && externalTrackUrl) {
-      if (!externalAudioRef.current || externalAudioRef.current.src !== externalTrackUrl) {
+      if (!externalAudioRef.current || externalSourceRef.current !== externalTrackUrl) {
+        externalAudioRef.current?.pause();
         externalAudioRef.current = new Audio(externalTrackUrl);
+        externalSourceRef.current = externalTrackUrl;
         externalAudioRef.current.loop = true;
+        externalAudioRef.current.currentTime = startSecond;
       }
       externalAudioRef.current.volume = volume;
       externalAudioRef.current.playbackRate = speedMultiplier;
-      externalAudioRef.current.play().catch(() => {});
+      const audio = externalAudioRef.current;
+      void audio.play().catch(() => {
+        if (externalAudioRef.current === audio) setIsPlaying(false);
+      });
     } else {
+      externalAudioRef.current?.pause();
       const stepMs = Math.max(
         140,
         Math.round((60000 / activeTrack.bpm / 2) / speedMultiplier)
@@ -436,17 +453,23 @@ export function useVinylTurntable({
       if (vuTimerRef.current) window.clearInterval(vuTimerRef.current);
     };
   }, [
+    enabled,
     isPlaying,
     activeTrack,
     speedMultiplier,
     rpm,
     preferExternalAudio,
     externalTrackUrl,
+    startSecond,
     volume,
     ensureAudioContext,
     startCrackleLoop,
     triggerAnalogBeat,
   ]);
+
+  useEffect(() => {
+    if (!enabled) setIsPlaying(false);
+  }, [enabled]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -470,32 +493,34 @@ export function useVinylTurntable({
   }, []);
 
   const togglePlay = useCallback(() => {
+    if (!enabled) return;
     setIsPlaying((prev) => {
       const next = !prev;
       playNeedleSound(next ? 'drop' : 'lift');
       return next;
     });
-  }, [playNeedleSound]);
+  }, [enabled, playNeedleSound]);
 
   const startPlayback = useCallback(() => {
+    if (!enabled) return;
     setIsPlaying((prev) => {
       if (!prev) {
         playNeedleSound('drop');
       }
       return true;
     });
-  }, [playNeedleSound]);
+  }, [enabled, playNeedleSound]);
 
   const selectTrack = useCallback(
     (index: number) => {
       const clamped = ((index % tracks.length) + tracks.length) % tracks.length;
       setActiveTrackIndex(clamped);
       setGrooveProgress(0);
-      stepCountRef.current = 0;
+      stepCountRef.current = Math.floor(startSecond * (tracks[clamped]?.bpm ?? 100) / 30);
       playNeedleSound('drop');
-      setIsPlaying(true);
+      setIsPlaying(enabled);
     },
-    [tracks.length, playNeedleSound]
+    [enabled, tracks, startSecond, playNeedleSound]
   );
 
   const nextTrack = useCallback(() => {

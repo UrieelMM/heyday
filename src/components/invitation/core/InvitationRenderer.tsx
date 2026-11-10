@@ -1,6 +1,9 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import { googleLocationUrl, locationTypeLabels, wazeLocationUrl } from '@/lib/invitation/location-links';
+import { TimelineIcon, DressInspiration, HotelLinks } from './InvitationDetails';
+import { RsvpExtras } from './RsvpExtras';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
@@ -41,6 +44,7 @@ import {
 } from '@/lib/templates/occasion-config';
 import { AmbientParticlesCanvas } from './AmbientParticlesCanvas';
 import { EnvelopeOpener } from './EnvelopeOpener';
+import { GalleryLayout } from './GalleryLayout';
 import { FloatingAudioPlayer } from './FloatingAudioPlayer';
 import { HeroMedia } from './HeroMedia';
 import { SharedAlbum } from './SharedAlbum';
@@ -59,6 +63,8 @@ import { SafariSunriseExperience, SafariTrailBackdrop } from '../templates/Safar
 import { CowboyRanchExperience, CowboyTrailBackdrop } from '../templates/CowboyRanchExperience';
 import { RodeoCountdownDial, RodeoFilmStrip, RodeoGiftLetter, RodeoLassoStory, RodeoRecord, RodeoRosaExperience, RodeoSceneArt } from '../templates/RodeoRosaExperience';
 import { setupRodeoRosaScenes } from '../templates/rodeo-rosa-scenes';
+import { resolveInvitationConfig } from '@/lib/templates/resolve-invitation-config';
+import { createDefaultInvitationConfig } from '@/lib/templates/templates-catalog';
 import { MickeyMouseBirthdayExperience, MickeyStoryBackdrop } from '../templates/MickeyMouseBirthdayExperience';
 import { BlueyBirthdayExperience, BlueyChalkStory } from '../templates/BlueyBirthdayExperience';
 import { PawPatrolBirthdayExperience, PawPatrolRadarStory } from '../templates/PawPatrolBirthdayExperience';
@@ -124,7 +130,9 @@ interface InvitationRendererProps {
   previewEnvelope?: boolean;
 }
 
-export function InvitationRenderer(props: InvitationRendererProps) {
+export function InvitationRenderer(input: InvitationRendererProps) {
+  const config = useMemo(() => resolveInvitationConfig(input.templateId, input.config), [input.templateId, input.config]);
+  const props = { ...input, config };
   if (props.templateId === 'eternal-elegance') {
     return <EternalEleganceExperience {...props} />;
   }
@@ -249,6 +257,8 @@ function StandardInvitationRenderer({
     return () => clearInterval(timer);
   }, [eventDate]);
 
+  const sectionSignature = config.sectionsOrder.map(section => `${section.id}:${section.enabled}`).join('|');
+
   // Coreografías GSAP ScrollTrigger por sección
   useGSAP(
     () => {
@@ -330,8 +340,8 @@ function StandardInvitationRenderer({
     },
     {
       scope: containerRef,
-      revertOnUpdate: isRodeo,
-      dependencies: [isEnvelopeOpen, templateId, signatureTemplateId, celebrationTemplateId, occasionTemplateId, newSceneTemplateId, weddingWorldId, newWorldId, storyWorldId, isRodeo ? config : undefined],
+      revertOnUpdate: true,
+      dependencies: [isEnvelopeOpen, templateId, sectionSignature, isRodeo ? config : undefined],
     }
   );
 
@@ -341,6 +351,16 @@ function StandardInvitationRenderer({
 
   const isSectionEnabled = (id: string) =>
     config.sectionsOrder.find((s) => s.id === id)?.enabled ?? true;
+  const stationConfig = (isKidsAdventure || kidsWorldId || weddingWorldId || newWorldId || storyWorldId) &&
+    !isSectionEnabled('gallery')
+    ? {
+        ...config,
+        content: {
+          ...content,
+          gallery: createDefaultInvitationConfig(templateId).content.gallery,
+        },
+      }
+    : config;
 
   const handleCopyClabe = async (clabe: string) => {
     try {
@@ -379,10 +399,13 @@ function StandardInvitationRenderer({
     e.preventDefault();
     if (isBuilderPreview || !guestGroup) { toast.error('Abre tu enlace personal para confirmar'); return; }
     try {
-      const response = await fetch(`/api/public/invitations/${encodeURIComponent(slug)}/rsvp`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ guestToken: guestGroup.guestToken, groupName: rsvpName, willAttend: willAttend === 'yes', confirmedAdults, confirmedChildren }) });
+      const response = await fetch(`/api/public/invitations/${encodeURIComponent(slug)}/rsvp`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ guestToken: guestGroup.guestToken, groupName: rsvpName, whatsappPhone: rsvpPhone, willAttend: willAttend === 'yes',
+        confirmedAdults: willAttend === 'yes' ? confirmedAdults : 0,
+        confirmedChildren: willAttend === 'yes' && content.rsvp.allowChildrenSelection ? confirmedChildren : 0,
+        dietaryNotes: content.rsvp.askDietaryRestrictions ? dietaryNotes : undefined, guestMessage }) });
       const result = await response.json(); if (!response.ok) throw new Error(result.error);
       if (!result.pass) { setGeneratedPass(null); toast.success('Gracias por avisarnos'); return; }
-      setGeneratedPass({ qrPayload: result.pass.qrPayload, groupName: result.pass.groupName, adults: confirmedAdults, children: confirmedChildren, tableName: result.pass.tableName || 'Mesa por asignar' });
+      setGeneratedPass({ qrPayload: result.pass.qrPayload, groupName: result.pass.groupName, adults: result.pass.confirmedAdults, children: result.pass.confirmedChildren, tableName: result.pass.tableName || 'Mesa por asignar' });
       toast.success('Asistencia confirmada');
     } catch (err) { toast.error(err instanceof Error ? err.message : 'No se pudo guardar tu respuesta'); }
   };
@@ -432,9 +455,7 @@ function StandardInvitationRenderer({
 
       {/* 3. Reproductor Flotante */}
       <FloatingAudioPlayer
-        enabled={config.audio.enabled}
-        trackUrl={config.audio.trackUrl}
-        trackTitle={config.audio.trackTitle}
+        {...config.audio}
         isEnvelopeOpen={isEnvelopeOpen}
         accentColor={colors.accentPrimary}
       />
@@ -608,6 +629,11 @@ function StandardInvitationRenderer({
             style={{ backgroundColor: colors.accentPrimary }}
           />
           {content.sectionHeadings?.quote_story?.eyebrow && <p className="mb-5 text-xs font-semibold uppercase tracking-[0.25em]" style={{ color: colors.accentPrimary }}>{content.sectionHeadings.quote_story.eyebrow}</p>}
+          {content.sectionHeadings?.quote_story?.title && (
+            <h2 className="mb-6 text-3xl font-semibold" style={{ fontFamily: invitationFontStack(fonts.headingFont) }}>
+              {content.sectionHeadings.quote_story.title}
+            </h2>
+          )}
           <blockquote
             className="text-2xl leading-relaxed italic sm:text-3xl"
             style={{ fontFamily: invitationFontStack(fonts.headingFont) }}
@@ -623,8 +649,8 @@ function StandardInvitationRenderer({
           </blockquote>
           {content.quoteStory.quoteAuthor && (
             <p
-              className="st-story__signature mt-4 text-xs font-semibold tracking-[0.25em] uppercase"
-              style={{ color: colors.accentPrimary }}
+              className="st-story__signature mt-4 text-lg font-semibold"
+              style={{ color: colors.accentPrimary, fontFamily: invitationFontStack(fonts.scriptFont) }}
             >
               — {content.quoteStory.quoteAuthor}
             </p>
@@ -642,7 +668,7 @@ function StandardInvitationRenderer({
                       borderColor: `${colors.accentPrimary}30`,
                     }}
                   >
-                    {(isKidsAdventure || kidsWorldId || weddingWorldId || newWorldId || storyWorldId) && block.imageUrl && <img className={isKidsAdventure ? 'fk-story-card__image' : kidsWorldId ? 'kw-story-card__image' : weddingWorldId ? 'ww-story-card__image' : newWorldId ? 'nw-story-card__image' : 'sw-story-card__image'} src={block.imageUrl} alt="" loading="lazy" />}
+                    {block.imageUrl && <img className={isKidsAdventure ? 'fk-story-card__image' : kidsWorldId ? 'kw-story-card__image' : weddingWorldId ? 'ww-story-card__image' : newWorldId ? 'nw-story-card__image' : storyWorldId ? 'sw-story-card__image' : 'mb-4 w-full rounded-lg object-cover'} src={block.imageUrl} alt="" loading="lazy" />}
                     <span
                       className="text-xs font-bold tracking-widest uppercase"
                       style={{ color: colors.accentPrimary }}
@@ -668,11 +694,11 @@ function StandardInvitationRenderer({
         </section>
       )}
 
-      {isKidsAdventure && <FiestaKidsStations config={config} />}
-      {kidsWorldId && isSectionEnabled('quote_story') && <KidsWorldStations variant={kidsWorldVariant} config={config} />}
-      {weddingWorldId && isSectionEnabled('quote_story') && <WeddingWorldStations variant={weddingWorldVariant} config={config} />}
-      {newWorldId && isSectionEnabled('quote_story') && <NewWorldMoments variant={newWorldVariant} config={config} />}
-      {storyWorldId && isSectionEnabled('quote_story') && <StoryWorldMoments variant={storyVariant} config={config} />}
+      {isKidsAdventure && isSectionEnabled('quote_story') && <FiestaKidsStations config={stationConfig} />}
+      {kidsWorldId && isSectionEnabled('quote_story') && <KidsWorldStations variant={kidsWorldVariant} config={stationConfig} />}
+      {weddingWorldId && isSectionEnabled('quote_story') && <WeddingWorldStations variant={weddingWorldVariant} config={stationConfig} />}
+      {newWorldId && isSectionEnabled('quote_story') && <NewWorldMoments variant={newWorldVariant} config={stationConfig} />}
+      {storyWorldId && isSectionEnabled('quote_story') && <StoryWorldMoments variant={storyVariant} config={stationConfig} />}
 
       {/* SECCIÓN 3: PADRES Y PADRINOS DE HONOR */}
       {isSectionEnabled('vip_parents') &&
@@ -890,7 +916,7 @@ function StandardInvitationRenderer({
                         style={{ color: colors.accentPrimary }}
                       >
                         <Clock className="h-3.5 w-3.5" />
-                        <span>{loc.time} • {loc.title}</span>
+                        <span>{loc.time} • {loc.title || locationTypeLabels[loc.type]}</span>
                       </div>
                       <h3
                         className="text-2xl font-semibold"
@@ -909,7 +935,7 @@ function StandardInvitationRenderer({
 
                     <div className="mt-6 flex flex-wrap gap-3 pt-4">
                       <a
-                        href={loc.googleMapsUrl}
+                        href={googleLocationUrl(loc)}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{
@@ -922,7 +948,7 @@ function StandardInvitationRenderer({
                         Google Maps
                       </a>
                       <a
-                        href={loc.wazeUrl}
+                        href={wazeLocationUrl(loc)}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{
@@ -1007,7 +1033,7 @@ function StandardInvitationRenderer({
                     className="st-timeline__time text-xs font-bold tracking-widest uppercase"
                     style={{ color: colors.accentPrimary }}
                   >
-                    {item.time}
+                    <TimelineIcon icon={item.icon} />{item.time}
                   </span>
                   <h3
                     className="mt-0.5 text-xl font-semibold"
@@ -1072,7 +1098,7 @@ function StandardInvitationRenderer({
               </h2>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+            <GalleryLayout layout={content.gallery.layout} className="grid grid-cols-2 gap-4 md:grid-cols-4">
               {content.gallery.images.map((img, idx) => (
                 <div
                   key={idx}
@@ -1090,7 +1116,7 @@ function StandardInvitationRenderer({
                   )}
                 </div>
               ))}
-            </div>
+            </GalleryLayout>
           </div>
         </section>
       )}
@@ -1181,6 +1207,7 @@ function StandardInvitationRenderer({
               </p>
             </div>
           )}
+          <DressInspiration url={content.dressCode.pinterestBoardUrl} />
         </section>
       )}
 
@@ -1197,7 +1224,7 @@ function StandardInvitationRenderer({
               className="mx-auto mb-3 h-8 w-8"
               style={{ color: colors.accentPrimary }}
             />
-            {isRodeo && content.sectionHeadings?.gifts?.eyebrow && (
+            {content.sectionHeadings?.gifts?.eyebrow && (
               <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em]" style={{ color: colors.accentPrimary }}>
                 {content.sectionHeadings.gifts.eyebrow}
               </p>
@@ -1289,6 +1316,7 @@ function StandardInvitationRenderer({
                       <p className="mt-2 font-mono text-base font-semibold tracking-wider">
                         CLABE: {content.gifts.bankTransfer.clabe}
                       </p>
+                    {content.gifts.bankTransfer.accountNumber && <small className="block">Cuenta: {content.gifts.bankTransfer.accountNumber}</small>}
                       {content.gifts.bankTransfer.conceptNote && (
                         <p
                           className="mt-1 text-xs"
@@ -1347,6 +1375,7 @@ function StandardInvitationRenderer({
                 className="mx-auto mb-3 h-7 w-7"
                 style={{ color: colors.accentPrimary }}
               />
+              {content.sectionHeadings?.accommodation?.eyebrow && <p className="mb-3 text-xs font-semibold tracking-widest uppercase" style={{ color: colors.accentPrimary }}>{content.sectionHeadings.accommodation.eyebrow}</p>}
               <h2
                 className="text-3xl font-semibold sm:text-4xl"
                 style={{ fontFamily: invitationFontStack(fonts.headingFont) }}
@@ -1385,6 +1414,7 @@ function StandardInvitationRenderer({
                       Código de convenio: {hotel.discountCode}
                     </div>
                   )}
+                  <HotelLinks hotel={hotel} />
                 </div>
               ))}
             </div>
@@ -1392,13 +1422,18 @@ function StandardInvitationRenderer({
         )}
 
       {/* SECCIÓN 11: FEATURES DIFERENCIADORAS — DJ PLAYLIST & AUDIO GUESTBOOK */}
-      {isSectionEnabled('social_features') && (
+      {isSectionEnabled('social_features') && (content.socialFeatures.enableLiveDisposableCamera || content.socialFeatures.hashtag || content.socialFeatures.enableSongRequests || content.socialFeatures.enableAudioGuestbook) && (
         <section data-editor-section="socialFeatures" className="st-social st-social--album mx-auto max-w-4xl px-6 py-12">
           {rodeoArtwork}
           {content.sectionHeadings?.social_features?.eyebrow && <p className="mb-3 text-xs font-semibold uppercase tracking-[0.25em]" style={{ color: colors.accentPrimary }}>{content.sectionHeadings.social_features.eyebrow}</p>}
-          <h2 className="mb-4 text-2xl">{content.sectionHeadings?.social_features?.title || 'Álbum compartido'}</h2>
-          {isRodeo && <RodeoFilmStrip />}
-          <SharedAlbum slug={slug} token={guestGroup?.guestToken} preview={isBuilderPreview} />
+          <h2 className="mb-4 text-2xl">{content.sectionHeadings?.social_features?.title || (content.socialFeatures.enableLiveDisposableCamera ? 'Álbum compartido' : 'Recuerdos de la celebración')}</h2>
+          {content.socialFeatures.enableLiveDisposableCamera && (
+            <>
+              {isRodeo && <RodeoFilmStrip />}
+              <SharedAlbum slug={slug} token={guestGroup?.guestToken} preview={isBuilderPreview} />
+            </>
+          )}
+          {content.socialFeatures.hashtag && <p className="mt-3 text-sm">{content.socialFeatures.hashtag}</p>}
         </section>
       )}
 
@@ -1426,7 +1461,7 @@ function StandardInvitationRenderer({
                 className="mx-auto mb-2 h-7 w-7"
                 style={{ color: colors.accentPrimary }}
               />}
-              {isRodeo && content.sectionHeadings?.rsvp?.eyebrow && (
+              {content.sectionHeadings?.rsvp?.eyebrow && (
                 <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em]" style={{ color: colors.accentPrimary }}>
                   {content.sectionHeadings.rsvp.eyebrow}
                 </p>
@@ -1683,6 +1718,7 @@ function StandardInvitationRenderer({
               </div>
             )}
           </div>
+          <RsvpExtras phone={content.rsvp.plannerContactWhatsapp} previewMessage={isBuilderPreview ? content.rsvp.customConfirmationMessage : undefined} />
         </section>
       )}
 

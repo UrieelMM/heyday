@@ -72,6 +72,7 @@ export type RsvpMode = 'closed_list' | 'open_registration';
 export type RsvpStatus = 'pending' | 'viewed' | 'confirmed' | 'declined';
 
 export interface InvitationConfig {
+  contentVersion?: 1;
   theme: {
     colors: {
       bgPrimary: string;

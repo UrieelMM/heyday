@@ -1,5 +1,8 @@
 'use client';
 
+import { googleLocationUrl, wazeLocationUrl } from '@/lib/invitation/location-links';
+import { TimelineIcon, DressInspiration, HotelLinks } from '../core/InvitationDetails';
+import { RsvpExtras } from '../core/RsvpExtras';
 import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
@@ -44,9 +47,10 @@ import { sectionHeading } from '@/lib/templates/section-heading';
 import { invitationFontStack } from '@/lib/fonts/invitation-fonts';
 import type { GuestGroup, InvitationConfig } from '@/types/invitation.types';
 import { buildGoogleCalendarUrl, buildIcsFileContent } from '@/lib/calendar/ics-generator';
-import { createDefaultInvitationConfig } from '@/lib/templates/templates-catalog';
 import { AmbientParticlesCanvas } from '../core/AmbientParticlesCanvas';
 import { HeroMedia } from '../core/HeroMedia';
+import { EnvelopeOpener } from '../core/EnvelopeOpener';
+import { GalleryLayout } from '../core/GalleryLayout';
 import { SharedAlbum } from '../core/SharedAlbum';
 import { SocialFeatures } from '../core/SocialFeatures';
 import { DEFAULT_VINYL_TRACKS, useVinylTurntable } from './useVinylTurntable';
@@ -91,56 +95,6 @@ const extractCoupleParts = (title: string): [string, string] => {
  * Upgrades unmodified legacy SVG seed paths ("cover.svg" / "detail.svg") to the new
  * 35mm analog vinyl photography while preserving 100% of user/editor customizations.
  */
-function ritmoContent(config: InvitationConfig) {
-  const source = config.content;
-  const defaults = createDefaultInvitationConfig(
-    'ritmo-de-dos',
-    source.hero.mainTitle || 'Marina & Pablo'
-  ).content;
-
-  const isLegacyCover =
-    !source.hero.coverImageUrl ||
-    source.hero.coverImageUrl === '/images/ritmo-de-dos/cover.svg';
-
-  const isLegacyGallery =
-    source.gallery.images.length <= 2 &&
-    source.gallery.images.every(
-      (img) =>
-        img.url === '/images/ritmo-de-dos/cover.svg' ||
-        img.url === '/images/ritmo-de-dos/detail.svg'
-    );
-
-  const isLegacyBlocks =
-    (source.quoteStory.storyBlocks?.length ?? 0) === 2 &&
-    source.quoteStory.storyBlocks?.[0]?.title === 'Primer compás';
-
-  const isLegacyTimeline =
-    source.timeline.length === 3 &&
-    source.timeline[0]?.id === 'ritmo-1' &&
-    source.timeline[0]?.title === 'Coctel de bienvenida';
-
-  return {
-    ...source,
-    hero: {
-      ...source.hero,
-      coverImageUrl: isLegacyCover ? defaults.hero.coverImageUrl : source.hero.coverImageUrl,
-    },
-    quoteStory: {
-      ...source.quoteStory,
-      storyBlocks: isLegacyBlocks ? defaults.quoteStory.storyBlocks : source.quoteStory.storyBlocks,
-    },
-    locations: source.locations.map((loc) => ({
-      ...loc,
-      imageUrl:
-        !loc.imageUrl || loc.imageUrl === '/images/ritmo-de-dos/cover.svg'
-          ? '/images/ritmo-de-dos/venue.jpg'
-          : loc.imageUrl,
-    })),
-    timeline: isLegacyTimeline ? defaults.timeline : source.timeline,
-    gallery: isLegacyGallery ? defaults.gallery : source.gallery,
-  };
-}
-
 /**
  * Symmetrical 12-inch LP Vinyl Record SVG (`viewBox="0 0 240 240"`, center `(120, 120)`).
  */
@@ -678,7 +632,7 @@ export function RitmoDeDosExperience({
     tableName: string;
   } | null>(null);
 
-  const content = useMemo(() => ritmoContent(config), [config]);
+  const content = config.content;
   const { colors, fonts, envelope } = config.theme;
   const [coupleFirst, coupleSecond] = extractCoupleParts(content.hero.mainTitle);
   const coupleDisplay = `${coupleFirst} & ${coupleSecond}`;
@@ -695,6 +649,8 @@ export function RitmoDeDosExperience({
     tracks: DEFAULT_VINYL_TRACKS,
     externalTrackUrl: config.audio.trackUrl,
     preferExternalAudio: hasCustomAudioUrl,
+    enabled: config.audio.enabled,
+    startSecond: config.audio.startSecond,
   });
 
   const spinDurationSec = useMemo(
@@ -1233,13 +1189,13 @@ export function RitmoDeDosExperience({
         );
       }
     },
-    { scope: rootRef, dependencies: [isOpen, isBuilderPreview, sectionSignature] }
+    { scope: rootRef, revertOnUpdate: true, dependencies: [isOpen, isBuilderPreview, sectionSignature] }
   );
 
   const openInvitation = useCallback(() => {
     setIsOpen(true);
-    deck.startPlayback();
-  }, [deck]);
+    if (config.audio.autoplayOnEnvelopeOpen) deck.startPlayback();
+  }, [config.audio.autoplayOnEnvelopeOpen, deck]);
 
   const mainLocation = content.locations[0];
   const calendarUrl = buildGoogleCalendarUrl({
@@ -1344,7 +1300,7 @@ export function RitmoDeDosExperience({
       }
     >
       {/* 1. FUNDA DE VINILO / BOLETO DE APERTURA */}
-      {(!isBuilderPreview || previewEnvelope) && (
+      {(!isBuilderPreview || previewEnvelope) && (envelope.variant === 'pass-ticket-tear' ? (
         <Opening
           config={config}
           guestGroup={guestGroup}
@@ -1354,7 +1310,9 @@ export function RitmoDeDosExperience({
           isOpen={isOpen}
           onOpen={openInvitation}
         />
-      )}
+      ) : (
+        <EnvelopeOpener config={config} guestGroup={guestGroup} isOpen={isOpen} onOpen={openInvitation} />
+      ))}
 
       {/* 2. PARTÍCULAS AMBIENTALES */}
       <AmbientParticlesCanvas
@@ -1363,17 +1321,17 @@ export function RitmoDeDosExperience({
       />
 
       {/* 3. DISCO FLOTANTE DE AUDIO (SIN CONTROLES EXTRA) */}
-      <div className={`rd-floating-deck ${deck.isPlaying ? 'rd-floating-deck--playing' : ''}`}>
+      {config.audio.enabled && <div className={`rd-floating-deck ${deck.isPlaying ? 'rd-floating-deck--playing' : ''}`}>
         <button
           type="button"
           className="rd-floating-deck__disc"
           onClick={deck.togglePlay}
           aria-label={deck.isPlaying ? 'Pausar música del tocadiscos' : 'Reproducir música del tocadiscos'}
-          title={deck.isPlaying ? 'Pausar tocadiscos' : 'Reproducir tocadiscos'}
+          title={config.audio.trackTitle || 'Tocadiscos'}
         >
           <VinylRecordDisc monogram={envelope.sealMonogram || 'M&P'} />
         </button>
-      </div>
+      </div>}
 
       {/* 4. BARRA DE PROGRESO + CONSOLA DE NAVEGACIÓN */}
       <div className="rd-progress" aria-hidden="true">
@@ -1643,6 +1601,7 @@ export function RitmoDeDosExperience({
                           <Radio size={16} />
                         </div>
                         <h3>{block.title}</h3>
+                        {block.imageUrl && <img className="mb-3 w-full rounded-lg object-cover" src={block.imageUrl} alt="" loading="lazy" />}
                         <p>{block.description}</p>
                       </article>
                     ))}
@@ -2045,11 +2004,11 @@ export function RitmoDeDosExperience({
                     <article className="rd-location-card" key={loc.id || idx}>
                       <div className="rd-location-card__visual-col">
                         <div className="rd-location-card__media">
-                          <img
-                            src={loc.imageUrl || '/images/ritmo-de-dos/venue.jpg'}
+                          {loc.imageUrl && <img
+                            src={loc.imageUrl}
                             alt={`Escenario en ${loc.venueName}`}
                             loading="lazy"
-                          />
+                          />}
                           <span className="rd-location-card__coord">
                             <Compass size={14} />
                             <span>
@@ -2085,7 +2044,7 @@ export function RitmoDeDosExperience({
 
                         <div className="rd-location-card__routes">
                           <a
-                            href={loc.googleMapsUrl}
+                            href={googleLocationUrl(loc)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="rd-route-btn rd-route-btn--primary"
@@ -2094,7 +2053,7 @@ export function RitmoDeDosExperience({
                             <span>Google Maps</span>
                           </a>
                           <a
-                            href={loc.wazeUrl}
+                            href={wazeLocationUrl(loc)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="rd-route-btn"
@@ -2170,7 +2129,7 @@ export function RitmoDeDosExperience({
                       </div>
                       <div className="rd-timeline__card">
                         <div className="rd-timeline__meta">
-                          <span className="rd-timeline__time">{item.time}</span>
+                          <span className="rd-timeline__time"><TimelineIcon icon={item.icon} />{item.time}</span>
                           <span className="rd-timeline__step">
                             SET 0{idx + 1}
                           </span>
@@ -2210,7 +2169,7 @@ export function RitmoDeDosExperience({
                 )}
               />
 
-              <div className="rd-gallery__grid">
+              <GalleryLayout layout={content.gallery.layout} className="rd-gallery__grid">
                 {content.gallery.images.map((img, idx) => (
                   <figure
                     className="rd-gallery__card"
@@ -2234,7 +2193,7 @@ export function RitmoDeDosExperience({
                     )}
                   </figure>
                 ))}
-              </div>
+              </GalleryLayout>
             </div>
           </section>
         )}
@@ -2329,6 +2288,7 @@ export function RitmoDeDosExperience({
                 </div>
               )}
             </div>
+            <DressInspiration url={content.dressCode.pinterestBoardUrl} />
           </section>
         )}
 
@@ -2389,6 +2349,7 @@ export function RitmoDeDosExperience({
                       <p className="rd-gifts__clabe">
                         CLABE: {content.gifts.bankTransfer.clabe}
                       </p>
+                    {content.gifts.bankTransfer.accountNumber && <small className="block">Cuenta: {content.gifts.bankTransfer.accountNumber}</small>}
                       {content.gifts.bankTransfer.conceptNote && (
                         <small>
                           Concepto: {content.gifts.bankTransfer.conceptNote}
@@ -2462,6 +2423,7 @@ export function RitmoDeDosExperience({
                         Código: {hotel.discountCode}
                       </span>
                     )}
+                    <HotelLinks hotel={hotel} />
                   </article>
                 ))}
               </div>
@@ -2495,18 +2457,20 @@ export function RitmoDeDosExperience({
               />
 
               <div className="rd-social__grid">
-                <div className="rd-social__panel">
-                  <div className="rd-social__panel-head">
-                    <Camera size={20} />
-                    <span>BOOTLEG OFICIAL DE FOTOS</span>
+                {content.socialFeatures.enableLiveDisposableCamera && (
+                  <div className="rd-social__panel">
+                    <div className="rd-social__panel-head">
+                      <Camera size={20} />
+                      <span>BOOTLEG OFICIAL DE FOTOS</span>
+                    </div>
+                    <h3>La fiesta desde tu lente</h3>
+                    <SharedAlbum
+                      slug={slug}
+                      token={guestGroup?.guestToken}
+                      preview={isBuilderPreview}
+                    />
                   </div>
-                  <h3>La fiesta desde tu lente</h3>
-                  <SharedAlbum
-                    slug={slug}
-                    token={guestGroup?.guestToken}
-                    preview={isBuilderPreview}
-                  />
-                </div>
+                )}
 
                 {(content.socialFeatures.enableSongRequests ||
                   content.socialFeatures.enableAudioGuestbook) && (
@@ -2763,6 +2727,7 @@ export function RitmoDeDosExperience({
                 )}
               </div>
             </div>
+            <RsvpExtras phone={content.rsvp.plannerContactWhatsapp} previewMessage={isBuilderPreview ? content.rsvp.customConfirmationMessage : undefined} />
           </section>
         )}
       </main>

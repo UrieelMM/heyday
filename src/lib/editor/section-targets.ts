@@ -1,6 +1,6 @@
 export const EDITOR_SECTION_TARGETS: Record<string, string> = {
   envelope: '[data-editor-section="envelope"], .ee-opening, .rx-opening, .mc-opening, .ax-opening, .rd-opening, .ma-opening, .nx-opening, .fk-opening, .kw-opening, .kw-opening--bluey, .kw-opening--pawpatrol, .kw-opening--rodeo, .ww-opening, .nw-opening, .sw-opening',
-  hero: '[data-editor-section="hero"], .st-hero, .cs-hero, .oc-hero, .ee-hero, .rx-hero, .mc-hero, .ax-hero, .rd-hero, .ma-hero, .nx-hero-scroll, .fk-hero, .kw-hero, .mmb-hero, .bb-hero, .pp-hero, .rr-hero, .vxb-hero, .ww-hero, .nw-hero, .sw-hero',
+  hero: '[data-editor-section="hero"], .st-hero, .cs-hero, .oc-hero, .ns-hero, .ee-hero, .rx-hero, .mc-hero, .ax-hero, .rd-hero, .ma-hero, .nx-hero-scroll, .fk-hero, .kw-hero, .mmb-hero, .bb-hero, .pp-hero, .rr-hero, .vxb-hero, .ww-hero, .nw-hero, .sw-hero',
   quoteStory: '[data-editor-section="quoteStory"], .st-story, .ee-story, .rx-story, .mc-story, .ax-story, .rd-story, .ma-story, .nx-story, .fk-stations, .kw-stations, .bb-stations, .pp-stations, #rr-stations, .ww-stations, .nw-moments, .sw-moments',
   vipParents: '.st-family, .ee-family, .rx-family, .mc-family, .ax-family, .rd-family, .ma-family, .nx-family',
   countdown: '.st-countdown, .ee-countdown, .rx-countdown, .mc-countdown, .ax-countdown, .rd-countdown, .ma-countdown, .nx-countdown',
@@ -10,7 +10,7 @@ export const EDITOR_SECTION_TARGETS: Record<string, string> = {
   dressCode: '.st-dress, .ee-dress, .rx-dress, .mc-dress, .ax-dress, .rd-dress, .ma-dress, .nx-dress',
   gifts: '.st-gifts, .ee-gifts, .rx-gifts, .mc-gifts, .ax-gifts, .rd-gifts, .ma-gifts, .nx-gifts',
   accommodation: '.st-stay, .ee-stay, .mc-stay, .ax-stay, .rd-stay, .ma-stay, .nx-stay',
-  socialFeatures: '[data-editor-section="socialFeatures"], .ee-album, .ee-memories, .rx-social, .mc-social, .ax-social, .rd-social, .ma-social, .nx-social',
+  socialFeatures: '[data-editor-section="socialFeatures"], [data-editor-section="social_features"], .ee-album, .ee-memories, .rx-social, .mc-social, .ax-social, .rd-social, .ma-social, .nx-social',
   rsvp: '.st-rsvp, .ee-rsvp, .rx-rsvp, .mc-rsvp, .ax-rsvp, .rd-rsvp, .ma-rsvp, .nx-rsvp',
 };
 
@@ -27,5 +27,10 @@ export function editorTargetForElement(element: Element): { section: string; tar
 export function editorTargetForSection(section: string): HTMLElement | null {
   const targetSection = section === 'theme' || section === 'audio' || section === 'sections' ? 'hero' : section;
   const selector = EDITOR_SECTION_TARGETS[targetSection];
-  return selector ? document.querySelector<HTMLElement>(selector) : null;
+  if (!selector) return null;
+  if (targetSection === 'quoteStory') {
+    const story = document.querySelector<HTMLElement>('[data-editor-section="quoteStory"], [data-editor-section="quote_story"], .st-story, .ee-story, .rx-story, .mc-story, .ax-story, .rd-story, .ma-story, .nx-story');
+    if (story) return story;
+  }
+  return document.querySelector<HTMLElement>(selector);
 }

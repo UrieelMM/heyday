@@ -1,0 +1,44 @@
+.slider.slider {
+  display: grid;
+  grid-template-columns: none;
+  grid-auto-columns: min(82%, 470px);
+  grid-auto-flow: column;
+  align-items: start;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 4px 4px 14px;
+  scroll-padding-inline: 4px;
+  scroll-snap-type: x mandatory;
+}
+
+.slider.slider > * {
+  grid-column: auto;
+  grid-row: auto;
+  min-width: 0;
+  margin: 0;
+  scroll-snap-align: start;
+}
+
+.polaroids.polaroids {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 165px), 1fr));
+  align-items: start;
+  gap: clamp(16px, 3vw, 32px);
+  padding: 10px;
+}
+
+.polaroids.polaroids > * {
+  grid-column: auto;
+  grid-row: auto;
+  min-width: 0;
+  margin: 0;
+  border: clamp(4px, 1vw, 12px) solid #fffaf3;
+  border-bottom-width: clamp(10px, 2vw, 25px);
+  border-radius: 3px;
+  box-shadow: 0 10px 25px #22170f35;
+  rotate: -2deg;
+}
+
+.polaroids.polaroids > :nth-child(even) {
+  rotate: 2deg;
+}

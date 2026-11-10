@@ -38,7 +38,7 @@ export function CelebrationHero({
 
   return (
     <section id="cs-hero" className="cs-hero" aria-label="Portada de la invitación">
-      <div className="cs-hero__stage">
+      <div className="cs-hero__stage" style={{ backgroundColor: config.theme.colors.bgPrimary, color: config.theme.colors.textPrimary }}>
         <div className="cs-hero__texture" aria-hidden="true" />
         {templateId === 'golden-jubilee' && (
           <div className="cs-hero__deco" aria-hidden="true"><i /><i /><i /><i /><i /></div>
@@ -62,10 +62,10 @@ export function CelebrationHero({
 
         <div className="cs-hero__copy">
           <p className="cs-hero__eyebrow">{copy.eyebrow}</p>
-          <p className="cs-hero__event">{copy.event}</p>
-          <h1 aria-label={hero.mainTitle}>{name}</h1>
+          <p className="cs-hero__event">{hero.badgeText || copy.event}</p>
+          <h1 style={{ fontFamily: 'var(--inv-heading-font)' }} aria-label={hero.mainTitle}>{name}</h1>
           {age && <p className="cs-hero__age-line">{age} {templateId === 'fiesta-kids-adventure' ? 'años de diversión' : 'años de historias'}</p>}
-          <p className="cs-hero__tagline">{hero.tagline}</p>
+          <p className="cs-hero__tagline" style={{ color: config.theme.colors.textMuted }}>{hero.tagline}</p>
           {guestGroup && <p className="cs-hero__guest">Invitación para {guestGroup.groupName}</p>}
           <p className="cs-hero__date">{date}</p>
         </div>

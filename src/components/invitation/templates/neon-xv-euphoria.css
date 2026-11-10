@@ -679,6 +679,7 @@
 }
 
 .nx-quote-author {
+  font-family: var(--nx-font-script, inherit);
   margin-top: 1.1rem;
   font-size: 0.82rem;
   font-weight: 700;

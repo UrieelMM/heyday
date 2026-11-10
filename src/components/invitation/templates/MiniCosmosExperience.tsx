@@ -1,6 +1,9 @@
 'use client';
 
-import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { googleLocationUrl, wazeLocationUrl } from '@/lib/invitation/location-links';
+import { TimelineIcon, DressInspiration, HotelLinks } from '../core/InvitationDetails';
+import { RsvpExtras } from '../core/RsvpExtras';
+import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import gsap from 'gsap';
@@ -40,10 +43,11 @@ import { sectionHeading } from '@/lib/templates/section-heading';
 import { invitationFontStack } from '@/lib/fonts/invitation-fonts';
 import type { GuestGroup, InvitationConfig } from '@/types/invitation.types';
 import { buildGoogleCalendarUrl, buildIcsFileContent } from '@/lib/calendar/ics-generator';
-import { createDefaultInvitationConfig } from '@/lib/templates/templates-catalog';
 import { AmbientParticlesCanvas } from '../core/AmbientParticlesCanvas';
 import { FloatingAudioPlayer } from '../core/FloatingAudioPlayer';
 import { HeroMedia } from '../core/HeroMedia';
+import { EnvelopeOpener } from '../core/EnvelopeOpener';
+import { GalleryLayout } from '../core/GalleryLayout';
 import { SharedAlbum } from '../core/SharedAlbum';
 import { SocialFeatures } from '../core/SocialFeatures';
 import './mini-cosmos.css';
@@ -84,61 +88,6 @@ const extractAgeNumber = (title: string) => {
  * Upgrades unmodified legacy SVG seed paths or single-item defaults to the rich
  * Mini Cosmos illustrations while preserving 100% of user/editor customizations.
  */
-function cosmosContent(config: InvitationConfig) {
-  const source = config.content;
-  const defaults = createDefaultInvitationConfig('mini-cosmos', source.hero.mainTitle || 'Leo cumple 6').content;
-
-  const isLegacyCover =
-    !source.hero.coverImageUrl ||
-    source.hero.coverImageUrl === '/images/mini-cosmos/cover.svg';
-
-  const isLegacyGallery =
-    source.gallery.images.length <= 2 &&
-    source.gallery.images.every(
-      (img) =>
-        img.url === '/images/mini-cosmos/cover.svg' ||
-        img.url === '/images/mini-cosmos/detail.svg'
-    );
-
-  const isLegacySingleGroup =
-    source.vipParents.groups.length === 1 &&
-    source.vipParents.groups[0]?.groupTitle === 'Tripulación anfitriona';
-
-  const isLegacyBlocks =
-    (source.quoteStory.storyBlocks?.length ?? 0) === 2 &&
-    source.quoteStory.storyBlocks?.[0]?.title === 'Tu misión';
-
-  const isLegacyTimeline =
-    source.timeline.length === 3 &&
-    source.timeline[0]?.id === 'cosmos-1' &&
-    source.timeline[0]?.title === 'Abordaje';
-
-  return {
-    ...source,
-    hero: {
-      ...source.hero,
-      coverImageUrl: isLegacyCover ? defaults.hero.coverImageUrl : source.hero.coverImageUrl,
-    },
-    quoteStory: {
-      ...source.quoteStory,
-      storyBlocks: isLegacyBlocks ? defaults.quoteStory.storyBlocks : source.quoteStory.storyBlocks,
-    },
-    vipParents: {
-      ...source.vipParents,
-      groups: isLegacySingleGroup ? defaults.vipParents.groups : source.vipParents.groups,
-    },
-    locations: source.locations.map((loc) => ({
-      ...loc,
-      imageUrl:
-        !loc.imageUrl || loc.imageUrl === '/images/mini-cosmos/cover.svg'
-          ? '/images/mini-cosmos/keyart.jpg'
-          : loc.imageUrl,
-    })),
-    timeline: isLegacyTimeline ? defaults.timeline : source.timeline,
-    gallery: isLegacyGallery ? defaults.gallery : source.gallery,
-  };
-}
-
 /**
  * Symmetrical, mathematically balanced vector Mission Rocket (`viewBox="0 0 240 340"`, center x = 120).
  * Replaces the old deformed path rocket with a clean 3D-inspired cartoon spacecraft.
@@ -656,7 +605,7 @@ export function MiniCosmosExperience({
     tableName: string;
   } | null>(null);
 
-  const content = useMemo(() => cosmosContent(config), [config]);
+  const content = config.content;
   const { colors, fonts, envelope } = config.theme;
   const explorerName = extractExplorerName(content.hero.mainTitle);
   const ageNumber = extractAgeNumber(content.hero.mainTitle);
@@ -1136,7 +1085,7 @@ export function MiniCosmosExperience({
         );
       });
     },
-    { scope: rootRef, dependencies: [isOpen, isBuilderPreview, sectionSignature] }
+    { scope: rootRef, revertOnUpdate: true, dependencies: [isOpen, isBuilderPreview, sectionSignature] }
   );
 
   const openInvitation = useCallback(() => setIsOpen(true), []);
@@ -1284,7 +1233,7 @@ export function MiniCosmosExperience({
       }
     >
       {/* 1. SOBRE / PASE DE ABORDAJE INTERACTIVO */}
-      {(!isBuilderPreview || previewEnvelope) && (
+      {(!isBuilderPreview || previewEnvelope) && (envelope.variant === 'pass-ticket-tear' ? (
         <Opening
           config={config}
           guestGroup={guestGroup}
@@ -1294,7 +1243,9 @@ export function MiniCosmosExperience({
           isOpen={isOpen}
           onOpen={openInvitation}
         />
-      )}
+      ) : (
+        <EnvelopeOpener config={config} guestGroup={guestGroup} isOpen={isOpen} onOpen={openInvitation} />
+      ))}
 
       {/* 2. PARTÍCULAS AMBIENTALES + AUDIO */}
       <AmbientParticlesCanvas
@@ -1302,9 +1253,7 @@ export function MiniCosmosExperience({
         accentColor={colors.accentSecondary}
       />
       <FloatingAudioPlayer
-        enabled={config.audio.enabled}
-        trackUrl={config.audio.trackUrl}
-        trackTitle={config.audio.trackTitle}
+        {...config.audio}
         isEnvelopeOpen={isOpen}
         accentColor={colors.accentPrimary}
       />
@@ -1556,6 +1505,7 @@ export function MiniCosmosExperience({
                           <Orbit size={18} className="mc-story__card-icon" />
                         </div>
                         <h3>{block.title}</h3>
+                        {block.imageUrl && <img className="mb-3 w-full rounded-lg object-cover" src={block.imageUrl} alt="" loading="lazy" />}
                         <p>{block.description}</p>
                       </article>
                     ))}
@@ -1772,11 +1722,11 @@ export function MiniCosmosExperience({
                     <article className="mc-location-card" key={loc.id || idx}>
                       <div className="mc-location-card__visual-col">
                         <div className="mc-location-card__media">
-                          <img
-                            src={loc.imageUrl || '/images/mini-cosmos/keyart.jpg'}
+                          {loc.imageUrl && <img
+                            src={loc.imageUrl}
                             alt={`Ilustración de ${loc.venueName}`}
                             loading="lazy"
-                          />
+                          />}
                           <span className="mc-location-card__coord">
                             <Compass size={14} />
                             <span>
@@ -1812,7 +1762,7 @@ export function MiniCosmosExperience({
 
                         <div className="mc-location-card__routes">
                           <a
-                            href={loc.googleMapsUrl}
+                            href={googleLocationUrl(loc)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="mc-route-btn mc-route-btn--primary"
@@ -1821,7 +1771,7 @@ export function MiniCosmosExperience({
                             <span>Google Maps</span>
                           </a>
                           <a
-                            href={loc.wazeUrl}
+                            href={wazeLocationUrl(loc)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="mc-route-btn"
@@ -1897,7 +1847,7 @@ export function MiniCosmosExperience({
                       </div>
                       <div className="mc-timeline__card">
                         <div className="mc-timeline__meta">
-                          <span className="mc-timeline__time">{item.time}</span>
+                          <span className="mc-timeline__time"><TimelineIcon icon={item.icon} />{item.time}</span>
                           <span className="mc-timeline__step">
                             FASE 0{idx + 1}
                           </span>
@@ -1941,7 +1891,7 @@ export function MiniCosmosExperience({
                 )}
               />
 
-              <div className="mc-gallery__grid">
+              <GalleryLayout layout={content.gallery.layout} className="mc-gallery__grid">
                 {content.gallery.images.map((img, idx) => (
                   <figure
                     className="mc-gallery__card"
@@ -1965,7 +1915,7 @@ export function MiniCosmosExperience({
                     )}
                   </figure>
                 ))}
-              </div>
+              </GalleryLayout>
             </div>
           </section>
         )}
@@ -2060,6 +2010,7 @@ export function MiniCosmosExperience({
                 </div>
               )}
             </div>
+            <DressInspiration url={content.dressCode.pinterestBoardUrl} />
           </section>
         )}
 
@@ -2112,6 +2063,7 @@ export function MiniCosmosExperience({
                       <p className="mc-gifts__clabe">
                         CLABE: {content.gifts.bankTransfer.clabe}
                       </p>
+                    {content.gifts.bankTransfer.accountNumber && <small className="block">Cuenta: {content.gifts.bankTransfer.accountNumber}</small>}
                       {content.gifts.bankTransfer.conceptNote && (
                         <small>
                           Concepto: {content.gifts.bankTransfer.conceptNote}
@@ -2182,6 +2134,7 @@ export function MiniCosmosExperience({
                         Código: {hotel.discountCode}
                       </span>
                     )}
+                    <HotelLinks hotel={hotel} />
                   </article>
                 ))}
               </div>
@@ -2215,18 +2168,20 @@ export function MiniCosmosExperience({
               />
 
               <div className="mc-social__grid">
-                <div className="mc-social__panel">
-                  <div className="mc-social__panel-head">
-                    <Camera size={22} />
-                    <span>ÁLBUM DE LA TRIPULACIÓN</span>
+                {content.socialFeatures.enableLiveDisposableCamera && (
+                  <div className="mc-social__panel">
+                    <div className="mc-social__panel-head">
+                      <Camera size={22} />
+                      <span>ÁLBUM DE LA TRIPULACIÓN</span>
+                    </div>
+                    <h3>Sube tus fotos de la misión</h3>
+                    <SharedAlbum
+                      slug={slug}
+                      token={guestGroup?.guestToken}
+                      preview={isBuilderPreview}
+                    />
                   </div>
-                  <h3>Sube tus fotos de la misión</h3>
-                  <SharedAlbum
-                    slug={slug}
-                    token={guestGroup?.guestToken}
-                    preview={isBuilderPreview}
-                  />
-                </div>
+                )}
 
                 {(content.socialFeatures.enableSongRequests ||
                   content.socialFeatures.enableAudioGuestbook) && (
@@ -2482,6 +2437,7 @@ export function MiniCosmosExperience({
                 )}
               </div>
             </div>
+            <RsvpExtras phone={content.rsvp.plannerContactWhatsapp} previewMessage={isBuilderPreview ? content.rsvp.customConfirmationMessage : undefined} />
           </section>
         )}
       </main>

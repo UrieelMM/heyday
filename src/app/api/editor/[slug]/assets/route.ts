@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { authorizedEvent } from '@/lib/editor/event';
 import { sameOrigin } from '@/lib/editor/access';
-import { validateEventMedia } from '@/lib/media/validate';
+import { eventMediaContentTypes, validateEventMedia } from '@/lib/media/validate';
 
 export async function POST(request: Request, { params }: { params: Promise<{ slug: string }> }) {
   if (!sameOrigin(request)) return NextResponse.json({ error: 'Origen inválido' }, { status: 403 });
@@ -15,7 +15,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ slu
     const ext = await validateEventMedia(file);
     const path = `${access.event.id}/${crypto.randomUUID()}.${ext}`;
     const bucket = access.db.storage.from('event-assets');
-    const { error } = await bucket.upload(path, file, { contentType: file.type, upsert: false });
+    const { error } = await bucket.upload(path, file, { contentType: eventMediaContentTypes[ext], upsert: false });
     if (error) throw error;
     return NextResponse.json({ url: bucket.getPublicUrl(path).data.publicUrl }, { headers: { 'Cache-Control': 'no-store' } });
   } catch (error) {

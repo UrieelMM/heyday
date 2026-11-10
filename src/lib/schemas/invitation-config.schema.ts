@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 export const invitationConfigSchema = z.object({
+  contentVersion: z.literal(1).optional(),
   theme: z.object({
     colors: z.object({
       bgPrimary: z.string().regex(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/),
@@ -201,7 +202,7 @@ export const invitationConfigSchema = z.object({
 export const rsvpSubmissionSchema = z.object({
   guestToken: z.string().optional(),
   groupName: z.string().min(2, 'Ingresa tu nombre o familia'),
-  whatsappPhone: z.string().optional(),
+  whatsappPhone: z.string().max(40).optional(),
   willAttend: z.boolean(),
   confirmedAdults: z.number().int().min(0).max(20),
   confirmedChildren: z.number().int().min(0).max(20),

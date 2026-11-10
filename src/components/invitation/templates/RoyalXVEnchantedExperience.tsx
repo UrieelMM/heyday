@@ -1,8 +1,11 @@
 'use client';
+import { TimelineIcon, DressInspiration, HotelLinks } from '../core/InvitationDetails';
+import { RsvpExtras } from '../core/RsvpExtras';
 import { SharedAlbum } from '../core/SharedAlbum';
+import { AmbientParticlesCanvas } from '../core/AmbientParticlesCanvas';
 import { SocialFeatures } from '../core/SocialFeatures';
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -12,12 +15,13 @@ import { QRCodeSVG } from 'qrcode.react';
 import { toast } from 'sonner';
 import { Apple, ArrowDown, ArrowRight, CalendarDays, Camera, CarFront, Check, Clock3, Gift, Heart, ImagePlus, MapPin, MapPinned, Music2, Route, Sparkles, Volume2 } from 'lucide-react';
 import { sectionHeading } from '@/lib/templates/section-heading';
+import { googleLocationUrl, locationQuery, locationTypeLabels, wazeLocationUrl } from '@/lib/invitation/location-links';
 import { invitationFontStack } from '@/lib/fonts/invitation-fonts';
 import type { GuestGroup, InvitationConfig } from '@/types/invitation.types';
 import { buildGoogleCalendarUrl, buildIcsFileContent } from '@/lib/calendar/ics-generator';
 import { FloatingAudioPlayer } from '../core/FloatingAudioPlayer';
 import { HeroMedia } from '../core/HeroMedia';
-import { createDefaultInvitationConfig } from '@/lib/templates/templates-catalog';
+import { GalleryLayout } from '../core/GalleryLayout';
 import './royal-xv-enchanted.css';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -43,30 +47,6 @@ const quinceName = (title: string) => title.replace(/^mis\s*xv\s*[:—-]?\s*/i, 
 
 // Older saved demos may still contain the wedding seed content. Only replace recognisable
 // seed copy, so a host's own edits remain untouched.
-function royalContent(config: InvitationConfig) {
-  const source = config.content;
-  const title = source.hero.mainTitle === 'Sofía & Mateo' ? 'Mis XV: Valentina' : source.hero.mainTitle;
-  const xv = createDefaultInvitationConfig('royal-xv-enchanted', title).content;
-  const weddingStory = /nuestros caminos|nuestro para siempre|nuestro comienzo|gran día/i.test(`${source.quoteStory.quoteText} ${source.quoteStory.storyBlocks?.map((part) => part.title).join(' ') || ''}`);
-  const weddingParents = source.vipParents.groups.some((group) => /padres de la novia|padres del novio/i.test(group.groupTitle));
-  const weddingLocations = source.locations.some((location) => /^loc-ceremony$|^loc-reception$/.test(location.id));
-  const weddingTimeline = source.timeline.some((item) => /ceremonia religiosa|primer baile y fiesta|cena de gala/i.test(item.title));
-  const weddingGallery = source.gallery.images.some((image) => /compromiso|por siempre juntos/i.test(image.caption || ''));
-  const weddingDress = /festejados|marfil|blanco, marfil/i.test(`${source.dressCode.reservedNote} ${source.dressCode.womenNotes}`);
-  const weddingGifts = source.gifts.registries.some((registry) => /wedding|SOFIA-MATEO/i.test(`${registry.url} ${registry.eventNumber || ''}`)) || /nuestro mejor regalo/i.test(source.gifts.introMessage);
-  return {
-    ...source,
-    hero: { ...source.hero, mainTitle: title, badgeText: source.hero.badgeText === '¡NOS CASAMOS!' ? xv.hero.badgeText : source.hero.badgeText, coverImageUrl: source.hero.coverImageUrl === '/images/royal-xv/enchanted-garden.jpg' ? xv.hero.coverImageUrl : source.hero.coverImageUrl },
-    quoteStory: weddingStory ? xv.quoteStory : source.quoteStory,
-    vipParents: weddingParents ? xv.vipParents : source.vipParents,
-    locations: weddingLocations ? xv.locations : source.locations,
-    timeline: weddingTimeline ? xv.timeline : source.timeline,
-    gallery: weddingGallery ? xv.gallery : source.gallery,
-    dressCode: weddingDress ? xv.dressCode : source.dressCode,
-    gifts: weddingGifts ? xv.gifts : source.gifts,
-  };
-}
-
 function Butterfly({ className = '' }: { className?: string }) {
   return (
     <svg className={`rx-butterfly ${className}`} viewBox="0 0 92 82" fill="none" aria-hidden="true">
@@ -126,9 +106,10 @@ export function RoyalXVEnchantedExperience({ slug, eventDate, config, guestGroup
   const [adults, setAdults] = useState(guestGroup?.allocatedAdults || 1);
   const [children, setChildren] = useState(0);
   const [message, setMessage] = useState('');
+  const [dietaryNotes, setDietaryNotes] = useState('');
   const [passPayload, setPassPayload] = useState('');
   const [passName, setPassName] = useState('');
-  const content = useMemo(() => royalContent(config), [config]);
+  const content = config.content;
   const name = quinceName(content.hero.mainTitle);
   const dateLabel = formatDate(eventDate);
   const maxAdults = guestGroup?.allocatedAdults ?? 4;
@@ -143,6 +124,8 @@ export function RoyalXVEnchantedExperience({ slug, eventDate, config, guestGroup
     };
     update(); const timer = window.setInterval(update, 1000); return () => window.clearInterval(timer);
   }, [eventDate]);
+
+  const sectionSignature = config.sectionsOrder.map(section => `${section.id}:${section.enabled}`).join('|');
 
   useGSAP(() => {
     if (!isOpen || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -187,7 +170,7 @@ export function RoyalXVEnchantedExperience({ slug, eventDate, config, guestGroup
     gsap.utils.toArray<HTMLElement>('.rx-social__grid > div').forEach((card, index) => {
       gsap.fromTo(card, { xPercent: index ? 18 : -18, opacity: .2 }, { xPercent: 0, opacity: 1, ease: 'none', scrollTrigger: { trigger: card, start: 'top 95%', end: 'center 62%', scrub: .7 } });
     });
-  }, { scope: rootRef, dependencies: [isOpen] });
+  }, { scope: rootRef, revertOnUpdate: true, dependencies: [isOpen, sectionSignature] });
 
   const open = useCallback(() => setIsOpen(true), []);
   const handleCalendar = () => {
@@ -198,17 +181,21 @@ export function RoyalXVEnchantedExperience({ slug, eventDate, config, guestGroup
   const handleRsvp = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (isBuilderPreview || !guestGroup) { toast.error('Abre tu enlace personal para confirmar'); return; }
-    try { const response = await fetch(`/api/public/invitations/${encodeURIComponent(slug)}/rsvp`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ guestToken: guestGroup.guestToken, groupName: rsvpName, willAttend: willAttend === 'yes', confirmedAdults: adults, confirmedChildren: children, guestMessage: message }) }); const result = await response.json(); if (!response.ok) throw new Error(result.error); if (result.pass) { setPassName(result.pass.groupName); setPassPayload(result.pass.qrPayload); } else { setPassName(''); toast.success('Gracias por avisarnos'); } } catch (err) { toast.error(err instanceof Error ? err.message : 'No se pudo guardar tu respuesta'); }
+    try { const response = await fetch(`/api/public/invitations/${encodeURIComponent(slug)}/rsvp`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ guestToken: guestGroup.guestToken, groupName: rsvpName, willAttend: willAttend === 'yes', confirmedAdults: willAttend === 'yes' ? adults : 0, confirmedChildren: willAttend === 'yes' && content.rsvp.allowChildrenSelection ? children : 0, dietaryNotes: content.rsvp.askDietaryRestrictions ? dietaryNotes : undefined, whatsappPhone: rsvpPhone, guestMessage: message }) }); const result = await response.json(); if (!response.ok) throw new Error(result.error); if (result.pass) { setPassName(result.pass.groupName); setPassPayload(result.pass.qrPayload); } else { setPassName(''); toast.success('Gracias por avisarnos'); } } catch (err) { toast.error(err instanceof Error ? err.message : 'No se pudo guardar tu respuesta'); }
   };
 
   const mainLocation = content.locations[0];
-  const mapAddress = mainLocation ? `${mainLocation.venueName}, ${mainLocation.address}` : '';
-  const mapsQuery = encodeURIComponent(mapAddress);
   const calendarUrl = buildGoogleCalendarUrl({ title: content.hero.mainTitle, description: `Mis XV años: ${name}`, location: mainLocation?.address || '', startDateIso: eventDate });
 
-  return <div ref={rootRef} className="rx-root" style={{ '--rx-accent': config.theme.colors.accentPrimary, '--rx-accent-soft': config.theme.colors.accentSecondary, '--rx-seal': config.theme.envelope.sealColor || config.theme.colors.accentPrimary, '--rx-heading-font': invitationFontStack(config.theme.fonts.headingFont), '--rx-script-font': invitationFontStack(config.theme.fonts.scriptFont), '--rx-body-font': invitationFontStack(config.theme.fonts.bodyFont) } as React.CSSProperties}>
+  return <div ref={rootRef} className="rx-root" style={{
+    '--rx-cream': config.theme.colors.bgPrimary,
+    '--rx-paper': config.theme.colors.bgSecondary,
+    '--rx-plum': config.theme.colors.textPrimary,
+    '--rx-muted': config.theme.colors.textMuted,
+    '--rx-accent': config.theme.colors.accentPrimary, '--rx-accent-soft': config.theme.colors.accentSecondary, '--rx-seal': config.theme.envelope.sealColor || config.theme.colors.accentPrimary, '--rx-heading-font': invitationFontStack(config.theme.fonts.headingFont), '--rx-script-font': invitationFontStack(config.theme.fonts.scriptFont), '--rx-body-font': invitationFontStack(config.theme.fonts.bodyFont) } as React.CSSProperties}>
     {(!isBuilderPreview || previewEnvelope) && <Opening config={config} guestGroup={guestGroup} name={name} isOpen={isOpen} onOpen={open} />}
-    <FloatingAudioPlayer enabled={config.audio.enabled} trackUrl={config.audio.trackUrl} trackTitle={config.audio.trackTitle} isEnvelopeOpen={isOpen} accentColor={config.theme.colors.accentPrimary} />
+    <AmbientParticlesCanvas effect={config.theme.ambientEffect} accentColor={config.theme.colors.accentPrimary} />
+    <FloatingAudioPlayer {...config.audio} isEnvelopeOpen={isOpen} accentColor={config.theme.colors.accentPrimary} />
     <nav className="rx-nav" aria-label="Navegación de la invitación"><a className="rx-nav__brand" href="#inicio"><span>XV</span>{name}</a><div><a href="#detalles">Detalles</a><a href="#momentos">Momentos</a><a href="#confirmar" className="rx-nav__rsvp">Confirmar <ArrowRight size={14} /></a></div></nav>
     <main>
       {enabled('hero') && <section id="inicio" className="rx-hero" aria-labelledby="rx-hero-title">
@@ -217,31 +204,96 @@ export function RoyalXVEnchantedExperience({ slug, eventDate, config, guestGroup
           <div className="rx-hero__orbit rx-hero__orbit--one" aria-hidden="true" /><div className="rx-hero__orbit rx-hero__orbit--two" aria-hidden="true" />
           <Twinkle className="rx-hero__star" /><Twinkle className="rx-hero__star rx-hero__star--second" />
           <div className="rx-hero__visual"><div className="rx-hero__image-wrap"><HeroMedia hero={content.hero} alt={`Portal floral hacia la celebración de XV años de ${name}`} /></div><span className="rx-hero__vertical">THE ENCHANTED NIGHT · XV</span><Butterfly className="rx-hero__butterfly" /><Twinkle className="rx-hero__twinkle" /></div>
-          <div className="rx-hero__copy"><p className="rx-kicker rx-hero__kicker">{content.hero.badgeText}</p><p className="rx-hero__script">Érase una vez...</p><h1 id="rx-hero-title"><span className="rx-hero__title-mask"><span className="rx-hero__title-line"><small>Mis</small> XV</span></span><span className="rx-hero__title-mask"><em className="rx-hero__title-line">{name}</em></span></h1><p className="rx-hero__line">Una noche para brillar, bailar y escribir un nuevo capítulo contigo.</p><div className="rx-hero__details"><span>{dateLabel}</span><span>{mainLocation?.venueName || content.hero.tagline}</span></div>{guestGroup && <p className="rx-hero__guest">Un lugar especial para {guestGroup.groupName}</p>}<div className="rx-hero__actions"><a className="rx-button rx-button--cream" href="#confirmar">Confirma tu asistencia <ArrowRight size={17} /></a></div></div>
+          <div className="rx-hero__copy"><p className="rx-kicker rx-hero__kicker">{content.hero.badgeText}</p><p className="rx-hero__script">Érase una vez...</p><h1 id="rx-hero-title"><span className="rx-hero__title-mask"><span className="rx-hero__title-line"><small>Mis</small> XV</span></span><span className="rx-hero__title-mask"><em className="rx-hero__title-line">{name}</em></span></h1><p className="rx-hero__line">Una noche para brillar, bailar y escribir un nuevo capítulo contigo.</p><div className="rx-hero__details"><span>{dateLabel}</span><span>{content.hero.tagline}</span></div>{guestGroup && <p className="rx-hero__guest">Un lugar especial para {guestGroup.groupName}</p>}<div className="rx-hero__actions"><a className="rx-button rx-button--cream" href="#confirmar">Confirma tu asistencia <ArrowRight size={17} /></a></div></div>
           <div className="rx-hero__reveal"><span>CAPÍTULO XV</span><p>La noche en que<br /><em>todo brilla.</em></p><a href="#historia">Descubre mi historia <ArrowDown size={16} /></a></div>
           <a className="rx-hero__scroll" href="#historia">Desliza para descubrir <ArrowDown size={16} /></a>
         </div>
       </section>}
 
-      {enabled('quote_story') && <section id="historia" className="rx-story rx-section"><Butterfly className="rx-story__butterfly rx-parallax" /><Twinkle className="rx-story__star" /><p className="rx-kicker rx-reveal">EL PRINCIPIO DE MI HISTORIA</p><blockquote aria-label={content.quoteStory.quoteText}><span aria-hidden="true">“{content.quoteStory.quoteText.replace(/^[“\"]|[”\"]$/g, '').split(/\s+/).map((word, index) => <span className="rx-story__word" key={`${word}-${index}`}>{word} </span>)}”</span></blockquote><p className="rx-story__signature rx-reveal">— {content.quoteStory.quoteAuthor || name}</p>{content.quoteStory.storyBlocks && <div className="rx-story__chapters">{content.quoteStory.storyBlocks.map((block, index) => <article className="rx-story__chapter rx-reveal" key={`${block.title}-${index}`}><span>0{index + 1} / MI HISTORIA</span><h3>{block.title}</h3><p>{block.description}</p></article>)}</div>}</section>}
+      {enabled('quote_story') && <section id="historia" className="rx-story rx-section"><Butterfly className="rx-story__butterfly rx-parallax" /><Twinkle className="rx-story__star" /><p className="rx-kicker rx-reveal">{sectionHeading(config, 'quote_story', 'eyebrow', 'EL PRINCIPIO DE MI HISTORIA')}</p>{content.sectionHeadings?.quote_story?.title && <SectionHeading title={content.sectionHeadings.quote_story.title} eyebrow="" />}<blockquote aria-label={content.quoteStory.quoteText}><span aria-hidden="true">“{content.quoteStory.quoteText.replace(/^[“\"]|[”\"]$/g, '').split(/\s+/).map((word, index) => <span className="rx-story__word" key={`${word}-${index}`}>{word} </span>)}”</span></blockquote><p className="rx-story__signature rx-reveal">— {content.quoteStory.quoteAuthor || name}</p>{content.quoteStory.storyBlocks && <div className="rx-story__chapters">{content.quoteStory.storyBlocks.map((block, index) => <article className="rx-story__chapter rx-reveal" key={`${block.title}-${index}`}><span>0{index + 1} / MI HISTORIA</span><h3>{block.title}</h3>{block.imageUrl && <img className="mb-4 w-full rounded-lg object-cover" src={block.imageUrl} alt="" loading="lazy" />}<p>{block.description}</p></article>)}</div>}</section>}
 
       {enabled('vip_parents') && content.vipParents.groups.length > 0 && <section className="rx-family rx-section"><SectionHeading eyebrow={sectionHeading(config, 'vip_parents', 'eyebrow', 'MIS PERSONAS FAVORITAS')} title={sectionHeading(config, 'vip_parents', 'title', 'Con quienes me vieron crecer')} /><p className="rx-family__intro rx-reveal">{content.vipParents.blessingMessage}</p><div className="rx-family__grid">{content.vipParents.groups.map((group) => <article className="rx-family__card" key={group.groupTitle}><Twinkle /><span>{group.groupTitle}</span>{group.names.map((person) => <strong key={person}>{person}</strong>)}</article>)}</div></section>}
 
       {enabled('countdown') && <section className="rx-countdown rx-section"><Butterfly className="rx-countdown__butterfly" /><SectionHeading eyebrow={sectionHeading(config, 'countdown', 'eyebrow', 'CADA VEZ MÁS CERCA')} title={sectionHeading(config, 'countdown', 'title', 'La magia comienza en…')} light /><div className="rx-countdown__grid rx-reveal" aria-label="Cuenta regresiva para mis XV años">{Object.entries(timeLeft).map(([unit, value]) => <div key={unit}><strong>{String(value).padStart(2, '0')}</strong><span>{{ days: 'DÍAS', hours: 'HORAS', minutes: 'MINUTOS', seconds: 'SEGUNDOS' }[unit as keyof typeof timeLeft]}</span></div>)}</div><p className="rx-countdown__date rx-reveal">{dateLabel}</p><div className="rx-countdown__actions rx-reveal"><a href={calendarUrl} target="_blank" rel="noopener noreferrer"><CalendarDays size={17} /> Google Calendar</a><button type="button" onClick={handleCalendar}><CalendarDays size={17} /> Apple / Outlook</button></div></section>}
 
-      {enabled('locations') && mainLocation && <section id="detalles" className="rx-location rx-section"><SectionHeading eyebrow={sectionHeading(config, 'locations', 'eyebrow', 'EL LUGAR DE NUESTRO ENCUENTRO')} title={sectionHeading(config, 'locations', 'title', 'Nos vemos ahí')} /><div className="rx-location__layout"><div className="rx-location__map rx-reveal"><iframe title={`Mapa de ${mainLocation.venueName}`} src={`https://www.google.com/maps?q=${mapsQuery}&output=embed`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" /><span>01 / EL DESTINO</span></div><div className="rx-location__info rx-reveal"><p className="rx-kicker">{mainLocation.title}</p><h3>{mainLocation.venueName}</h3><p className="rx-location__time"><Clock3 size={18} /> {mainLocation.time}</p><p className="rx-location__address"><MapPin size={18} /> {mainLocation.address}</p><p className="rx-location__help">Elige cómo llegar y prepárate para una noche inolvidable.</p><div className="rx-location__routes"><a href={`https://m.uber.com/ul/?action=setPickup&pickup=my_location&dropoff%5Bformatted_address%5D=${mapsQuery}`} target="_blank" rel="noopener noreferrer"><CarFront size={18} /> Uber</a><a href={`https://maps.apple.com/?daddr=${mapsQuery}`} target="_blank" rel="noopener noreferrer"><Apple size={18} /> Apple Maps</a><a href={mainLocation.googleMapsUrl} target="_blank" rel="noopener noreferrer"><MapPinned size={18} /> Google Maps</a><a href={mainLocation.wazeUrl} target="_blank" rel="noopener noreferrer"><Route size={18} /> Waze</a></div></div></div></section>}
+      {enabled('locations') && content.locations.length > 0 && (
+        <section id="detalles" className="rx-location rx-section">
+          <SectionHeading eyebrow={sectionHeading(config, 'locations', 'eyebrow', 'EL LUGAR DE NUESTRO ENCUENTRO')} title={sectionHeading(config, 'locations', 'title', 'Nos vemos ahí')} />
+          <div className="grid gap-10">
+            {content.locations.map(location => (
+              <article className="rx-location__layout" key={location.id}>
+                <div className="rx-location__map">
+                  <iframe title={`Mapa de ${location.venueName}`} src={`https://www.google.com/maps?q=${encodeURIComponent(locationQuery(location))}&output=embed`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+                </div>
+                <div className="rx-location__info rx-reveal">
+                  {location.imageUrl && <img className="mb-4 max-h-56 w-full rounded-lg object-cover" src={location.imageUrl} alt={location.venueName} loading="lazy" />}
+                  <p className="rx-kicker">{location.title || locationTypeLabels[location.type]}</p>
+                  <h3>{location.venueName}</h3>
+                  <p className="rx-location__time"><Clock3 size={18} /> {location.time}</p>
+                  <p className="rx-location__address"><MapPin size={18} /> {location.address}</p>
+                  <div className="rx-location__actions">
+                    <a href={googleLocationUrl(location)} target="_blank" rel="noopener noreferrer" className="rx-button">Google Maps</a>
+                    <a href={wazeLocationUrl(location)} target="_blank" rel="noopener noreferrer" className="rx-button rx-button--outline">Waze</a>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
 
-      {enabled('timeline') && content.timeline.length > 0 && <section className="rx-timeline rx-section"><SectionHeading eyebrow={sectionHeading(config, 'timeline', 'eyebrow', 'EL PLAN DE LA NOCHE')} title={sectionHeading(config, 'timeline', 'title', 'Momentos para recordar')} /><div className="rx-timeline__list"><span className="rx-timeline__track" aria-hidden="true" />{content.timeline.map((item, index) => <article className="rx-timeline__item rx-reveal" key={item.id}><span className="rx-timeline__number">0{index + 1}</span><div><span className="rx-timeline__time">{item.time}</span><h3>{item.title}</h3><p>{item.description}</p></div><Twinkle /></article>)}</div></section>}
+      {enabled('timeline') && content.timeline.length > 0 && <section className="rx-timeline rx-section"><SectionHeading eyebrow={sectionHeading(config, 'timeline', 'eyebrow', 'EL PLAN DE LA NOCHE')} title={sectionHeading(config, 'timeline', 'title', 'Momentos para recordar')} /><div className="rx-timeline__list"><span className="rx-timeline__track" aria-hidden="true" />{content.timeline.map((item, index) => <article className="rx-timeline__item rx-reveal" key={item.id}><span className="rx-timeline__number">0{index + 1}</span><div><span className="rx-timeline__time"><TimelineIcon icon={item.icon} />{item.time}</span><h3>{item.title}</h3><p>{item.description}</p></div><Twinkle /></article>)}</div></section>}
 
-      {enabled('gallery') && content.gallery.images.length > 0 && <section id="momentos" className="rx-gallery rx-section"><SectionHeading eyebrow={sectionHeading(config, 'gallery', 'eyebrow', 'PEQUEÑOS VISTAZOS')} title={sectionHeading(config, 'gallery', 'title', 'El mundo de mis XV')} /><div className="rx-gallery__grid">{content.gallery.images.map((image, index) => <figure className={`rx-gallery__photo rx-gallery__photo--${index + 1}`} key={`${image.url}-${index}`}><div><img src={image.url} alt={image.caption || `Imagen de mis XV ${index + 1}`} loading="lazy" /></div><figcaption><span>0{index + 1}</span>{image.caption}</figcaption></figure>)}</div><p className="rx-gallery__note rx-reveal">Cada detalle fue elegido para compartirlo contigo.</p></section>}
+      {enabled('gallery') && content.gallery.images.length > 0 && <section id="momentos" className="rx-gallery rx-section"><SectionHeading eyebrow={sectionHeading(config, 'gallery', 'eyebrow', 'PEQUEÑOS VISTAZOS')} title={sectionHeading(config, 'gallery', 'title', 'El mundo de mis XV')} /><GalleryLayout layout={content.gallery.layout} className="rx-gallery__grid">{content.gallery.images.map((image, index) => <figure className={`rx-gallery__photo rx-gallery__photo--${index + 1}`} key={`${image.url}-${index}`}><div><img src={image.url} alt={image.caption || `Imagen de mis XV ${index + 1}`} loading="lazy" /></div><figcaption><span>0{index + 1}</span>{image.caption}</figcaption></figure>)}</GalleryLayout><p className="rx-gallery__note rx-reveal">Cada detalle fue elegido para compartirlo contigo.</p></section>}
 
-      {enabled('dress_code') && <section className="rx-dress rx-section"><Butterfly className="rx-dress__butterfly" /><SectionHeading eyebrow={sectionHeading(config, 'dress_code', 'eyebrow', 'DRESS CODE')} title={sectionHeading(config, 'dress_code', 'title', content.dressCode.title)} light /><p className="rx-dress__intro rx-reveal">Ven con tu mejor versión. Esta noche también es para que tú brilles.</p><div className="rx-dress__grid rx-reveal"><div><span>PARA ELLAS</span><p>{content.dressCode.womenNotes}</p></div><div><span>PARA ELLOS</span><p>{content.dressCode.menNotes}</p></div></div>{content.dressCode.reservedColors.length > 0 && <div className="rx-dress__reserved rx-reveal"><span>TONOS RESERVADOS</span><div>{content.dressCode.reservedColors.map((color) => <i key={color.name} title={color.name} style={{ backgroundColor: color.hex }} />)}</div><p>{content.dressCode.reservedNote}</p></div>}</section>}
+      {enabled('dress_code') && <section className="rx-dress rx-section"><Butterfly className="rx-dress__butterfly" /><SectionHeading eyebrow={sectionHeading(config, 'dress_code', 'eyebrow', 'DRESS CODE')} title={sectionHeading(config, 'dress_code', 'title', content.dressCode.title)} light /><p className="rx-dress__intro rx-reveal">Ven con tu mejor versión. Esta noche también es para que tú brilles.</p><div className="rx-dress__grid rx-reveal"><div><span>PARA ELLAS</span><p>{content.dressCode.womenNotes}</p></div><div><span>PARA ELLOS</span><p>{content.dressCode.menNotes}</p></div></div>{content.dressCode.reservedColors.length > 0 && <div className="rx-dress__reserved rx-reveal"><span>TONOS RESERVADOS</span><div>{content.dressCode.reservedColors.map((color) => <i key={color.name} title={color.name} style={{ backgroundColor: color.hex }} />)}</div><p>{content.dressCode.reservedNote}</p></div>}<DressInspiration url={content.dressCode.pinterestBoardUrl} /></section>}
 
-      {enabled('gifts') && <section className="rx-gifts rx-section"><Gift className="rx-gifts__icon rx-reveal" /><SectionHeading eyebrow={sectionHeading(config, 'gifts', 'eyebrow', 'UN DETALLE ESPECIAL')} title={sectionHeading(config, 'gifts', 'title', 'El mejor regalo es verte ahí')} /><p className="rx-gifts__text rx-reveal">{content.gifts.introMessage}</p>{content.gifts.registries.length > 0 && <div className="rx-gifts__links rx-reveal">{content.gifts.registries.map((registry) => <a key={registry.storeName} href={registry.url} target="_blank" rel="noopener noreferrer">{registry.storeName} <ArrowRight size={16} /></a>)}</div>}</section>}
+      {enabled('gifts') && (
+        <section className="rx-gifts rx-section">
+          <Gift className="rx-gifts__icon rx-reveal" />
+          <SectionHeading eyebrow={sectionHeading(config, 'gifts', 'eyebrow', 'UN DETALLE ESPECIAL')} title={sectionHeading(config, 'gifts', 'title', 'El mejor regalo es verte ahí')} />
+          <p className="rx-gifts__text rx-reveal">{content.gifts.introMessage}</p>
+          {content.gifts.registries.length > 0 && <div className="rx-gifts__links rx-reveal">
+            {content.gifts.registries.map((registry, index) => (
+              <a key={index} href={registry.url} target="_blank" rel="noopener noreferrer">
+                {registry.storeName}{registry.eventNumber && ` · ${registry.eventNumber}`} <ArrowRight size={16} />
+              </a>
+            ))}
+          </div>}
+          {content.gifts.bankTransfer?.enabled && (
+            <div className="mt-5 space-y-2 text-center">
+              <h3>Transferencia bancaria</h3>
+              <p>{content.gifts.bankTransfer.bankName} · {content.gifts.bankTransfer.accountHolder}</p>
+              <p>CLABE: {content.gifts.bankTransfer.clabe}</p>
+              {content.gifts.bankTransfer.accountNumber && <p>Cuenta: {content.gifts.bankTransfer.accountNumber}</p>}
+              {content.gifts.bankTransfer.conceptNote && <p>Concepto: {content.gifts.bankTransfer.conceptNote}</p>}
+            </div>
+          )}
+          {content.gifts.cashEnvelopeAtVenue && <p className="mt-5 text-center">Habrá un espacio para lluvia de sobres el día del evento.</p>}
+        </section>
+      )}
 
-      {enabled('social_features') && <section className="rx-social rx-section"><SectionHeading eyebrow={sectionHeading(config, 'social_features', 'eyebrow', 'LA NOCHE TAMBIÉN ES TUYA')} title={sectionHeading(config, 'social_features', 'title', 'Hagamos recuerdos juntos')} /><div className="rx-social__grid"><div className="rx-social__album rx-reveal"><Camera size={31} /><span>ÁLBUM DE INVITADOS</span><h3>La noche desde tus ojos</h3><SharedAlbum slug={slug} token={guestGroup?.guestToken} preview={isBuilderPreview} /></div><div className="rx-social__music rx-reveal"><SocialFeatures slug={slug} token={guestGroup?.guestToken} preview={isBuilderPreview} songsEnabled={content.socialFeatures.enableSongRequests} audioEnabled={content.socialFeatures.enableAudioGuestbook} /></div></div>{content.socialFeatures.hashtag && <p className="rx-social__hashtag rx-reveal">{content.socialFeatures.hashtag}</p>}</section>}
+      {enabled('accommodation') && content.accommodation.length > 0 && (
+        <section className="rx-section" data-editor-section="accommodation">
+          <SectionHeading eyebrow={sectionHeading(config, 'accommodation', 'eyebrow', 'PARA QUIENES VIENEN DE LEJOS')} title={sectionHeading(config, 'accommodation', 'title', 'Hospedaje sugerido')} />
+          <div className="mx-auto grid max-w-3xl gap-5 sm:grid-cols-2">
+            {content.accommodation.map((hotel, index) => (
+              <article className="rounded-lg border p-5" key={index}>
+                <h3 className="text-lg font-semibold">{hotel.hotelName}</h3>
+                <p>{hotel.distanceNote}</p>
+                {hotel.discountCode && <p>Código: {hotel.discountCode}</p>}
+                <HotelLinks hotel={hotel} />
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
 
-      {enabled('rsvp') && <section id="confirmar" className="rx-rsvp rx-section"><Twinkle className="rx-rsvp__star" /><SectionHeading eyebrow={sectionHeading(config, 'rsvp', 'eyebrow', 'NO SERÍA LO MISMO SIN TI')} title={sectionHeading(config, 'rsvp', 'title', '¿Nos vemos en mis XV?')} light /><p className="rx-rsvp__intro rx-reveal">{guestGroup ? `Esta invitación está reservada para ${guestGroup.groupName}. Tienen ${guestGroup.allocatedAdults + guestGroup.allocatedChildren} pases.` : 'Abre tu enlace personal para confirmar tu asistencia.'}</p><div className="rx-rsvp__card rx-reveal">{passName ? <div className="rx-rsvp__pass"><span><Check size={18} /> PASE DIGITAL</span><h3>{passName}</h3><p>{adults} adultos{children > 0 ? ` · ${children} niños` : ''}</p><div className="rx-rsvp__qr"><QRCodeSVG value={passPayload} size={164} level="M" /></div><p>{content.rsvp.customConfirmationMessage}</p><small>Guarda este pase para presentarlo en el evento.</small><button type="button" onClick={() => setPassName('')}>Modificar datos</button></div> : <form onSubmit={handleRsvp}><label>Nombre o familia<input required value={rsvpName} readOnly={Boolean(guestGroup)} onChange={(event) => setRsvpName(event.target.value)} placeholder="Tu nombre" /></label><div className="rx-rsvp__row"><label>¿Nos acompañas?<select value={willAttend} onChange={(event) => setWillAttend(event.target.value)}><option value="yes">¡Sí, ahí estaré!</option><option value="no">No podré asistir</option></select></label><label>WhatsApp<input type="tel" value={rsvpPhone} onChange={(event) => setRsvpPhone(event.target.value)} placeholder="Tu número" /></label></div>{willAttend === 'yes' && <div className="rx-rsvp__row"><label>Adultos<select value={adults} onChange={(event) => setAdults(Number(event.target.value))}>{Array.from({ length: maxAdults }, (_, index) => index + 1).map((count) => <option key={count} value={count}>{count}</option>)}</select></label>{config.content.rsvp.allowChildrenSelection && maxChildren > 0 && <label>Niños<select value={children} onChange={(event) => setChildren(Number(event.target.value))}>{Array.from({ length: maxChildren + 1 }, (_, index) => index).map((count) => <option key={count} value={count}>{count}</option>)}</select></label>}</div>}<label>Un mensaje para {name} <span>(opcional)</span><textarea rows={3} value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Escribe tus mejores deseos..." /></label><button className="rx-button" type="submit">{willAttend === 'yes' ? 'Confirmar asistencia' : 'Enviar respuesta'} <ArrowRight size={17} /></button><small>Usa tu enlace personal para guardar tu respuesta.</small></form>}</div></section>}
+      {enabled('social_features') && <section className="rx-social rx-section"><SectionHeading eyebrow={sectionHeading(config, 'social_features', 'eyebrow', 'LA NOCHE TAMBIÉN ES TUYA')} title={sectionHeading(config, 'social_features', 'title', 'Hagamos recuerdos juntos')} /><div className="rx-social__grid">{content.socialFeatures.enableLiveDisposableCamera && <div className="rx-social__album rx-reveal"><Camera size={31} /><span>ÁLBUM DE INVITADOS</span><h3>La noche desde tus ojos</h3><SharedAlbum slug={slug} token={guestGroup?.guestToken} preview={isBuilderPreview} /></div>}<div className="rx-social__music rx-reveal"><SocialFeatures slug={slug} token={guestGroup?.guestToken} preview={isBuilderPreview} songsEnabled={content.socialFeatures.enableSongRequests} audioEnabled={content.socialFeatures.enableAudioGuestbook} /></div></div>{content.socialFeatures.hashtag && <p className="rx-social__hashtag rx-reveal">{content.socialFeatures.hashtag}</p>}</section>}
+
+      {enabled('rsvp') && <section id="confirmar" className="rx-rsvp rx-section"><Twinkle className="rx-rsvp__star" /><SectionHeading eyebrow={sectionHeading(config, 'rsvp', 'eyebrow', 'NO SERÍA LO MISMO SIN TI')} title={sectionHeading(config, 'rsvp', 'title', '¿Nos vemos en mis XV?')} light /><p className="rx-rsvp__intro rx-reveal">{guestGroup ? `Esta invitación está reservada para ${guestGroup.groupName}. Tienen ${guestGroup.allocatedAdults + guestGroup.allocatedChildren} pases.` : 'Abre tu enlace personal para confirmar tu asistencia.'}</p><div className="rx-rsvp__card rx-reveal">{passName ? <div className="rx-rsvp__pass"><span><Check size={18} /> PASE DIGITAL</span><h3>{passName}</h3><p>{adults} adultos{children > 0 ? ` · ${children} niños` : ''}</p><div className="rx-rsvp__qr"><QRCodeSVG value={passPayload} size={164} level="M" /></div><p>{content.rsvp.customConfirmationMessage}</p><small>Guarda este pase para presentarlo en el evento.</small><button type="button" onClick={() => setPassName('')}>Modificar datos</button></div> : <form onSubmit={handleRsvp}><label>Nombre o familia<input required value={rsvpName} readOnly={Boolean(guestGroup)} onChange={(event) => setRsvpName(event.target.value)} placeholder="Tu nombre" /></label><div className="rx-rsvp__row"><label>¿Nos acompañas?<select value={willAttend} onChange={(event) => setWillAttend(event.target.value)}><option value="yes">¡Sí, ahí estaré!</option><option value="no">No podré asistir</option></select></label><label>WhatsApp<input type="tel" value={rsvpPhone} onChange={(event) => setRsvpPhone(event.target.value)} placeholder="Tu número" /></label></div>{willAttend === 'yes' && <div className="rx-rsvp__row"><label>Adultos<select value={adults} onChange={(event) => setAdults(Number(event.target.value))}>{Array.from({ length: maxAdults }, (_, index) => index + 1).map((count) => <option key={count} value={count}>{count}</option>)}</select></label>{config.content.rsvp.allowChildrenSelection && maxChildren > 0 && <label>Niños<select value={children} onChange={(event) => setChildren(Number(event.target.value))}>{Array.from({ length: maxChildren + 1 }, (_, index) => index).map((count) => <option key={count} value={count}>{count}</option>)}</select></label>}</div>}{willAttend === 'yes' && content.rsvp.askDietaryRestrictions && (
+        <label>Restricciones alimentarias (opcional)<input value={dietaryNotes} onChange={event => setDietaryNotes(event.target.value)} maxLength={400} /></label>
+      )}<label>Un mensaje para {name} <span>(opcional)</span><textarea rows={3} value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Escribe tus mejores deseos..." /></label><button className="rx-button" type="submit">{willAttend === 'yes' ? 'Confirmar asistencia' : 'Enviar respuesta'} <ArrowRight size={17} /></button><small>Usa tu enlace personal para guardar tu respuesta.</small></form>}</div><RsvpExtras phone={content.rsvp.plannerContactWhatsapp} previewMessage={isBuilderPreview ? content.rsvp.customConfirmationMessage : undefined} /></section>}
     </main>
     <footer className="rx-footer"><Butterfly /><span>XV</span><strong>{name}</strong><p>{dateLabel} · Gracias por ser parte de mi historia</p><a href="#inicio">Volver al inicio ↑</a></footer>
   </div>;

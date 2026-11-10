@@ -1,6 +1,9 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { TimelineIcon, DressInspiration, HotelLinks } from '../core/InvitationDetails';
+import { RsvpExtras } from '../core/RsvpExtras';
+import { extractCoupleParts } from '@/lib/templates/resolve-invitation-config';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { createQuoteReveal, drawQuotePaths, quoteWordTiming } from './quote-reveal';
@@ -45,8 +48,11 @@ import {
 } from '@/lib/calendar/ics-generator';
 import { invitationFontStack } from '@/lib/fonts/invitation-fonts';
 import { HeroMedia } from '../core/HeroMedia';
+import { EnvelopeOpener } from '../core/EnvelopeOpener';
+import { GalleryLayout } from '../core/GalleryLayout';
 import { FloatingAudioPlayer } from '../core/FloatingAudioPlayer';
 import { SharedAlbum } from '../core/SharedAlbum';
+import { submitGuestRsvp } from '@/lib/invitation/submit-rsvp';
 import { SocialFeatures } from '../core/SocialFeatures';
 import './marea-azul.css';
 
@@ -539,15 +545,6 @@ function SectionHeader({
  * HELPERS DE CONTENIDO Y MIGRACIÓN SUAVE
  * ========================================================================== */
 
-function extractCoupleParts(mainTitle: string): [string, string] {
-  const raw = (mainTitle || 'Sofía & Mateo').trim();
-  const parts = raw.split(/\s*(?:&|y|\+)\s*/i).filter(Boolean);
-  if (parts.length >= 2) {
-    return [parts[0], parts.slice(1).join(' & ')];
-  }
-  return [raw, 'Nuestro Horizonte'];
-}
-
 function formatDate(eventDate: string) {
   const date = new Date(eventDate);
   if (Number.isNaN(date.getTime())) return '';
@@ -566,202 +563,6 @@ function sectionHeading(
   fallback: string
 ) {
   return config.content.sectionHeadings?.[id]?.[field] || fallback;
-}
-
-/**
- * Enriquecimiento suave del contenido de Marea Azul para que tanto invitaciones nuevas
- * como existentes tengan imágenes editoriales, 3 capítulos de bitácora, familia, 4 momentos
- * de ruta y galería completa sin sobrescribir personalizaciones del usuario.
- */
-function mareaContent(config: InvitationConfig): InvitationConfig['content'] {
-  const raw = config.content;
-  const [first, second] = extractCoupleParts(raw.hero.mainTitle);
-  const coupleLabel = `${first} & ${second}`;
-
-  const isLegacyCover =
-    !raw.hero.coverImageUrl ||
-    raw.hero.coverImageUrl.includes('/images/marea-azul/cover.svg') ||
-    raw.hero.coverImageUrl.includes('unsplash.com/photo-1519741497674');
-
-  const hero = {
-    ...raw.hero,
-    badgeText:
-      !raw.hero.badgeText || raw.hero.badgeText === 'NOS CASAMOS'
-        ? 'UNA BODA JUNTO AL MAR'
-        : raw.hero.badgeText,
-    tagline:
-      !raw.hero.tagline || raw.hero.tagline.includes('Huatulco')
-        ? 'Un nuevo horizonte · Bahías de Huatulco, Oaxaca'
-        : raw.hero.tagline,
-    coverImageUrl: isLegacyCover ? '/images/marea-azul/cover.jpg' : raw.hero.coverImageUrl,
-  };
-
-  const defaultBlocks = [
-    {
-      title: 'La primera marea',
-      description:
-        'Entre viajes, sobremesas largas y atardeceres frente al mar descubrimos que nuestros caminos siempre buscaban la misma orilla.',
-    },
-    {
-      title: 'El mismo horizonte',
-      description:
-        'Aprendimos a navegar cada estación en equipo, celebrando la calma de los días simples y la emoción de cada nueva travesía.',
-    },
-    {
-      title: 'Puerto de encuentro',
-      description:
-        'Hoy reunimos a las personas que más queremos frente a las aguas de Huatulco para zarpar hacia nuestra siguiente etapa juntos.',
-    },
-  ];
-
-  const existingBlocks = raw.quoteStory.storyBlocks || [];
-  const isDefaultSeedBlocks =
-    existingBlocks.length <= 2 &&
-    (existingBlocks.length === 0 || existingBlocks[0]?.title === 'El encuentro');
-
-  const quoteStory = {
-    ...raw.quoteStory,
-    quoteText:
-      raw.quoteStory.quoteText ||
-      'Nuestra historia nos llevó por muchos caminos. Ahora elegimos el mismo horizonte y queremos celebrarlo contigo frente al mar.',
-    quoteAuthor: raw.quoteStory.quoteAuthor || coupleLabel,
-    storyBlocks: isDefaultSeedBlocks ? defaultBlocks : existingBlocks,
-  };
-
-  const defaultGroups = [
-    { groupTitle: 'Padres de la novia', names: ['Elena y Fernando'] },
-    { groupTitle: 'Padres del novio', names: ['María del Carmen y Jorge'] },
-    { groupTitle: 'Padrinos de horizonte', names: ['Camila, Santiago y nuestra familia'] },
-  ];
-
-  const vipParents = {
-    blessingMessage:
-      raw.vipParents.blessingMessage ||
-      'Con la bendición de nuestras familias y el cariño de quienes han acompañado nuestra travesía.',
-    groups:
-      raw.vipParents.groups && raw.vipParents.groups.length >= 2
-        ? raw.vipParents.groups
-        : defaultGroups,
-  };
-
-  const locations = (raw.locations || []).map((loc) => ({
-    ...loc,
-    imageUrl:
-      !loc.imageUrl || loc.imageUrl.endsWith('.svg')
-        ? '/images/marea-azul/venue.jpg'
-        : loc.imageUrl,
-  }));
-
-  const defaultTimeline = [
-    {
-      id: 'marea-1',
-      time: '16:30 HRS',
-      title: 'Arribo y brisa de bienvenida',
-      description: 'Recepción frente a la bahía con aguas frescas, cocos fríos y abanicos de palma.',
-      icon: 'cocktail' as const,
-    },
-    {
-      id: 'marea-2',
-      time: '17:00 HRS',
-      title: 'Ceremonia frente al mar',
-      description: 'Nos damos el sí con el sonido de las olas y la luz dorada de la costa.',
-      icon: 'rings' as const,
-    },
-    {
-      id: 'marea-3',
-      time: '18:30 HRS',
-      title: 'Brindis de sol terracota',
-      description: 'Mezcal artesanal, coctelería costera y música acústica al caer el sol.',
-      icon: 'cocktail' as const,
-    },
-    {
-      id: 'marea-4',
-      time: '20:00 HRS',
-      title: 'Cena mediterránea y fiesta bajo las estrellas',
-      description: 'Mesa compartida entre azulejos de cobalto, linternas cálidas y baile junto al mar.',
-      icon: 'party' as const,
-    },
-  ];
-
-  const isLegacyTimeline =
-    !raw.timeline ||
-    raw.timeline.length <= 3 && raw.timeline[0]?.title === 'El encuentro';
-
-  const timeline = isLegacyTimeline ? defaultTimeline : raw.timeline;
-
-  const isLegacyGallery =
-    !raw.gallery?.images ||
-    raw.gallery.images.length <= 2 ||
-    raw.gallery.images.some((img) => img.url.endsWith('.svg'));
-
-  const gallery = {
-    ...raw.gallery,
-    images: isLegacyGallery
-      ? [
-          {
-            url: '/images/marea-azul/cover.jpg',
-            caption: 'Postal 01 · Nuestro horizonte en la bahía',
-          },
-          {
-            url: '/images/marea-azul/sail.jpg',
-            caption: 'Postal 02 · Travesía bajo el sol de la tarde',
-          },
-          {
-            url: '/images/marea-azul/table.jpg',
-            caption: 'Postal 03 · Lino, sal y cerámica de cobalto',
-          },
-          {
-            url: '/images/marea-azul/toast.jpg',
-            caption: 'Postal 04 · Brindis frente al Pacífico',
-          },
-        ]
-      : raw.gallery.images,
-  };
-
-  const dressCode = {
-    ...raw.dressCode,
-    title: raw.dressCode.title || 'Elegancia Costera / Lino Mediterráneo',
-    womenNotes:
-      raw.dressCode.womenNotes ||
-      'Vestido largo o midi fluido en telas frescas y ligeras; sandalias de tacón ancho o cuñas aptas para terraza y arena.',
-    menNotes:
-      raw.dressCode.menNotes ||
-      'Traje de lino o algodón ligero en tonos arena, hueso, azul pizarra o salvia; sin corbata.',
-    reservedColors:
-      raw.dressCode.reservedColors && raw.dressCode.reservedColors.length > 0
-        ? raw.dressCode.reservedColors
-        : [
-            { name: 'Blanco Cal', hex: '#FFFFFF' },
-            { name: 'Marfil Lino', hex: '#F7F4E9' },
-          ],
-    reservedNote:
-      raw.dressCode.reservedNote ||
-      'El blanco y marfil están reservados exclusivamente para la pareja.',
-  };
-
-  const gifts = {
-    introMessage:
-      raw.gifts.introMessage ||
-      'El mejor regalo es que viajes a compartir este horizonte con nosotros. Si deseas hacernos un obsequio para nuestra nueva vida juntos, tendremos buzón de sobres en recepción.',
-    registries: raw.gifts.registries || [],
-    bankTransfer: raw.gifts.bankTransfer,
-    cashEnvelopeAtVenue:
-      raw.gifts.registries?.length || raw.gifts.bankTransfer?.enabled
-        ? raw.gifts.cashEnvelopeAtVenue
-        : true,
-  };
-
-  return {
-    ...raw,
-    hero,
-    quoteStory,
-    vipParents,
-    locations,
-    timeline,
-    gallery,
-    dressCode,
-    gifts,
-  };
 }
 
 /* ============================================================================
@@ -810,7 +611,7 @@ export function MareaAzulExperience({
     tableName: string;
   } | null>(null);
 
-  const content = useMemo(() => mareaContent(config), [config]);
+  const content = config.content;
   const { colors, fonts, envelope } = config.theme;
   const [coupleFirst, coupleSecond] = extractCoupleParts(content.hero.mainTitle);
   const coupleDisplay = `${coupleFirst} & ${coupleSecond}`;
@@ -1262,7 +1063,7 @@ export function MareaAzulExperience({
           );
         });
     },
-    { scope: rootRef, dependencies: [isOpen, isBuilderPreview, sectionSignature] }
+    { scope: rootRef, revertOnUpdate: true, dependencies: [isOpen, isBuilderPreview, sectionSignature] }
   );
 
   const handleOpenInvitation = () => {
@@ -1321,60 +1122,37 @@ export function MareaAzulExperience({
     URL.revokeObjectURL(link.href);
   };
 
-  const handleRsvpSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!rsvpName.trim()) {
-      toast.error('Por favor escribe tu nombre completo');
+  const handleRsvpSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (isBuilderPreview || !guestGroup) {
+      toast.error('Abre tu enlace personal para confirmar');
       return;
     }
 
-    const totalAdults = willAttend === 'yes' ? adults : 0;
-    const totalChildren =
-      willAttend === 'yes' && content.rsvp.allowChildrenSelection ? children : 0;
-
     try {
-      await fetch(`/api/public/invitations/${encodeURIComponent(slug)}/rsvp`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          groupId: guestGroup?.id,
-          groupName: rsvpName.trim(),
-          whatsappPhone: rsvpPhone.trim(),
-          status: willAttend === 'yes' ? 'confirmed' : 'declined',
-          confirmedAdults: totalAdults,
-          confirmedChildren: totalChildren,
-          dietaryRestrictions: dietaryNotes.trim(),
-          message: guestMessage.trim(),
-        }),
-      });
-    } catch {
-      // Continúa en modo demo/preview
-    }
-
-    if (willAttend === 'yes') {
-      const qrPayload = JSON.stringify({
-        invitationSlug: slug,
-        groupId: guestGroup?.id || `ma-${Date.now()}`,
+      const pass = await submitGuestRsvp(slug, {
+        guestToken: guestGroup.guestToken,
         groupName: rsvpName.trim(),
-        confirmedAdults: totalAdults,
-        confirmedChildren: totalChildren,
+        whatsappPhone: rsvpPhone.trim(),
+        willAttend: willAttend === 'yes',
+        confirmedAdults: willAttend === 'yes' ? adults : 0,
+        confirmedChildren: willAttend === 'yes' && content.rsvp.allowChildrenSelection ? children : 0,
+        dietaryNotes: content.rsvp.askDietaryRestrictions ? dietaryNotes.trim() : undefined,
+        guestMessage: guestMessage.trim(),
       });
+      if (!pass) {
+        setGeneratedPass(null);
+        toast.success('Gracias por avisarnos');
+        return;
+      }
       setGeneratedPass({
-        qrPayload,
-        groupName: rsvpName.trim(),
-        adults: totalAdults,
-        children: totalChildren,
-        tableName: guestGroup?.tableName || 'TERRAZA DEL MAR',
+        qrPayload: pass.qrPayload, groupName: pass.groupName, adults: pass.confirmedAdults,
+        children: pass.confirmedChildren, tableName: pass.tableName || 'Mesa por asignar',
       });
-      confetti({
-        particleCount: 75,
-        spread: 80,
-        origin: { y: 0.65 },
-        colors: ['#155B8A', '#D3865A', '#F7F4E9', '#102F45'],
-      });
-      toast.success('¡Pase de embarque confirmado!');
-    } else {
-      toast.success('Gracias por avisarnos. Te llevamos en el corazón.');
+      confetti({ particleCount: 65, spread: 75, origin: { y: 0.65 }, colors: ['#155B8A', '#D3865A', '#F7F4E9', '#102F45'] });
+      toast.success('¡Asistencia confirmada! Tu pase QR está listo.');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'No se pudo guardar tu respuesta');
     }
   };
 
@@ -1412,7 +1190,7 @@ export function MareaAzulExperience({
   return (
     <div ref={rootRef} className="ma-root" style={rootStyle}>
       {/* 1. CARTA DE NAVEGACIÓN / SOBRE COSTERO INTERACTIVO */}
-      {(!isOpen || (isBuilderPreview && previewEnvelope)) && (
+      {!isOpen && (envelope.variant === 'editorial-curtain' ? (
         <div
           className="ma-opening"
           data-editor-section="envelope"
@@ -1433,7 +1211,7 @@ export function MareaAzulExperience({
                 <i aria-hidden="true" />
                 <span>15°45′N · 96°08′W · COSTA DEL PACÍFICO</span>
               </span>
-              <span className="ma-opening__monogram">
+              <span className="ma-opening__monogram" style={{ borderColor: envelope.sealColor, color: envelope.sealColor }}>
                 {envelope.sealMonogram || 'S&M'}
               </span>
             </div>
@@ -1470,13 +1248,13 @@ export function MareaAzulExperience({
             </button>
           </div>
         </div>
-      )}
+      ) : (
+        <EnvelopeOpener config={config} guestGroup={guestGroup} isOpen={isOpen} onOpen={handleOpenInvitation} />
+      ))}
 
       {/* 2. AUDIO FLOTANTE (SI ESTÁ ACTIVO) */}
       <FloatingAudioPlayer
-        enabled={config.audio.enabled}
-        trackUrl={config.audio.trackUrl}
-        trackTitle={config.audio.trackTitle}
+        {...config.audio}
         isEnvelopeOpen={isOpen}
         accentColor={colors.accentPrimary}
       />
@@ -1729,6 +1507,7 @@ export function MareaAzulExperience({
                           <Waves size={16} />
                         </div>
                         <h3>{block.title}</h3>
+                        {block.imageUrl && <img className="mb-3 w-full rounded-lg object-cover" src={block.imageUrl} alt="" loading="lazy" />}
                         <p>{block.description}</p>
                       </article>
                     ))}
@@ -1960,11 +1739,11 @@ export function MareaAzulExperience({
                     <article className="ma-location-card" key={loc.id}>
                       <div className="ma-location-card__visual-col">
                         <div className="ma-location-card__media">
-                          <img
-                            src={loc.imageUrl || '/images/marea-azul/venue.jpg'}
+                          {loc.imageUrl && <img
+                            src={loc.imageUrl}
                             alt={loc.venueName}
                             loading="lazy"
-                          />
+                          />}
                           <span className="ma-location-card__coord">
                             <Compass size={13} />
                             <span>
@@ -2086,7 +1865,7 @@ export function MareaAzulExperience({
                       </div>
                       <div className="ma-timeline__card">
                         <div className="ma-timeline__meta">
-                          <span className="ma-timeline__time">{item.time}</span>
+                          <span className="ma-timeline__time"><TimelineIcon icon={item.icon} />{item.time}</span>
                           <span className="ma-timeline__step">
                             COORDENADA 0{idx + 1}
                           </span>
@@ -2126,7 +1905,7 @@ export function MareaAzulExperience({
                 )}
               />
 
-              <div className="ma-gallery__grid">
+              <GalleryLayout layout={content.gallery.layout} className="ma-gallery__grid">
                 {content.gallery.images.map((img, idx) => (
                   <figure className="ma-gallery__card" key={`${img.url}-${idx}`}>
                     <div className="ma-gallery__img-wrap">
@@ -2143,7 +1922,7 @@ export function MareaAzulExperience({
                     </figcaption>
                   </figure>
                 ))}
-              </div>
+              </GalleryLayout>
             </div>
           </section>
         )}
@@ -2164,10 +1943,7 @@ export function MareaAzulExperience({
                   'eyebrow',
                   'Para disfrutar la costa'
                 )}
-                title={
-                  content.dressCode.title ||
-                  sectionHeading(config, 'dress_code', 'title', 'Cómo venir')
-                }
+                title={sectionHeading(config, 'dress_code', 'title', content.dressCode.title || 'Cómo venir')}
                 subtitle="Queremos que te sientas fresco, cómodo y elegante bajo el sol y la brisa del mar."
               />
 
@@ -2223,6 +1999,7 @@ export function MareaAzulExperience({
                   </div>
                 )}
             </div>
+            <DressInspiration url={content.dressCode.pinterestBoardUrl} />
           </section>
         )}
 
@@ -2264,6 +2041,7 @@ export function MareaAzulExperience({
                     <p className="ma-gifts__clabe">
                       CLABE: {content.gifts.bankTransfer.clabe}
                     </p>
+                    {content.gifts.bankTransfer.accountNumber && <small className="block">Cuenta: {content.gifts.bankTransfer.accountNumber}</small>}
                     {content.gifts.bankTransfer.conceptNote && (
                       <small>{content.gifts.bankTransfer.conceptNote}</small>
                     )}
@@ -2348,6 +2126,7 @@ export function MareaAzulExperience({
                         <ExternalLink size={14} />
                       </a>
                     )}
+                    <HotelLinks hotel={hotel} includeBooking={false} />
                   </article>
                 ))}
               </div>
@@ -2381,18 +2160,20 @@ export function MareaAzulExperience({
               />
 
               <div className="ma-social__grid">
-                <div className="ma-social__panel">
-                  <div className="ma-social__panel-head">
-                    <Sparkles size={16} />
-                    <span>ÁLBUM EN VIVO JUNTO AL MAR</span>
+                {content.socialFeatures.enableLiveDisposableCamera && (
+                  <div className="ma-social__panel">
+                    <div className="ma-social__panel-head">
+                      <Sparkles size={16} />
+                      <span>ÁLBUM EN VIVO JUNTO AL MAR</span>
+                    </div>
+                    <h3>Comparte tus postales del día</h3>
+                    <SharedAlbum
+                      slug={slug}
+                      token={guestGroup?.guestToken}
+                      preview={isBuilderPreview}
+                    />
                   </div>
-                  <h3>Comparte tus postales del día</h3>
-                  <SharedAlbum
-                    slug={slug}
-                    token={guestGroup?.guestToken}
-                    preview={isBuilderPreview}
-                  />
-                </div>
+                )}
 
                 {(content.socialFeatures.enableSongRequests ||
                   content.socialFeatures.enableAudioGuestbook) && (
@@ -2623,6 +2404,7 @@ export function MareaAzulExperience({
                 )}
               </div>
             </div>
+            <RsvpExtras phone={content.rsvp.plannerContactWhatsapp} previewMessage={isBuilderPreview ? content.rsvp.customConfirmationMessage : undefined} />
           </section>
         )}
       </main>

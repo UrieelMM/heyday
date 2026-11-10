@@ -1,6 +1,9 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { googleLocationUrl, wazeLocationUrl } from '@/lib/invitation/location-links';
+import { TimelineIcon, HotelLinks } from '../core/InvitationDetails';
+import { RsvpExtras } from '../core/RsvpExtras';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -45,7 +48,9 @@ import {
 } from '@/lib/calendar/ics-generator';
 import { FloatingAudioPlayer } from '../core/FloatingAudioPlayer';
 import { HeroMedia } from '../core/HeroMedia';
+import { GalleryLayout } from '../core/GalleryLayout';
 import { SharedAlbum } from '../core/SharedAlbum';
+import { submitGuestRsvp } from '@/lib/invitation/submit-rsvp';
 import { SocialFeatures } from '../core/SocialFeatures';
 import './eternal-elegance.css';
 
@@ -143,148 +148,6 @@ function extractCoupleNames(mainTitle: string): [string, string] {
     return [parts[0], parts.slice(1).join(' & ')];
   }
   return [raw, 'Nuestro Para Siempre'];
-}
-
-/**
- * Enriquecimiento suave del contenido de Eternal Elegance para que tanto invitaciones
- * nuevas como existentes luzcan las 5 fotografías editoriales locales, 3 capítulos de
- * historia, 3 grupos familiares y 4 momentos de programa sin sobrescribir ediciones.
- */
-function eternalContent(config: InvitationConfig): InvitationConfig['content'] {
-  const raw = config.content;
-
-  const isLegacyCover =
-    !raw.hero.coverImageUrl ||
-    raw.hero.coverImageUrl.includes('unsplash.com/photo-1519741497674') ||
-    raw.hero.coverImageUrl.includes('unsplash.com');
-
-  const hero = {
-    ...raw.hero,
-    badgeText: raw.hero.badgeText || 'NOS CASAMOS',
-    mainTitle: raw.hero.mainTitle || 'Sofía & Mateo',
-    tagline:
-      raw.hero.tagline || 'Un amor para toda la vida • San Miguel de Allende',
-    coverImageUrl: isLegacyCover
-      ? '/images/eternal-elegance/cover.jpg'
-      : raw.hero.coverImageUrl,
-  };
-
-  const defaultBlocks = [
-    {
-      title: 'El primer encuentro',
-      description:
-        'Una coincidencia bastó para descubrir que compartíamos la misma forma de mirar la vida, reír sin prisa y soñar en grande.',
-      imageUrl: '/images/eternal-elegance/vows.jpg',
-    },
-    {
-      title: 'La promesa en calma',
-      description:
-        'Entre viajes, cafés largos y complicidad cotidiana, supimos que nuestro hogar no era un lugar, sino estar juntos.',
-      imageUrl: '/images/eternal-elegance/ceremony.jpg',
-    },
-    {
-      title: 'Nuestro gran capítulo',
-      description:
-        'Hoy reunimos a nuestras familias y amigos más queridos en el corazón de San Miguel de Allende para celebrar nuestro sí para siempre.',
-      imageUrl: '/images/eternal-elegance/hacienda.jpg',
-    },
-  ];
-
-  const existingBlocks = raw.quoteStory.storyBlocks || [];
-  const isDefaultSeedBlocks =
-    existingBlocks.length < 3 ||
-    (existingBlocks[0]?.title === 'El encuentro' &&
-      !existingBlocks[0]?.imageUrl);
-
-  const quoteStory = {
-    ...raw.quoteStory,
-    quoteText:
-      raw.quoteStory.quoteText ||
-      'En medio de todo el ruido del mundo, encontramos en el otro nuestro lugar favorito para volver siempre.',
-    quoteAuthor: raw.quoteStory.quoteAuthor || hero.mainTitle,
-    storyBlocks: isDefaultSeedBlocks
-      ? defaultBlocks
-      : existingBlocks.map((b, idx) => ({
-          ...b,
-          imageUrl:
-            b.imageUrl && !b.imageUrl.includes('unsplash.com')
-              ? b.imageUrl
-              : defaultBlocks[idx % defaultBlocks.length].imageUrl,
-        })),
-  };
-
-  const defaultGroups = [
-    {
-      groupTitle: 'Padres de la Novia',
-      names: ['Sra. Elena Morales de Garza', 'Sr. Fernando Garza Treviño'],
-    },
-    {
-      groupTitle: 'Padres del Novio',
-      names: ['Sra. María del Carmen Villarreal', 'Sr. Jorge Alberto Elizondo'],
-    },
-    {
-      groupTitle: 'Padrinos de Velación',
-      names: ['Lic. Roberto Garza & Sra. Lucía Méndez'],
-    },
-  ];
-
-  const vipParents = {
-    blessingMessage:
-      raw.vipParents.blessingMessage ||
-      'Con la bendición de Dios y el amor incondicional de nuestros padres',
-    groups:
-      raw.vipParents.groups && raw.vipParents.groups.length >= 2
-        ? raw.vipParents.groups
-        : defaultGroups,
-  };
-
-  const locations = (raw.locations || []).map((loc, idx) => ({
-    ...loc,
-    imageUrl:
-      !loc.imageUrl || loc.imageUrl.includes('unsplash.com')
-        ? idx === 0
-          ? '/images/eternal-elegance/ceremony.jpg'
-          : '/images/eternal-elegance/hacienda.jpg'
-        : loc.imageUrl,
-  }));
-
-  const isLegacyGallery =
-    !raw.gallery?.images ||
-    raw.gallery.images.length === 0 ||
-    raw.gallery.images.some((img) => img.url.includes('unsplash.com'));
-
-  const gallery = {
-    ...raw.gallery,
-    images: isLegacyGallery
-      ? [
-          {
-            url: '/images/eternal-elegance/cover.jpg',
-            caption: 'El comienzo de nuestro para siempre',
-          },
-          {
-            url: '/images/eternal-elegance/vows.jpg',
-            caption: 'La promesa que nos une',
-          },
-          {
-            url: '/images/eternal-elegance/hacienda.jpg',
-            caption: 'Nuestra mesa bajo las estrellas',
-          },
-          {
-            url: '/images/eternal-elegance/toast.jpg',
-            caption: 'Brindis por toda una vida juntos',
-          },
-        ]
-      : raw.gallery.images,
-  };
-
-  return {
-    ...raw,
-    hero,
-    quoteStory,
-    vipParents,
-    locations,
-    gallery,
-  };
 }
 
 /* ============================================================================
@@ -1065,7 +928,7 @@ export function EternalEleganceExperience({
   } | null>(null);
 
   const openInvitation = useCallback(() => setIsOpen(true), []);
-  const content = useMemo(() => eternalContent(config), [config]);
+  const content = config.content;
   const { theme } = config;
   const dateText = formatDate(eventDate);
   const [coupleFirst, coupleSecond] = extractCoupleNames(content.hero.mainTitle);
@@ -1518,7 +1381,7 @@ export function EternalEleganceExperience({
         window.removeEventListener('resize', updateActiveSection);
       };
     },
-    { scope: rootRef, dependencies: [isOpen, isBuilderPreview, sectionSignature] },
+    { scope: rootRef, revertOnUpdate: true, dependencies: [isOpen, isBuilderPreview, sectionSignature] },
   );
 
   const calendarUrl = buildGoogleCalendarUrl({
@@ -1560,65 +1423,32 @@ export function EternalEleganceExperience({
 
   const submitRsvp = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!rsvpName.trim()) {
-      toast.error('Por favor escribe tu nombre o familia');
+    if (isBuilderPreview || !guestGroup) {
+      toast.error('Abre tu enlace personal para confirmar');
       return;
     }
 
-    const totalAdults = willAttend === 'yes' ? adults : 0;
-    const totalChildren =
-      willAttend === 'yes' && content.rsvp.allowChildrenSelection
-        ? children
-        : 0;
-
     try {
-      await fetch(`/api/public/invitations/${encodeURIComponent(slug)}/rsvp`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          guestToken: guestGroup?.guestToken,
-          groupId: guestGroup?.id,
-          groupName: rsvpName.trim(),
-          whatsappPhone: rsvpPhone.trim(),
-          willAttend: willAttend === 'yes',
-          status: willAttend === 'yes' ? 'confirmed' : 'declined',
-          confirmedAdults: totalAdults,
-          confirmedChildren: totalChildren,
-          dietaryNotes: dietaryNotes.trim(),
-          guestMessage: guestMessage.trim(),
-        }),
-      }).catch(() => null);
-    } catch {
-      // Continue in demo/preview mode
-    }
-
-    if (willAttend === 'yes') {
-      const payload = JSON.stringify({
-        invitationSlug: slug,
+      const pass = await submitGuestRsvp(slug, {
+        guestToken: guestGroup.guestToken,
         groupName: rsvpName.trim(),
-        confirmedAdults: totalAdults,
-        confirmedChildren: totalChildren,
+        whatsappPhone: rsvpPhone.trim(),
+        willAttend: willAttend === 'yes',
+        confirmedAdults: willAttend === 'yes' ? adults : 0,
+        confirmedChildren: willAttend === 'yes' && content.rsvp.allowChildrenSelection ? children : 0,
+        dietaryNotes: content.rsvp.askDietaryRestrictions ? dietaryNotes.trim() : undefined,
+        guestMessage: guestMessage.trim(),
       });
-      setPass({
-        name: rsvpName.trim(),
-        adults: totalAdults,
-        children: totalChildren,
-        payload,
-      });
-      try {
-        confetti({
-          particleCount: 65,
-          spread: 75,
-          origin: { y: 0.65 },
-          colors: ['#C5A059', '#8C7355', '#FAF7F2'],
-        });
-      } catch {
-        // Ignore confetti errors
+      if (!pass) {
+        setPass(null);
+        toast.success('Gracias por avisarnos');
+        return;
       }
+      setPass({ name: pass.groupName, adults: pass.confirmedAdults, children: pass.confirmedChildren, payload: pass.qrPayload });
+      confetti({ particleCount: 65, spread: 75, origin: { y: 0.65 }, colors: ['#C5A059', '#8C7355', '#FAF7F2'] });
       toast.success('¡Asistencia confirmada! Tu pase QR está listo.');
-    } else {
-      setPass(null);
-      toast.success('Gracias por avisarnos. Te llevamos en el corazón.');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'No se pudo guardar tu respuesta');
     }
   };
 
@@ -1660,9 +1490,7 @@ export function EternalEleganceExperience({
       )}
 
       <FloatingAudioPlayer
-        enabled={config.audio.enabled}
-        trackUrl={config.audio.trackUrl}
-        trackTitle={config.audio.trackTitle}
+        {...config.audio}
         isEnvelopeOpen={isOpen}
         accentColor={theme.colors.accentPrimary}
       />
@@ -1891,6 +1719,9 @@ export function EternalEleganceExperience({
               <div className="ee-story__crest-mini">
                 <HaciendaCrestMedallion compact />
               </div>
+              {content.sectionHeadings?.quote_story?.title && (
+                <h2 className="ee-heading mb-5">{content.sectionHeadings.quote_story.title}</h2>
+              )}
               <blockquote
                 className="ee-story__quote"
                 aria-label={content.quoteStory.quoteText}
@@ -1924,20 +1755,7 @@ export function EternalEleganceExperience({
                         className="ee-story-card"
                       >
                         <div className="ee-story-card__media">
-                          <img
-                            src={
-                              block.imageUrl ||
-                              `/images/eternal-elegance/${
-                                index === 0
-                                  ? 'vows'
-                                  : index === 1
-                                  ? 'ceremony'
-                                  : 'hacienda'
-                              }.jpg`
-                            }
-                            alt={block.title}
-                            loading="lazy"
-                          />
+                          {block.imageUrl && <img src={block.imageUrl} alt={block.title} loading="lazy" />}
                           <span className="ee-story-card__index">
                             CAPÍTULO 0{index + 1}
                           </span>
@@ -2197,14 +2015,14 @@ export function EternalEleganceExperience({
                     <p className="ee-location__address">{location.address}</p>
                     <div className="ee-location__links">
                       <a
-                        href={location.googleMapsUrl}
+                        href={googleLocationUrl(location)}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
                         Ver en Maps <ArrowRight size={15} />
                       </a>
                       <a
-                        href={location.wazeUrl}
+                        href={wazeLocationUrl(location)}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -2269,7 +2087,7 @@ export function EternalEleganceExperience({
                   <span className="ee-timeline__dot">
                     <Diamond />
                   </span>
-                  <time>{item.time}</time>
+                  <time><TimelineIcon icon={item.icon} />{item.time}</time>
                   <div>
                     <span className="ee-small-index">
                       MOMENTO 0{index + 1}
@@ -2318,7 +2136,7 @@ export function EternalEleganceExperience({
                 'Nuestra historia en imágenes',
               )}
             />
-            <div className="ee-gallery__grid">
+            <GalleryLayout layout={content.gallery.layout} className="ee-gallery__grid">
               {content.gallery.images.map((photo, index) => (
                 <figure
                   key={`${photo.url}-${index}`}
@@ -2338,14 +2156,14 @@ export function EternalEleganceExperience({
                   </figcaption>
                 </figure>
               ))}
-            </div>
+            </GalleryLayout>
             <p className="ee-gallery__closing ee-reveal">
               El amor vive en los detalles.
             </p>
           </section>
         )}
 
-        {isSectionEnabled('gallery') && (
+        {isSectionEnabled('social_features') && content.socialFeatures.enableLiveDisposableCamera && (
           <section className="ee-album ee-section">
             <SectionIntro
               eyebrow="RECUERDOS DESDE TU MIRADA"
@@ -2473,7 +2291,10 @@ export function EternalEleganceExperience({
                   <div>
                     <span className="ee-small-index">TRANSFERENCIA</span>
                     <strong>{content.gifts.bankTransfer.bankName}</strong>
+                    {content.gifts.bankTransfer.accountHolder && <small>Titular: {content.gifts.bankTransfer.accountHolder}</small>}
                     <small>CLABE {content.gifts.bankTransfer.clabe}</small>
+                    {content.gifts.bankTransfer.accountNumber && <small className="block">Cuenta: {content.gifts.bankTransfer.accountNumber}</small>}
+                    {content.gifts.bankTransfer.conceptNote && <small>Concepto: {content.gifts.bankTransfer.conceptNote}</small>}
                   </div>
                   <button
                     type="button"
@@ -2549,6 +2370,7 @@ export function EternalEleganceExperience({
                         <ArrowRight size={19} />
                       </a>
                     )}
+                    <HotelLinks hotel={hotel} includeBooking={false} />
                   </article>
                 ))}
               </div>
@@ -2769,6 +2591,7 @@ export function EternalEleganceExperience({
                 </div>
               )}
             </div>
+            <RsvpExtras phone={content.rsvp.plannerContactWhatsapp} previewMessage={isBuilderPreview ? content.rsvp.customConfirmationMessage : undefined} />
           </section>
         )}
       </main>

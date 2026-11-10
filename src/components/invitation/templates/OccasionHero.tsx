@@ -43,7 +43,7 @@ export function OccasionHero({
 
   return (
     <section id="oc-hero" className="oc-hero" aria-label="Portada de la invitación">
-      <div className="oc-hero__stage">
+      <div className="oc-hero__stage" style={{ backgroundColor: config.theme.colors.bgPrimary, color: config.theme.colors.textPrimary }}>
         <div className="oc-hero__texture" aria-hidden="true" />
 
         {templateId === 'sweet-oh-baby' ? (
@@ -73,9 +73,9 @@ export function OccasionHero({
 
         <div className="oc-hero__copy">
           <p className="oc-hero__eyebrow">{copy.eyebrow}</p>
-          <p className="oc-hero__event">{copy.event}</p>
-          <h1>{hero.mainTitle}</h1>
-          <p className="oc-hero__tagline">{hero.tagline}</p>
+          <p className="oc-hero__event">{hero.badgeText || copy.event}</p>
+          <h1 style={{ fontFamily: 'var(--inv-heading-font)' }}>{hero.mainTitle}</h1>
+          <p className="oc-hero__tagline" style={{ color: config.theme.colors.textMuted }}>{hero.tagline}</p>
           {guestGroup && (
             <p className="oc-hero__guest">Invitación para {guestGroup.groupName}</p>
           )}
