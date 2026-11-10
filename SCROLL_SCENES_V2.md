@@ -1,6 +1,6 @@
 # Sistema de Escenas Dinámicas v2.0 — Guía Mobile-First, Profundidad Multicapa y Prompt Maestro
 
-> Este documento evoluciona `SCROLL_SCENES.md` a partir de los rediseños integrales de **Mini Cosmos** (`src/components/invitation/templates/MiniCosmosExperience.tsx`), **Atelier XV** (`src/components/invitation/templates/AtelierXVExperience.tsx`), **Ritmo de Dos** (`src/components/invitation/templates/RitmoDeDosExperience.tsx`), **Marea Azul** (`src/components/invitation/templates/MareaAzulExperience.tsx`), **Neon XV Euphoria** (`src/components/invitation/templates/NeonXVEuphoriaExperience.tsx`) y **Eternal Elegance** (`src/components/invitation/templates/EternalEleganceExperience.tsx`), incorporando patrones de dinamismo y profundidad de **[urieel.dev](https://urieel.dev/)** y **[ywstudio.com.mx](https://www.ywstudio.com.mx/)**. Documenta todos los ajustes realizados y entrega la **guía / prompt maestro** para llevar el resto de los templates del catálogo al mismo estándar de diseño.
+> Este documento evoluciona `SCROLL_SCENES.md` a partir de los rediseños integrales de **Mini Cosmos** (`src/components/invitation/templates/MiniCosmosExperience.tsx`), **Atelier XV** (`src/components/invitation/templates/AtelierXVExperience.tsx`), **Ritmo de Dos** (`src/components/invitation/templates/RitmoDeDosExperience.tsx`), **Marea Azul** (`src/components/invitation/templates/MareaAzulExperience.tsx`), **Neon XV Euphoria** (`src/components/invitation/templates/NeonXVEuphoriaExperience.tsx`) y **Eternal Elegance** (`src/components/invitation/templates/EternalEleganceExperience.tsx`), incorporando patrones de dinamismo y profundidad de **[urieel.dev](https://urieel.dev/)** y **[ywstudio.com.mx](https://www.ywstudio.com.mx/)**. Incluye los ajustes de **Rodeo Rosa** para suavizar el movimiento, controlar las revelaciones en móvil y mantener el contenido legible durante el scroll.
 
 ---
 
@@ -66,6 +66,22 @@ Cada capítulo responde a una pregunta narrativa y utiliza el desplazamiento (`s
 3. **El movimiento debe ser perceptible y variado.** Combina trayectorias distintas de flotación, giro, deriva o cambio de escala con parallax reversible ligado al scroll (`scrub`) en las escenas protagonistas. Anima capas separadas cuando convivan movimiento continuo y scroll para que sus transformaciones no se sobrescriban.
 4. **Conserva legibilidad y rendimiento.** Sitúa los gráficos detrás del contenido (`isolation`, `z-index`, `pointer-events: none`), recorta dentro de la escena, ajusta tamaño/opacidad/posición para `320px–430px` y desactiva la animación con `prefers-reduced-motion`. Comprueba que no haya desbordamiento horizontal.
 
+### 3.4 Movimiento suave y revelaciones en móvil
+
+**Rodeo Rosa** usa una coreografía dedicada para distinguir las escenas con gestos propios de la temática. El boleto se separa en dos, las estaciones abren sus puertas y el álbum revela una tira de película. Los fondos se mueven en planos separados del contenido. [Escenas de Rodeo Rosa](src/components/invitation/templates/rodeo-rosa-scenes.ts) · [Estilos de Rodeo Rosa](src/components/invitation/templates/rodeo-rosa.css)
+
+| Escena | Ajuste aplicado en Rodeo Rosa | Criterio para futuros templates |
+| --- | --- | --- |
+| Manifiesto | La cita es el disparador. El efecto va de `top bottom` a `bottom bottom` con `scrub: true`, de modo que la última palabra recupera toda su opacidad cuando entra la última línea. | Ajusta el recorrido al texto que se anima. Comprueba también el estado al llegar desde un enlace interno. |
+| Tarjetas de historia y vestimenta | Las tarjetas de «Botas y moños» suben 12 px y sus fotos recuperan saturación. En «Saca tus botas favoritas», las tarjetas ganan opacidad y el borde de costura se revela desde el centro. | Escoge un gesto por grupo y deja que se desarrolle a lo largo del scroll. Un detalle de la foto o del borde puede aportar profundidad con la tarjeta casi inmóvil. |
+| Telones de las estaciones | Cada foto tiene un telón de dos hojas. En móvil, ambas empiezan en `xPercent: 0`, con un pequeño solape en el centro y esquinas internas rectas. Cada tarjeta `sticky` usa su propio marcador en el flujo (`.rr-station__anchor`, de altura cero) justo antes de la tarjeta. La apertura se distribuye de `top 42%` a `top 17%` con `scrub: .22`. | Deja que se vea el telón cerrado cuando la foto entra en pantalla. Mide el avance desde un marcador que conserve su posición original aunque la tarjeta se fije. Completa la apertura de cada foto antes de que la siguiente la cubra. |
+| Cuenta regresiva | Los números y las etiquetas permanecen fijos y pasan de opacidad `.9` a `1`. El arco SVG, con `pathLength="1"`, anima `attr: { 'stroke-dashoffset': .36 }` hacia `0` de `top bottom` a `bottom 58%` con `scrub: .5`. | Mantén el reloj legible y anima el arco como adorno. Usa el atributo SVG para conservar los valores fraccionarios del trazo. Mantén el avance del scroll independiente de la actualización de los segundos. |
+| Itinerario, álbum y confirmación | Las tarjetas del itinerario entran con un movimiento corto dentro de su columna. El álbum presenta las instrucciones de carga como nota secundaria y el pase anima su sello decorativo mientras los campos permanecen fijos. | Comprueba el ancho durante la transición, conserva la jerarquía del texto y reserva el movimiento para capas que no interfieran con mapas, enlaces ni formularios. |
+
+Los valores de `start`, `end` y `scrub` son puntos de partida. Ajusta primero cuánto se mueve el elemento y en qué tramo de pantalla se verá el gesto. Usa curvas suaves como `sine.inOut` y un `scrub` numérico corto cuando ayude a amortiguar el movimiento. Comprueba el resultado al deslizar despacio, invertir el sentido y cambiar el tamaño de la ventana con la escena a medio recorrido.
+
+Si una animación depende de medidas, recalcula sus disparadores cuando cambie el tamaño del contenido por fotos, fuentes o ediciones. En Rodeo Rosa, `gsap.matchMedia()` actualiza el comportamiento por breakpoint y preferencia de movimiento, y `ResizeObserver` solicita el recálculo de `ScrollTrigger`. Con movimiento reducido, las fotos de las estaciones quedan visibles y las tarjetas siguen el flujo de la página.
+
 ---
 
 ## 4. Regla de oro para el centrado matemático con GSAP
@@ -117,7 +133,7 @@ Copia y utiliza este prompt cada vez que vayas a crear un nuevo template o redis
 ```markdown
 Actúa como Director de Arte Interactivo y Desarrollador Frontend Senior especializado en GSAP ScrollTrigger, Lenis y experiencias Mobile-First.
 
-Tu objetivo es rediseñar el template `[NOMBRE_DEL_TEMPLATE]` (`[TEMPLATE_ID]`, categoría `[CATEGORIA]`) siguiendo la arquitectura y el nivel de oficio de `MiniCosmosExperience.tsx`, `RoyalXVEnchantedExperience.tsx`, `EternalEleganceExperience.tsx` y la guía `SCROLL_SCENES_V2.md`.
+Tu objetivo es rediseñar el template `[NOMBRE_DEL_TEMPLATE]` (`[TEMPLATE_ID]`, categoría `[CATEGORIA]`) siguiendo la arquitectura de `MiniCosmosExperience.tsx`, `RoyalXVEnchantedExperience.tsx` y `EternalEleganceExperience.tsx`. Usa la sección 3.4 de `SCROLL_SCENES_V2.md` y `rodeo-rosa-scenes.ts` como referencia para el ritmo de las revelaciones.
 
 ### 1. Identidad visual y activos gráficos a medida (Cero gráficos deformes o genéricos)
 - Diseña al menos **3 componentes SVG propios y matemáticamente simétricos** para la temática del template:
@@ -125,6 +141,7 @@ Tu objetivo es rediseñar el template `[NOMBRE_DEL_TEMPLATE]` (`[TEMPLATE_ID]`, 
   2. Un **sello circular giratorio (`<textPath>`)** con palabras clave auténticas del evento.
   3. Un **fondo geométrico / botánico / arquitectónico con trazos `strokeDasharray` / `strokeDashoffset`** que se dibuje progresivamente con el scroll en la sección de Historia/Manifiesto.
 - Genera y optimiza (con `sharp` a JPEG/WebP `< 110 KB`) un set cohesivo de **4 a 5 ilustraciones o fotografías editoriales** en `public/images/[TEMPLATE_ID]/` para la portada, la sección de experiencia temática, las ubicaciones y la galería.
+- Prepara encuadres de portada propios para móvil y escritorio. Usa `HeroMedia` con `desktopSrc` para los recursos de portada por defecto y conserva los medios personalizados que lleguen desde `InvitationConfig`.
 - Diseña motivos ambientales propios para las escenas con fondos de color sólido. Distribúyelos de forma diferente en cada capítulo, con varias escalas y movimientos (flotación, giro, deriva, parallax de scroll); incluye la sección de inmersión temática. Mantén estos gráficos detrás de textos y controles, adapta la composición móvil y respeta `prefers-reduced-motion`.
 
 ### 2. Impacto Mobile-First (`320px`, `375px`, `390px`, `430px`) y centrado matemático
@@ -140,22 +157,27 @@ Implementa un componente dedicado `[NombreTemplate]Experience.tsx` y su hoja `[t
 2. **Barra superior de progreso (`scaleX`) + Navegación flotante tipo píldora (`backdrop-filter: blur`).**
 3. **Hero Sticky en dos tiempos (`190–195svh`, `data-editor-section="hero"`):**
    - Estado 1: Copy editorial + chips de fecha/sede + motivo vectorial + imagen enmarcada (arco, escotilla, vinilo, ventana).
-   - Transición (`scrub: 0.9`): El copy se retira, el motivo protagonista viaja por la escena, el marco se expande a pantalla completa y emerge una tarjeta puente hacia la historia.
+   - Durante la transición, el copy se retira, el motivo protagonista se desplaza, el marco se expande a pantalla completa y emerge una tarjeta puente hacia la historia. Ajusta el `scrub` al recorrido del hero.
 4. **Banda cinética (`Marquee`):** Cinta horizontal continua con `mask-image` lateral que aporta ritmo entre capítulos.
-5. **Manifiesto / Historia (`data-editor-section="quoteStory"`):** Cita cuyas palabras (`.word`) se iluminan progresivamente con `scrub` sobre el dibujo SVG de fondo (`strokeDashoffset`), seguida de 3 tarjetas de historia con entrada en perspectiva.
-6. **Sección de Inmersión Temática (4 Estaciones / Momentos Destacados):** Un capítulo visual propio con 4 tarjetas ilustradas que en móvil se apilan con `position: sticky; top: calc(74px + var(--stack-index) * 10px)` y en escritorio forman un Bento Grid.
-7. **Familia / Círculo de Honor (`data-editor-section="vipParents"`):** Tarjetas centradas que corrigen su rotación (`±5deg -> 0deg`) y escala con `scrub`.
-8. **Cuenta Regresiva Escénica (`data-editor-section="countdown"`):** Pods temáticos con entrada escalonada en `scrub` (sin re-animar el contenedor en cada tick de 1 segundo) + botones de Google Calendar e `.ics`.
+5. **Manifiesto / Historia (`data-editor-section="quoteStory"`).** Ilumina las palabras de la cita sobre el dibujo SVG (`strokeDashoffset`) y termina de revelarlas cuando la última línea entre en pantalla. Da a las 3 tarjetas de historia un gesto suave ligado a la temática.
+6. **Inmersión temática (4 estaciones o momentos destacados).** Crea 4 tarjetas ilustradas y un fondo propio. Usa una cuadrícula Bento en escritorio. Si apilas tarjetas `sticky` en móvil, usa un marcador independiente por tarjeta y muestra el estado inicial de cada revelación antes de animarla.
+7. **Familia / Círculo de Honor (`data-editor-section="vipParents"`).** Centra las tarjetas y anima con moderación el desplazamiento, la escala o sus detalles decorativos.
+8. **Cuenta regresiva (`data-editor-section="countdown"`).** Mantén números y etiquetas fijos y legibles. Si animas arcos, trazos o cambios de opacidad, vincúlalos al scroll y separa la animación del reloj. Incluye las acciones de calendario solicitadas y centra el botón si hay uno solo.
 9. **Ubicaciones + Mapa Interactivo (`data-editor-section="locations"`):** Fotografía con apertura de `clip-path`, iframe de Google Maps y 4 botones de ruta (Google Maps, Waze, Apple Maps, Uber).
 10. **Itinerario con Riel Progresivo y Viajero (`data-editor-section="timeline"`):** Línea vertical que crece con `scaleY` acompañada de un icono/vehículo temático que recorre la trayectoria al hacer scroll.
-11. **Galería, Dress Code, Regalos, Álbum Social y RSVP con QR:** Cada uno con su transformación en `scrub`, respetando que los formularios y botones interactivos estén 100% estáticos al momento de usarlos.
+11. **Galería, vestimenta, regalos, álbum social y RSVP con QR.** Elige un gesto suave para cada escena. Mantén las instrucciones de carga del álbum como texto secundario y deja fijos los formularios y controles.
 
-### 4. Contrato con el Editor y Accesibilidad
+### 4. Ritmo y verificación del scroll
+- Usa gestos distintos para fotos, texto, adornos y tarjetas. Da prioridad a desplazamientos cortos, cambios moderados de opacidad y revelaciones de detalles. Ajusta la curva y el tramo de scroll por escena.
+- Cuando una escena use un telón, prueba el estado cerrado, la apertura parcial y el estado abierto de cada tarjeta. Comprueba que cada foto termine de revelarse antes de que la siguiente la cubra.
+- Prueba el avance y el retroceso en móvil y escritorio. En móvil, revisa también un salto por enlace interno y un cambio de tamaño a mitad de una escena `sticky`.
+
+### 5. Contrato con el Editor y Accesibilidad
 - Conecta todos los textos y medios a `InvitationConfig` y usa un helper de migración suave para actualizar solo valores semilla antiguos sin sobrescribir ediciones del usuario.
 - Registra las clases `.xx-*` en `src/lib/editor/section-targets.ts` y añade `data-editor-section` en cada sección.
 - Soporta `scroller = root.closest('[data-invitation-scroller]') || undefined` en todos los `ScrollTrigger`.
-- Incluye soporte completo para `@media (prefers-reduced-motion: reduce)`.
-- Verifica con `npm run typecheck`, `npm run build` y pruebas reales en navegador a `390×844` y `1280×800`.
+- Respeta `prefers-reduced-motion` en CSS y en las animaciones JS. Deja las fotos y los textos visibles en ese modo.
+- Verifica con `npm run typecheck`, `npm run build` y pruebas reales en navegador a `320×640`, `390×844` y `1280×800`.
 ```
 
 ---
@@ -168,4 +190,7 @@ Implementa un componente dedicado `[NombreTemplate]Experience.tsx` y su hoja `[t
 - [ ] **Riqueza narrativa:** Al menos 10–12 secciones/capítulos visuales (incluyendo marquesinas cinéticas y sección de experiencia temática).
 - [ ] **Fondos escénicos completos:** Ninguna sección depende solo de un color plano; los motivos temáticos cambian de posición, escala y animación entre capítulos, incluida la inmersión temática, sin obstaculizar el contenido.
 - [ ] **Scroll reversible (`scrub`):** El hero, el manifiesto por palabras, el dibujo SVG, el riel del itinerario y las tarjetas responden suavemente al subir y bajar.
+- [ ] **Revelaciones por tarjeta.** Si hay telones, comprueba en móvil el estado cerrado, la apertura parcial y la foto completa en cada estación. El efecto sigue funcionando al cambiar el tamaño con una tarjeta fijada.
+- [ ] **Cuenta regresiva legible.** Los números y las etiquetas permanecen fijos, los arcos avanzan sin saltos y las acciones de calendario quedan centradas.
+- [ ] **Movimiento reducido.** Los textos y las fotos se pueden consultar sin activar animaciones de scroll.
 - [ ] **Compatibilidad total con el editor:** Funciona en vivo con selección de secciones, vista previa del sobre (`previewEnvelope`), cambio de colores/fuentes y generación de pase QR.
