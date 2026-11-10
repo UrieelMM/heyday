@@ -418,6 +418,16 @@
 }
 .rr-dress__badge--boots { --rr-badge: var(--rr-boots); }
 .rr-dress__badge--hat { --rr-badge: var(--rr-hat); }
+.kw-root--rodeo .st-dress > .grid > div { position: relative; }
+.kw-root--rodeo .st-dress > .grid > div::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px dashed var(--rr-stitch);
+  border-radius: 18px;
+  clip-path: inset(var(--rr-dress-stitch-cut, 0%) 0);
+  pointer-events: none;
+}
 .rr-rsvp__stamp {
   width: 62px;
   border: 3px double var(--rr-rose);
@@ -550,6 +560,8 @@
 
 @media (max-width: 700px) {
   .rr-station__anchor { display: block; height: 0; }
+  .rr-station__door { right: calc(50% - .5px); border-radius: 0; }
+  .rr-station__door + .rr-station__door { left: calc(50% - .5px); border-radius: 0; }
   .kw-root--rodeo .rr-nav > div a:first-child { display: inline-flex; }
   .rr-hero__copy {
     top: max(70px, 9%);

@@ -65,14 +65,13 @@ export function setupRodeoRosaScenes(root: HTMLElement) {
       const signature = one('.st-story__signature', story);
       if (signature) scene(signature).fromTo(signature, { letterSpacing: '.31em', opacity: .77 }, { letterSpacing: '.25em', opacity: 1 });
 
-      // The small prints unfold from opposite edges like pages of a letter.
-      all(':scope > .grid > div', story).forEach((card, index) => {
-        const direction = index % 2 ? -1 : 1;
-        const timeline = scene(card)
-          .fromTo(card, { rotationY: 7 * direction, scale: .985, y: 8 }, { rotationY: 0, scale: 1, y: 0, transformPerspective: 900, duration: 1 }, 0)
-          .fromTo(all('h3, p', card), { y: 5, opacity: .82 }, { y: 0, opacity: 1, stagger: .05, duration: .74 }, .16);
+      all(':scope > .grid > div', story).forEach(card => {
+        const timeline = scene(card, 'top 96%', 'top 49%')
+          .fromTo(card, { y: 12, opacity: .76 }, { y: 0, opacity: 1, duration: 1 }, 0);
         const image = one('.kw-story-card__image', card);
-        if (image) timeline.fromTo(image, { clipPath: 'inset(13% 0% 0% 0% round 15px)', objectPosition: '50% 40%' }, { clipPath: 'inset(0% 0% 0% 0% round 15px)', objectPosition: '50% 50%', duration: .9 }, .04);
+        if (image) {
+          timeline.fromTo(image, { filter: 'saturate(.55)' }, { filter: 'saturate(1)', duration: .94 }, .06);
+        }
       });
     });
 
@@ -86,11 +85,19 @@ export function setupRodeoRosaScenes(root: HTMLElement) {
       });
       all('.kw-station', stations).forEach(card => {
         // The in-flow anchor stays at the card's original position when the card sticks.
-        const anchor = conditions.mobile ? card.previousElementSibling ?? card : card;
-        const timeline = scene(anchor, 'top 111%', 'top 67%', .16);
+        const mobile = conditions.mobile;
+        const anchor = mobile ? card.previousElementSibling ?? card : card;
+        const timeline = mobile ? scene(anchor, 'top 42%', 'top 17%', .22) : scene(anchor, 'top 111%', 'top 67%', .16);
         timeline
           .fromTo(one('.kw-station__image img', card), { scale: 1.1, yPercent: 2 }, { scale: 1, yPercent: 0, duration: 1 }, 0)
-          .fromTo(all('.rr-station__door', card), { x: 0, xPercent: (index: number) => index ? 17 : -17 }, { xPercent: (index: number) => index ? 102 : -102, duration: .79, ease: 'sine.out' }, 0)
+          .fromTo(all('.rr-station__door', card), {
+            x: 0,
+            xPercent: (index: number) => mobile ? 0 : index ? 17 : -17,
+          }, {
+            xPercent: (index: number) => index ? 102 : -102,
+            duration: mobile ? .94 : .79,
+            ease: mobile ? 'sine.inOut' : 'sine.out',
+          }, mobile ? .06 : 0)
           .fromTo(all('.kw-station__content > *', card), { y: 5, opacity: .81 }, { y: 0, opacity: 1, stagger: .055, duration: .72 }, .17);
       });
     });
@@ -150,12 +157,9 @@ export function setupRodeoRosaScenes(root: HTMLElement) {
     });
 
     section('.st-dress', dress => {
-      all(':scope > .grid > div', dress).forEach((card, index) => {
-        const left = index === 0;
-        scene(card)
-          .fromTo(card, { rotationY: left ? -9 : 9, scale: .985 }, { rotationY: 0, scale: 1, transformOrigin: left ? 'left' : 'right', transformPerspective: 950, duration: 1 }, 0)
-          .fromTo(one('.rr-dress__badge', card), { rotation: left ? 9 : -9, y: -4 }, { rotation: 0, y: 0, duration: .83 }, .06)
-          .fromTo(all('h3, p', card), { opacity: .83 }, { opacity: 1, stagger: .06, duration: .74 }, .15);
+      all(':scope > .grid > div', dress).forEach(card => {
+        scene(card, 'top 96%', 'top 48%')
+          .fromTo(card, { opacity: .74, '--rr-dress-stitch-cut': '50%' }, { opacity: 1, '--rr-dress-stitch-cut': '0%', duration: 1 }, 0);
       });
     });
 
