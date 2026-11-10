@@ -112,11 +112,10 @@ export function setupRodeoRosaScenes(root: HTMLElement) {
     });
 
     section('.st-countdown', countdown => {
-      all('.st-countdown__unit', countdown).forEach((dial, index) => {
-        const delay = index % 2 ? .18 : 0;
-        scene(dial, 'top 98%', 'bottom 72%')
-          .fromTo(one('.rr-dial__sweep', dial), { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: .82 }, delay)
-          .fromTo(all(':scope > span', dial), { rotationX: -24, y: 8, opacity: .78 }, { rotationX: 0, y: 0, opacity: 1, transformPerspective: 500, stagger: .06, duration: .68 }, delay + .12);
+      all('.st-countdown__unit', countdown).forEach(dial => {
+        scene(dial, 'top bottom', 'bottom 58%', .5)
+          .fromTo(one('.rr-dial__sweep', dial), { attr: { 'stroke-dashoffset': .36 } }, { attr: { 'stroke-dashoffset': 0 }, duration: 1 }, 0)
+          .fromTo(all(':scope > span', dial), { opacity: .9 }, { opacity: 1, duration: 1 }, 0);
       });
     });
 
