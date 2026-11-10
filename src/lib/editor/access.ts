@@ -79,5 +79,9 @@ export async function canEditEvent(event: { id: string; editor_pin_version: stri
 
 export function sameOrigin(request: Request) {
   const origin = request.headers.get('origin');
-  return !origin || origin === new URL(request.url).origin;
+  if (!origin || origin === new URL(request.url).origin) return true;
+
+  // Behind the reverse proxy, Next.js can expose the container address in request.url.
+  const publicUrl = URL.parse(process.env.NEXT_PUBLIC_APP_URL ?? '');
+  return (publicUrl?.protocol === 'https:' || publicUrl?.protocol === 'http:') && origin === publicUrl.origin;
 }
