@@ -1,0 +1,228 @@
+.page {
+  --postal-ink: #884838;
+  display: flex;
+  min-height: 100svh;
+  flex-direction: column;
+  padding-inline: clamp(20px, 5.5vw, 80px);
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-secondary);
+}
+
+.header,
+.main,
+.footer {
+  width: min(100%, 1200px);
+  margin-inline: auto;
+}
+
+.header,
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-block: 18px;
+}
+
+.header {
+  border-bottom: 1px solid var(--color-hairline);
+}
+
+.label,
+.kicker,
+.footer > :first-child {
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 11px;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+}
+
+.label {
+  color: var(--color-muted);
+  text-align: right;
+}
+
+.main {
+  display: grid;
+  flex: 1;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(28px, 5vw, 72px);
+  padding-block: clamp(36px, 7vh, 88px);
+}
+
+.kicker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--postal-ink);
+  font-weight: 600;
+}
+
+.kicker > span {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  background: currentColor;
+  transform: rotate(45deg);
+}
+
+.copy h1 {
+  max-width: 11ch;
+  margin-top: 18px;
+  font-family: var(--font-primary);
+  font-size: clamp(52px, 6.25vw, 90px);
+  font-weight: 500;
+  letter-spacing: -.048em;
+  line-height: .91;
+}
+
+.copy h1 em {
+  display: block;
+  color: var(--postal-ink);
+  font-weight: 500;
+}
+
+.copy h1 span {
+  white-space: nowrap;
+}
+
+.description {
+  max-width: 38ch;
+  margin-top: 22px;
+  color: var(--color-body);
+  font-size: clamp(15px, 1.4vw, 17px);
+  line-height: 1.65;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 26px;
+}
+
+.actions a {
+  display: inline-flex;
+  min-height: 46px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  padding-inline: 16px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color .2s, border-color .2s;
+}
+
+.actions .primary {
+  background: var(--color-ink);
+  color: var(--color-on-dark);
+}
+
+.actions .primary:hover {
+  background: var(--postal-ink);
+}
+
+.actions .secondary {
+  border-color: var(--color-hairline-strong);
+}
+
+.actions .secondary:hover {
+  border-color: var(--postal-ink);
+  background: var(--color-canvas-soft);
+}
+
+.illustration {
+  overflow: hidden;
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(ellipse at 54% 32%, #faf0e1 12%, transparent 72%),
+    repeating-linear-gradient(0deg, #a36e4e0b 0 1px, transparent 1px 4px),
+    #ede1d1;
+}
+
+.illustration svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.postalType,
+.panelLabel {
+  fill: #744635;
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .13em;
+}
+
+.postalCode {
+  fill: #753e31;
+  font-family: var(--font-primary);
+  font-size: 91px;
+  font-weight: 600;
+  letter-spacing: -.055em;
+}
+
+.footer {
+  border-top: 1px solid var(--color-hairline);
+  color: var(--color-muted);
+  font-size: 11px;
+}
+
+.footer > :last-child {
+  text-align: right;
+}
+
+.footer span[aria-hidden] {
+  margin-left: 4px;
+  color: var(--postal-ink);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mail {
+    animation: mail-arrive .85s cubic-bezier(.22, 1, .36, 1) both;
+  }
+}
+
+@keyframes mail-arrive {
+  from {
+    opacity: .55;
+    transform: translateY(16px);
+  }
+}
+
+@media (max-width: 760px) {
+  .main {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: start;
+    gap: 28px;
+    padding-block: 34px 24px;
+  }
+
+  .copy h1 {
+    max-width: 13ch;
+    font-size: clamp(48px, 10vw, 70px);
+  }
+
+  .description {
+    margin-top: 16px;
+  }
+
+  .actions {
+    margin-top: 20px;
+  }
+
+  .illustration {
+    width: min(100%, 500px);
+  }
+
+  .label {
+    max-width: 15ch;
+    font-size: 10px;
+  }
+}
