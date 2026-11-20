@@ -1,10 +1,66 @@
 'use client';
-import { useCallback, useEffect, useState } from 'react';
-type Memory = { id: string; type: string; author: string; url: string };
+
+import { useEffect, useId, useState } from 'react';
+import { Heart, Mic, Music2, RefreshCw } from 'lucide-react';
+import { EventPhotoGallery, type AlbumPhoto } from './EventPhotoGallery';
+import { Pagination } from '@/components/ui/Pagination';
+import styles from './event-memories.module.css';
+
+type Memory = AlbumPhoto & { type: string };
 type Song = { id: string; track_title: string; artist_name: string; suggested_by_name: string; votes_count: number };
-export function EventMemories({ eventId }: { eventId: string }) {
-  const [memories, setMemories] = useState<Memory[]>([]); const [songs, setSongs] = useState<Song[]>([]); const [error, setError] = useState(''); const [loading, setLoading] = useState(true);
-  const load = useCallback(async () => { setLoading(true); try { const res = await fetch(`/api/admin/invitations/${encodeURIComponent(eventId)}/memories`, { cache: 'no-store' }); const data = await res.json(); if (!res.ok) throw new Error(data.error); setMemories(data.memories); setSongs(data.songs); setError(''); } catch (e) { setError(e instanceof Error ? e.message : 'No se pudo cargar'); } finally { setLoading(false); } }, [eventId]);
-  useEffect(() => { void load(); }, [load]);
-  return <section className="rounded-xl border border-[#e6dfd8] bg-white p-6"><div className="flex items-center justify-between"><h3 className="text-lg font-bold">Recuerdos y playlist</h3><button className="text-sm text-[#a9583e] underline" onClick={() => void load()}>Actualizar</button></div>{loading ? <p role="status" className="mt-3 text-sm">Cargando…</p> : error ? <p role="alert" className="mt-3 text-sm text-red-700">{error}</p> : <><h4 className="mt-4 font-semibold">Canciones sugeridas</h4>{songs.length ? <ul className="mt-2 space-y-2 text-sm">{songs.map(s => <li key={s.id}>{s.track_title} · {s.artist_name} — {s.votes_count} votos <span className="text-[#6c6a64]">({s.suggested_by_name})</span></li>)}</ul> : <p className="mt-2 text-sm text-[#6c6a64]">Aún no hay canciones.</p>}<h4 className="mt-5 font-semibold">Mensajes de voz</h4>{memories.filter(m => m.type === 'audio_message').length ? memories.filter(m => m.type === 'audio_message').map(m => <div key={m.id} className="mt-3"><p className="text-sm">{m.author}</p><audio controls src={m.url} className="mt-1 max-w-full" /></div>) : <p className="mt-2 text-sm text-[#6c6a64]">Aún no hay mensajes.</p>}<h4 className="mt-5 font-semibold">Fotos compartidas</h4><div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">{memories.filter(m => m.type === 'photo').map(m => <figure key={m.id}><img src={m.url} alt={`Foto compartida por ${m.author}`} className="aspect-square w-full rounded-lg object-cover"/><figcaption className="text-xs">{m.author}</figcaption></figure>)}</div></>}</section>;
+
+export function EventMemories({ slug, eventTitle }: { slug: string; eventTitle: string }) {
+  const [memories, setMemories] = useState<Memory[]>([]);
+  const [songs, setSongs] = useState<Song[]>([]);
+  const [album, setAlbum] = useState<{ expiresAt: string; purgedAt: string | null } | null>(null);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [loaded, setLoaded] = useState(false);
+  const [refresh, setRefresh] = useState(0);
+  const [songPage, setSongPage] = useState(1);
+  const songListId = useId();
+
+  useEffect(() => {
+    const controller = new AbortController();
+    setLoading(true);
+    async function load() {
+      try {
+        const response = await fetch(`/api/editor/${encodeURIComponent(slug)}/memories`, { cache: 'no-store', signal: controller.signal });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'No se pudieron cargar los recuerdos');
+        setMemories(data.memories); setSongs(data.songs); setAlbum(data.album); setError(''); setLoaded(true);
+      } catch (error) {
+        if (!controller.signal.aborted) setError(error instanceof Error ? error.message : 'No se pudieron cargar los recuerdos');
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    }
+    void load();
+    return () => controller.abort();
+  }, [slug, refresh]);
+
+  const photos = memories.filter(memory => memory.type === 'photo');
+  const audio = memories.filter(memory => memory.type === 'audio_message');
+  const currentSongPage = Math.min(songPage, Math.max(1, Math.ceil(songs.length / 6)));
+
+  return <section className={styles.memories} aria-label="Recuerdos de tu celebración">
+    <header className={styles.heading}>
+      <div><p className={styles.eyebrow}>TU CELEBRACIÓN, DESDE SUS OJOS</p><h2>Momentos que <em>se quedan.</em></h2><p className={styles.description}>Todas las miradas de <strong>{eventTitle}</strong>, reunidas en un solo lugar.</p></div>
+      <button type="button" className={styles.refresh} disabled={loading} onClick={() => setRefresh(value => value + 1)}><RefreshCw size={17} className={loading ? styles.spinning : undefined} aria-hidden="true" />{loading ? 'Actualizando…' : 'Actualizar álbum'}</button>
+    </header>
+    {error && <div className={styles.error} role="alert"><p>{error}</p><button type="button" disabled={loading} onClick={() => setRefresh(value => value + 1)}>Reintentar</button></div>}
+    {!loaded && loading ? <div className={styles.skeleton} role="status"><span className="sr-only">Cargando álbum compartido…</span>{Array.from({ length: 8 }, (_, index) => <div key={index} />)}</div> : loaded && <>
+      <EventPhotoGallery photos={photos} eventTitle={eventTitle} expiresAt={album?.expiresAt} purgedAt={album?.purgedAt} />
+      <div className={styles.extras}>
+        <section className={styles.extraCard} aria-labelledby={`${songListId}-title`}>
+          <div className={styles.extraHeading}><span className={styles.extraIcon}><Music2 size={20} aria-hidden="true" /></span><div><h3 id={`${songListId}-title`}>La playlist de tu celebración</h3><p>{songs.length} {songs.length === 1 ? 'canción sugerida' : 'canciones sugeridas'}</p></div></div>
+          {songs.length ? <><ul id={songListId} className={styles.songList}>{songs.slice((currentSongPage - 1) * 6, currentSongPage * 6).map(song => <li key={song.id}><div><strong>{song.track_title}</strong><span>{song.artist_name} · {song.suggested_by_name}</span></div><span className={styles.votes}><Heart size={14} aria-hidden="true" />{song.votes_count}<span className="sr-only"> votos</span></span></li>)}</ul><Pagination page={currentSongPage} pageSize={6} total={songs.length} onPageChange={setSongPage} label="Páginas de la playlist" controlsId={songListId} /></> : <p className={styles.extraEmpty}>Las canciones que sugieran tus invitados aparecerán aquí. Que empiece la música.</p>}
+        </section>
+        <section className={styles.extraCard} aria-label="Mensajes de voz">
+          <div className={styles.extraHeading}><span className={styles.extraIcon}><Mic size={20} aria-hidden="true" /></span><div><h3>Palabras para recordar</h3><p>{audio.length} {audio.length === 1 ? 'mensaje de voz' : 'mensajes de voz'}</p></div></div>
+          {audio.length ? <div className={styles.audioList}>{audio.map(memory => <div key={memory.id}><p>{memory.author}</p><audio controls preload="none" src={memory.fullUrl || memory.url} aria-label={`Mensaje de voz de ${memory.author}`} /></div>)}</div> : <p className={styles.extraEmpty}>Hay palabras que merecen escucharse otra vez. Aquí encontrarás los mensajes de tus invitados.</p>}
+        </section>
+      </div>
+    </>}
+  </section>;
 }

@@ -1,0 +1,59 @@
+.photoImage, .fullImage { display: block; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .3s; }
+.photoImage[data-loaded='true'], .fullImage[data-loaded='true'] { opacity: 1; }
+.imageError { display: flex; width: 100%; height: 100%; min-height: 120px; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 24px; color: var(--color-muted); text-align: center; font-size: .875rem; line-height: 1.5; }
+.viewer.inherited { font-family: inherit; --viewer-heading-font: inherit; }
+.viewer { position: fixed; inset: 0; width: 100%; max-width: none; height: 100dvh; max-height: none; margin: 0; overflow: hidden; border: 0; background: #181715f7; padding: 0; color: var(--color-on-dark); font-family: var(--font-secondary); backdrop-filter: blur(20px); }
+.viewer[open] { display: flex; flex-direction: column; animation: viewer-in .25s ease-out; }
+.viewer::backdrop { background: #181715ed; }
+.viewer .viewerHeader { display: flex; flex: none; align-items: center; justify-content: space-between; gap: 20px; min-height: 90px; padding: max(20px, env(safe-area-inset-top)) 32px 20px; }
+.viewer .viewerHeader > div:first-child { min-width: 0; }
+.viewer .viewerEyebrow { color: var(--color-on-dark-soft); font-size: .6875rem; font-weight: 600; letter-spacing: .16em; }
+.viewer .viewerHeader h2 { overflow: hidden; margin: 6px 0 0; font-family: var(--viewer-heading-font, var(--font-primary)); font-size: 1.75rem; font-weight: 400; text-overflow: ellipsis; white-space: nowrap; }
+.viewer .viewerActions { display: flex; flex: none; align-items: center; gap: 12px; }
+.viewer .viewerDownload { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; border: 1px solid #faf9f54d; border-radius: 100px; padding: 10px 17px; color: var(--color-on-dark); font-size: .875rem; text-decoration: none; transition: background .2s; }
+.viewer .viewerDownload:hover { background: #faf9f51a; }
+.viewer .viewerClose, .viewer .viewerNav { display: grid; flex: none; width: 46px; height: 46px; place-items: center; border: 1px solid #faf9f54d; border-radius: 50%; background: #252320b3; color: var(--color-on-dark); backdrop-filter: blur(12px); transition: background .2s, transform .2s; }
+.viewer .viewerClose:hover, .viewer .viewerNav:hover:not(:disabled) { background: #faf9f52b; transform: scale(1.05); }
+.viewer .viewerStage { position: relative; display: flex; flex: 1; align-items: center; justify-content: center; min-height: 0; padding: 8px 94px; touch-action: pan-y pinch-zoom; }
+.viewer .viewerImageFrame { display: flex; width: 100%; height: 100%; align-items: center; justify-content: center; min-height: 0; animation: photo-in .3s ease-out; }
+.fullImage { display: block; width: 100%; height: 100%; object-fit: contain; opacity: 0; transition: opacity .3s; }
+.viewer .viewerImageFrame .imageError { color: var(--color-on-dark-soft); }
+.viewer .viewerNav { position: absolute; z-index: 1; top: calc(50% - 23px); }
+.viewer .viewerNav:disabled { opacity: .25; cursor: not-allowed; }
+.viewer .viewerPrevious { left: 26px; }
+.viewer .viewerNext { right: 26px; }
+.viewer .viewerFooter { flex: none; width: min(100%, 940px); margin-inline: auto; padding: 16px 28px max(16px, env(safe-area-inset-bottom)); }
+.viewer .viewerCaption { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 16px; color: var(--color-on-dark-soft); font-size: .875rem; line-height: 1.5; }
+.viewer .viewerCaption > span:first-child { min-width: 0; overflow-wrap: anywhere; }
+.viewer .viewerCaption > span:last-child { flex: none; font-variant-numeric: tabular-nums; }
+.viewer .viewerCaption strong { color: var(--color-on-dark); font-weight: 500; }
+.viewer .filmstrip { display: flex; align-items: center; gap: 8px; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; scrollbar-color: #faf9f54d transparent; padding: 5px 3px 10px; }
+.viewer .filmstrip button { flex: none; width: 58px; height: 58px; overflow: hidden; border: 2px solid transparent; border-radius: 9px; background: var(--color-surface-dark-elevated); padding: 0; opacity: .45; transition: opacity .2s, transform .2s; }
+.viewer .filmstrip button[aria-current='true'] { border-color: var(--viewer-accent, var(--color-primary)); opacity: 1; transform: translateY(-3px); }
+.viewer .filmstrip button:hover { opacity: 1; }
+.viewer .filmstrip img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.viewer .viewerHint { margin: 9px 0 0; color: var(--color-on-dark-soft); text-align: center; font-size: .75rem; }
+@keyframes photo-in { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: none; } }
+@keyframes viewer-in { from { opacity: 0; } to { opacity: 1; } }
+@media (max-width: 700px) {
+  .viewer .viewerHeader { gap: 10px; min-height: 80px; padding-inline: 16px; }
+  .viewer .viewerHeader h2 { font-size: 1.375rem; }
+  .viewer .viewerActions { gap: 8px; }
+  .viewer .viewerDownload { width: 44px; height: 44px; padding: 0; }
+  .viewer .viewerDownload span { display: none; }
+  .viewer .viewerClose { width: 44px; height: 44px; }
+  .viewer .viewerStage { padding: 0 8px; }
+  .viewer .viewerNav { width: 44px; height: 44px; }
+  .viewer .viewerPrevious { left: 12px; }
+  .viewer .viewerNext { right: 12px; }
+  .viewer .viewerFooter { padding-inline: 16px; }
+  .viewer .viewerCaption { margin-bottom: 10px; }
+  .viewer .filmstrip button { width: 48px; height: 48px; }
+  .viewer .viewerHint { font-size: .6875rem; }
+}
+@media (max-height: 540px) and (orientation: landscape) { .viewer .viewerHeader { min-height: 60px; padding-block: 10px; } .viewer .viewerHeader h2 { font-size: 1.25rem; } .viewer .viewerEyebrow, .viewer .filmstrip, .viewer .viewerHint { display: none; } .viewer .viewerFooter { padding-block: 8px; } .viewer .viewerCaption { margin: 0; } }
+@media (prefers-reduced-motion: reduce) { .viewer, .viewer * { animation: none !important; transition: none !important; } }
+
+.viewer .viewerHeader, .viewer .viewerFooter { background: transparent; background-image: none; border: 0; box-shadow: none; }
+.viewer .viewerHeader::before, .viewer .viewerHeader::after, .viewer .viewerFooter::before, .viewer .viewerFooter::after { content: none; }
+.viewer .viewerHeader h2 { line-height: 1.2; letter-spacing: normal; }

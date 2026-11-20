@@ -41,20 +41,34 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
 
     const { data, error } = await authorization.db
       .from('event_memories')
-      .select('id,storage_path,thumbnail_path,guest_group_id')
+      .select('id,storage_path,thumbnail_path,guest_group_id,author_name')
       .eq('event_id', authorization.event.id)
       .eq('type', 'photo')
       .eq('is_approved', true)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false }).order('id');
     if (error) throw error;
 
-    const photos = await Promise.all((data || []).map(async photo => {
-      const [full, thumbnail] = await Promise.all([
-        authorization.db.storage.from('guest-memories').createSignedUrl(photo.storage_path, 3600),
-        authorization.db.storage.from('guest-memories').createSignedUrl(photo.thumbnail_path || photo.storage_path, 3600),
-      ]);
-      if (full.error || thumbnail.error) throw full.error || thumbnail.error;
-      return { id: photo.id, url: thumbnail.data.signedUrl, fullUrl: full.data.signedUrl };
+    const rows = data || [];
+    const sourcePaths = [...new Set(rows.flatMap(photo => [photo.storage_path, photo.thumbnail_path || photo.storage_path]))];
+    const storage = authorization.db.storage.from('guest-memories');
+    const [sources, downloads] = rows.length ? await Promise.all([
+      storage.createSignedUrls(sourcePaths, 3600),
+      storage.createSignedUrls(rows.map(photo => photo.storage_path), 3600, { download: true }),
+    ]) : [{ data: [], error: null }, { data: [], error: null }];
+    if (sources.error || downloads.error) throw sources.error || downloads.error;
+    const sourceUrls = new Map<string, string>();
+    const downloadUrls = new Map<string, string>();
+    for (const [result, target] of [[sources, sourceUrls], [downloads, downloadUrls]] as const) {
+      for (const item of result.data || []) {
+        if (item.error || !item.path || !item.signedUrl) throw new Error('No se pudo preparar una foto');
+        target.set(item.path, item.signedUrl);
+      }
+    }
+    const photos = rows.map(photo => ({
+      id: photo.id, author: photo.author_name,
+      url: sourceUrls.get(photo.thumbnail_path || photo.storage_path)!,
+      fullUrl: sourceUrls.get(photo.storage_path)!,
+      downloadUrl: downloadUrls.get(photo.storage_path)!,
     }));
 
     return NextResponse.json({
@@ -62,7 +76,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
       ownCount: (data || []).filter(photo => photo.guest_group_id === authorization.group.id).length,
       total: photos.length,
       expiresAt: authorization.event.album_expires_at,
-    });
+    }, { headers: { 'Cache-Control': 'private, no-store' } });
   } catch {
     return NextResponse.json({ error: 'No se pudo cargar el álbum' }, { status: 500 });
   }

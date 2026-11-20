@@ -1,0 +1,11 @@
+.pagination { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding-top: 18px; font-family: inherit; font-size: .875rem; color: inherit; }
+.summary { opacity: .75; }
+.buttons, .page { display: inline-flex; align-items: center; gap: 4px; }
+.buttons { max-width: 100%; flex-wrap: wrap; justify-content: center; }
+.buttons button { display: inline-flex; align-items: center; justify-content: center; min-width: 40px; min-height: 44px; border: 1px solid currentColor; border-radius: 10px; background: transparent; color: inherit; font: inherit; font-weight: 600; transition: background .2s, transform .2s; }
+.buttons button:hover:not(:disabled) { background: color-mix(in srgb, currentColor 10%, transparent); transform: translateY(-2px); }
+.buttons button[aria-current='page'] { background: color-mix(in srgb, currentColor 15%, transparent); border-width: 2px; }
+.buttons button:disabled { opacity: .3; cursor: not-allowed; }
+.ellipsis { padding-inline: 2px; opacity: .65; }
+@media (max-width: 480px) { .pagination { justify-content: center; } .summary { width: 100%; text-align: center; } .buttons, .page { gap: 3px; } .buttons button { min-width: 34px; } }
+@media (prefers-reduced-motion: reduce) { .buttons button { transition: none; } .buttons button:hover:not(:disabled) { transform: none; } }

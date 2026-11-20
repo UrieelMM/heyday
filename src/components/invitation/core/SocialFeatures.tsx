@@ -1,12 +1,19 @@
 'use client';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { Pagination } from '@/components/ui/Pagination';
+const SONGS_PER_PAGE = 6;
 type Song = { id: string; track_title: string; artist_name: string; suggested_by_name: string; votes_count: number };
 export function SocialFeatures({ slug, token, preview, songsEnabled, audioEnabled }: { slug: string; token?: string; preview?: boolean; songsEnabled: boolean; audioEnabled: boolean }) {
+  const [songPage, setSongPage] = useState(1);
+  const songListId = useId();
   const [songs, setSongs] = useState<Song[]>([]); const [voted, setVoted] = useState<string[]>([]); const [title, setTitle] = useState(''); const [artist, setArtist] = useState('');
   const [busy, setBusy] = useState(false); const [recording, setRecording] = useState(false); const [clip, setClip] = useState<Blob | null>(null); const [clipUrl, setClipUrl] = useState(''); const [error, setError] = useState('');
   const recorder = useRef<MediaRecorder | null>(null); const stream = useRef<MediaStream | null>(null); const timeout = useRef<ReturnType<typeof setTimeout> | null>(null); const alive = useRef(true);
   const url = `/api/public/invitations/${encodeURIComponent(slug)}/social`;
+  const currentSongPage = Math.min(songPage, Math.max(1, Math.ceil(songs.length / SONGS_PER_PAGE)));
+  const visibleSongs = songs.slice((currentSongPage - 1) * SONGS_PER_PAGE, currentSongPage * SONGS_PER_PAGE);
+  useEffect(() => { setSongPage(1); }, [slug, token]);
   const load = useCallback(async () => { if (!token || preview || !songsEnabled) return; try { const res = await fetch(`${url}?g=${encodeURIComponent(token)}`, { cache: 'no-store' }); const data = await res.json(); if (!res.ok) throw new Error(data.error); setSongs(data.songs); setVoted(data.voted); setError(''); } catch (e) { setError(e instanceof Error ? e.message : 'No se pudo cargar'); } }, [token, preview, songsEnabled, url]);
   useEffect(() => { void load(); }, [load]);
   useEffect(() => { alive.current = true; return () => { alive.current = false; if (timeout.current) clearTimeout(timeout.current); if (recorder.current?.state === 'recording') recorder.current.stop(); stream.current?.getTracks().forEach(t => t.stop()); }; }, []);
@@ -33,7 +40,17 @@ export function SocialFeatures({ slug, token, preview, songsEnabled, audioEnable
   if (!songsEnabled && !audioEnabled) return null;
   return <div className="space-y-6 text-sm" aria-live="polite">
     {!token || preview ? <p>Abre tu enlace personal para compartir canciones o mensajes de voz.</p> : null}
-    {songsEnabled && <div className="space-y-3"><h3 className="text-lg font-semibold">Sugiere una canción</h3><form className="flex flex-wrap gap-2" onSubmit={async e => { e.preventDefault(); if (await send('song', { title, artist })) { setTitle(''); setArtist(''); } }}><input aria-label="Canción" maxLength={120} required value={title} onChange={e => setTitle(e.target.value)} placeholder="Canción" className="min-w-0 flex-1 rounded border border-current bg-transparent p-2"/><input aria-label="Artista" maxLength={120} value={artist} onChange={e => setArtist(e.target.value)} placeholder="Artista" className="min-w-0 flex-1 rounded border border-current bg-transparent p-2"/><button disabled={busy || !token || preview} className="rounded border border-current px-3 py-2 disabled:opacity-50">Sugerir</button></form>{error && <p role="alert">{error} <button type="button" onClick={() => void load()}>Reintentar</button></p>}<ul className="space-y-2">{songs.map(song => <li key={song.id} className="flex items-center justify-between gap-2 border-b border-current/20 py-2"><span><strong>{song.track_title}</strong> · {song.artist_name}<small className="block opacity-70">Sugerida por {song.suggested_by_name}</small></span><button type="button" disabled={busy || voted.includes(song.id)} onClick={() => void send('vote', { songId: song.id })} className="rounded border border-current px-3 py-1 disabled:opacity-50" aria-label={`Votar por ${song.track_title}`}>♥ {song.votes_count}</button></li>)}</ul></div>}
+    {songsEnabled && <div className="space-y-3">
+      <h3 className="text-lg font-semibold">Sugiere una canción</h3>
+      <form className="flex flex-wrap gap-2" onSubmit={async e => { e.preventDefault(); if (await send('song', { title, artist })) { setTitle(''); setArtist(''); } }}>
+        <input aria-label="Canción" maxLength={120} required value={title} onChange={e => setTitle(e.target.value)} placeholder="Canción" className="min-w-0 flex-1 rounded border border-current bg-transparent p-2"/>
+        <input aria-label="Artista" maxLength={120} value={artist} onChange={e => setArtist(e.target.value)} placeholder="Artista" className="min-w-0 flex-1 rounded border border-current bg-transparent p-2"/>
+        <button disabled={busy || !token || preview} className="rounded border border-current px-3 py-2 disabled:opacity-50">Sugerir</button>
+      </form>
+      {error && <p role="alert">{error} <button type="button" onClick={() => void load()}>Reintentar</button></p>}
+      <ul id={songListId} className="space-y-2">{visibleSongs.map(song => <li key={song.id} className="flex items-center justify-between gap-2 border-b border-current/20 py-2"><span className="min-w-0 break-words"><strong>{song.track_title}</strong> · {song.artist_name}<small className="block opacity-70">Sugerida por {song.suggested_by_name}</small></span><button type="button" disabled={busy || voted.includes(song.id)} onClick={() => void send('vote', { songId: song.id })} className="shrink-0 rounded border border-current px-3 py-1 disabled:opacity-50" aria-label={`Votar por ${song.track_title}`}>♥ {song.votes_count}</button></li>)}</ul>
+      <Pagination page={currentSongPage} pageSize={SONGS_PER_PAGE} total={songs.length} onPageChange={setSongPage} label="Páginas de canciones sugeridas" controlsId={songListId} />
+    </div>}
     {audioEnabled && <div className="space-y-3"><h3 className="text-lg font-semibold">Deja un mensaje de voz</h3><p>Graba hasta 45 segundos. Cada pase puede enviar tres mensajes.</p><button type="button" disabled={busy || !token || preview} onClick={recording ? stopRecording : () => void startRecording()} className="rounded border border-current px-4 py-2 disabled:opacity-50">{recording ? 'Detener grabación' : 'Grabar mensaje'}</button>{recording && <span role="status"> Grabando…</span>}{clipUrl && <div className="space-y-2"><audio controls src={clipUrl} className="max-w-full"/><div className="flex gap-2"><button type="button" disabled={busy} onClick={async () => { if (clip && await send('audio', { file: clip })) setClip(null); }} className="rounded border border-current px-4 py-2">{busy ? 'Enviando…' : 'Enviar mensaje'}</button><button type="button" disabled={busy} onClick={() => setClip(null)}>Descartar</button></div></div>}</div>}
   </div>;
 }

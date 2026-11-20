@@ -21,8 +21,8 @@
 .editor-status.is-dirty { color: #ac7242; }
 .editor-save { display: inline-flex; align-items: center; gap: 8px; border: 0; border-radius: 10px; background: #b9664b; color: #fff; padding: 11px 16px; font-size: 13px !important; font-weight: 700 !important; }
 .editor-save:hover:not(:disabled) { background: #975038; }
-.editor-tabs { display: flex; gap: 8px; padding: 14px clamp(18px, 3vw, 44px) 0; background: #fff; border-bottom: 1px solid #e7ded2; }
-.editor-tabs button { display: inline-flex; align-items: center; gap: 9px; border: 0; border-bottom: 3px solid transparent; padding: 11px 16px 13px; background: transparent; color: #71675c; font-size: 13px; font-weight: 700; }
+.editor-tabs { display: flex; flex: none; gap: 8px; overflow-x: auto; scrollbar-width: thin; padding: 14px clamp(18px, 3vw, 44px) 0; background: #fff; border-bottom: 1px solid #e7ded2; }
+.editor-tabs button { display: inline-flex; flex: none; white-space: nowrap; align-items: center; gap: 9px; border: 0; border-bottom: 3px solid transparent; padding: 11px 16px 13px; background: transparent; color: #71675c; font-size: 13px; font-weight: 700; }
 .editor-tabs button.active { color: #a95940; border-color: #b9664b; }
 .editor-tabs span { border-radius: 999px; background: #f0e7dc; padding: 2px 7px; font-size: 11px; }
 .editor-workspace { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(350px, 460px) minmax(0, 1fr); }
