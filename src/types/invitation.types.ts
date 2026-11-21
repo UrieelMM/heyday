@@ -231,6 +231,7 @@ export interface GuestGroup {
   guestMessage?: string;
   tableName?: string;
   checkedInCount: number;
+  qrPayload?: string;
 }
 
 export interface EventInvitation {

@@ -3,6 +3,7 @@ import { PublicInvitationClientView } from '@/components/invitation/core/PublicI
 import { createAdminClient } from '@/lib/supabase/admin';
 import { createClient as createSessionClient } from '@/lib/supabase/server';
 import type { GuestGroup, InvitationConfig, TemplateId } from '@/types/invitation.types';
+import { signQrPass } from '@/lib/crypto/qr-signer';
 
 export const dynamic = 'force-dynamic';
 export default async function PublicInvitationPage({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: Promise<{ g?: string }> }) {
@@ -35,10 +36,14 @@ export default async function PublicInvitationPage({ params, searchParams }: { p
 
   let guest: GuestGroup | null = null;
   if (g) {
-    const { data, error: guestError } = await db.from('guest_groups').select('id,event_id,guest_token,group_name,allocated_adults,allocated_children,rsvp_status,confirmed_adults,confirmed_children,table_name_fallback,checked_in_count').eq('event_id', event.id).eq('guest_token', g).maybeSingle();
+    const { data, error: guestError } = await db.from('guest_groups').select('id,event_id,guest_token,group_name,allocated_adults,allocated_children,rsvp_status,confirmed_adults,confirmed_children,table_name_fallback,checked_in_count,whatsapp_phone,dietary_notes,guest_message').eq('event_id', event.id).eq('guest_token', g).maybeSingle();
     if (guestError) throw new Error('No se pudo cargar el pase');
     if (data) {
-      guest = { id: data.id, eventId: data.event_id, guestToken: data.guest_token, groupName: data.group_name, allocatedAdults: data.allocated_adults, allocatedChildren: data.allocated_children, rsvpStatus: data.rsvp_status, confirmedAdults: data.confirmed_adults, confirmedChildren: data.confirmed_children, tableName: data.table_name_fallback || '', checkedInCount: data.checked_in_count };
+      const secret = process.env.QR_MASTER_SECRET;
+      const qrPayload = event.status === 'published' && data.rsvp_status === 'confirmed' && data.confirmed_adults + data.confirmed_children > 0 && secret && secret.length >= 32
+        ? signQrPass({ eventId: event.id, groupId: data.id, confirmedAdults: data.confirmed_adults, confirmedChildren: data.confirmed_children }, secret)
+        : undefined;
+      guest = { id: data.id, eventId: data.event_id, guestToken: data.guest_token, groupName: data.group_name, allocatedAdults: data.allocated_adults, allocatedChildren: data.allocated_children, rsvpStatus: data.rsvp_status, confirmedAdults: data.confirmed_adults, confirmedChildren: data.confirmed_children, tableName: data.table_name_fallback || '', checkedInCount: data.checked_in_count, whatsappPhone: data.whatsapp_phone || '', dietaryNotes: data.dietary_notes || '', guestMessage: data.guest_message || '', qrPayload };
     }
   }
   return <PublicInvitationClientView slug={slug} fallbackTemplateId={event.template_id as TemplateId} fallbackEventDate={event.event_date} fallbackConfig={event.config as InvitationConfig} fallbackGuestGroup={guest} guestToken={g} />;

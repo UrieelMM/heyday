@@ -1,5 +1,7 @@
 'use client';
 
+import { savedGuestPass, savedGuestCount } from '@/lib/invitation/saved-guest-pass';
+
 import { googleLocationUrl, locationTypeLabels, wazeLocationUrl } from '@/lib/invitation/location-links';
 import { TimelineIcon, DressInspiration, HotelLinks } from './InvitationDetails';
 import { RsvpExtras } from './RsvpExtras';
@@ -216,22 +218,22 @@ function StandardInvitationRenderer({
   const maxChildren = guestGroup ? guestGroup.allocatedChildren : 2;
   const [rsvpName, setRsvpName] = useState(guestGroup?.groupName || '');
   const [rsvpPhone, setRsvpPhone] = useState(guestGroup?.whatsappPhone || '');
-  const [willAttend, setWillAttend] = useState<'yes' | 'no'>('yes');
+  const [willAttend, setWillAttend] = useState<'yes' | 'no'>(guestGroup?.rsvpStatus === 'declined' ? 'no' : 'yes');
   const [confirmedAdults, setConfirmedAdults] = useState(
-    guestGroup ? guestGroup.allocatedAdults : 2
+    savedGuestCount(guestGroup, 'adults', 2)
   );
   const [confirmedChildren, setConfirmedChildren] = useState(
-    guestGroup ? guestGroup.allocatedChildren : 0
+    savedGuestCount(guestGroup, 'children', 0)
   );
-  const [dietaryNotes, setDietaryNotes] = useState('');
-  const [guestMessage, setGuestMessage] = useState('');
+  const [dietaryNotes, setDietaryNotes] = useState(guestGroup?.dietaryNotes || '');
+  const [guestMessage, setGuestMessage] = useState(guestGroup?.guestMessage || '');
   const [generatedPass, setGeneratedPass] = useState<{
     qrPayload: string;
     groupName: string;
     adults: number;
     children: number;
     tableName: string;
-  } | null>(null);
+  } | null>(() => savedGuestPass(guestGroup));
 
   useEffect(() => {
     setIsEnvelopeOpen(forceEnvelopeOpen || (isBuilderPreview && !previewEnvelope));
@@ -1695,6 +1697,7 @@ function StandardInvitationRenderer({
 
                 <div className="my-6 inline-flex rounded-2xl bg-white p-4 shadow-md">
                   <QRCodeSVG
+                    marginSize={4}
                     value={generatedPass.qrPayload}
                     size={176}
                     level="M"

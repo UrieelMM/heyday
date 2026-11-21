@@ -1,5 +1,7 @@
 'use client';
 
+import { savedGuestPass, savedGuestCount } from '@/lib/invitation/saved-guest-pass';
+
 import { googleLocationUrl, wazeLocationUrl } from '@/lib/invitation/location-links';
 import { TimelineIcon, DressInspiration, HotelLinks } from '../core/InvitationDetails';
 import { RsvpExtras } from '../core/RsvpExtras';
@@ -592,18 +594,18 @@ export function MiniCosmosExperience({
   const maxChildren = guestGroup ? guestGroup.allocatedChildren : 2;
   const [rsvpName, setRsvpName] = useState(guestGroup?.groupName || '');
   const [rsvpPhone, setRsvpPhone] = useState(guestGroup?.whatsappPhone || '');
-  const [willAttend, setWillAttend] = useState<'yes' | 'no'>('yes');
-  const [adults, setAdults] = useState(guestGroup ? guestGroup.allocatedAdults : 2);
-  const [children, setChildren] = useState(guestGroup ? guestGroup.allocatedChildren : 1);
-  const [dietaryNotes, setDietaryNotes] = useState('');
-  const [guestMessage, setGuestMessage] = useState('');
+  const [willAttend, setWillAttend] = useState<'yes' | 'no'>(guestGroup?.rsvpStatus === 'declined' ? 'no' : 'yes');
+  const [adults, setAdults] = useState(savedGuestCount(guestGroup, 'adults', 2));
+  const [children, setChildren] = useState(savedGuestCount(guestGroup, 'children', 1));
+  const [dietaryNotes, setDietaryNotes] = useState(guestGroup?.dietaryNotes || '');
+  const [guestMessage, setGuestMessage] = useState(guestGroup?.guestMessage || '');
   const [generatedPass, setGeneratedPass] = useState<{
     qrPayload: string;
     groupName: string;
     adults: number;
     children: number;
     tableName: string;
-  } | null>(null);
+  } | null>(() => savedGuestPass(guestGroup));
 
   const content = config.content;
   const { colors, fonts, envelope } = config.theme;
@@ -2416,6 +2418,7 @@ export function MiniCosmosExperience({
 
                     <div className="mc-rsvp__qr-box">
                       <QRCodeSVG
+                        marginSize={4}
                         value={generatedPass.qrPayload}
                         size={176}
                         level="M"

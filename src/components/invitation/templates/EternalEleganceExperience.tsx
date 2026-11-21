@@ -1,5 +1,7 @@
 'use client';
 
+import { savedGuestPass, savedGuestCount } from '@/lib/invitation/saved-guest-pass';
+
 import { googleLocationUrl, wazeLocationUrl } from '@/lib/invitation/location-links';
 import { TimelineIcon, HotelLinks } from '../core/InvitationDetails';
 import { RsvpExtras } from '../core/RsvpExtras';
@@ -915,17 +917,17 @@ export function EternalEleganceExperience({
 
   const [rsvpName, setRsvpName] = useState(guestGroup?.groupName || '');
   const [rsvpPhone, setRsvpPhone] = useState(guestGroup?.whatsappPhone || '');
-  const [willAttend, setWillAttend] = useState<'yes' | 'no'>('yes');
-  const [adults, setAdults] = useState(guestGroup?.allocatedAdults ?? 2);
-  const [children, setChildren] = useState(0);
-  const [dietaryNotes, setDietaryNotes] = useState('');
-  const [guestMessage, setGuestMessage] = useState('');
+  const [willAttend, setWillAttend] = useState<'yes' | 'no'>(guestGroup?.rsvpStatus === 'declined' ? 'no' : 'yes');
+  const [adults, setAdults] = useState(savedGuestCount(guestGroup, 'adults', 2));
+  const [children, setChildren] = useState(savedGuestCount(guestGroup, 'children', 0));
+  const [dietaryNotes, setDietaryNotes] = useState(guestGroup?.dietaryNotes || '');
+  const [guestMessage, setGuestMessage] = useState(guestGroup?.guestMessage || '');
   const [pass, setPass] = useState<{
     name: string;
     payload: string;
     adults: number;
     children: number;
-  } | null>(null);
+  } | null>(() => { const saved = savedGuestPass(guestGroup); return saved ? { name: saved.groupName, payload: saved.qrPayload, adults: saved.adults, children: saved.children } : null; });
 
   const openInvitation = useCallback(() => setIsOpen(true), []);
   const content = config.content;
@@ -2580,7 +2582,7 @@ export function EternalEleganceExperience({
                       : 'asistentes'}
                   </p>
                   <div className="ee-rsvp__qr">
-                    <QRCodeSVG value={pass.payload} size={156} level="M" />
+                    <QRCodeSVG marginSize={4} value={pass.payload} size={156} level="M" />
                   </div>
                   <p className="ee-rsvp__pass-note">
                     {content.rsvp.customConfirmationMessage}

@@ -1,5 +1,7 @@
 'use client';
 
+import { savedGuestPass, savedGuestCount } from '@/lib/invitation/saved-guest-pass';
+
 import { googleLocationUrl, locationTypeLabels, wazeLocationUrl } from '@/lib/invitation/location-links';
 import { TimelineIcon, DressInspiration, HotelLinks } from '../core/InvitationDetails';
 import { RsvpExtras } from '../core/RsvpExtras';
@@ -560,18 +562,18 @@ export function NeonXVEuphoriaExperience({
   });
 
   // RSVP state
-  const [attending, setAttending] = useState<'yes' | 'no'>('yes');
+  const [attending, setAttending] = useState<'yes' | 'no'>(guestGroup?.rsvpStatus === 'declined' ? 'no' : 'yes');
   const [guestName, setGuestName] = useState<string>(
     guestGroup?.groupName ?? '',
   );
   const [guestsCount, setGuestsCount] = useState<number>(
-    guestGroup ? Math.min(2, guestGroup.allocatedAdults) : 2,
+    savedGuestCount(guestGroup, 'adults', 2),
   );
-  const [dietaryNotes, setDietaryNotes] = useState<string>('');
-  const [guestMessage, setGuestMessage] = useState<string>('');
-  const [childrenCount, setChildrenCount] = useState(0);
-  const [qrPayload, setQrPayload] = useState('');
-  const [rsvpSubmitted, setRsvpSubmitted] = useState<boolean>(false);
+  const [dietaryNotes, setDietaryNotes] = useState<string>(guestGroup?.dietaryNotes || '');
+  const [guestMessage, setGuestMessage] = useState<string>(guestGroup?.guestMessage || '');
+  const [childrenCount, setChildrenCount] = useState(savedGuestCount(guestGroup, 'children', 0));
+  const [qrPayload, setQrPayload] = useState(savedGuestPass(guestGroup)?.qrPayload || '');
+  const [rsvpSubmitted, setRsvpSubmitted] = useState<boolean>(Boolean(savedGuestPass(guestGroup)));
   const [isSubmittingRsvp, setIsSubmittingRsvp] = useState<boolean>(false);
   const [copiedClabe, setCopiedClabe] = useState<boolean>(false);
 
@@ -2016,10 +2018,11 @@ export function NeonXVEuphoriaExperience({
                   {qrPayload && (
                     <div className="nx-qr-pass__code">
                       <QRCodeSVG
+                        marginSize={4}
                         value={qrPayload}
                         size={148}
-                        bgColor="#090614"
-                        fgColor="#00F0FF"
+                        bgColor="#FFFFFF"
+                        fgColor="#000000"
                         level="M"
                       />
                       <span>PRESENTA EN ACCESO VIP</span>

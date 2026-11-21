@@ -951,12 +951,10 @@ function DashboardContent() {
                     type="date"
                     required
                     value={newForm.eventDate}
-                    onChange={(e) =>
-                      setNewForm((prev) => ({
-                        ...prev,
-                        eventDate: e.target.value,
-                      }))
-                    }
+                    onInput={(e) => {
+                      const eventDate = e.currentTarget.value;
+                      setNewForm((prev) => ({ ...prev, eventDate }));
+                    }}
                     className="w-full rounded-xl border border-[#d7cfc4] bg-[#faf9f5] px-3.5 py-2.5 text-sm text-[#141413] outline-none focus:border-[#cc785c]"
                   />
                 </div>
